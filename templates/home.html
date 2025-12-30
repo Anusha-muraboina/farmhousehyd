@@ -200,13 +200,20 @@
             <div class="flex items-center justify-between py-4">
                 <!-- Logo -->
                 <a href="#" class="flex items-center gap-2">
-                    <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-                        <i data-lucide="home" class="w-6 h-6 text-white"></i>
+
+                    
+                    <div class=" flex items-center justify-center">
+                        <!-- <i data-lucide="home" class="w-6 h-6 text-white"></i> -->
+                             <img 
+        src="../static/images/farmhousehyd.webp"
+        alt="Farmhouses Hyderabad"
+        class="h-24 w-auto"
+    >
                     </div>
-                    <div>
+                    <!-- <div>
                         <h1 class="text-xl font-bold text-secondary leading-tight">Farmhouses</h1>
                         <p class="text-xs text-gray-500">Hyderabad</p>
-                    </div>
+                    </div> -->
                 </a>
                 
                 <!-- Navigation -->
@@ -1089,8 +1096,14 @@
             </div>
         </div>
     </section> -->
-    <section class="py-20 bg-white">
-    <div class="container mx-auto px-4">
+
+    <section class="relative py-20 bg-cover bg-center"
+         style="background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1920&q=80');">
+
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-white/90"></div>
+
+    <div class="relative container mx-auto px-4">
 
         <!-- Heading -->
         <div class="text-center mb-12">
@@ -1102,7 +1115,7 @@
         </div>
 
         <!-- BLOG GRID -->
-        <div class="grid lg:grid-cols-3 gap-10">
+            <div class="grid lg:grid-cols-3 gap-10">
 
             <!-- BIG BLOG -->
             <div class="lg:col-span-2 group bg-gray-50 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition">
@@ -1194,6 +1207,112 @@
         </div>
     </div>
 </section>
+<!-- 
+    <section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+
+     
+        <div class="text-center mb-12">
+            <p class="text-primary font-medium mb-2">Our Blogs</p>
+            <h2 class="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">
+                Latest Travel Blog
+            </h2>
+            <div class="w-24 h-1 bg-primary mx-auto rounded-full"></div>
+        </div>
+
+       
+        <div class="grid lg:grid-cols-3 gap-10">
+
+         
+            <div class="lg:col-span-2 group bg-gray-50 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition">
+
+                <img
+                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80"
+                    class="w-full h-96 object-cover group-hover:scale-105 transition duration-500"
+                >
+
+                <div class="p-8">
+                    <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                        <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs">
+                            Featured
+                        </span>
+                        <span>Dec 15, 2024</span>
+                    </div>
+
+                    <h3 class="font-display text-2xl md:text-3xl font-bold text-secondary mb-4">
+                        Why Renting a Farmhouse in Hyderabad Is Better Than Staying in a Hotel
+                    </h3>
+
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Discover why farmhouses are becoming the preferred choice for vacations,
+                        parties, and staycations compared to traditional hotels.
+                    </p>
+
+                    <a href="#"
+                       class="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all">
+                        Read Full Article
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+
+           
+            <div class="flex flex-col gap-8">
+
+               
+                <div class="group bg-gray-50 rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition">
+
+                    <img
+                        src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80"
+                        class="w-full h-44 object-cover group-hover:scale-105 transition duration-500"
+                    >
+
+                    <div class="p-6">
+                        <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full">
+                            Event
+                        </span>
+
+                        <h4 class="font-display text-lg font-bold text-secondary mt-4 mb-3">
+                            Host Your Dream Event at a Farmhouse in Hyderabad
+                        </h4>
+
+                        <a href="#"
+                           class="inline-flex items-center gap-2 text-primary text-sm font-medium">
+                            Read More
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+
+               
+                <div class="group bg-gray-50 rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition">
+
+                    <img
+                        src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80"
+                        class="w-full h-44 object-cover group-hover:scale-105 transition duration-500"
+                    >
+
+                    <div class="p-6">
+                        <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full">
+                            Party
+                        </span>
+
+                        <h4 class="font-display text-lg font-bold text-secondary mt-4 mb-3">
+                            Farmhouse in Hyderabad for Party | One-Day Rental Guide
+                        </h4>
+
+                        <a href="#"
+                           class="inline-flex items-center gap-2 text-primary text-sm font-medium">
+                            Read More
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section> -->
 
     <!-- Footer -->
     <footer class="bg-secondary text-white">
