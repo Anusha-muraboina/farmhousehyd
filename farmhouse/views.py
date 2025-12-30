@@ -5,4 +5,5 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 def blog_page(request):
-    return HttpResponse("Hello, this is Blog Page")
+    # return HttpResponse("Hello, this is Blog Page")
+    return render(request , "home.html")
