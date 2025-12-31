@@ -1,3 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Farmhouses Hyderabad - Best Farmhouses{% endblock %}
+
+{% block content %}
+
+
+
 {% comment %} <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,8 +16,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"> {% endcomment %}
+  {% comment %} <script>
     tailwind.config = {
       theme: {
         extend: {
@@ -35,7 +43,7 @@
         },
       },
     }
-  </script>
+  </script> {% endcomment %}
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -219,9 +227,9 @@
 
           <!-- CTAs -->
           <div class="flex flex-wrap items-center gap-4">
-            <button class="px-8 py-3 bg-primary text-white rounded-full font-medium hover:bg-primary-dark transition-colors shadow-lg hover:shadow-xl">
+            {% comment %} <button class="px-8 py-3 bg-primary text-white rounded-full font-medium hover:bg-primary-dark transition-colors shadow-lg hover:shadow-xl">
               Find Out More
-            </button>
+            </button> {% endcomment %}
             <button class="flex items-center gap-2 text-gray-900 hover:text-primary transition-colors group">
               <div class="w-12 h-12 rounded-full border-2 border-gray-200 flex items-center justify-center group-hover:border-primary transition-colors">
                 <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 24 24">
@@ -254,7 +262,7 @@
         <!-- Stat 1 -->
         <div class="flex items-center gap-4 p-4">
           <div class="w-14 h-14 rounded-full bg-primary-light flex items-center justify-center">
-            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
             </svg>
           </div>
@@ -267,7 +275,7 @@
         <!-- Stat 2 -->
         <div class="flex items-center gap-4 p-4">
           <div class="w-14 h-14 rounded-full bg-primary-light flex items-center justify-center">
-            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
             </svg>
           </div>
@@ -280,7 +288,7 @@
         <!-- Stat 3 -->
         <div class="flex items-center gap-4 p-4">
           <div class="w-14 h-14 rounded-full bg-primary-light flex items-center justify-center">
-            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
             </svg>
           </div>
@@ -293,7 +301,7 @@
         <!-- Stat 4 -->
         <div class="flex items-center gap-4 p-4">
           <div class="w-14 h-14 rounded-full bg-primary-light flex items-center justify-center">
-            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
             </svg>
           </div>
@@ -320,7 +328,12 @@
   </section>
 
   <!-- Why Choose Us Section -->
-  <section class="py-16 md:py-24 bg-white relative overflow-hidden">
+  <section class="relative py-4 md:py-24 bg-white relative overflow-hidden"  
+  style="background-image:url('https://images.unsplash.com/photo-1520975916090-3105956dac38?w=1920&q=80');" >
+   
+      <!-- Overlay -->
+  <div class="absolute inset-0 bg-white/90"></div>
+
     <div class="container mx-auto px-4 relative z-10">
       <!-- Header -->
       <div class="text-center mb-12">
@@ -499,5 +512,19 @@
     // Add mobile menu functionality here if needed
   </script>
 
-</body>
-</html> {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+{% comment %} </body>
+</html>  {% endcomment %}

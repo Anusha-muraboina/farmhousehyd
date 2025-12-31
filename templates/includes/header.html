@@ -1,0 +1,79 @@
+{% load static %}
+
+<!-- Top Bar -->
+<div class="bg-secondary text-white py-2 text-sm hidden md:block">
+    <div class="container mx-auto px-4 flex justify-between">
+        <span>info@farmhouseshyderabad.com</span>
+        <div class="flex gap-4">
+            <a href="#" class="bg-primary px-4 py-1 rounded-xl">Enquiry Now</a>
+            <a href="#" class="bg-primary px-4 py-1 rounded-xl">Add Farmhouse</a>
+        </div>
+    </div>
+</div>
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                
+                <a href="{% url 'home' %}" class="flex items-center gap-2">
+
+                    
+                    <div class=" flex items-center justify-center">
+                      
+                             <img 
+        src="../static/images/farmhousehyd.webp"
+        alt="Farmhouses Hyderabad"
+        class="h-24 w-auto"
+    >
+                    </div>
+                   
+                </a>
+                
+               
+                <nav class="hidden lg:flex items-center gap-8">
+                    <a href="{% url 'home' %}" class="text-secondary hover:text-primary font-medium transition-colors">Home</a>
+                    <a href="{% url 'about' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">About</a>
+                    <a href="#" class="text-gray-600 hover:text-primary font-medium transition-colors">Farm Houses</a>
+                    <a href="#" class="text-gray-600 hover:text-primary font-medium transition-colors">Destinations</a>
+                    <a href="#" class="text-gray-600 hover:text-primary font-medium transition-colors">Blogs</a>
+                    <a href="{% url 'contact' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Contact</a>
+                </nav>
+                
+           
+                <div class="hidden lg:flex items-center gap-4">
+                    <a href="tel:+917013413092" class="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-full hover:bg-primary-dark transition-colors">
+                        <i data-lucide="phone" class="w-4 h-4"></i>
+                        7013 413 092
+                    </a>
+                </div>
+                
+               
+                <button id="mobileMenuBtn" class="lg:hidden p-2">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+
+
+        <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed inset-0 bg-white z-50 lg:hidden">
+        <div class="p-4 flex justify-between items-center border-b">
+            <h2 class="text-xl font-bold">Menu</h2>
+            <button id="closeMobileMenu" class="p-2">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <nav class="p-4 flex flex-col gap-4">
+            <a href="#" class="text-secondary font-medium py-2 border-b">Home</a>
+            <a href="#" class="text-gray-600 font-medium py-2 border-b">About</a>
+            <a href="#" class="text-gray-600 font-medium py-2 border-b">Farm Houses</a>
+            <a href="#" class="text-gray-600 font-medium py-2 border-b">Destinations</a>
+            <a href="#" class="text-gray-600 font-medium py-2 border-b">Blogs</a>
+            <a href="#" class="text-gray-600 font-medium py-2 border-b">Contact</a>
+            <a href="tel:+917013413092" class="bg-primary text-white text-center py-3 rounded-full mt-4">
+                Call: 7013 413 092
+            </a>
+        </nav>
+    </div>
+    
