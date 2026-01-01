@@ -30,9 +30,13 @@
                     },
                     colors: {
                         primary: { 
-                            DEFAULT: '#22c55e',
+                            {% comment %} DEFAULT: '#22c55e',
                             dark: '#16a34a',
-                            light: '#4ade80',
+                            light: '#4ade80', {% endcomment %}
+
+                            DEFAULT: '#fc8906ff',
+                            dark: '#fc8906ff',
+                            light: '#fc8906ff',
                         },
                         secondary: {
                             DEFAULT: '#1a1a2e',
@@ -106,7 +110,8 @@
         
         /* Food section gradient */
         .food-section {
-            background: linear-gradient(135deg, #055e26 0%, #a6f2c2 100%);
+            {% comment %} background: linear-gradient(135deg, #412402ff 0%, #f9911bff 100%); {% endcomment %}
+            background-color: bg-secondary ;
         }
         
         /* Feature card hover */

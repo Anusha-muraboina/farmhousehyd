@@ -24,7 +24,7 @@
   }
 
   .wood-item {
-
+    min-width: 160px;
     text-align: center;
     min-width: 170px;
   }
@@ -32,7 +32,7 @@
   .rope {
     display: block;
     width: 4px;
-    height: 32px;
+    height: 12px;
     background: #b08968;
     margin: 0 auto;
     border-radius: 4px;
@@ -60,6 +60,63 @@
       inset 0 2px 4px rgba(255,255,255,0.6),
       0 14px 35px rgba(0,0,0,0.35);
   }
+
+
+  /* Mobile: smoother finger scroll */
+/* Desktop: hide scrollbar */
+@media (min-width: 768px) {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Mobile: SHOW scrollbar */
+@media (max-width: 767px) {
+  #woodCarousel::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  #woodCarousel::-webkit-scrollbar-track {
+    background: #eee;
+    border-radius: 10px;
+  }
+
+  #woodCarousel::-webkit-scrollbar-thumb {
+    background: #8b5a2b;
+    border-radius: 10px;
+  }
+
+  #woodCarousel {
+    scrollbar-color: #8b5a2b #eee; /* Firefox */
+    scrollbar-width: thin;
+  }
+}
+
+.wood-item {
+  min-width: 150px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  #woodCarousel::-webkit-scrollbar {
+    height: 6px;
+  }
+  #woodCarousel::-webkit-scrollbar-track {
+    background: #eee;
+    border-radius: 10px;
+  }
+  #woodCarousel::-webkit-scrollbar-thumb {
+    background: #8b5a2b;
+    border-radius: 10px;
+  }
+}
+
+
 </style>
 
 <!-- Hero Section -->
@@ -97,10 +154,53 @@
         <div class="w-full flex flex-col items-center gap-6">
 
 
-    <h2 class="font-display text-4xl  md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-        Find the Best Farmhouses <br> in Hyderabad
+    <h2 class="font-display text-medium  md:text-3xl lg:text-4xl font-bold mb-6 leading-tight">
+        Find the Best Farmhouses  in Hyderabad
     </h2>
 
+<section class="w-full py-2">
+
+  <!-- Rope Divider -->
+  <div class="h-1 bg-[#8b5a2b] rounded-full mb-6 mx-4 md:mx-10"></div>
+
+  <!-- WOODEN LOCATION BAR -->
+  <div id="woodCarousel"
+    class="
+      flex gap-4
+      px-4 md:px-10 pb-6
+      scroll-smooth
+      snap-x snap-mandatory
+
+      /* Mobile */
+      overflow-x-auto flex-nowrap
+
+      /* Desktop */
+      md:overflow-visible md:flex-wrap md:justify-center
+    ">
+
+    <div class="wood-item snap-start">
+      <span class="rope"></span><div class="plank active">All Farmhouses</div>
+    </div>
+
+    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Gachibowli</div></div>
+    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Moinabad</div></div>
+    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Shamshabad</div></div>
+    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Shamirpet</div></div>
+    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Secunderabad</div></div>
+    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Chevella</div></div>
+    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Ghatkesar</div></div>
+    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Shadnagar</div></div>
+    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Kompally</div></div>
+    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Medchal</div></div>
+
+  </div>
+
+  <!-- Mobile hint -->
+  <p class="md:hidden text-center text-xs text-gray-500 mt-2">
+    ← Swipe to explore locations →
+  </p>
+
+</section>
 
     <!-- Search Box --> <div class="bg-white rounded-full shadow-xl px-4 py-2 w-full max-w-xl"> 
         <div class="flex items-center gap-3"> <!-- Search Icon --> <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -157,58 +257,57 @@
   <!-- CONTENT WRAPPER -->
   <div class="relative w-full">
 
-
+<!-- 
     <section class="py-12 w-full">
 
       <div class="relative w-full">
-        <!-- Heading -->
+       
         <div class="text-center mb-10">
           <p class="text-primary font-medium mb-2">Find Best Farmhouses</p>
           <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold">
             Ultimate Stay Experience
           </h2>
         </div>
-        <!-- Rope -->
+       
         <div class="h-1 bg-[#8b5a2b] rounded-full mb-6 mx-4 md:mx-10"></div>
 
-        <!-- LEFT ARROW -->
+     
         <button onclick="scrollLeftWood()"
           class="hidden md:flex absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-20
-                 bg-[#4a2c18] text-white w-10 h-10 md:w-12 md:h-12
+                 bg-[#4a2c18] text-white w-10 h-10 md:w-12 md:h-12  flex items-center justify-center
                  rounded-full shadow-lg hover:scale-110 transition">
           ❮
         </button>
 
-        <!-- SLIDER -->
+     
         <div id="woodCarousel"
           class="flex gap-6 md:gap-8 overflow-x-auto
                  px-6 md:px-20 pb-6
-         snap-x snap-mandatory
+         snap-x snap-mandatory text-sm
         
 
                  scroll-smooth no-scrollbar">
 
-          <div class="wood-item"><span class="rope"></span><div class="plank">Shamshabad</div></div>
-          <div class="wood-item"><span class="rope"></span><div class="plank">Pedda Golconda</div></div>
-          <div class="wood-item"><span class="rope"></span><div class="plank">Shamirpet</div></div>
-          <div class="wood-item"><span class="rope"></span><div class="plank">Chevella</div></div>
-          <div class="wood-item"><span class="rope"></span><div class="plank">Moinabad</div></div>
-          <div class="wood-item"><span class="rope"></span><div class="plank">Ghatkesar</div></div>
-          <div class="wood-item"><span class="rope"></span><div class="plank">Gachibowli</div></div>
-          <div class="wood-item"><span class="rope"></span><div class="plank">Shadnagar</div></div>
-
+          <div class="wood-item "><span class="rope"></span><div class="plank">All Farmhouses</div></div>
+          <div class="wood-item"><span class="rope"></span><div class="plank">Near Gachibowli</div></div>
+          <div class="wood-item"><span class="rope"></span><div class="plank">Near Moinabad</div></div>
+          <div class="wood-item"><span class="rope"></span><div class="plank">Near Secunderabad</div></div>
+          <div class="wood-item"><span class="rope"></span><div class="plank">Near Shamsabad</div></div>
+          <div class="wood-item"><span class="rope"></span><div class="plank">Near Shamirpet</div></div>
+          <div class="wood-item"><span class="rope"></span><div class="plank">Near Shadnagar</div></div>
+       
         </div>
 
-        <!-- RIGHT ARROW -->
+   
         <button onclick="scrollRightWood()"
           class=" hidden md:flex absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-20
-                 bg-[#4a2c18] text-white w-10 h-10 md:w-12 md:h-12
+                 bg-[#4a2c18] text-white w-10 h-10 md:w-12 md:h-12  flex items-center justify-center
                  rounded-full shadow-lg hover:scale-110 transition">
           ❯
         </button>
 
       </div>
-    </section>
+    </section> -->
 
     <!-- ===================== -->
     <!-- FARMHOUSE LISTINGS -->
@@ -216,7 +315,12 @@
 
     <section class="py-6 md:py-4">
       <div class="container mx-auto px-4">
-
+        <div class="text-center mb-10">
+          <p class="text-primary font-medium mb-2">Find Best Farmhouses</p>
+          <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold">
+            Ultimate Stay Experience
+          </h2>
+        </div>
         <!-- Heading -->
         <!-- <div class="text-center mb-10">
           <p class="text-primary font-medium mb-2">Find Best Farmhouses</p>
@@ -258,7 +362,7 @@
                         </div>
                         <div class="flex items-center justify-between pt-4 border-t">
                             <div>
-                                <span class="text-gray-400 text-sm">Free cancellation</span>
+                                <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
                             </div>
                             <a href="#" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
                                 Know More →
@@ -300,8 +404,7 @@
                         </div>
                         <div class="flex items-center justify-between pt-4 border-t">
                             <div>
-                                <span class="text-gray-400 text-sm">Free cancellation</span>
-                                <p class="text-xs text-gray-400">before 48 hrs</p>
+                                <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
                             </div>
                             <a href="#" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
                                 Know More →
@@ -343,7 +446,7 @@
                         </div>
                         <div class="flex items-center justify-between pt-4 border-t">
                             <div>
-                                <span class="text-gray-400 text-sm">Free cancellation</span>
+                                 <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
                             </div>
                             <a href="#" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
                                 Know More →
@@ -767,47 +870,53 @@
 </script>
 
     <!-- Why Choose Us Section -->
-    <section class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4 text-center">
+    <section class="py-4 md:py-20 relative bg-cover bg-center"  style="background-image:url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&q=80');">
+     
+
+          <!-- Overlay -->
+  <div class="absolute inset-0 bg-white/85"></div>
+
+     
+        <div class="relative  container mx-auto px-4 text-center">
             <p class="text-primary font-medium mb-2 section-subtitle">Our Services</p>
             <h2 class="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Why Choose Farmhouses Hyderabad</h2>
             <div class="w-24 h-1 bg-primary mx-auto mb-12 rounded-full"></div>
             
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Feature 1 -->
-                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i data-lucide="utensils" class="w-8 h-8 text-primary"></i>
+                <div class="feature-card bg-white  md:p-4 p-2 rounded-2xl shadow-lg">
+                    <div class="w-16 h-16 bg-primary/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="utensils" class="w-8 h-8 text-white"></i>
                     </div>
                     <h3 class="text-xl font-bold text-secondary mb-3">Free Breakfast</h3>
-                    <p class="text-gray-600 text-sm">We give complimentary welcome drink and breakfast for early booking customers.</p>
+                    <p class="text-gray-900 text-sm">We give complimentary welcome drink and breakfast for early booking customers.</p>
                 </div>
                 
                 <!-- Feature 2 -->
-                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg">
+                <div class="feature-card bg-white md:p-4 p-2 rounded-2xl shadow-lg">
                     <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i data-lucide="indian-rupee" class="w-8 h-8 text-primary"></i>
                     </div>
                     <h3 class="text-xl font-bold text-secondary mb-3">Competitive Pricing</h3>
-                    <p class="text-gray-600 text-sm">Best price guaranteed. Get the best deals on farmhouse bookings in Hyderabad.</p>
+                    <p class="text-gray-900 text-sm">Best price guaranteed. Get the best deals on farmhouse bookings in Hyderabad.</p>
                 </div>
                 
                 <!-- Feature 3 -->
-                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg">
+                <div class="feature-card bg-white md:p-4 p-2 rounded-2xl shadow-lg">
                     <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i data-lucide="users" class="w-8 h-8 text-primary"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-secondary mb-3">Best Farmhouses For Family</h3>
-                    <p class="text-gray-600 text-sm">Perfect setting for family gatherings, kids activities, and quality time together.</p>
+                    <h3 class="text-xl font-bold text-secondary mb-3">Farmhouses For Family</h3>
+                    <p class="text-gray-900 text-sm">Perfect setting for family gatherings, kids activities, and quality time together.</p>
                 </div>
                 
                 <!-- Feature 4 -->
-                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg">
+                <div class="feature-card bg-white md:p-4 p-2 rounded-2xl shadow-lg">
                     <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i data-lucide="calendar-check" class="w-8 h-8 text-primary"></i>
                     </div>
                     <h3 class="text-xl font-bold text-secondary mb-3">Ultimate Flexibility</h3>
-                    <p class="text-gray-600 text-sm">Flexible booking options with free cancellation up to 48 hours before check-in.</p>
+                    <p class="text-gray-900 text-sm">Flexible booking options with free cancellation up to 48 hours before check-in.</p>
                 </div>
             </div>
         </div>
@@ -932,7 +1041,7 @@
 
 
 
-<script>
+<!-- <script>
   const woodCarousel = document.getElementById("woodCarousel");
 
   function scrollLeftWood() {
@@ -948,7 +1057,7 @@
       behavior: "smooth"
     });
   }
-</script>
+</script> -->
 
 
 
