@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | Farmhouses Hyderabad</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Playfair Display', 'serif'],
+            sans: ['Poppins', 'sans-serif'],
+          },
+          colors: {
+            primary: '#fc8906ff',
+            secondary: '#1a1a2e',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+<section class="min-h-screen flex items-center justify-center px-4">
+
+  <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8">
+
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <img src="{% static 'images/farmhousehyd.webp' %}"
+           class="h-20 mx-auto mb-4"
+           alt="Farmhouses Hyderabad">
+
+      <h1 class="font-display text-3xl font-bold text-secondary">
+        Welcome Back
+      </h1>
+      <p class="text-gray-500 text-sm mt-1">
+        Login to continue
+      </p>
+    </div>
+
+    <!-- Login Form -->
+    <form method="post" class="space-y-5">
+      {% csrf_token %}
+
+      <!-- Username / Email -->
+      <div class="relative">
+        <i data-lucide="user"
+           class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+        <input type="text" name="username" required
+               placeholder="Email or Username"
+               class="w-full border border-gray-300 rounded-xl pl-12 px-4 py-3 focus:ring-2 focus:ring-primary outline-none">
+      </div>
+
+      <!-- Password with show/hide -->
+      <div class="relative">
+        <i data-lucide="lock"
+           class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+
+        <input type="password" name="password" id="loginPassword" required
+               placeholder="Password"
+               class="w-full border border-gray-300 rounded-xl pl-12 pr-12 px-4 py-3 focus:ring-2 focus:ring-primary outline-none">
+
+        <button type="button"
+                onclick="togglePassword()"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">
+          <i data-lucide="eye" id="passwordIcon" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Remember + Forgot -->
+      <div class="flex justify-between items-center text-sm">
+        <label class="flex items-center gap-2 text-gray-600">
+          <input type="checkbox" class="rounded">
+          Remember me
+        </label>
+
+        <!-- Django forgot password URL -->
+        <a href="{% url 'password_reset' %}"
+           class="text-primary font-medium hover:underline">
+          Forgot password?
+        </a>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit"
+              class="w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-orange-600 transition">
+        Login
+      </button>
+    </form>
+
+    <p class="text-center text-sm text-gray-600 mt-6">
+      Don’t have an account?
+      <a href="{% url 'register' %}" class="text-primary font-medium hover:underline">
+        Register
+      </a>
+    </p>
+
+  </div>
+</section>
+
+<!-- Show / Hide Password Script -->
+<script>
+  function togglePassword() {
+    const input = document.getElementById("loginPassword");
+    const icon = document.getElementById("passwordIcon");
+
+    if (input.type === "password") {
+      input.type = "text";
+      icon.setAttribute("data-lucide", "eye-off");
+    } else {
+      input.type = "password";
+      icon.setAttribute("data-lucide", "eye");
+    }
+    lucide.createIcons();
+  }
+
+  lucide.createIcons();
+</script>
+
+</body>
+</html>

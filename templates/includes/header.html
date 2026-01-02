@@ -2,7 +2,7 @@
 
 <!-- Top Bar -->
 <div class="bg-secondary text-white py-2 text-sm hidden md:block">
-    <div class="container mx-auto px-4 flex justify-between">
+    <div class=" mx-auto md-2 px-3 md:px-8 flex justify-between">
         <span>info@farmhouseshyderabad.com</span>
         <div class="flex gap-4">
             <a href="#" class="bg-primary px-4 py-1 rounded-xl">Enquiry Now</a>
@@ -11,7 +11,7 @@
     </div>
 </div>
     <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="container mx-auto px-4">
+        <div class=" mx-auto px-4 md:px-12 ">
             <div class="flex items-center justify-between py-2">
                 
                 <a href="{% url 'home' %}" class="flex items-center gap-2">
@@ -22,7 +22,7 @@
                              <img 
         src="../static/images/farmhousehyd.webp"
         alt="Farmhouses Hyderabad"
-        class="h-32 w-auto"
+        class="md:h-32 h-32 w-auto"
     >
                     </div>
                    
@@ -32,8 +32,8 @@
                 <nav class="hidden lg:flex items-center gap-8">
                     <a href="{% url 'home' %}" class="text-secondary hover:text-primary font-medium transition-colors">Home</a>
                     <a href="{% url 'about' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">About</a>
-                    <a href="#" class="text-gray-600 hover:text-primary font-medium transition-colors">Farm Houses</a>
-                    <a href="#" class="text-gray-600 hover:text-primary font-medium transition-colors">Destinations</a>
+                    <a href="{% url 'farmhouses' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Farm Houses</a>
+                    <a href="{% url 'destination' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Destinations</a>
                     <a href="#" class="text-gray-600 hover:text-primary font-medium transition-colors">Blogs</a>
                     <a href="{% url 'contact' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Contact</a>
                 </nav>

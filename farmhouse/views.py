@@ -17,3 +17,28 @@ def about(request):
 def contact(request):
     # return HttpResponse("Hello, this is Blog Page")
     return render(request , "contact.html")
+
+
+def destination(request):
+    # return HttpResponse("Hello, this is Blog Page")
+    return render(request , "destination.html")
+
+
+def Farmhouses(request):
+    # return HttpResponse("Hello, this is Blog Page")
+    return render(request , "farmhouse_list.html")
+
+
+def Login(request):
+    # return HttpResponse("Hello, this is Blog Page")
+    return render(request , "authpages/login.html")
+
+
+def Register(request):
+    # return HttpResponse("Hello, this is Blog Page")
+    return render(request , "authpages/register.html")
+
+
+def PasswordResetView(request):
+    # return HttpResponse("Hello, this is Blog Page")
+    return render(request , "authpages/forgot_password.html")

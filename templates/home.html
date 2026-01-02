@@ -11,7 +11,6 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
-
 </style>
 
 <style>
@@ -41,8 +40,8 @@
 .plank {
   background: linear-gradient(145deg, #f3d2a2, #ddb27c);
   color: #3a2a1a;
-  font-weight: 700;
-  padding: 10px 20px;
+  font-weight: 500;
+  padding: 10px 5px;
   border-radius: 10px;
   border: 2px solid #c18f59;
   box-shadow:
@@ -50,7 +49,11 @@
     0 8px 18px rgba(0,0,0,0.25);
   cursor: pointer;
   transition: all 0.3s ease;
-  white-space: nowrap;
+    /* ✅ FIX */
+  white-space: normal;        /* allow wrapping */
+  word-break: break-word;     /* break long words */
+  text-align: center;
+  line-height: 1.2;
 }
 
 .plank:hover {
@@ -125,54 +128,51 @@
 
 <!-- Hero Section -->
 <section class="relative h-auto md:h-[600px] overflow-hidden">
-
     <!-- SLIDER -->
     <div class="absolute inset-0">
         <div id="slider" class="relative w-full h-full">
-
             <!-- Slide 1 -->
             <div class="slide absolute inset-0 opacity-100 transition-opacity duration-1000">
                 <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&q=80"
                      class="w-full h-full object-cover">
             </div>
-
             <!-- Slide 2 -->
             <div class="slide absolute inset-0 opacity-0 transition-opacity duration-1000">
                 <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80"
                      class="w-full h-full object-cover">
             </div>
-
             <!-- Slide 3 -->
             <div class="slide absolute inset-0 opacity-0 transition-opacity duration-1000">
                 <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1920&q=80"
                      class="w-full h-full object-cover">
             </div>
-
             <!-- Overlay -->
             <div class="absolute inset-0 bg-black/40"></div>
         </div>
     </div>
 
     <!-- CONTENT -->
-    <div class="relative container mx-auto px-4 h-full flex items-start justify-center text-center text-white pt-4 md:pt-28 md:pt-36">
+    <div class="relative  mx-auto px-2 md:px-12  h-full flex items-start justify-center text-center text-white pt-4 md:pt-28 md:pt-36">
         <div class="w-full flex flex-col items-center gap-6">
-
-
     <h2 class="font-display text-medium  md:text-3xl lg:text-4xl font-bold mb-6 leading-tight">
         Find the Best Farmhouses  in Hyderabad
     </h2>
-
+     <div class="bg-white rounded-full shadow-xl px-2 md:px-4 py-2 mb-4 w-full max-w-xl"> 
+        <div class="flex items-center gap-3">
+             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"/> </svg>
+            <input type="text" placeholder="Search farmhouses..." class="flex-1 py-2 outline-none text-gray-700" > 
+        <button class="bg-primary text-white md:px-4 px-2 py-2 rounded-full hover:bg-primary-dark transition"> Search </button> 
+    </div>
+ </div>
 <section class="w-full py-3">
-
   <!-- Rope Divider -->
-  <div class="h-1 bg-[#8b5a2b] rounded-full mb-4 md:mb-6 mx-4 md:mx-10"></div>
-
+  <div class="h-1 bg-[#8b5a2b] rounded-full mb-4 md:mb-6 mx-2 md:mx-10"></div>
   <!-- WOODEN LOCATION BAR -->
   <div
     class="
    grid grid-cols-2 gap-4
       px-2
-
       sm:grid-cols-3
       md:flex md:flex-wrap md:justify-center md:gap-5 md:px-4
     "
@@ -183,44 +183,16 @@
       <span class="rope"></span>
       <div class="plank active">All Farmhouses</div>
     </div>
-
-    <div class="wood-item"><span class="rope"></span><div class="plank">Near Gachibowli</div></div>
-    <div class="wood-item"><span class="rope"></span><div class="plank">Near Moinabad</div></div>
-    <div class="wood-item"><span class="rope"></span><div class="plank">Near Secunderabad</div></div>
-    <div class="wood-item"><span class="rope"></span><div class="plank">Near Shamsabad</div></div>
-    <div class="wood-item"><span class="rope"></span><div class="plank">Near Shamirpet</div></div>
-    <div class="wood-item"><span class="rope"></span><div class="plank">Near Shadnagar</div></div>
-    {% comment %} <div class="wood-item"><span class="rope"></span><div class="plank">Ghatkesar</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Gachibowli</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Moinabad</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Secunderabad</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Shamsabad</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Shamirpet</div></div>
     <div class="wood-item"><span class="rope"></span><div class="plank">Shadnagar</div></div>
-    <div class="wood-item"><span class="rope"></span><div class="plank">Kompally</div></div>
-    <div class="wood-item"><span class="rope"></span><div class="plank">Medchal</div></div> {% endcomment %}
-
   </div>
-
 </section>
 
-    <!-- Search Box --> <div class="bg-white rounded-full shadow-xl px-4 py-2 mb-4 w-full max-w-xl"> 
-        <div class="flex items-center gap-3"> <!-- Search Icon --> <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"/> </svg>
-            <input type="text" placeholder="Search farmhouses..." class="flex-1 py-2 outline-none text-gray-700" > 
-        <button class="bg-primary text-white px-6 py-2 rounded-full hover:bg-primary-dark transition"> Search </button> 
-    </div> </div>
 
-    
-    <!-- Buttons -->
-    <!-- <div class="flex flex-col sm:flex-row justify-center gap-4">
-
-        <a href="#farmhouses"
-           class="bg-primary text-white px-8 py-3 rounded-full font-semibold hover:bg-primary-dark transition">
-            Explore Farmhouses
-        </a>
-
-        <a href="tel:+917013413092"
-           class="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-secondary transition">
-            Call Now
-        </a>
-
-    </div> -->
         </div>
     </div>
 
@@ -245,7 +217,7 @@
 </section>
 
 <section
-  class="relative w-full bg-cover bg-center py-2 md:py-8"
+  class="  relative w-full bg-cover bg-center py-2 md:py-8"
   style="background-image:url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&q=80');">
 
   <!-- Overlay -->
@@ -254,77 +226,14 @@
   <!-- CONTENT WRAPPER -->
   <div class="relative w-full">
 
-<!-- 
-    <section class="py-12 w-full">
-
-      <div class="relative w-full">
-       
-        <div class="text-center mb-10">
-          <p class="text-primary font-medium mb-2">Find Best Farmhouses</p>
-          <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold">
-            Ultimate Stay Experience
-          </h2>
-        </div>
-       
-        <div class="h-1 bg-[#8b5a2b] rounded-full mb-6 mx-4 md:mx-10"></div>
-
-     
-        <button onclick="scrollLeftWood()"
-          class="hidden md:flex absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-20
-                 bg-[#4a2c18] text-white w-10 h-10 md:w-12 md:h-12  flex items-center justify-center
-                 rounded-full shadow-lg hover:scale-110 transition">
-          ❮
-        </button>
-
-     
-        <div id="woodCarousel"
-          class="flex gap-6 md:gap-8 overflow-x-auto
-                 px-6 md:px-20 pb-6
-         snap-x snap-mandatory text-sm
-        
-
-                 scroll-smooth no-scrollbar">
-
-          <div class="wood-item "><span class="rope"></span><div class="plank">All Farmhouses</div></div>
-          <div class="wood-item"><span class="rope"></span><div class="plank">Near Gachibowli</div></div>
-          <div class="wood-item"><span class="rope"></span><div class="plank">Near Moinabad</div></div>
-          <div class="wood-item"><span class="rope"></span><div class="plank">Near Secunderabad</div></div>
-          <div class="wood-item"><span class="rope"></span><div class="plank">Near Shamsabad</div></div>
-          <div class="wood-item"><span class="rope"></span><div class="plank">Near Shamirpet</div></div>
-          <div class="wood-item"><span class="rope"></span><div class="plank">Near Shadnagar</div></div>
-       
-        </div>
-
-   
-        <button onclick="scrollRightWood()"
-          class=" hidden md:flex absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-20
-                 bg-[#4a2c18] text-white w-10 h-10 md:w-12 md:h-12  flex items-center justify-center
-                 rounded-full shadow-lg hover:scale-110 transition">
-          ❯
-        </button>
-
-      </div>
-    </section> -->
-
-    <!-- ===================== -->
-    <!-- FARMHOUSE LISTINGS -->
-    <!-- ===================== -->
-
     <section class="py-6 md:py-4">
-      <div class="container mx-auto px-4">
+      <div class=" mx-auto px-4 md:px-12 ">
         <div class="text-center mb-10">
           <p class="text-primary font-medium mb-2">Find Best Farmhouses</p>
           <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold">
             Ultimate Stay Experience
           </h2>
         </div>
-        <!-- Heading -->
-        <!-- <div class="text-center mb-10">
-          <p class="text-primary font-medium mb-2">Find Best Farmhouses</p>
-          <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold">
-            Ultimate Stay Experience
-          </h2>
-        </div> -->
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 
@@ -456,172 +365,14 @@
             <div class="text-center mt-4 md:mt-8">
                 <button class="bg-primary text-white px-8 py-3 rounded-full font-medium hover:bg-primary-dark transition-colors inline-flex items-center gap-2">
                     <i data-lucide="loader" class="w-5 h-5"></i>
-                    Load More
+                    See All
                 </button>
             </div>
-
       </div>
     </section>
 
   </div>
 </section>
-
-
-
-  
-    <!-- <section class="relative  py-4 md:py-16 bg-gray-50 bg-center"  style="background-image: url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&q=80');">
-
-       
-    <div class="absolute inset-0 bg-white/90"></div>
-        <div class="relative  container mx-auto px-4">
-                       <div class="flex flex-col items-center text-center">
-            <p class="text-primary font-medium mb-2">Find Best Farmhouses</p>
-            <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-8">Ultimate Stay Experience</h2>
-            </div>
-
-
-
-
-
-
-
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-               
-                <div class="farmhouse-card bg-white rounded-2xl overflow-hidden shadow-lg">
-                    <div class="card-image relative h-56">
-                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80" alt="Celeste Farm Stories" class="w-full h-full object-cover">
-                        <span class="absolute top-4 left-4 bg-primary text-white text-xs px-3 py-1 rounded-full">Featured</span>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-display text-xl font-bold text-secondary mb-2">Celeste Farm Stories</h3>
-                        <p class="text-gray-500 text-sm flex items-center gap-1 mb-3">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
-                            Shankarpally, 6 km from Gachibowli
-                        </p>
-                      
-                        <div class="text-sm text-gray-600 max-w-2xl mx-auto mt-4 truncate-text ">
-                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
-                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
-
-                        </div>
-                          <div class="flex items-center gap-4 text-sm text-gray-600 my-4">
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bed" class="w-4 h-4"></i> 3 Beds
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bath" class="w-4 h-4"></i> 3 Baths
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="waves" class="w-4 h-4"></i> Pool
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between pt-4 border-t">
-                            <div>
-                                <span class="text-gray-400 text-sm">Free cancellation</span>
-                            </div>
-                            <a href="#" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
-                                Know More →
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-               
-                <div class="farmhouse-card bg-white rounded-2xl overflow-hidden shadow-lg">
-                    <div class="card-image relative h-56">
-                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80" alt="Shamirpet Lux" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-display text-xl font-bold text-secondary mb-2">Shamirpet Lux</h3>
-                        <p class="text-gray-500 text-sm flex items-center gap-1 mb-3">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
-                            Shamirpet, 35 km from Secunderabad
-                        </p>
-                      
-
-                                                <div class="text-sm text-gray-600 max-w-2xl mx-auto mt-4 truncate-text ">
-                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
-                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
-
-                        </div>
-
-                        
-                                                <div class="flex items-center gap-4 text-sm text-gray-600 my-4">
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bed" class="w-4 h-4"></i> 5 Beds
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bath" class="w-4 h-4"></i> 4 Baths
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="trees" class="w-4 h-4"></i> Garden
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between pt-4 border-t">
-                            <div>
-                                <span class="text-gray-400 text-sm">Free cancellation</span>
-                                <p class="text-xs text-gray-400">before 48 hrs</p>
-                            </div>
-                            <a href="#" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
-                                Know More →
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-               
-                <div class="farmhouse-card bg-white rounded-2xl overflow-hidden shadow-lg">
-                    <div class="card-image relative h-56">
-                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80" alt="Forest Villa Lux" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-display text-xl font-bold text-secondary mb-2">Forest Villa Lux</h3>
-                        <p class="text-gray-500 text-sm flex items-center gap-1 mb-3">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
-                            Chevella, 20 km from HITEC City
-                        </p>
-                    
-
-                                                <div class="text-sm text-gray-600 max-w-2xl mx-auto mt-4 truncate-text ">
-                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
-                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
-
-                        </div>
-
-                        
-                                                <div class="flex items-center gap-4 text-sm text-gray-600 my-4">
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bed" class="w-4 h-4"></i> 5 Beds
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bath" class="w-4 h-4"></i> 4 Baths
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="trees" class="w-4 h-4"></i> Garden
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between pt-4 border-t">
-                            <div>
-                                <span class="text-gray-400 text-sm">Free cancellation</span>
-                            </div>
-                            <a href="#" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
-                                Know More →
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-           
-            <div class="text-center mt-4 md:mt-8">
-                <button class="bg-primary text-white px-8 py-3 rounded-full font-medium hover:bg-primary-dark transition-colors inline-flex items-center gap-2">
-                    <i data-lucide="loader" class="w-5 h-5"></i>
-                    Load More
-                </button>
-            </div>
-        </div>
-        
-    </section> -->
 
 
 <section class="relative py-20 bg-cover bg-center"
@@ -631,7 +382,7 @@
     <div class="absolute inset-0 bg-white/85"></div>
 
 
-    <div class="relative container mx-auto px-4">
+    <div class="relative  mx-auto px-4 md:px-12 ">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
 
             <div>
@@ -708,7 +459,7 @@
 
     <section class="food-section py-20 text-white relative overflow-hidden bg-black">
 
-    <div class="container mx-auto px-4">
+    <div class=" mx-auto px-4 md:px-12 ">
         <div id="foodSlider" class="relative">
 
             <!-- SLIDE 1 -->
@@ -864,7 +615,17 @@
 
     // Auto slide every 6 seconds
     setInterval(nextFoodSlide, 6000);
+    
 </script>
+
+
+
+
+
+
+
+
+
 
     <!-- Why Choose Us Section -->
     <section class="py-4 md:py-20 relative bg-cover bg-center"  style="background-image:url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&q=80');">
@@ -874,7 +635,7 @@
   <div class="absolute inset-0 bg-white/85"></div>
 
      
-        <div class="relative  container mx-auto px-4 text-center">
+        <div class="relative   mx-auto px-4 md:px-12 text-center">
             <p class="text-primary font-medium mb-2 section-subtitle">Our Services</p>
             <h2 class="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Why Choose Farmhouses Hyderabad</h2>
             <div class="w-24 h-1 bg-primary mx-auto mb-12 rounded-full"></div>
@@ -925,7 +686,7 @@
     <!-- Overlay -->
     <div class="absolute inset-0 bg-white/90"></div>
 
-    <div class="relative container mx-auto px-4">
+    <div class="relative  mx-auto px-4 md:px-12 ">
 
         <!-- Heading -->
         <div class="text-center mb-12">

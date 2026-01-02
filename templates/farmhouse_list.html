@@ -1,41 +1,8 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About - Farmhouses Hyderabad</title>
-  <meta name="description" content="Learn about Farmhouses Hyderabad - Your premier destination for farmhouse rentals and tour packages in Hyderabad.">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Poppins', 'sans-serif'],
-            serif: ['Playfair Display', 'serif'],
-          },
-          colors: {
-            primary: {
-              DEFAULT: '#1e6e3c',
-              light: '#e8f5ec',
-              dark: '#145a2e',
-            },
-            secondary: {
-              DEFAULT: '#f97316',
-              light: '#fed7aa',
-            },
-            dark: {
-              DEFAULT: '#1a1a2e',
-              light: '#2d2d44',
-            },
-          },
-        },
-      },
-    }
-  </script>
+{% extends "base.html" %}
+
+{% block title %}Farmhouses Hyderabad - Best Farmhouses{% endblock %}
+
+{% block content %}
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -60,9 +27,21 @@
     .animate-fade-up {
       animation: fadeUp 0.6s ease-out forwards;
     }
+
+    
   </style>
-</head>
-<body class="bg-white text-gray-900">
+
+  
+<style>
+    .truncate-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;   /* controls visible lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>
+<!-- </head>
+<body class="bg-white text-gray-900"> -->
 
 
   <section class="relative h-[300px] md:h-[400px] overflow-hidden">
@@ -90,9 +69,66 @@
 
 
 
-
     <section class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
+        <div class=" md:px-12 px-4 mx-auto ">
+
+            
+<!-- Breadcrumb + Filters UI -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+
+  <!-- LEFT: Breadcrumb -->
+  <nav class="flex items-center text-sm text-gray-600">
+    <a href="/" class="hover:text-primary font-medium">Home</a>
+    <svg class="w-4 h-4 mx-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+    </svg>
+    <span class="text-secondary font-semibold">Farmhouses</span>
+    <svg class="w-4 h-4 mx-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+    </svg>
+    <span class="text-secondary font-semibold">Gachibowli</span>
+
+   
+  </nav>
+
+  <!-- RIGHT: Filters (UI Only) -->
+  <div class="flex flex-wrap gap-3">
+
+    <!-- Location Dropdown -->
+    <div class="relative">
+      <select
+        class="appearance-none border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary">
+        <option>All Locations</option>
+        <option>Gachibowli</option>
+        <option>Shankarpally</option>
+        <option>Moinabad</option>
+        <option>Shamirpet</option>
+        <option>Chevella</option>
+      </select>
+      <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </div>
+
+    <!-- Price Dropdown -->
+    <div class="relative">
+      <select
+        class="appearance-none border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary">
+        <option>All Prices</option>
+        <option>low to high</option>
+        <option>high to low</option>
+        <!-- <option>Below ₹25,000</option> -->
+      </select>
+      <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </div>
+
+  </div>
+</div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 
               
@@ -107,6 +143,7 @@
                             <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
                             Shankarpally, 6 km from Gachibowli
                         </p>
+                        
                         <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
                             <span class="flex items-center gap-1">
                                 <i data-lucide="bed" class="w-4 h-4"></i> 3 Beds
@@ -118,9 +155,15 @@
                                 <i data-lucide="waves" class="w-4 h-4"></i> Pool
                             </span>
                         </div>
+
+                             <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
+                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
+                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
+
+                        </div>
                         <div class="flex items-center justify-between pt-4 border-t">
                             <div>
-                                <span class="text-gray-400 text-sm">Free cancellation</span>
+                               <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
                             </div>
                             <a href="#" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
                                 Know More →
@@ -151,10 +194,17 @@
                                 <i data-lucide="waves" class="w-4 h-4"></i> Pool
                             </span>
                         </div>
+
+                        
+                             <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
+                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
+                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
+
+                        </div>
+
                         <div class="flex items-center justify-between pt-4 border-t">
                             <div>
-                                <span class="text-gray-400 text-sm">Free cancellation</span>
-                                <p class="text-xs text-gray-400">before 48 hrs</p>
+                              <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
                             </div>
                             <a href="#" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
                                 Know More →
@@ -185,9 +235,15 @@
                                 <i data-lucide="waves" class="w-4 h-4"></i> Pool
                             </span>
                         </div>
+
+                                <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
+                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
+                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
+
+                        </div>
                         <div class="flex items-center justify-between pt-4 border-t">
                             <div>
-                                <span class="text-gray-400 text-sm">Free cancellation</span>
+                               <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
                             </div>
                             <a href="#" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
                                 Know More →
@@ -218,10 +274,15 @@
                                 <i data-lucide="car" class="w-4 h-4"></i> Parking
                             </span>
                         </div>
+
+                                <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
+                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
+                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
+
+                        </div>
                         <div class="flex items-center justify-between pt-4 border-t">
                             <div>
-                                <span class="text-gray-400 text-sm">Free cancellation</span>
-                                <p class="text-xs text-gray-400">before 24 hrs</p>
+                             <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
                             </div>
                             <a href="#" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
                                 Know More →
@@ -253,10 +314,15 @@
                                 <i data-lucide="waves" class="w-4 h-4"></i> Pool
                             </span>
                         </div>
+
+                                <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
+                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
+                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
+
+                        </div>
                         <div class="flex items-center justify-between pt-4 border-t">
                             <div>
-                                <span class="text-gray-400 text-sm">Free cancellation</span>
-                                <p class="text-xs text-gray-400">before 48 hrs</p>
+                                <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
                             </div>
                             <a href="#" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
                                 Know More →
@@ -287,9 +353,15 @@
                                 <i data-lucide="trees" class="w-4 h-4"></i> Garden
                             </span>
                         </div>
+
+                                <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
+                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
+                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
+
+                        </div>
                         <div class="flex items-center justify-between pt-4 border-t">
                             <div>
-                                <span class="text-gray-400 text-sm">Free cancellation</span>
+                                <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
                             </div>
                             <a href="#" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
                                 Know More →
@@ -316,5 +388,6 @@
     // Add mobile menu functionality here if needed
   </script>
 
-</body>
-</html> -->
+<!-- </body>
+</html>  -->
+{% endblock %}
