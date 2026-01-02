@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stays Near You - Property Listings</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            primary: '#0891b2',
+            'primary-foreground': '#ffffff',
+            accent: '#ec4899',
+            'accent-foreground': '#ffffff',
+            muted: '#f1f5f9',
+            'muted-foreground': '#64748b',
+            border: '#e2e8f0',
+            rating: '#eab308',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      line-height: 1.5;
+    }
+
+    /* Custom scrollbar */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    /* Property card hover effect */
+    .property-card {
+      transition: all 0.3s ease;
+    }
+    .property-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15);
+    }
+    .property-card:hover .property-image {
+      transform: scale(1.05);
+    }
+    .property-card:hover .nav-arrows {
+      opacity: 1;
+    }
+
+    .property-image {
+      transition: transform 0.5s ease;
+    }
+
+    .nav-arrows {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    /* Category chip styles */
+    .category-chip {
+      transition: all 0.2s ease;
+    }
+    .category-chip:hover {
+      border-color: #0891b2;
+      color: #0891b2;
+    }
+    .category-chip.active {
+      background-color: #0891b2;
+      color: white;
+      border-color: #0891b2;
+    }
+
+    /* Price chip styles */
+    .price-chip {
+      transition: all 0.2s ease;
+    }
+    .price-chip:hover {
+      border-color: #0891b2;
+      color: #0891b2;
+    }
+    .price-chip.active {
+      border-color: #0891b2;
+      color: #0891b2;
+      background-color: rgba(8, 145, 178, 0.05);
+    }
+
+    /* Wishlist button */
+    .wishlist-btn {
+      transition: all 0.2s ease;
+    }
+    .wishlist-btn:hover {
+      color: #ef4444;
+    }
+    .wishlist-btn.active svg {
+      fill: #ef4444;
+      color: #ef4444;
+    }
+
+    /* Map button */
+    .map-button {
+      transition: transform 0.2s ease;
+    }
+    .map-button:hover {
+      transform: translateX(-50%) scale(1.05);
+    }
+
+    /* View toggle */
+    .view-toggle-btn {
+      transition: all 0.2s ease;
+    }
+    .view-toggle-btn.active {
+      background-color: #0891b2;
+      color: white;
+      border-color: #0891b2;
+    }
+
+    /* Booking type toggle */
+    .booking-btn.active {
+      background-color: #ec4899;
+      color: white;
+    }
+
+    /* Checkbox custom style */
+    .custom-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .custom-checkbox:hover {
+      border-color: #0891b2;
+    }
+    .custom-checkbox.checked {
+      background-color: #0891b2;
+      border-color: #0891b2;
+    }
+    .custom-checkbox.checked svg {
+      display: block;
+    }
+    .custom-checkbox svg {
+      display: none;
+      width: 12px;
+      height: 12px;
+      color: white;
+    }
+
+    /* Image dots */
+    .image-dot {
+      transition: all 0.2s ease;
+    }
+    .image-dot.active {
+      width: 16px;
+      background-color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container ">
+    <div class=" mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex gap-6">
+        
+        <!-- Filter Sidebar -->
+        <aside class="hidden lg:block w-72 bg-white rounded-xl border border-border p-5 h-fit sticky top-6 animate-fade-in">
+          
+          <!-- Header -->
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-lg font-semibold text-gray-900">Filters</h2>
+            <button class="text-sm text-muted-foreground hover:text-primary transition-colors">Clear All</button>
+          </div>
+
+          <!-- Search -->
+          <div class="mb-6">
+            <h3 class="text-base font-semibold text-gray-900 mb-3">Search</h3>
+            <div class="relative">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              <input type="text" placeholder="Search by name, location..." class="w-full px-4 py-2.5 pl-10 rounded-lg border border-border bg-white text-gray-900 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+            </div>
+          </div>
+
+
+
+          <!-- Popular Locations -->
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-base font-semibold text-gray-900">Popular Locations</h3>
+              <button class="text-sm text-muted-foreground hover:text-primary transition-colors">Reset</button>
+            </div>
+            <div class="relative mb-3">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              <input type="text" placeholder="Search locations" class="w-full px-4 py-2.5 pl-10 rounded-lg border border-border bg-white text-gray-900 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+            </div>
+            <div class="max-h-48 overflow-y-auto space-y-1 pr-2 custom-scrollbar">
+              <label class="flex items-center gap-3 py-2 cursor-pointer text-sm text-gray-900 hover:text-primary transition-colors">
+                <div class="custom-checkbox">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span>Nagaram</span>
+              </label>
+              <label class="flex items-center gap-3 py-2 cursor-pointer text-sm text-gray-900 hover:text-primary transition-colors">
+                <div class="custom-checkbox">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span>thumkunta</span>
+              </label>
+              <label class="flex items-center gap-3 py-2 cursor-pointer text-sm text-gray-900 hover:text-primary transition-colors">
+                <div class="custom-checkbox">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span>Nadargul</span>
+              </label>
+              <label class="flex items-center gap-3 py-2 cursor-pointer text-sm text-gray-900 hover:text-primary transition-colors">
+                <div class="custom-checkbox">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span>Bongloor</span>
+              </label>
+              <label class="flex items-center gap-3 py-2 cursor-pointer text-sm text-gray-900 hover:text-primary transition-colors">
+                <div class="custom-checkbox">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span>kucharm</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Price Range -->
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-base font-semibold text-gray-900">Price Range</h3>
+              <button class="text-sm text-muted-foreground hover:text-primary transition-colors">Reset</button>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button class="price-chip px-3 py-1.5 text-sm rounded-lg border border-border text-muted-foreground">₹800 - ₹1000</button>
+              <button class="price-chip px-3 py-1.5 text-sm rounded-lg border border-border text-muted-foreground">₹1000 - ₹2500</button>
+              <button class="price-chip px-3 py-1.5 text-sm rounded-lg border border-border text-muted-foreground">₹2500 - ₹5000</button>
+              <button class="price-chip px-3 py-1.5 text-sm rounded-lg border border-border text-muted-foreground">₹5000 - ₹10000</button>
+              <button class="price-chip px-3 py-1.5 text-sm rounded-lg border border-border text-muted-foreground">₹10000 - ₹20000</button>
+              <button class="price-chip px-3 py-1.5 text-sm rounded-lg border border-border text-muted-foreground">₹20000+</button>
+            </div>
+          </div>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 min-w-0">
+          
+          <!-- Header -->
+          <div class="flex flex-col gap-4 mb-6 animate-fade-in">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h1 class="text-2xl font-bold text-gray-900">Stays Near You</h1>
+                <p class="text-sm text-muted-foreground">284 properties found</p>
+              </div>
+
+              <div class="flex items-center gap-3 flex-wrap">
+                <!-- Filter Button (Mobile) -->
+                <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-primary text-primary font-medium hover:bg-primary/5 transition-colors sm:hidden">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                  </svg>
+                  <span>Filters</span>
+                  <span class="w-2 h-2 rounded-full bg-accent"></span>
+                </button>
+
+                <!-- View Toggle -->
+                <div class="flex items-center border border-border rounded-lg overflow-hidden">
+                  <button class="view-toggle-btn active p-2 bg-white text-muted-foreground">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                    </svg>
+                  </button>
+                  <button class="view-toggle-btn p-2 bg-white text-muted-foreground">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                    </svg>
+                  </button>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Property Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Property Card 1 -->
+            <div class="property-card bg-white rounded-xl overflow-hidden shadow-sm border border-border cursor-pointer animate-fade-in">
+              <div class="relative aspect-[4/3] overflow-hidden">
+                <span class="absolute top-3 left-3 px-3 py-1 text-xs font-medium rounded bg-accent text-white z-10">Featured</span>
+                <button class="wishlist-btn absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-muted-foreground z-10">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
+                </button>
+                <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop" alt="Joyland Eco Retreat" class="property-image w-full h-full object-cover">
+                
+                <!-- Navigation Arrows -->
+                <button class="nav-arrows absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 shadow-md hover:bg-white">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                  </svg>
+                </button>
+                <button class="nav-arrows absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 shadow-md hover:bg-white">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+
+                <!-- Dots -->
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  <button class="image-dot active w-2 h-2 rounded-full bg-white/60"></button>
+                  <button class="image-dot w-2 h-2 rounded-full bg-white/60"></button>
+                  <button class="image-dot w-2 h-2 rounded-full bg-white/60"></button>
+                  <button class="image-dot w-2 h-2 rounded-full bg-white/60"></button>
+                </div>
+              </div>
+              <div class="p-4">
+                <div class="flex items-start justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-muted-foreground flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    <h3 class="font-semibold text-gray-900 line-clamp-1">Joyland Eco Retreat</h3>
+                  </div>
+                  <div class="flex items-center gap-1 text-sm text-muted-foreground flex-shrink-0">
+                    <svg class="w-4 h-4 fill-rating text-rating" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <span>4.6</span>
+                    <span class="text-muted-foreground">(170)</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1 text-sm text-muted-foreground mb-1">
+                  <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  <span class="line-clamp-1">Dream Valley Resorts, Moinabad, Hyderabad</span>
+                </div>
+                <div class="flex items-center justify-between mt-3">
+                  
+                  <div class="text-right">
+                    <p class="text-lg font-bold text-gray-900">₹5,000</p>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Property Card 2 -->
+            <div class="property-card bg-white rounded-xl overflow-hidden shadow-sm border border-border cursor-pointer animate-fade-in" style="animation-delay: 0.05s">
+              <div class="relative aspect-[4/3] overflow-hidden">
+                <span class="absolute top-3 left-3 px-3 py-1 text-xs font-medium rounded bg-accent text-white z-10">Featured</span>
+                <button class="wishlist-btn absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-muted-foreground z-10">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
+                </button>
+                <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop" alt="Tranquil Edge Farmhouse" class="property-image w-full h-full object-cover">
+                
+                <!-- Navigation Arrows -->
+                <button class="nav-arrows absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 shadow-md hover:bg-white">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                  </svg>
+                </button>
+                <button class="nav-arrows absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 shadow-md hover:bg-white">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+
+                <!-- Dots -->
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  <button class="image-dot active w-2 h-2 rounded-full bg-white/60"></button>
+                  <button class="image-dot w-2 h-2 rounded-full bg-white/60"></button>
+                  <button class="image-dot w-2 h-2 rounded-full bg-white/60"></button>
+                </div>
+              </div>
+              <div class="p-4">
+                <div class="flex items-start justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-muted-foreground flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    <h3 class="font-semibold text-gray-900 line-clamp-1">Tranquil Edge Farmhouse</h3>
+                  </div>
+                  <div class="flex items-center gap-1 text-sm text-muted-foreground flex-shrink-0">
+                    <svg class="w-4 h-4 fill-rating text-rating" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <span>4.5</span>
+                    <span class="text-muted-foreground">(153)</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1 text-sm text-muted-foreground mb-1">
+                  <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  <span class="line-clamp-1">Bakaram Jagir, Telangana, Moinabad, Hyderabad</span>
+                </div>
+                <div class="flex items-center justify-between mt-3">
+                 
+                  <div class="text-right">
+                    <p class="text-lg font-bold text-gray-900">₹15,000</p>
+                  
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Property Card 3 -->
+            <div class="property-card bg-white rounded-xl overflow-hidden shadow-sm border border-border cursor-pointer animate-fade-in" style="animation-delay: 0.1s">
+              <div class="relative aspect-[4/3] overflow-hidden">
+                <span class="absolute top-3 left-3 px-3 py-1 text-xs font-medium rounded bg-accent text-white z-10">Featured</span>
+                <button class="wishlist-btn absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-muted-foreground z-10">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
+                </button>
+                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop" alt="Tranquil Picola" class="property-image w-full h-full object-cover">
+                
+                <!-- Navigation Arrows -->
+                <button class="nav-arrows absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 shadow-md hover:bg-white">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                  </svg>
+                </button>
+                <button class="nav-arrows absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 shadow-md hover:bg-white">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+
+                <!-- Dots -->
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  <button class="image-dot active w-2 h-2 rounded-full bg-white/60"></button>
+                  <button class="image-dot w-2 h-2 rounded-full bg-white/60"></button>
+                  <button class="image-dot w-2 h-2 rounded-full bg-white/60"></button>
+                  <button class="image-dot w-2 h-2 rounded-full bg-white/60"></button>
+                  <button class="image-dot w-2 h-2 rounded-full bg-white/60"></button>
+                </div>
+              </div>
+              <div class="p-4">
+                <div class="flex items-start justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-muted-foreground flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    <h3 class="font-semibold text-gray-900 line-clamp-1">Tranquil Picola</h3>
+                  </div>
+                  <div class="flex items-center gap-1 text-sm text-muted-foreground flex-shrink-0">
+                    <svg class="w-4 h-4 fill-rating text-rating" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <span>4.3</span>
+                    <span class="text-muted-foreground">(98)</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1 text-sm text-muted-foreground mb-1">
+                  <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  <span class="line-clamp-1">Bakaram, Moinabad, Hyderabad</span>
+                </div>
+                <div class="flex items-center justify-between mt-3">
+            
+                  <div class="text-right">
+                    <p class="text-lg font-bold text-gray-900">₹10,000</p>
+                 
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Property Card 4 -->
+            <div class="property-card bg-white rounded-xl overflow-hidden shadow-sm border border-border cursor-pointer animate-fade-in" style="animation-delay: 0.15s">
+              <div class="relative aspect-[4/3] overflow-hidden">
+                <span class="absolute top-3 left-3 px-3 py-1 text-xs font-medium rounded bg-accent text-white z-10">Featured</span>
+                <button class="wishlist-btn absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-muted-foreground z-10">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
+                </button>
+                <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=600&fit=crop" alt="Sunny Cliff Farmhouse" class="property-image w-full h-full object-cover">
+                
+                <!-- Navigation Arrows -->
+                <button class="nav-arrows absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 shadow-md hover:bg-white">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                  </svg>
+                </button>
+                <button class="nav-arrows absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 shadow-md hover:bg-white">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+
+                <!-- Dots -->
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  <button class="image-dot active w-2 h-2 rounded-full bg-white/60"></button>
+                  <button class="image-dot w-2 h-2 rounded-full bg-white/60"></button>
+                  <button class="image-dot w-2 h-2 rounded-full bg-white/60"></button>
+                </div>
+              </div>
+              <div class="p-4">
+                <div class="flex items-start justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-muted-foreground flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    <h3 class="font-semibold text-gray-900 line-clamp-1">Sunny Cliff Farmhouse</h3>
+                  </div>
+                  <div class="flex items-center gap-1 text-sm text-muted-foreground flex-shrink-0">
+                    <svg class="w-4 h-4 fill-rating text-rating" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <span>4.4</span>
+                    <span class="text-muted-foreground">(121)</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1 text-sm text-muted-foreground mb-1">
+                  <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  <span class="line-clamp-1">Moinabad, Nazeeb Nagar Village, Telangana</span>
+                </div>
+                <div
+                  <div class="text-right">
+                    <p class="text-lg font-bold text-gray-900">₹10,000</p>
+                   
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </main>
+
+      </div>
+    </div>
+
+    <!-- Map Button -->
+    <button class="map-button fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-2.5 bg-gray-900 text-white rounded-full shadow-lg flex items-center gap-2 font-medium z-50">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+      </svg>
+      <span>Map</span>
+    </button>
+
+  </div>
+
+  <script>
+    // Toggle category chips
+    document.querySelectorAll('.category-chip').forEach(chip => {
+      chip.addEventListener('click', function() {
+        document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Toggle price chips
+    document.querySelectorAll('.price-chip').forEach(chip => {
+      chip.addEventListener('click', function() {
+        if (this.classList.contains('active')) {
+          this.classList.remove('active');
+        } else {
+          document.querySelectorAll('.price-chip').forEach(c => c.classList.remove('active'));
+          this.classList.add('active');
+        }
+      });
+    });
+
+    // Toggle checkboxes
+    document.querySelectorAll('.custom-checkbox').forEach(checkbox => {
+      checkbox.addEventListener('click', function() {
+        this.classList.toggle('checked');
+      });
+    });
+
+    // Toggle wishlist
+    document.querySelectorAll('.wishlist-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('active');
+      });
+    });
+
+    // View toggle
+    document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Booking type toggle
+    document.querySelectorAll('.booking-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.booking-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Image dots
+    document.querySelectorAll('.image-dot').forEach(dot => {
+      dot.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const parent = this.parentElement;
+        parent.querySelectorAll('.image-dot').forEach(d => d.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

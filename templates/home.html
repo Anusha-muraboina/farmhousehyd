@@ -15,15 +15,53 @@
 </style>
 
 <style>
-  .no-scrollbar::-webkit-scrollbar {
+  {% comment %} .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
-  }
+  } {% endcomment %}
+
 
   .wood-item {
+  min-width: 150px;
+  text-align: center;
+}
+
+.rope {
+  display: block;
+  width: 4px;
+  height: 18px;
+  background: #b08968;
+  margin: 0 auto;
+  border-radius: 4px;
+}
+
+.plank {
+  background: linear-gradient(145deg, #f3d2a2, #ddb27c);
+  color: #3a2a1a;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 2px solid #c18f59;
+  box-shadow:
+    inset 0 2px 3px rgba(255,255,255,0.5),
+    0 8px 18px rgba(0,0,0,0.25);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.plank:hover {
+  transform: translateY(-4px);
+}
+
+.plank.active {
+  background: linear-gradient(145deg, #fff1d0, #e9c38a);
+}
+
+  {% comment %} .wood-item {
     min-width: 160px;
     text-align: center;
     min-width: 170px;
@@ -62,47 +100,13 @@
   }
 
 
-  /* Mobile: smoother finger scroll */
-/* Desktop: hide scrollbar */
-@media (min-width: 768px) {
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-}
-
-/* Mobile: SHOW scrollbar */
-@media (max-width: 767px) {
-  #woodCarousel::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  #woodCarousel::-webkit-scrollbar-track {
-    background: #eee;
-    border-radius: 10px;
-  }
-
-  #woodCarousel::-webkit-scrollbar-thumb {
-    background: #8b5a2b;
-    border-radius: 10px;
-  }
-
-  #woodCarousel {
-    scrollbar-color: #8b5a2b #eee; /* Firefox */
-    scrollbar-width: thin;
-  }
-}
-
 .wood-item {
   min-width: 150px;
   flex-shrink: 0;
   text-align: center;
-}
+} {% endcomment %}
 
-@media (max-width: 767px) {
+{% comment %} @media (max-width: 767px) {
   #woodCarousel::-webkit-scrollbar {
     height: 6px;
   }
@@ -114,13 +118,13 @@
     background: #8b5a2b;
     border-radius: 10px;
   }
-}
+} {% endcomment %}
 
 
 </style>
 
 <!-- Hero Section -->
-<section class="relative h-[500px] md:h-[600px] overflow-hidden">
+<section class="relative h-auto md:h-[600px] overflow-hidden">
 
     <!-- SLIDER -->
     <div class="absolute inset-0">
@@ -150,7 +154,7 @@
     </div>
 
     <!-- CONTENT -->
-    <div class="relative container mx-auto px-4 h-full flex items-start justify-center text-center text-white pt-28 md:pt-36">
+    <div class="relative container mx-auto px-4 h-full flex items-start justify-center text-center text-white pt-4 md:pt-28 md:pt-36">
         <div class="w-full flex flex-col items-center gap-6">
 
 
@@ -158,51 +162,44 @@
         Find the Best Farmhouses  in Hyderabad
     </h2>
 
-<section class="w-full py-2">
+<section class="w-full py-3">
 
   <!-- Rope Divider -->
-  <div class="h-1 bg-[#8b5a2b] rounded-full mb-6 mx-4 md:mx-10"></div>
+  <div class="h-1 bg-[#8b5a2b] rounded-full mb-4 md:mb-6 mx-4 md:mx-10"></div>
 
   <!-- WOODEN LOCATION BAR -->
-  <div id="woodCarousel"
+  <div
     class="
-      flex gap-4
-      px-4 md:px-10 pb-6
-      scroll-smooth
-      snap-x snap-mandatory
+   grid grid-cols-2 gap-4
+      px-2
 
-      /* Mobile */
-      overflow-x-auto flex-nowrap
+      sm:grid-cols-3
+      md:flex md:flex-wrap md:justify-center md:gap-5 md:px-4
+    "
+  >
 
-      /* Desktop */
-      md:overflow-visible md:flex-wrap md:justify-center
-    ">
-
-    <div class="wood-item snap-start">
-      <span class="rope"></span><div class="plank active">All Farmhouses</div>
+    <!-- ITEM -->
+    <div class="wood-item">
+      <span class="rope"></span>
+      <div class="plank active">All Farmhouses</div>
     </div>
 
-    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Gachibowli</div></div>
-    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Moinabad</div></div>
-    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Shamshabad</div></div>
-    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Shamirpet</div></div>
-    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Secunderabad</div></div>
-    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Chevella</div></div>
-    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Ghatkesar</div></div>
-    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Shadnagar</div></div>
-    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Kompally</div></div>
-    <div class="wood-item snap-start"><span class="rope"></span><div class="plank">Medchal</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Near Gachibowli</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Near Moinabad</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Near Secunderabad</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Near Shamsabad</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Near Shamirpet</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Near Shadnagar</div></div>
+    {% comment %} <div class="wood-item"><span class="rope"></span><div class="plank">Ghatkesar</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Shadnagar</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Kompally</div></div>
+    <div class="wood-item"><span class="rope"></span><div class="plank">Medchal</div></div> {% endcomment %}
 
   </div>
 
-  <!-- Mobile hint -->
-  <p class="md:hidden text-center text-xs text-gray-500 mt-2">
-    ← Swipe to explore locations →
-  </p>
-
 </section>
 
-    <!-- Search Box --> <div class="bg-white rounded-full shadow-xl px-4 py-2 w-full max-w-xl"> 
+    <!-- Search Box --> <div class="bg-white rounded-full shadow-xl px-4 py-2 mb-4 w-full max-w-xl"> 
         <div class="flex items-center gap-3"> <!-- Search Icon --> <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"/> </svg>
             <input type="text" placeholder="Search farmhouses..." class="flex-1 py-2 outline-none text-gray-700" > 
@@ -885,8 +882,8 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Feature 1 -->
                 <div class="feature-card bg-white  md:p-4 p-2 rounded-2xl shadow-lg">
-                    <div class="w-16 h-16 bg-primary/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i data-lucide="utensils" class="w-8 h-8 text-white"></i>
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="utensils" class="w-8 h-8 text-primary"></i>
                     </div>
                     <h3 class="text-xl font-bold text-secondary mb-3">Free Breakfast</h3>
                     <p class="text-gray-900 text-sm">We give complimentary welcome drink and breakfast for early booking customers.</p>
