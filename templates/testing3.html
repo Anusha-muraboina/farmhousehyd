@@ -1,112 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Desired Vacation Spots</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farmhouse Detail</title>
 
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
 
-  <style>
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-    }
-  </style>
-<!-- </head>
-<body class="bg-gray-50"> -->
+<!-- Lucide -->
+<script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+        tailwind.config = {
+            theme: {
+                extend: { 
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        display: ['Playfair Display', 'serif'], 
+                    },
+                    colors: {
+                        primary: { 
+                     
 
-  <!-- SECTION -->
-  <section class="max-w-7xl mx-auto px-4 py-12">
+                            DEFAULT: '#fc8906ff',
+                            dark: '#fc8906ff',
+                            light: '#fc8906ff',
+                        },
+                        secondary: {
+                            DEFAULT: '#1a1a2e',
+                            light: '#2d2d44',
+                        },
+                        accent: {
+                            orange: '#f97316',
+                            yellow: '#eab308',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
-    <!-- Heading -->
-    <h2 class="text-3xl md:text-4xl font-bold text-center mb-10">
-      Desired Vacation Spots
-    </h2>
 
-    <!-- GRID -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<style>
+.tab-btn{
+  padding:14px 20px;
+  font-weight:600;
+  color:#6b4f2c;
+  border-bottom:3px solid transparent;
+}
+.active-tab{
+  color:#16a34a;
+  border-color:#16a34a;
+}
 
-      <!-- Card 1 -->
-      <div class="relative overflow-hidden rounded-2xl shadow-lg group">
-        <img
-          src="https://images.unsplash.com/photo-1604147706283-d7119b5b822c?q=80&w=800"
-          class="w-full h-72 object-cover transform group-hover:scale-110 transition duration-500"
-          alt="Salar Jung Museum"
-        />
-        <div class="absolute inset-0 bg-black/30"></div>
-        <h3 class="absolute bottom-5 left-5 text-white text-xl font-semibold">
-          Salar Jung Museum
-        </h3>
-      </div>
+.amenity-card{
+  background:#fef7ed;
+  padding:16px;
+  border-radius:12px;
+  text-align:center;
+  font-weight:600;
+  border:1px solid #e5d3b3;
+}
 
-      <!-- Card 2 -->
-      <div class="relative overflow-hidden rounded-2xl shadow-lg group">
-        <img
-          src="https://images.unsplash.com/photo-1610552050890-fe99536c2615?q=80&w=800"
-          class="w-full h-72 object-cover transform group-hover:scale-110 transition duration-500"
-          alt="Ramoji Film City"
-        />
-        <div class="absolute inset-0 bg-black/30"></div>
-        <h3 class="absolute bottom-5 left-5 text-white text-xl font-semibold">
-          Ramoji Film City
-        </h3>
-      </div>
+.review-card{
+  background:#fff;
+  padding:16px;
+  border-radius:12px;
+  border:1px solid #e5d3b3;
+}
+</style>
 
-      <!-- Card 3 -->
-      <div class="relative overflow-hidden rounded-2xl shadow-lg group">
-        <img
-          src="https://images.unsplash.com/photo-1624377632657-3902bfd35958?q=80&w=800"
-          class="w-full h-72 object-cover transform group-hover:scale-110 transition duration-500"
-          alt="Qutub Shahi Tomb"
-        />
-        <div class="absolute inset-0 bg-black/30"></div>
-        <h3 class="absolute bottom-5 left-5 text-white text-xl font-semibold">
-          Qutub Shahi Tomb
-        </h3>
-      </div>
 
-      <!-- Card 4 -->
-      <div class="relative overflow-hidden rounded-2xl shadow-lg group">
-        <img
-          src="https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?q=80&w=800"
-          class="w-full h-72 object-cover transform group-hover:scale-110 transition duration-500"
-          alt="Golconda Fort"
-        />
-        <div class="absolute inset-0 bg-black/30"></div>
-        <h3 class="absolute bottom-5 left-5 text-white text-xl font-semibold">
-          Golconda Fort
-        </h3>
-      </div>
+<style>
+/* Tabs */
+.tab-btn{
+  padding:14px 20px;
+  font-weight:600;
+  color:#6b4f2c;
+  border-bottom:3px solid transparent;
+}
+.active-tab{
+  color:#16a34a;
+  border-color:#16a34a;
+}
 
-      <!-- Card 5 -->
-      <div class="relative overflow-hidden rounded-2xl shadow-lg group">
-        <img
-          src="https://images.unsplash.com/photo-1604571595639-91a0a7b4e7cb?q=80&w=800"
-          class="w-full h-72 object-cover transform group-hover:scale-110 transition duration-500"
-          alt="Durgam Cheruvu"
-        />
-        <div class="absolute inset-0 bg-black/30"></div>
-        <h3 class="absolute bottom-5 left-5 text-white text-xl font-semibold">
-          Durgam Cheruvu
-        </h3>
-      </div>
+/* Thumbnails */
+.thumb{
+  width:100%;
+  height:90px;
+  object-fit:cover;
+  border-radius:12px;
+  cursor:pointer;
+  border:2px solid transparent;
+  transition:.25s;
+}
+.thumb:hover{ transform:scale(1.05); }
+.active-thumb{ border-color:#fc8906; }
 
-      <!-- Card 6 -->
-      <div class="relative overflow-hidden rounded-2xl shadow-lg group">
-        <img
-          src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800"
-          class="w-full h-72 object-cover transform group-hover:scale-110 transition duration-500"
-          alt="Public Garden"
-        />
-        <div class="absolute inset-0 bg-black/30"></div>
-        <h3 class="absolute bottom-5 left-5 text-white text-xl font-semibold">
-          Public Garden
-        </h3>
-      </div>
+/* Drag */
+.grabbing{ cursor:grabbing !important; }
+</style>
+</head>
 
+<body class="bg-gray-100">
+
+<main class="max-w-6xl mx-auto px-4 py-8 grid lg:grid-cols-3 gap-8">
+
+<!-- ================= LEFT ================= -->
+<div class="lg:col-span-2 space-y-6">
+
+<!-- IMAGE GALLERY -->
+<div class="space-y-4">
+  <div id="imageWrapper" class="relative overflow-hidden rounded-2xl shadow-xl group cursor-grab bg-black">
+    <img id="mainImage"
+         src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1600"
+         class="w-full h-[420px] object-cover transition-transform duration-300 select-none"
+         draggable="false">
+
+    <!-- Controls -->
+    <div class="absolute bottom-4 right-4 flex gap-2 bg-white/90 p-2 rounded-full shadow opacity-0 group-hover:opacity-100 transition">
+      <button onclick="zoomIn()"><i data-lucide="zoom-in"></i></button>
+      <button onclick="zoomOut()"><i data-lucide="zoom-out"></i></button>
+      <button onclick="resetZoom()"><i data-lucide="refresh-cw"></i></button>
+      <button onclick="openFullscreen()"><i data-lucide="maximize-2"></i></button>
     </div>
-  </section>
+  </div>
+
+  <!-- Thumbnails -->
+  <div class="grid grid-cols-4 gap-3">
+    <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=300"
+         class="thumb active-thumb" onclick="changeImage(this)">
+    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=300"
+         class="thumb" onclick="changeImage(this)">
+    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300"
+         class="thumb" onclick="changeImage(this)">
+    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=300"
+         class="thumb" onclick="changeImage(this)">
+  </div>
+</div>
+
+<!-- DETAILS -->
+<div class="bg-white p-6 rounded-2xl shadow">
+  <h1 class="text-3xl font-bold">Green Valley Farmhouse</h1>
+  <p class="text-gray-600 mt-1">Shamirpet, Hyderabad</p>
+  <p class="mt-4 text-gray-700">
+    Luxury private farmhouse ideal for parties, stays and family gatherings.
+  </p>
+</div>
+
+<!-- TABS -->
+<div class="bg-white rounded-2xl shadow">
+  <div class="flex border-b">
+    <button class="tab-btn active-tab" onclick="openTab('amenities', this)">Amenities</button>
+    <button class="tab-btn" onclick="openTab('rules', this)">House Rules</button>
+    <button class="tab-btn" onclick="openTab('reviews', this)">Reviews</button>
+    <button class="tab-btn" onclick="openTab('location', this)">Location</button>
+  </div>
+
+  <div class="p-6">
+    <div id="amenities" class="tab-content">
+      <ul class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <li class="p-4 bg-gray-100 rounded">Swimming Pool</li>
+        <li class="p-4 bg-gray-100 rounded">DJ System</li>
+        <li class="p-4 bg-gray-100 rounded">BBQ</li>
+        <li class="p-4 bg-gray-100 rounded">Parking</li>
+      </ul>
+    </div>
+
+    <div id="rules" class="tab-content hidden">
+      <p>✔ Check-in 12 PM<br>✔ No smoking indoors<br>✔ Pets allowed</p>
+    </div>
+
+    <div id="reviews" class="tab-content hidden">
+      <p>⭐⭐⭐⭐⭐ Rahul – Amazing place!</p>
+      <p>⭐⭐⭐⭐ Priya – Clean & spacious</p>
+    </div>
+
+    <div id="location" class="tab-content hidden">
+      <p>📍 Shamirpet, Hyderabad</p>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ================= RIGHT ================= -->
+<div class="sticky top-24">
+  <div class="bg-white rounded-2xl p-6 shadow">
+    <p class="text-gray-500">Starting from</p>
+    <h2 class="text-4xl font-bold text-orange-500">₹15,000</h2>
+    <button class="mt-4 w-full bg-orange-500 text-white py-3 rounded-xl">
+      Book Now
+    </button>
+  </div>
+</div>
+
+</main>
+
+<!-- ================= JAVASCRIPT ================= -->
+<script>
+let scale = 1, posX = 0, posY = 0, isDragging = false, startX, startY;
+const img = document.getElementById("mainImage");
+const wrapper = document.getElementById("imageWrapper");
+
+function applyTransform(){
+  img.style.transform = `scale(${scale}) translate(${posX}px, ${posY}px)`;
+}
+function zoomIn(){ scale=Math.min(scale+0.2,4); applyTransform(); }
+function zoomOut(){ scale=Math.max(scale-0.2,1); if(scale===1){posX=posY=0;} applyTransform(); }
+function resetZoom(){ scale=1; posX=posY=0; applyTransform(); }
+function changeImage(el){
+  img.src = el.src.replace("w=300","w=1600");
+  document.querySelectorAll(".thumb").forEach(t=>t.classList.remove("active-thumb"));
+  el.classList.add("active-thumb");
+  resetZoom();
+}
+wrapper.addEventListener("mousedown",e=>{
+  if(scale===1) return;
+  isDragging=true;
+  startX=e.clientX-posX;
+  startY=e.clientY-posY;
+  wrapper.classList.add("grabbing");
+});
+window.addEventListener("mousemove",e=>{
+  if(!isDragging) return;
+  posX=e.clientX-startX;
+  posY=e.clientY-startY;
+  applyTransform();
+});
+window.addEventListener("mouseup",()=>{isDragging=false;wrapper.classList.remove("grabbing");});
+img.addEventListener("wheel",e=>{e.preventDefault();e.deltaY<0?zoomIn():zoomOut();});
+function openFullscreen(){ if(img.requestFullscreen) img.requestFullscreen(); }
+
+/* Tabs */
+function openTab(tabId, btn){
+  document.querySelectorAll(".tab-content").forEach(t=>t.classList.add("hidden"));
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active-tab"));
+  document.getElementById(tabId).classList.remove("hidden");
+  btn.classList.add("active-tab");
+}
+
+lucide.createIcons();
+</script>
 
 </body>
 </html>

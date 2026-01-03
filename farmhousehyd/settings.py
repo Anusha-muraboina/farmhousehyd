@@ -136,11 +136,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 CORS_ALLOWED_ORIGINS = [
-    "https://349072779b47.ngrok-free.app",
+    "https://c11f202b23bc.ngrok-free.app",
     
 ]
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://349072779b47.ngrok-free.app",
+    "https://c11f202b23bc.ngrok-free.app",
 ]
