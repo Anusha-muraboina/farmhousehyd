@@ -29,6 +29,11 @@ def Farmhouses(request):
     return render(request , "farmhouse_list.html")
 
 
+def Farmhouse_detail(request):
+    # return HttpResponse("Hello, this is Blog Page")
+    return render(request , "farmhouse_detail.html")
+
+
 def Login(request):
     # return HttpResponse("Hello, this is Blog Page")
     return render(request , "authpages/login.html")

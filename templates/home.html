@@ -63,67 +63,6 @@
 .plank.active {
   background: linear-gradient(145deg, #fff1d0, #e9c38a);
 }
-
-  {% comment %} .wood-item {
-    min-width: 160px;
-    text-align: center;
-    min-width: 170px;
-  }
-
-  .rope {
-    display: block;
-    width: 4px;
-    height: 12px;
-    background: #b08968;
-    margin: 0 auto;
-    border-radius: 4px;
-  }
-
-  .plank {
-    background: linear-gradient(145deg, #f3d2a2, #ddb27c);
-    color: #3a2a1a;
-    font-weight: 700;
-    padding: 12px 22px;
-    border-radius: 10px;
-    border: 2px solid #c18f59;
-    box-shadow:
-      inset 0 2px 3px rgba(255,255,255,0.5),
-      0 8px 20px rgba(0,0,0,0.25);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-  }
-
-  .plank:hover {
-    transform: translateY(-6px);
-    background: linear-gradient(145deg, #ddb27c, #f3d2a2);
-    box-shadow:
-      inset 0 2px 4px rgba(255,255,255,0.6),
-      0 14px 35px rgba(0,0,0,0.35);
-  }
-
-
-.wood-item {
-  min-width: 150px;
-  flex-shrink: 0;
-  text-align: center;
-} {% endcomment %}
-
-{% comment %} @media (max-width: 767px) {
-  #woodCarousel::-webkit-scrollbar {
-    height: 6px;
-  }
-  #woodCarousel::-webkit-scrollbar-track {
-    background: #eee;
-    border-radius: 10px;
-  }
-  #woodCarousel::-webkit-scrollbar-thumb {
-    background: #8b5a2b;
-    border-radius: 10px;
-  }
-} {% endcomment %}
-
-
 </style>
 
 <!-- Hero Section -->
@@ -589,34 +528,6 @@
     </div>
 
 </section>
-<script>
-    let foodIndex = 0;
-    const foodSlides = document.querySelectorAll('.food-slide');
-    const foodDots = document.querySelectorAll('.food-dot');
-
-    function showFoodSlide(index) {
-        foodSlides.forEach((slide, i) => {
-            slide.classList.toggle('opacity-100', i === index);
-            slide.classList.toggle('opacity-0', i !== index);
-
-            foodDots[i].classList.toggle('bg-white', i === index);
-            foodDots[i].classList.toggle('bg-white/40', i !== index);
-        });
-        foodIndex = index;
-    }
-
-    function nextFoodSlide() {
-        showFoodSlide((foodIndex + 1) % foodSlides.length);
-    }
-
-    function prevFoodSlide() {
-        showFoodSlide((foodIndex - 1 + foodSlides.length) % foodSlides.length);
-    }
-
-    // Auto slide every 6 seconds
-    setInterval(nextFoodSlide, 6000);
-    
-</script>
 
 
 
@@ -817,6 +728,34 @@
   }
 </script> -->
 
+<script>
+    let foodIndex = 0;
+    const foodSlides = document.querySelectorAll('.food-slide');
+    const foodDots = document.querySelectorAll('.food-dot');
+
+    function showFoodSlide(index) {
+        foodSlides.forEach((slide, i) => {
+            slide.classList.toggle('opacity-100', i === index);
+            slide.classList.toggle('opacity-0', i !== index);
+
+            foodDots[i].classList.toggle('bg-white', i === index);
+            foodDots[i].classList.toggle('bg-white/40', i !== index);
+        });
+        foodIndex = index;
+    }
+
+    function nextFoodSlide() {
+        showFoodSlide((foodIndex + 1) % foodSlides.length);
+    }
+
+    function prevFoodSlide() {
+        showFoodSlide((foodIndex - 1 + foodSlides.length) % foodSlides.length);
+    }
+
+    // Auto slide every 6 seconds
+    setInterval(nextFoodSlide, 6000);
+    
+</script>
 
 
     <script>
