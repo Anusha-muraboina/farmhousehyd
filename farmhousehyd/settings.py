@@ -56,6 +56,16 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'farmhousehyd.urls'
 
+
+# AUTH_USER_MODEL = "user.User"
+
+
+
+
+
+
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -137,11 +147,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 CORS_ALLOWED_ORIGINS = [
-    "https://c11f202b23bc.ngrok-free.app",
+    "https://d496df2c6bfe.ngrok-free.app",
     
 ]
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://c11f202b23bc.ngrok-free.app",
+    "https://d496df2c6bfe.ngrok-free.app",
 ]

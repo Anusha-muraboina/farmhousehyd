@@ -1,88 +1,67 @@
-from django.db import models
+# from django.db import models
 
-# Create your models here.
-from django.db import models
-from django.utils import timezone
-
+# # Create your models here.
+# from django.db import models
+# from django.conf import settings
+# from user.models import *
+# from product.models import *
+# # Create your models here.
 
 # class Coupon(models.Model):
-#     DISCOUNT_TYPE_CHOICES = (
+#     DISCOUNT_TYPE_CHOICES = [
+#         ('fixed_amount', 'Fixed Amount'),
 #         ('percentage', 'Percentage'),
-#         ('fixed', 'Fixed Amount'),
-#     )
+#     ]
 
-#     code = models.CharField(
-#         max_length=50,
-#         unique=True,
-#         help_text="Example: NEWYEAR50"
-#     )
-
-#     discount_type = models.CharField(
-#         max_length=20,
-#         choices=DISCOUNT_TYPE_CHOICES
-#     )
-
-#     discount_value = models.DecimalField(
-#         max_digits=10,
-#         decimal_places=2,
-#         help_text="Percentage (e.g. 10) or fixed amount (e.g. 500)"
-#     )
-
-#     min_order_amount = models.DecimalField(
-#         max_digits=10,
-#         decimal_places=2,
-#         default=0,
-#         help_text="Minimum order value to apply coupon"
-#     )
-
-#     max_discount_amount = models.DecimalField(
-#         max_digits=10,
-#         decimal_places=2,
-#         null=True,
-#         blank=True,
-#         help_text="Maximum discount limit (for percentage coupons)"
-#     )
-
-#     valid_from = models.DateTimeField()
-#     valid_to = models.DateTimeField()
-
-#     usage_limit = models.PositiveIntegerField(
-#         null=True,
-#         blank=True,
-#         help_text="How many times coupon can be used"
-#     )
-
-#     used_count = models.PositiveIntegerField(default=0)
-
-#     is_active = models.BooleanField(default=True)
-
-#     created_at = models.DateTimeField(auto_now_add=True)
+#     coupon = models.CharField(max_length=50, unique=True)
+#     description = models.TextField()
+#     discount_type = models.CharField(max_length=20, choices=DISCOUNT_TYPE_CHOICES)
+#     coupon_amount = models.DecimalField(max_digits=10, decimal_places=2)
+#     allow_free_shipping = models.BooleanField(default=False)
+#     coupon_start_date = models.DateField()
+#     coupon_end_date = models.DateField()
+#     minimum_spend = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+#     maximum_spend = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+#     individual_use_only = models.BooleanField(default=False)
+#     exclude_sale_items = models.BooleanField(default=False)
+#     products = models.ManyToManyField(Product, related_name='coupon_products', blank=True)
+#     exclude_products = models.ManyToManyField(Product, related_name='excluded_coupon_products', blank=True)
+#     product_categories = models.ManyToManyField(ParentCategory, related_name='coupon_product_categories', blank=True)
+#     exclude_categories = models.ManyToManyField(ParentCategory, related_name='excluded_coupon_categories', blank=True)
+#     allowed_emails = models.TextField(blank=True)
+#     usage_limit_per_coupon = models.PositiveIntegerField(default=0, blank=True, null=True)
+#     limit_usage_to_x_items = models.PositiveIntegerField(default=0, blank=True, null=True)
+#     usage_limit_per_user = models.PositiveIntegerField(default=0, blank=True, null=True)
 
 #     def __str__(self):
-#         return self.code
+#         return self.coupon
 
-#     def is_valid(self, order_amount):
-#         now = timezone.now()
+# class CouponUsage(models.Model):
+#     coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE)
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     usage_count = models.PositiveIntegerField(default=0)
+#     used_at = models.DateTimeField(auto_now_add=True)
 
-#         if not self.is_active:
-#             return False
+#     def __str__(self):
+#         return f" used {self.coupon.coupon} on {self.used_at}"
 
-#         if now < self.valid_from or now > self.valid_to:
-#             return False
 
-#         if self.usage_limit and self.used_count >= self.usage_limit:
-#             return False
 
-#         if order_amount < self.min_order_amount:
-#             return False
 
-#         return True
 
-#     def calculate_discount(self, order_amount):
-#         if self.discount_type == 'percentage':
-#             discount = (order_amount * self.discount_value) / 100
-#             if self.max_discount_amount:
-#                 discount = min(discount, self.max_discount_amount)
-#             return discount
 
-#         return min(self.discount_value, order_amount)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

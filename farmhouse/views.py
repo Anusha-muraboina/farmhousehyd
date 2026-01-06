@@ -47,3 +47,13 @@ def Register(request):
 def PasswordResetView(request):
     # return HttpResponse("Hello, this is Blog Page")
     return render(request , "authpages/forgot_password.html")
+
+
+def BlogListing(request):
+    # return HttpResponse("Hello, this is Blog Page")
+    return render(request , "blog_listing.html")
+
+
+def BlogDetail(request):
+    # return HttpResponse("Hello, this is Blog Page")
+    return render(request , "blog_detailpage.html")

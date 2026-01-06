@@ -79,7 +79,7 @@
   </style>
 
 
-
+{% comment %} 
   <style>
     /* Tabs */
     .tab-btn {
@@ -117,7 +117,23 @@
     .grabbing {
       cursor: grabbing !important;
     }
-  </style>
+  </style> {% endcomment %}
+
+  <style>
+  .thumb {
+    width: 128px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+
+  .active-thumb {
+    border-color: #f97316; /* orange-500 */
+  }
+</style>
+
   <style>
     body {
       font-family: 'Nunito', sans-serif;
@@ -192,7 +208,7 @@
   <main class="container mx-auto px-4 py-8">
 
     <!-- IMAGE GALLERY -->
-    <div class="space-y-4 pb-8">
+    {% comment %} <div class="space-y-4 pb-8">
       <div id="imageWrapper" class="relative overflow-hidden rounded-2xl shadow-xl group cursor-grab bg-black">
         <img id="mainImage" src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1600"
           class="w-full h-[420px] object-cover transition-transform duration-300 select-none" draggable="false">
@@ -218,7 +234,56 @@
         <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=300" class="thumb"
           onclick="changeImage(this)">
       </div>
+    </div> {% endcomment %}
+
+
+    <!-- IMAGE GALLERY -->
+<div class="flex flex-row gap-4 pb-8 items-start">
+
+  <!-- LEFT THUMBNAILS -->
+  <div class="flex flex-col gap-3 w-auto shrink-0">
+    <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=300"
+         class="thumb active-thumb"
+         onclick="changeImage(this)">
+
+    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=300"
+         class="thumb"
+         onclick="changeImage(this)">
+
+    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300"
+         class="thumb"
+         onclick="changeImage(this)">
+
+    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=300"
+         class="thumb"
+         onclick="changeImage(this)">
+  </div>
+
+  <!-- RIGHT MAIN IMAGE -->
+  <div class="flex-1">
+    <div id="imageWrapper"
+         class="relative overflow-hidden rounded-2xl shadow-xl group cursor-grab bg-black">
+
+      <img id="mainImage"
+           src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1600"
+           class="w-full h-[420px] object-cover transition-transform duration-300 select-none"
+           draggable="false">
+
+      <!-- CONTROLS -->
+      <div
+        class="absolute bottom-4 right-4 flex gap-2 bg-white/90 p-2 rounded-full shadow
+               opacity-0 group-hover:opacity-100 transition">
+        <button onclick="zoomIn()"><i data-lucide="zoom-in"></i></button>
+        <button onclick="zoomOut()"><i data-lucide="zoom-out"></i></button>
+        <button onclick="resetZoom()"><i data-lucide="refresh-cw"></i></button>
+        <button onclick="openFullscreen()"><i data-lucide="maximize-2"></i></button>
+      </div>
+
     </div>
+  </div>
+
+</div>
+
     <div class="grid lg:grid-cols-2 gap-8">
       <!-- Right Column - Booking Card -->
       <div class="lg:col-span-1">
@@ -358,7 +423,7 @@
                 <span class="text-wood-dark font-semibold" id="pay-label">
                   Pay full:
                 </span>
-                <span class="text-green-600 font-bold text-lg" id="pay-amount">
+                <span class="text-orange-600 font-bold text-lg" id="pay-amount">
                   ₹15,000
                 </span>
               </div>
@@ -372,7 +437,7 @@
               </div>
 
               <!-- Submit Button -->
-              <button type="submit" class="w-full bg-green-800 hover:bg-green-900 text-white py-4 rounded-xl
+              <button type="submit" class="w-full bg-orange-600 hover:bg-orange-500 text-white py-4 rounded-xl
          font-bold text-lg transition shadow-lg flex items-center justify-center gap-2">
                 <i data-lucide="calendar-check" class="w-5 h-5"></i>
                 Book Entire Villa

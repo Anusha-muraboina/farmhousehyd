@@ -14,4 +14,7 @@ urlpatterns = [
     path('register/', Register, name = 'register'),
     
     path('password-reset/', PasswordResetView, name='password_reset'),
+    
+    path('bloglisting/', BlogListing,name= 'bloglisting'),
+    path('blogdetail/',BlogDetail,name='blogdetail')
 ]

@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+
+{% block title %}Farmhouses Hyderabad - Best Farmhouses{% endblock %}
+
+{% block content %}
+
+
+  <style>
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Playfair Display', serif;
+    }
+    .blog-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    .tag-chip:hover {
+      background-color: #22a855;
+      color: white;
+    }
+    .view-post:hover {
+      color: #1a8a44;
+    }
+    .view-post:hover svg {
+      transform: translateX(4px);
+    }
+  </style>
+<!-- </head>
+<body class="bg-gray-50 text-gray-800"> -->
+
+
+  <!-- Hero Banner -->
+  <div class="relative h-64 md:h-80 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=80');">
+    <div class="absolute inset-0 bg-gray-900/80 flex flex-col items-center justify-center">
+      <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Blog</h1>
+      <div class="flex items-center gap-2 text-white/80">
+        <a href="#" class="hover:text-primary transition-colors">Home</a>
+        <span>›</span>
+        <span class="text-primary">Blog Standard</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Blog Posts -->
+      <div class="lg:col-span-2 space-y-8">
+
+        <!-- Blog Card 1 -->
+        <article class="blog-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80" alt="Farmhouse" class="w-full h-64 object-cover">
+            <div class="absolute top-4 left-4 bg-primary text-white px-3 py-2 rounded text-center">
+              <span class="block text-2xl font-bold">15</span>
+              <span class="text-xs uppercase">Dec</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex flex-wrap gap-4 mb-4">
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                987 Views
+              </span>
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                2 Min Read
+              </span>
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                24 Comments
+              </span>
+            </div>
+            <h2 class="font-serif text-xl md:text-2xl font-bold text-gray-800 mb-3 hover:text-primary transition-colors cursor-pointer">
+              Why Renting A Farmhouse In Hyderabad Is Better Than Staying In A Hotel
+            </h2>
+            <p class="text-gray-600 mb-4 line-clamp-3">
+              Discover the unique advantages of choosing a farmhouse stay over traditional hotels. From spacious accommodations to private amenities, learn why more travelers are opting for farmhouse experiences.
+            </p>
+            <a href="{% url 'blogdetail' %}" class="view-post inline-flex items-center text-primary font-semibold transition-colors">
+              View Post 
+              <svg class="w-4 h-4 ml-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- Blog Card 2 -->
+        <article class="blog-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80" alt="Party Venue" class="w-full h-64 object-cover">
+            <div class="absolute top-4 left-4 bg-primary text-white px-3 py-2 rounded text-center">
+              <span class="block text-2xl font-bold">10</span>
+              <span class="text-xs uppercase">Dec</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex flex-wrap gap-4 mb-4">
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                845 Views
+              </span>
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                3 Min Read
+              </span>
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                18 Comments
+              </span>
+            </div>
+            <h2 class="font-serif text-xl md:text-2xl font-bold text-gray-800 mb-3 hover:text-primary transition-colors cursor-pointer">
+              Farmhouse In Hyderabad For Party | Farmhouse On Rent For 1 Day
+            </h2>
+            <p class="text-gray-600 mb-4 line-clamp-3">
+              Looking for the perfect venue for your next celebration? Explore our curated collection of party-ready farmhouses with stunning outdoor spaces, modern amenities, and flexible rental options.
+            </p>
+            <a href="{% url 'blogdetail' %}" class="view-post inline-flex items-center text-primary font-semibold transition-colors">
+              View Post
+              <svg class="w-4 h-4 ml-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- Blog Card 3 -->
+        <article class="blog-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=800&q=80" alt="Staycation" class="w-full h-64 object-cover">
+            <div class="absolute top-4 left-4 bg-primary text-white px-3 py-2 rounded text-center">
+              <span class="block text-2xl font-bold">05</span>
+              <span class="text-xs uppercase">Dec</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex flex-wrap gap-4 mb-4">
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                732 Views
+              </span>
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                4 Min Read
+              </span>
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                12 Comments
+              </span>
+            </div>
+            <h2 class="font-serif text-xl md:text-2xl font-bold text-gray-800 mb-3 hover:text-primary transition-colors cursor-pointer">
+              Best Staycation Farm House In Hyderabad: Discover Vedika Farmhouse Near Moinabad
+            </h2>
+            <p class="text-gray-600 mb-4 line-clamp-3">
+              Escape the city rush and discover Vedika Farmhouse - a serene retreat near Moinabad offering luxury accommodations, organic gardens, and authentic countryside experiences.
+            </p>
+            <a href="{% url 'blogdetail' %}" class="view-post inline-flex items-center text-primary font-semibold transition-colors">
+              View Post
+              <svg class="w-4 h-4 ml-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- Blog Card 4 -->
+        <article class="blog-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80" alt="Nature Retreat" class="w-full h-64 object-cover">
+            <div class="absolute top-4 left-4 bg-primary text-white px-3 py-2 rounded text-center">
+              <span class="block text-2xl font-bold">28</span>
+              <span class="text-xs uppercase">Nov</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex flex-wrap gap-4 mb-4">
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                654 Views
+              </span>
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                2 Min Read
+              </span>
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                9 Comments
+              </span>
+            </div>
+            <h2 class="font-serif text-xl md:text-2xl font-bold text-gray-800 mb-3 hover:text-primary transition-colors cursor-pointer">
+              Farmhouse For Rent In Hyderabad - Enjoy Quality Time In Nature
+            </h2>
+            <p class="text-gray-600 mb-4 line-clamp-3">
+              Find your perfect nature escape with our handpicked farmhouse rentals. Whether you're planning a romantic getaway or family reunion, discover spaces designed for relaxation.
+            </p>
+            <a href="{% url 'blogdetail' %}" class="view-post inline-flex items-center text-primary font-semibold transition-colors">
+              View Post
+              <svg class="w-4 h-4 ml-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- Blog Card 5 -->
+        <article class="blog-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80" alt="Beautiful Places" class="w-full h-64 object-cover">
+            <div class="absolute top-4 left-4 bg-primary text-white px-3 py-2 rounded text-center">
+              <span class="block text-2xl font-bold">20</span>
+              <span class="text-xs uppercase">Nov</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex flex-wrap gap-4 mb-4">
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                543 Views
+              </span>
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                5 Min Read
+              </span>
+              <span class="flex items-center gap-1.5 text-gray-500 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                15 Comments
+              </span>
+            </div>
+            <h2 class="font-serif text-xl md:text-2xl font-bold text-gray-800 mb-3 hover:text-primary transition-colors cursor-pointer">
+              7 Beautiful Places To Visit In Hyderabad
+            </h2>
+            <p class="text-gray-600 mb-4 line-clamp-3">
+              Explore the most stunning destinations around Hyderabad. From historical monuments to natural wonders, this guide covers the best spots for day trips and weekend getaways.
+            </p>
+            <a href="{% url 'blogdetail' %}" class="view-post inline-flex items-center text-primary font-semibold transition-colors">
+              View Post
+              <svg class="w-4 h-4 ml-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="lg:col-span-1 space-y-6">
+        
+        <!-- Search -->
+        <div class="bg-white rounded-lg p-6 shadow-sm">
+          <h3 class="font-serif text-xl font-bold text-gray-800 mb-4">Search Here</h3>
+          <div class="flex">
+            <input type="text" placeholder="Search..." class="flex-1 px-4 py-3 border border-gray-200 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary">
+            <button class="bg-primary hover:bg-primary-dark text-white px-4 rounded-r-lg transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Recent Posts -->
+        <div class="bg-white rounded-lg p-6 shadow-sm">
+          <h3 class="font-serif text-xl font-bold text-gray-800 mb-4">Recent Post</h3>
+          <div class="space-y-4">
+            <div class="flex gap-4 pb-4 border-b border-gray-100">
+              <img src="https://images.unsplash.com/photo-600596542815-ffad4c1539a9?w=200&q=80" alt="Recent Post" class="w-20 h-16 object-cover rounded">
+              <h4 class="text-sm font-medium text-gray-800 hover:text-primary transition-colors cursor-pointer line-clamp-2">
+                Why Renting A Farmhouse Is Better Than Staying In A Hotel
+              </h4>
+            </div>
+            <div class="flex gap-4 pb-4 border-b border-gray-100">
+              <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=200&q=80" alt="Recent Post" class="w-20 h-16 object-cover rounded">
+              <h4 class="text-sm font-medium text-gray-800 hover:text-primary transition-colors cursor-pointer line-clamp-2">
+                Host Your Dream Event At A Farmhouse In Hyderabad
+              </h4>
+            </div>
+            <div class="flex gap-4">
+              <img src="https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=200&q=80" alt="Recent Post" class="w-20 h-16 object-cover rounded">
+              <h4 class="text-sm font-medium text-gray-800 hover:text-primary transition-colors cursor-pointer line-clamp-2">
+                Farmhouse In Hyderabad For Party | Farmhouse On Rent For...
+              </h4>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="bg-white rounded-lg p-6 shadow-sm">
+          <h3 class="font-serif text-xl font-bold text-gray-800 mb-4">Tags</h3>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Farmhouse</span>
+            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Party</span>
+            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Weekend</span>
+            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Staycation</span>
+            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Nature</span>
+            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Pool Party</span>
+            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Events</span>
+            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Hyderabad</span>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </main>
+
+
+
+
+{% endblock %}
