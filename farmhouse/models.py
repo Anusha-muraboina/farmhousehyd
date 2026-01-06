@@ -5,21 +5,14 @@
 from django.db import models
 
 class Banner(models.Model):
-    title = models.CharField(max_length=200)
-    image = models.ImageField(upload_to='banners/')
+    title = models.CharField(max_length=200 ,null=True ,blank=True)
+    image = models.ImageField(upload_to='banners/' , null=True , blank=True)
     link = models.URLField(blank=True ,null=True)
     is_active = models.BooleanField(default=True)
     Slot_position = models.PositiveIntegerField(blank=True,null=True)
     
     def __str__(self):
-        return self.title
-
-
-
-
-
-
-
+        return self.title    
 
 
 class Location(models.Model):
@@ -43,9 +36,16 @@ class Amenity(models.Model):
 
 from django.utils.text import slugify
 
-
+from django.conf import settings
 
 class Farmhouse(models.Model):
+    
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,   # User model
+        on_delete=models.CASCADE,
+        related_name="farmhouses",
+        null=True,blank=True
+    )
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True)
 
@@ -86,12 +86,9 @@ class Farmhouse(models.Model):
         max_digits=10,
         decimal_places=2
     )
-
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
-
     created_at = models.DateTimeField(auto_now_add=True)
-
     class Meta:
         ordering = ['-created_at']
     def get_price_by_date(self, date):

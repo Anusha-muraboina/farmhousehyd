@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'farmhouse',
     'contact',
+    'user',
     
     'corsheaders',
 ]
@@ -57,7 +58,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'farmhousehyd.urls'
 
 
-# AUTH_USER_MODEL = "user.User"
+AUTH_USER_MODEL = "user.User"
 
 
 
@@ -112,6 +113,30 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+
+
+
+# ================= EMAIL (SMTP) SETTINGS =================
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = "anushamuraboina9@gmail.com"
+EMAIL_HOST_PASSWORD = "zdhpxjpgdbyydxyw"
+
+DEFAULT_FROM_EMAIL = "Farmhouses Hyderabad <anushamuraboina9@gmail.com>"
+
+# =================================================================
+
+
+
+
+
 
 
 # Internationalization
