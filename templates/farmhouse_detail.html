@@ -4,122 +4,41 @@
 
 {% block content %}
 
-<!-- <!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Green Valley Farmhouse - Booking Details</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap"
-    rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Poppins', 'sans-serif'],
-            display: ['Playfair Display', 'serif'],
-          },
-          colors: {
-            primary: {
 
 
-              DEFAULT: '#fc8906ff',
-              dark: '#fc8906ff',
-              light: '#fc8906ff',
-            },
-            secondary: {
-              DEFAULT: '#1a1a2e',
-              light: '#2d2d44',
-            },
-            accent: {
-              orange: '#f97316',
-              yellow: '#eab308',
-            }
-          }
-        }
-      }
-    }
-  </script> -->
+<style>
+  .tab-btn {
+    padding: 14px 20px;
+    font-weight: 600;
+    color: #6b4f2c;
+    border-bottom: 3px solid transparent;
+  }
+
+  .active-tab {
+    color: #16a34a;
+    border-color: #16a34a;
+  }
+
+  .amenity-card {
+    background: #fef7ed;
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    border: 1px solid #e5d3b3;
+  }
+
+  .review-card {
+    background: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e5d3b3;
+  }
+</style>
 
 
-  <style>
-    .tab-btn {
-      padding: 14px 20px;
-      font-weight: 600;
-      color: #6b4f2c;
-      border-bottom: 3px solid transparent;
-    }
 
-    .active-tab {
-      color: #16a34a;
-      border-color: #16a34a;
-    }
-
-    .amenity-card {
-      background: #fef7ed;
-      padding: 16px;
-      border-radius: 12px;
-      text-align: center;
-      font-weight: 600;
-      border: 1px solid #e5d3b3;
-    }
-
-    .review-card {
-      background: #fff;
-      padding: 16px;
-      border-radius: 12px;
-      border: 1px solid #e5d3b3;
-    }
-  </style>
-
-
-{% comment %} 
-  <style>
-    /* Tabs */
-    .tab-btn {
-      padding: 14px 20px;
-      font-weight: 600;
-      color: #6b4f2c;
-      border-bottom: 3px solid transparent;
-    }
-
-    .active-tab {
-      color: #16a34a;
-      border-color: #16a34a;
-    }
-
-    /* Thumbnails */
-    .thumb {
-      width: 100%;
-      height: 90px;
-      object-fit: cover;
-      border-radius: 12px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: .25s;
-    }
-
-    .thumb:hover {
-      transform: scale(1.05);
-    }
-
-    .active-thumb {
-      border-color: #fc8906;
-    }
-
-    /* Drag */
-    .grabbing {
-      cursor: grabbing !important;
-    }
-  </style> {% endcomment %}
-
-  <style>
+<style>
   .thumb {
     width: 128px;
     height: 96px;
@@ -130,62 +49,63 @@
   }
 
   .active-thumb {
-    border-color: #f97316; /* orange-500 */
+    border-color: #f97316;
+    /* orange-500 */
   }
 </style>
 
-  <style>
-    body {
-      font-family: 'Nunito', sans-serif;
-    }
+<style>
+  body {
+    font-family: 'Nunito', sans-serif;
+  }
 
-    .bamboo-border {
-      background: repeating-linear-gradient(90deg, #eeeeed 0px, #f5f5f5 3px, #f5f3f2 6px, #e9e6e2 9px);
-    }
+  .bamboo-border {
+    background: repeating-linear-gradient(90deg, #eeeeed 0px, #f5f5f5 3px, #f5f3f2 6px, #e9e6e2 9px);
+  }
 
-    .gallery-img {
-      transition: transform 0.3s ease;
-    }
+  .gallery-img {
+    transition: transform 0.3s ease;
+  }
 
-    .gallery-img:hover {
-      transform: scale(1.05);
-    }
+  .gallery-img:hover {
+    transform: scale(1.05);
+  }
 
-    .amenity-card {
-      transition: all 0.3s ease;
-    }
+  .amenity-card {
+    transition: all 0.3s ease;
+  }
 
-    .amenity-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    }
+  .amenity-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
 
-    .booking-card {
-      background: linear-gradient(180deg, #fefefe 0%, #ffffff 100%);
-      border: 1px solid #000000;
-    }
+  .booking-card {
+    background: linear-gradient(180deg, #fefefe 0%, #ffffff 100%);
+    border: 1px solid #000000;
+  }
 
-    .price-tag {
-      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-      clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%);
-    }
+  .price-tag {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%);
+  }
 
-    .review-card {
-      background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
-    }
+  .review-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  }
 
-    .star-filled {
-      color: #fbbf24;
-    }
+  .star-filled {
+    color: #fbbf24;
+  }
 
-    .star-empty {
-      color: #d1d5db;
-    }
+  .star-empty {
+    color: #d1d5db;
+  }
 
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      filter: invert(35%) sepia(50%) saturate(500%) hue-rotate(350deg);
-    }
-  </style>
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(35%) sepia(50%) saturate(500%) hue-rotate(350deg);
+  }
+</style>
 </head>
 
 <body class="bg-white min-h-screen">
@@ -208,81 +128,43 @@
   <main class="container mx-auto px-4 py-8">
 
     <!-- IMAGE GALLERY -->
-    {% comment %} <div class="space-y-4 pb-8">
-      <div id="imageWrapper" class="relative overflow-hidden rounded-2xl shadow-xl group cursor-grab bg-black">
-        <img id="mainImage" src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1600"
-          class="w-full h-[420px] object-cover transition-transform duration-300 select-none" draggable="false">
+    <div class="flex flex-row gap-4 pb-8 items-start">
 
-        <!-- Controls -->
-        <div
-          class="absolute bottom-4 right-4 flex gap-2 bg-white/90 p-2 rounded-full shadow opacity-0 group-hover:opacity-100 transition">
-          <button onclick="zoomIn()"><i data-lucide="zoom-in"></i></button>
-          <button onclick="zoomOut()"><i data-lucide="zoom-out"></i></button>
-          <button onclick="resetZoom()"><i data-lucide="refresh-cw"></i></button>
-          <button onclick="openFullscreen()"><i data-lucide="maximize-2"></i></button>
-        </div>
-      </div>
-
-      <!-- Thumbnails -->
-      <div class="grid grid-cols-4 gap-3">
+      <!-- LEFT THUMBNAILS -->
+      <div class="flex flex-col gap-3 w-auto shrink-0">
         <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=300" class="thumb active-thumb"
           onclick="changeImage(this)">
+
         <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=300" class="thumb"
           onclick="changeImage(this)">
+
         <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300" class="thumb"
           onclick="changeImage(this)">
+
         <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=300" class="thumb"
           onclick="changeImage(this)">
       </div>
-    </div> {% endcomment %}
 
+      <!-- RIGHT MAIN IMAGE -->
+      <div class="flex-1">
+        <div id="imageWrapper" class="relative overflow-hidden rounded-2xl shadow-xl group cursor-grab bg-black">
 
-    <!-- IMAGE GALLERY -->
-<div class="flex flex-row gap-4 pb-8 items-start">
+          <img id="mainImage" src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1600"
+            class="w-full h-[420px] object-cover transition-transform duration-300 select-none" draggable="false">
 
-  <!-- LEFT THUMBNAILS -->
-  <div class="flex flex-col gap-3 w-auto shrink-0">
-    <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=300"
-         class="thumb active-thumb"
-         onclick="changeImage(this)">
-
-    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=300"
-         class="thumb"
-         onclick="changeImage(this)">
-
-    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300"
-         class="thumb"
-         onclick="changeImage(this)">
-
-    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=300"
-         class="thumb"
-         onclick="changeImage(this)">
-  </div>
-
-  <!-- RIGHT MAIN IMAGE -->
-  <div class="flex-1">
-    <div id="imageWrapper"
-         class="relative overflow-hidden rounded-2xl shadow-xl group cursor-grab bg-black">
-
-      <img id="mainImage"
-           src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1600"
-           class="w-full h-[420px] object-cover transition-transform duration-300 select-none"
-           draggable="false">
-
-      <!-- CONTROLS -->
-      <div
-        class="absolute bottom-4 right-4 flex gap-2 bg-white/90 p-2 rounded-full shadow
+          <!-- CONTROLS -->
+          <div class="absolute bottom-4 right-4 flex gap-2 bg-white/90 p-2 rounded-full shadow
                opacity-0 group-hover:opacity-100 transition">
-        <button onclick="zoomIn()"><i data-lucide="zoom-in"></i></button>
-        <button onclick="zoomOut()"><i data-lucide="zoom-out"></i></button>
-        <button onclick="resetZoom()"><i data-lucide="refresh-cw"></i></button>
-        <button onclick="openFullscreen()"><i data-lucide="maximize-2"></i></button>
+            <button onclick="zoomIn()"><i data-lucide="zoom-in"></i></button>
+            <button onclick="zoomOut()"><i data-lucide="zoom-out"></i></button>
+            <button onclick="resetZoom()"><i data-lucide="refresh-cw"></i></button>
+            <button onclick="openFullscreen()"><i data-lucide="maximize-2"></i></button>
+          </div>
+
+        </div>
       </div>
 
     </div>
-  </div>
-
-</div>
 
     <div class="grid lg:grid-cols-2 gap-8">
       <!-- Right Column - Booking Card -->
@@ -291,16 +173,7 @@
 
           <!-- Price Card -->
           <div class="booking-card rounded-2xl p-6 shadow-xl">
-            <!-- <div class="text-center mb-6">
-              <div class="inline-block">
-                <span class="text-wood line-through text-lg">₹18,000</span>
-                <div class="flex items-baseline justify-center gap-1">
-                  <span class="font-display text-4xl text-primary-600">₹15,000</span>
-                  <span class="text-wood">/day</span>
-                </div>
-              </div>
-              <span class="inline-block bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-semibold mt-2">17% OFF</span>
-            </div> -->
+
             <div class="space-y-4">
 
               <!-- Monday – Friday Row -->
@@ -308,6 +181,9 @@
                 <div>
                   <p class="text-sm font-semibold text-wood-dark">
                     Monday – Friday
+                  </p>
+                  <p class="text-sm font-semibold text-wood-dark">
+                    Saturday – Sunday
                   </p>
                   <!-- <p class="text-xs text-wood">Weekday Price</p> -->
                 </div>
@@ -317,26 +193,11 @@
                   <p class="font-display text-2xl text-primary-600">
                     ₹15,000 <span class="text-sm text-wood">/day</span>
                   </p>
-                </div>
-              </div>
-
-              <!-- Saturday – Sunday Row -->
-              <div class="flex items-center justify-between p-4 border rounded-xl">
-                <div>
-                  <p class="text-sm font-semibold text-wood-dark">
-                    Saturday – Sunday
-                  </p>
-                  <!-- <p class="text-xs text-wood">Weekend Price</p> -->
-                </div>
-
-                <div class="text-right">
-                  <!-- <span class="text-wood line-through text-sm">₹22,000</span> -->
                   <p class="font-display text-2xl text-primary-600">
                     ₹20,000 <span class="text-sm text-wood">/day</span>
                   </p>
                 </div>
               </div>
-
             </div>
 
             <form class="space-y-4">
@@ -454,38 +315,18 @@
 
         </div>
       </div>
+
+
+
+
+
+
+
+
+
       <!-- Left Column - Details -->
       <div class=" space-y-8">
 
-        <!-- IMAGE GALLERY
-<div class="space-y-4">
-  <div id="imageWrapper" class="relative overflow-hidden rounded-2xl shadow-xl group cursor-grab bg-black">
-    <img id="mainImage"
-         src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1600"
-         class="w-full h-[420px] object-cover transition-transform duration-300 select-none"
-         draggable="false">
-
-    
-    <div class="absolute bottom-4 right-4 flex gap-2 bg-white/90 p-2 rounded-full shadow opacity-0 group-hover:opacity-100 transition">
-      <button onclick="zoomIn()"><i data-lucide="zoom-in"></i></button>
-      <button onclick="zoomOut()"><i data-lucide="zoom-out"></i></button>
-      <button onclick="resetZoom()"><i data-lucide="refresh-cw"></i></button>
-      <button onclick="openFullscreen()"><i data-lucide="maximize-2"></i></button>
-    </div>
-  </div>
-
-
-  <div class="grid grid-cols-4 gap-3">
-    <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=300"
-         class="thumb active-thumb" onclick="changeImage(this)">
-    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=300"
-         class="thumb" onclick="changeImage(this)">
-    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300"
-         class="thumb" onclick="changeImage(this)">
-    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=300"
-         class="thumb" onclick="changeImage(this)">
-  </div>
-</div> -->
 
         <!-- Title & Info -->
         <div class="bg-white rounded-2xl p-6 shadow-lg border-2 border-wood-light/20">
@@ -528,232 +369,9 @@
             gatherings, corporate events, birthday parties, and weekend getaways.
           </p>
         </div>
-
-
-        <div class="bg-white rounded-2xl shadow-lg border-2 border-wood-light/20">
-          <div class="flex flex-wrap border-b">
-
-            <button onclick="openTab('amenities')" class="tab-btn active-tab">
-              Amenities
-            </button>
-
-            <button onclick="openTab('rules')" class="tab-btn">
-              House Rules
-            </button>
-
-            <button onclick="openTab('reviews')" class="tab-btn">
-              Reviews
-            </button>
-
-            <button onclick="openTab('location')" class="tab-btn">
-              Location
-            </button>
-
-          </div>
-
-          <!-- TAB CONTENT -->
-          <div class="p-6">
-
-            <!-- ================= AMENITIES ================= -->
-            <div id="amenities" class="tab-content">
-
-              <!-- Amenities -->
-              <div class="bg-white rounded-2xl">
-                <h2 class="font-display text-2xl text-wood-dark mb-6 flex items-center gap-2">
-                  <i data-lucide="sparkles" class="w-6 h-6 text-primary-500"></i>
-                  Amenities & Facilities
-                </h2>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div class="amenity-card bg-cream rounded-xl p-4 text-center border border-wood-light/30">
-                    <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <i data-lucide="waves" class="w-6 h-6 text-primary-600"></i>
-                    </div>
-                    <span class="font-semibold text-wood-dark text-sm">Swimming Pool</span>
-                  </div>
-                  <div class="amenity-card bg-cream rounded-xl p-4 text-center border border-wood-light/30">
-                    <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <i data-lucide="music" class="w-6 h-6 text-primary-600"></i>
-                    </div>
-                    <span class="font-semibold text-wood-dark text-sm">DJ Sound System</span>
-                  </div>
-                  <div class="amenity-card bg-cream rounded-xl p-4 text-center border border-wood-light/30">
-                    <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <i data-lucide="flame" class="w-6 h-6 text-primary-600"></i>
-                    </div>
-                    <span class="font-semibold text-wood-dark text-sm">BBQ & Bonfire</span>
-                  </div>
-                  <div class="amenity-card bg-cream rounded-xl p-4 text-center border border-wood-light/30">
-                    <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <i data-lucide="gamepad-2" class="w-6 h-6 text-primary-600"></i>
-                    </div>
-                    <span class="font-semibold text-wood-dark text-sm">Indoor Games</span>
-                  </div>
-                  <div class="amenity-card bg-cream rounded-xl p-4 text-center border border-wood-light/30">
-                    <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <i data-lucide="chef-hat" class="w-6 h-6 text-primary-600"></i>
-                    </div>
-                    <span class="font-semibold text-wood-dark text-sm">Kitchen</span>
-                  </div>
-                  <div class="amenity-card bg-cream rounded-xl p-4 text-center border border-wood-light/30">
-                    <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <i data-lucide="car" class="w-6 h-6 text-primary-600"></i>
-                    </div>
-                    <span class="font-semibold text-wood-dark text-sm">Parking (20 Cars)</span>
-                  </div>
-                  <div class="amenity-card bg-cream rounded-xl p-4 text-center border border-wood-light/30">
-                    <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <i data-lucide="wifi" class="w-6 h-6 text-primary-600"></i>
-                    </div>
-                    <span class="font-semibold text-wood-dark text-sm">Free WiFi</span>
-                  </div>
-                  <div class="amenity-card bg-cream rounded-xl p-4 text-center border border-wood-light/30">
-                    <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <i data-lucide="tv" class="w-6 h-6 text-primary-600"></i>
-                    </div>
-                    <span class="font-semibold text-wood-dark text-sm">Projector & TV</span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- ================= HOUSE RULES ================= -->
-            <div id="rules" class="tab-content hidden">
-              <div class="bg-white rounded-2xl  ">
-                <h2 class="font-display text-2xl text-wood-dark mb-6 flex items-center gap-2">
-                  <i data-lucide="scroll-text" class="w-6 h-6 text-primary-500"></i>
-                  House Rules
-                </h2>
-                <div class="grid md:grid-cols-2 gap-4">
-                  <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <i data-lucide="clock" class="w-4 h-4 text-primary-600"></i>
-                    </div>
-                    <div>
-                      <span class="font-semibold text-wood-dark">Check-in: 12:00 PM</span>
-                      <p class="text-sm text-wood">Check-out: 11:00 AM</p>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <i data-lucide="users" class="w-4 h-4 text-primary-600"></i>
-                    </div>
-                    <div>
-                      <span class="font-semibold text-wood-dark">Max 50 guests</span>
-                      <p class="text-sm text-wood">Extra charges apply beyond limit</p>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <i data-lucide="cigarette-off" class="w-4 h-4 text-red-600"></i>
-                    </div>
-                    <div>
-                      <span class="font-semibold text-wood-dark">No smoking indoors</span>
-                      <p class="text-sm text-wood">Designated outdoor areas available</p>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <i data-lucide="paw-print" class="w-4 h-4 text-green-600"></i>
-                    </div>
-                    <div>
-                      <span class="font-semibold text-wood-dark">Pets allowed</span>
-                      <p class="text-sm text-wood">Prior intimation required</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- ================= REVIEWS ================= -->
-            <div id="reviews" class="tab-content hidden">
-
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">Guest Reviews</h3>
-                <button onclick="openReviewModal()" class="bg-primary-500 text-black px-4 py-2 rounded-lg">
-                  + Add Review
-                </button>
-                <div class="flex items-center gap-2 bg-primary-100 px-4 py-2 rounded-full">
-                  <i data-lucide="star" class="w-5 h-5 text-primary-500 fill-current"></i>
-                  <span class="font-bold text-primary-700">4.8</span>
-                  <span class="text-primary-600 text-sm">(128 reviews)</span>
-                </div>
-
-              </div>
-
-              <div class="space-y-4">
-                <div class="review-card">
-                  <p class="font-bold">Rahul Sharma ⭐⭐⭐⭐⭐</p>
-                  <p class="text-sm">Amazing place for family gathering!</p>
-                </div>
-
-                <div class="review-card">
-                  <p class="font-bold">Priya Reddy ⭐⭐⭐⭐</p>
-                  <p class="text-sm">Beautiful garden and clean pool.</p>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- ================= LOCATION ================= -->
-            <div id="location" class="tab-content hidden">
-              <div class="bg-white rounded-2xl ">
-                <h2 class="font-display text-2xl text-wood-dark mb-4 flex items-center gap-2">
-                  <i data-lucide="map" class="w-6 h-6 text-primary-500"></i>
-                  Location
-                </h2>
-                <div
-                  class="bg-sand rounded-xl h-64 flex items-center justify-center border-2 border-dashed border-wood-light">
-                  <div class="text-center">
-                    <i data-lucide="map-pin" class="w-12 h-12 text-primary-500 mx-auto mb-2"></i>
-                    <p class="text-wood font-medium">Shamirpet, Hyderabad</p>
-                    <p class="text-sm text-wood/70">25 km from city center</p>
-                    <button
-                      class="mt-3 bg-primary-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-primary-600 transition-colors flex items-center gap-2 mx-auto">
-                      <i data-lucide="navigation" class="w-4 h-4"></i>
-                      Get Directions
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-
-
-
-                  <!-- Similar Properties -->
-          <div class="bg-white rounded-2xl p-6 shadow-lg border-2 border-wood-light/20">
-            <h3 class="font-display text-xl text-wood-dark mb-4">Similar Farmhouses</h3>
-            <div class="space-y-3">
-              <a href="#" class="flex gap-3 group">
-                <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=100&h=80&fit=crop"
-                  alt="Farmhouse" class="w-20 h-16 object-cover rounded-lg">
-                <div>
-                  <span
-                    class="font-semibold text-wood-dark group-hover:text-primary-600 transition-colors block text-sm">Sunrise
-                    Villa</span>
-                  <span class="text-xs text-wood">Shamirpet</span>
-                  <span class="text-primary-600 font-bold text-sm block">₹12,000/day</span>
-                </div>
-              </a>
-              <a href="#" class="flex gap-3 group">
-                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=100&h=80&fit=crop"
-                  alt="Farmhouse" class="w-20 h-16 object-cover rounded-lg">
-                <div>
-                  <span
-                    class="font-semibold text-wood-dark group-hover:text-primary-600 transition-colors block text-sm">Lake
-                    View Retreat</span>
-                  <span class="text-xs text-wood">Shankarpally</span>
-                  <span class="text-primary-600 font-bold text-sm block">₹18,000/day</span>
-                </div>
-              </a>
-            </div>
-          </div>
       </div>
 
+      <!-- =============== -->
 
     </div>
   </main>
@@ -828,11 +446,6 @@
       event.target.classList.add('active-tab');
     }
   </script>
-
-
-
-
-
 
 
   <!-- ================= JAVASCRIPT ================= -->
@@ -916,10 +529,10 @@
     }
   </script>
 
-<!-- </body>
+  <!-- </body>
 
 </html> -->
 
 
 
-{% endblock %}
+  {% endblock %}

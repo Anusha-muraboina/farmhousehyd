@@ -40,8 +40,15 @@ INSTALLED_APPS = [
     'farmhouse',
     'contact',
     'user',
+    'blogs',
+    'coupon',
+    'booking',
+    'rating',
     
     'corsheaders',
+    
+    # ✅ ADD THIS
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [

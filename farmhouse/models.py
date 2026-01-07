@@ -28,7 +28,11 @@ class Location(models.Model):
 
 class Amenity(models.Model):
     name = models.CharField(max_length=100)  # Swimming Pool, Lawn
-    icon = models.ImageField(upload_to='amenities/', blank=True, null=True)
+    # icon = models.ImageField(upload_to='amenities/', blank=True, null=True)
+    icon_class = models.CharField(
+        max_length=100,
+        help_text="Example: waves, bed, bath, car"
+    )
 
     def __str__(self):
         return self.name
@@ -44,6 +48,9 @@ class Farmhouse(models.Model):
         settings.AUTH_USER_MODEL,   # User model
         on_delete=models.CASCADE,
         related_name="farmhouses",
+        limit_choices_to={
+            "is_staff": True
+        },
         null=True,blank=True
     )
     title = models.CharField(max_length=200)
@@ -79,6 +86,8 @@ class Farmhouse(models.Model):
     description = models.TextField(
         help_text="Full farmhouse details page"
     )
+    extra_guest_count = models.PositiveIntegerField(default=0)
+    guest_count = models.PositiveIntegerField(default=20)
 
     free_cancellation = models.BooleanField(default=True)
 

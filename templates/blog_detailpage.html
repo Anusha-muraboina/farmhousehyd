@@ -1,183 +1,284 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Farmhouses Hyderabad - Best Farmhouses{% endblock %}
+{% block title %}{{ blog.title }}{% endblock %}
 
 {% block content %}
-<!-- ================= MAIN CONTENT ================= -->
+<style>
+
+  .blog-content {
+  font-family: "Inter", system-ui, sans-serif;
+  color: #374151;
+  line-height: 1.9;
+  font-size: 16px;
+}
+
+/* Intro */
+.blog-content .intro {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+/* Headings */
+.blog-content h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 36px 0 16px;
+  color: #ca5902ff;
+}
+
+.blog-content h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Paragraphs */
+.blog-content p {
+  margin-bottom: 16px;
+}
+
+/* Divider */
+.blog-content hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 32px 0;
+}
+
+/* ICON LIST (NO EMOJIS) */
+.icon-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.icon-list li {
+  position: relative;
+  padding-left: 44px;
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+
+/* Icon circle */
+.icon-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ca5902ff, #ca5902ff);
+}
+
+/* Check icon */
+.icon-list li::after {
+  content: "✔";
+  position: absolute;
+  left: 8px;
+  top: 3px;
+  font-size: 14px;
+  color: white;
+  font-weight: bold;
+}
+
+/* Benefits box */
+.benefits {
+  background: #f9fafb;
+  border-left: 4px solid #ca5902ff;
+  padding: 18px 22px;
+  border-radius: 10px;
+}
+
+.benefits p {
+  margin-bottom: 12px;
+}
+
+/* CTA BOX */
+.cta-box {
+  background: linear-gradient(135deg, #ca5902ff, #ca5902ff);
+  color: #ffffff;
+  padding: 26px;
+  border-radius: 14px;
+  margin: 40px 0;
+}
+
+.cta-box h3 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .blog-content {
+    font-size: 15px;
+  }
+}
+
+</style>
+  <!-- Hero Banner -->
+  <div class="relative h-64 md:h-80 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=80');">
+    <div class="absolute inset-0 bg-gray-900/80 flex flex-col items-center justify-center">
+      <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Blog</h1>
+      <div class="flex items-center gap-2 text-white/80">
+        <a href="#" class="hover:text-primary transition-colors">Home</a>
+        <span>›</span>
+        <span class="text-primary">Blog Standard</span>
+      </div>
+    </div>
+  </div>
 <section class="w-full px-6 md:px-12 lg:px-20 py-10">
+
 
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
-    <!-- ========== BLOG CONTENT (LEFT) ========== -->
+    <!-- LEFT CONTENT -->
     <div class="lg:col-span-8 bg-white p-8 rounded-xl shadow">
 
-      <!-- META -->
-      <div class="flex flex-wrap gap-4 text-sm text-gray-500 mb-6">
-        <span>By <strong class="text-green-600">Shrikant Gavandi</strong></span>
-        <span>👁 191 Views</span>
-        <span>⏱ 3 Min Read</span>
-        <span>💬 0 Comments</span>
+      {% if blog.image %}
+      <img src="{{ blog.image.url }}" alt="{{ blog.title }}"
+           class="w-full h-[420px] object-cover rounded-lg mb-6">
+      {% endif %}
+
+    
+      <div class="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
+        <span>📅 {{ blog.published_at|date:"M d, Y" }}</span>
+        <span>👁 {{ blog.views }} Views</span>
+        <span>⏱ {{ blog.read_time }} Min Read</span>
+        <span>💬 {{ comments.count }} Comments</span>
       </div>
 
-      <!-- INTRO -->
-      <p class="text-gray-600 leading-relaxed mb-6">
-        In this blog, we explore why farmhouse rentals in Hyderabad are becoming more popular than hotels
-        for families, groups, and celebrations.
-      </p>
+      <!-- TITLE -->
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">
+        {{ blog.title }}
+      </h1>
 
       <!-- CONTENT -->
-      <div class="space-y-6">
-
-        <h2 class="text-xl font-semibold text-green-600">✅ Advantages Of Staying In A Hotel</h2>
-
-        <p><strong>1. Convenient Location</strong><br>
-          Hotels are usually located in city centers, making travel easy.</p>
-
-        <p><strong>2. Standard Amenities</strong><br>
-          Room service, daily cleaning, and concierge support.</p>
-
-        <p><strong>3. Budget Options (Sometimes)</strong><br>
-          Suitable for solo or short stays.</p>
-
-        <h2 class="text-xl font-semibold text-red-600">❌ Disadvantages Of Hotels</h2>
-
-        <p><strong>1. Limited Space</strong><br>
-          Small rooms feel cramped for families or groups.</p>
-
-        <p><strong>2. Lack of Privacy</strong><br>
-          Shared spaces reduce peace and comfort.</p>
-
-        <p><strong>3. Expensive During Peak Seasons</strong><br>
-          Prices skyrocket during holidays and weddings.</p>
-
-        <p><strong>4. Generic Experience</strong><br>
-          Most hotels feel the same everywhere.</p>
-
-        <h2 class="text-xl font-semibold text-green-600">
-          🌿 Why Renting A Farmhouse Is Better
-        </h2>
-
-        <p><strong>1. Spacious & Private</strong><br>
-          Full property for your group only.</p>
-
-        <p><strong>2. Perfect for Celebrations</strong><br>
-          Ideal for birthdays, weddings & parties.</p>
-
-        <p><strong>3. Close to Nature</strong><br>
-          Peaceful greenery & fresh air.</p>
-
-        <p><strong>4. Budget Friendly for Groups</strong><br>
-          One farmhouse is cheaper than multiple hotel rooms.</p>
-
-        <p><strong>5. Safe & Secure</strong><br>
-          Gated properties with privacy.</p>
-
-        <p><strong>6. Memorable Experience</strong><br>
-          Feels like a real vacation.</p>
-
-        <h2 class="text-xl font-semibold">📌 Final Thoughts</h2>
-        <p>
-          If privacy, space, and value matter, farmhouse booking in Hyderabad is the best choice.
-        </p>
-
+      <div class="prose max-w-none">
+        {{ blog.content|safe }}
       </div>
 
-      <!-- TAGS & SHARE -->
-      <div class="mt-8 border-t pt-6 flex flex-wrap justify-between gap-4">
-
-        <div class="flex gap-2">
-          <span class="px-3 py-1 bg-gray-200 rounded text-sm">City Tour</span>
-          <span class="px-3 py-1 bg-gray-200 rounded text-sm">Farmhouse</span>
-        </div>
-
-        <div class="flex gap-4">
-          <i data-lucide="facebook"></i>
-          <i data-lucide="twitter"></i>
-          <i data-lucide="linkedin"></i>
-        </div>
-
+      <!-- TAGS -->
+      <div class="mt-8 flex flex-wrap gap-2">
+        {% for tag in blog.tags.all %}
+          <a href="?tag={{ tag.slug }}"
+             class="px-3 py-1 bg-gray-200 rounded text-sm hover:bg-primary hover:text-white">
+            #{{ tag.name }}
+          </a>
+        {% endfor %}
       </div>
 
-      <!-- PREV POST -->
-      <div class="mt-6 text-sm text-gray-600">
-        ← <strong>Prev Post:</strong> Host Your Dream Event at a Farmhouse in Hyderabad
+      <!-- COMMENTS -->
+      <div class="mt-10">
+        <h3 class="text-xl font-semibold mb-4">Comments</h3>
+
+        {% for comment in comments %}
+          <div class="border-b py-4">
+            <strong>{{ comment.name }}</strong>
+            <p class="text-sm text-gray-600">{{ comment.created_at|date:"M d, Y" }}</p>
+            <p class="mt-2">{{ comment.comment }}</p>
+          </div>
+        {% empty %}
+          <p class="text-gray-500">No comments yet.</p>
+        {% endfor %}
       </div>
+
+      <!-- COMMENT FORM -->
+      {% comment %} <div class="mt-8">
+        <h3 class="text-lg font-semibold mb-3">Leave a Comment</h3>
+
+        <form method="POST" class="space-y-4">
+          {% csrf_token %}
+          <input type="text" name="name" placeholder="Your Name"
+                 class="w-full border px-4 py-2 rounded" required>
+          <input type="email" name="email" placeholder="Your Email"
+                 class="w-full border px-4 py-2 rounded" required>
+          <textarea name="comment" rows="4" placeholder="Your Comment"
+                    class="w-full border px-4 py-2 rounded" required></textarea>
+          <button class="bg-primary text-white px-6 py-2 rounded">
+            Submit Comment
+          </button>
+        </form>
+      </div> {% endcomment %}
 
     </div>
 
-    <!-- ========== SIDEBAR (RIGHT) ========== -->
+    <!-- SIDEBAR -->
     <aside class="lg:col-span-4 space-y-6">
-
-      <!-- SEARCH -->
-
         <!-- Search -->
         <div class="bg-white rounded-lg p-6 shadow-sm">
           <h3 class="font-serif text-xl font-bold text-gray-800 mb-4">Search Here</h3>
           <div class="flex">
-            <input type="text" placeholder="Search..." class="flex-1 px-4 py-3 border border-gray-200 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary">
+            <!-- <input type="text" placeholder="Search..." class="flex-1 px-4 py-3 border border-gray-200 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary"> -->
+                   <input type="text" name="search" value="{{ search_query }}"
+               placeholder="Search..."
+               class="w-full border px-4 py-2 rounded">
+           
             <button class="bg-primary hover:bg-primary-dark text-white px-4 rounded-r-lg transition-colors">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </button>
           </div>
         </div>
-
       <!-- CATEGORIES -->
-      <div class="bg-white p-6 rounded-xl shadow">
+      <div class="bg-white p-6 rounded shadow">
         <h3 class="font-semibold mb-3">Categories</h3>
         <ul class="space-y-2 text-sm">
-          <li>City Discovery (6)</li>
-          <li>Destinations (1)</li>
+          {% for cat in categories %}
+            <li>
+              <a href="?category={{ cat.slug }}" class="hover:text-primary">
+                {{ cat.name }} ({{ cat.blog_count }})
+              </a>
+            </li>
+          {% endfor %}
         </ul>
       </div>
 
       <!-- RECENT POSTS -->
-  <!-- Recent Posts -->
-        <div class="bg-white rounded-lg p-6 shadow-sm">
-          <h3 class="font-serif text-xl font-bold text-gray-800 mb-4">Recent Post</h3>
-          <div class="space-y-4">
-            <div class="flex gap-4 pb-4 border-b border-gray-100">
-              <img src="https://images.unsplash.com/photo-600596542815-ffad4c1539a9?w=200&q=80" alt="Recent Post" class="w-20 h-16 object-cover rounded">
-              <h4 class="text-sm font-medium text-gray-800 hover:text-primary transition-colors cursor-pointer line-clamp-2">
-                Why Renting A Farmhouse Is Better Than Staying In A Hotel
-              </h4>
-            </div>
-            <div class="flex gap-4 pb-4 border-b border-gray-100">
-              <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=200&q=80" alt="Recent Post" class="w-20 h-16 object-cover rounded">
-              <h4 class="text-sm font-medium text-gray-800 hover:text-primary transition-colors cursor-pointer line-clamp-2">
-                Host Your Dream Event At A Farmhouse In Hyderabad
-              </h4>
-            </div>
-            <div class="flex gap-4">
-              <img src="https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=200&q=80" alt="Recent Post" class="w-20 h-16 object-cover rounded">
-              <h4 class="text-sm font-medium text-gray-800 hover:text-primary transition-colors cursor-pointer line-clamp-2">
-                Farmhouse In Hyderabad For Party | Farmhouse On Rent For...
-              </h4>
-            </div>
-          </div>
-        </div>
+      {% comment %} <div class="bg-white p-6 rounded shadow">
+        <h3 class="font-semibold mb-3">Related Posts</h3>
 
+        {% for post in related_blogs %}
+        <a href="{% url 'blog_detail' post.slug %}" class="flex gap-3 mb-4">
+          {% if post.image %}
+            <img src="{{ post.image.url }}" class="w-20 h-16 object-cover rounded">
+          {% endif %}
+          <span class="text-sm hover:text-primary">{{ post.title }}</span>
+        </a>
+        {% endfor %}
+      </div> {% endcomment %}
 
       <!-- TAGS -->
-        <!-- Tags -->
-        <div class="bg-white rounded-lg p-6 shadow-sm">
-          <h3 class="font-serif text-xl font-bold text-gray-800 mb-4">Tags</h3>
-          <div class="flex flex-wrap gap-2">
-            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Farmhouse</span>
-            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Party</span>
-            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Weekend</span>
-            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Staycation</span>
-            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Nature</span>
-            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Pool Party</span>
-            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Events</span>
-            <span class="tag-chip inline-block px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded cursor-pointer transition-colors">Hyderabad</span>
-          </div>
+      <div class="bg-white p-6 rounded shadow">
+        <h3 class="font-semibold mb-3">Tags</h3>
+        <div class="flex flex-wrap gap-2">
+          {% for tag in tags %}
+            <a href="?tag={{ tag.slug }}"
+               class="px-3 py-1 bg-gray-100 rounded text-sm hover:bg-primary hover:text-white">
+              {{ tag.name }}
+            </a>
+          {% endfor %}
         </div>
+      </div>
+      <div class="mt-8">
+        <h3 class="text-lg font-semibold mb-3">Leave a Comment</h3>
 
+        <form method="POST" class="space-y-4 bg-white p-4">
+          {% csrf_token %}
+          <input type="text" name="name" placeholder="Your Name"
+                 class="w-full border px-4 py-2 rounded" required>
+          <input type="email" name="email" placeholder="Your Email"
+                 class="w-full border px-4 py-2 rounded" required>
+          <textarea name="comment" rows="4" placeholder="Your Comment"
+                    class="w-full border px-4 py-2 rounded" required></textarea>
+          <button class="bg-primary text-white px-6 py-2 rounded">
+            Submit Comment
+          </button>
+        </form>
+      </div>
     </aside>
 
   </div>
 </section>
 
-
 {% endblock %}
-

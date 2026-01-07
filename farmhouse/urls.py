@@ -7,8 +7,12 @@ urlpatterns = [
     path('about/', about, name='about'),
     path('contact/', contact, name='contact'),
     path('destination/',destination,name= 'destination'),
+    # path('farmhouses/', Farmhouses, name = 'farmhouses'),
+    # path('farmhouse/', Farmhouse_detail, name='farmhouse_detail'),
+    
     path('farmhouses/', Farmhouses, name = 'farmhouses'),
-    path('farmhouse/', Farmhouse_detail, name='farmhouse_detail'),
+    path('farmhouse/<slug:slug>/', Farmhouse_detail, name='farmhouse_detail'),
+    
     
     path('login/', Login, name = 'login'),
     path('register/', Register, name = 'register'),

@@ -1,357 +1,115 @@
 {% extends "base.html" %}
-
 {% block title %}Farmhouses Hyderabad - Best Farmhouses{% endblock %}
-
 {% block content %}
-
-<!-- </head>
-<body class="bg-white text-gray-900"> -->
-
-
-  <section class="relative h-[300px] md:h-[400px] overflow-hidden">
-    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80');">
-      <div class="absolute inset-0 bg-gradient-to-r from-gray-900/70 to-gray-900/40"></div>
+<section class="relative h-[300px] md:h-[400px] overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center"
+        style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80');">
+        <div class="absolute inset-0 bg-gradient-to-r from-gray-900/70 to-gray-900/40"></div>
     </div>
     <div class="relative h-full container mx-auto px-4 flex flex-col items-center justify-center text-center">
-      <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4 animate-fade-up">Farm Houses</h1>
-      <div class="flex items-center gap-2 text-white/90 animate-fade-up" style="animation-delay: 0.1s">
-        <a href="#" class="flex items-center gap-1 hover:text-secondary transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-          </svg>
-          Home
-        </a>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
-        <span class="text-secondary font-medium">Farm Houses</span>
-      </div>
+        <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Farm Houses</h1>
+        <div class="flex items-center gap-2 text-white/90">
+            <a href="/" class="hover:text-secondary">Home</a>
+            <span>/</span>
+            <span class="text-secondary font-medium">Farm Houses</span>
+        </div>
     </div>
-  </section>
-
-
-
-
-
-    <section class="py-16 bg-gray-50">
-        <div class=" md:px-12 px-4 mx-auto ">
-
-            
-<!-- Breadcrumb + Filters UI -->
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-
-  <!-- LEFT: Breadcrumb -->
-  <nav class="flex items-center text-sm text-gray-600">
-    <a href="/" class="hover:text-primary font-medium">Home</a>
-    <svg class="w-4 h-4 mx-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-    </svg>
-    <span class="text-secondary font-semibold">Farmhouses</span>
-    <svg class="w-4 h-4 mx-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-    </svg>
-    <span class="text-secondary font-semibold">Gachibowli</span>
-
-   
-  </nav>
-
-  <!-- RIGHT: Filters (UI Only) -->
-  <div class="flex flex-wrap gap-3">
-
-    <!-- Location Dropdown -->
-    <div class="relative">
-      <select
-        class="appearance-none border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary">
-        <option>All Locations</option>
-        <option>Gachibowli</option>
-        <option>Shankarpally</option>
-        <option>Moinabad</option>
-        <option>Shamirpet</option>
-        <option>Chevella</option>
-      </select>
-      <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-        viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-      </svg>
-    </div>
-
-    <!-- Price Dropdown -->
-    <div class="relative">
-      <select
-        class="appearance-none border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary">
-        <option>All Prices</option>
-        <option>low to high</option>
-        <option>high to low</option>
-        <!-- <option>Below ₹25,000</option> -->
-      </select>
-      <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-        viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-      </svg>
-    </div>
-
-  </div>
-</div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                
-              
-                <div class="farmhouse-card bg-white rounded-2xl overflow-hidden shadow-lg">
-                    <div class="card-image relative h-56">
-                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80" alt="Celeste Farm Stories" class="w-full h-full object-cover">
-                        <span class="absolute top-4 left-4 bg-primary text-white text-xs px-3 py-1 rounded-full">Featured</span>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-display text-xl font-bold text-secondary mb-2">Celeste Farm Stories</h3>
-                        <p class="text-gray-500 text-sm flex items-center gap-1 mb-3">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
-                            Shankarpally, 6 km from Gachibowli
-                        </p>
-                        
-                        <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bed" class="w-4 h-4"></i> 3 Beds
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bath" class="w-4 h-4"></i> 3 Baths
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="waves" class="w-4 h-4"></i> Pool
-                            </span>
-                        </div>
-
-                             <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
-                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
-                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
-
-                        </div>
-                        <div class="flex items-center justify-between pt-4 border-t">
-                            <div>
-                               <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
-                            </div>
-                            <a href="{% url 'farmhouse_detail' %}" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
-                                Know More →
-                            </a>
-                        </div>
-                    </div>
+</section>
+<section class="py-16 bg-gray-50">
+    <div class="md:px-12 px-4 mx-auto">
+        <form id="filterForm" method="GET"
+            class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 w-full">
+            {% if request.GET.search %}
+            <input type="hidden" name="search" value="{{ request.GET.search }}">
+            {% endif %}
+            <nav class="flex items-center text-sm text-gray-600">
+                <a href="/" class="hover:text-primary font-medium">Home</a>
+                <span class="mx-2">/</span>
+                <a href="{% url 'farmhouses' %}" class="hover:text-primary font-medium">Farmhouses</a>
+                {% if current_location %}
+                <span class="mx-2">/</span>
+                <span class="text-secondary font-semibold">{{ current_location }}</span>
+                {% endif %}
+            </nav>
+            <div class="flex flex-wrap gap-3">
+                <div class="relative">
+                    <select name="location" onchange="this.form.submit()"
+                        class="appearance-none border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer">
+                        <option value="">All Locations</option>
+                        {% for loc in locations %}
+                        <option value="{{ loc.name }}" {% if loc.selected %}selected{% endif %}>{{ loc.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                
-              
-                <div class="farmhouse-card bg-white rounded-2xl overflow-hidden shadow-lg">
-                    <div class="card-image relative h-56">
-                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80" alt="Shamirpet Lux" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-display text-xl font-bold text-secondary mb-2">Shamirpet Lux</h3>
-                        <p class="text-gray-500 text-sm flex items-center gap-1 mb-3">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
-                            Shamirpet, 35 km from Secunderabad
-                        </p>
-                        <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bed" class="w-4 h-4"></i> 4 Beds
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bath" class="w-4 h-4"></i> 4 Baths
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="waves" class="w-4 h-4"></i> Pool
-                            </span>
-                        </div>
-
-                        
-                             <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
-                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
-                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
-
-                        </div>
-
-                        <div class="flex items-center justify-between pt-4 border-t">
-                            <div>
-                              <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
-                            </div>
-                            <a href="{% url 'farmhouse_detail' %}" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
-                                Know More →
-                            </a>
-                        </div>
-                    </div>
+                <div class="relative">
+                    <select name="sort" onchange="this.form.submit()"
+                        class="appearance-none border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer">
+                        <option value="">Sort By Price</option>
+                        <option value="low_to_high" {% if is_low_to_high %}selected{% endif %}>Low to High</option>
+                        <option value="high_to_low" {% if is_high_to_low %}selected{% endif %}>High to Low</option>
+                    </select>
                 </div>
-                
-        
-                <div class="farmhouse-card bg-white rounded-2xl overflow-hidden shadow-lg">
-                    <div class="card-image relative h-56">
-                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80" alt="Forest Villa Lux" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-display text-xl font-bold text-secondary mb-2">Forest Villa Lux</h3>
-                        <p class="text-gray-500 text-sm flex items-center gap-1 mb-3">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
-                            Chevella, 20 km from HITEC City
-                        </p>
-                        <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bed" class="w-4 h-4"></i> 5 Beds
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bath" class="w-4 h-4"></i> 4 Baths
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="waves" class="w-4 h-4"></i> Pool
-                            </span>
-                        </div>
-
-                                <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
-                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
-                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
-
-                        </div>
-                        <div class="flex items-center justify-between pt-4 border-t">
-                            <div>
-                               <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
-                            </div>
-                            <a href="{% url 'farmhouse_detail' %}" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
-                                Know More →
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-               
-                <div class="farmhouse-card bg-white rounded-2xl overflow-hidden shadow-lg">
-                    <div class="card-image relative h-56">
-                        <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=600&q=80" alt="Vedika Farmhouse" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-display text-xl font-bold text-secondary mb-2">Vedika Farmhouse</h3>
-                        <p class="text-gray-500 text-sm flex items-center gap-1 mb-3">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
-                            Moinabad, 30 km from city center
-                        </p>
-                        <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bed" class="w-4 h-4"></i> 4 Beds
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bath" class="w-4 h-4"></i> 3 Baths
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="car" class="w-4 h-4"></i> Parking
-                            </span>
-                        </div>
-
-                                <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
-                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
-                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
-
-                        </div>
-                        <div class="flex items-center justify-between pt-4 border-t">
-                            <div>
-                             <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
-                            </div>
-                            <a href="{% url 'farmhouse_detail' %}" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
-                                Know More →
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-              
-                <div class="farmhouse-card bg-white rounded-2xl overflow-hidden shadow-lg">
-                    <div class="card-image relative h-56">
-                        <img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80" alt="Raju Farms" class="w-full h-full object-cover">
-                        <span class="absolute top-4 left-4 bg-accent-orange text-white text-xs px-3 py-1 rounded-full">Popular</span>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-display text-xl font-bold text-secondary mb-2">Raju Farms</h3>
-                        <p class="text-gray-500 text-sm flex items-center gap-1 mb-3">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
-                            Shankarpally, 25 km from Kondapur
-                        </p>
-                        <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bed" class="w-4 h-4"></i> 6 Beds
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bath" class="w-4 h-4"></i> 5 Baths
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="waves" class="w-4 h-4"></i> Pool
-                            </span>
-                        </div>
-
-                                <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
-                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
-                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
-
-                        </div>
-                        <div class="flex items-center justify-between pt-4 border-t">
-                            <div>
-                                <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
-                            </div>
-                            <a href="{% url 'farmhouse_detail' %}" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
-                                Know More →
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-            
-                <div class="farmhouse-card bg-white rounded-2xl overflow-hidden shadow-lg">
-                    <div class="card-image relative h-56">
-                        <img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80" alt="Nishar Farm House" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-display text-xl font-bold text-secondary mb-2">Nishar Farm House</h3>
-                        <p class="text-gray-500 text-sm flex items-center gap-1 mb-3">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
-                            Near Rajiv Gandhi Airport
-                        </p>
-                        <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bed" class="w-4 h-4"></i> 5 Beds
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="bath" class="w-4 h-4"></i> 4 Baths
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i data-lucide="trees" class="w-4 h-4"></i> Garden
-                            </span>
-                        </div>
-
-                                <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
-                        Discover handpicked farmhouses in Hyderabad for family stays, private parties,
-                        and peaceful weekend getaways — comfort, privacy, and nature all in one place.
-
-                        </div>
-                        <div class="flex items-center justify-between pt-4 border-t">
-                            <div>
-                                <span class="text-xl font-bold text-secondary font-display">20,000/night</span>
-                            </div>
-                            <a href="{% url 'farmhouse_detail' %}" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
-                                Know More →
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
             </div>
-            
-                   </div>
-    </section>
-                     
-
-    
-
-
-
-
-
-  <script>
-    // Mobile menu toggle
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    // Add mobile menu functionality here if needed
-  </script>
-
-<!-- </body>
-</html>  -->
+        </form>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for farmhouse in farmhouses %}
+            <div class="farmhouse-card bg-white rounded-2xl overflow-hidden shadow-lg">
+                <div class="card-image relative h-56">
+                    {% if farmhouse.images.exists %}
+                    <img src="{% if farmhouse.images.first.image %}{{ farmhouse.images.first.image.url }}{% else %}https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80{% endif %}"
+                        alt="{{ farmhouse.title }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80"
+                        alt="{{ farmhouse.title }}" class="w-full h-full object-cover">
+                    {% endif %}
+                    {% if farmhouse.is_featured %}
+                    <span
+                        class="absolute top-4 left-4 bg-primary text-white text-xs px-3 py-1 rounded-full">Featured</span>
+                    {% endif %}
+                </div>
+                <div class="p-5">
+                    <h3 class="font-display text-xl font-bold text-secondary mb-2">{{ farmhouse.title }}</h3>
+                    <p class="text-gray-500 text-sm flex items-center gap-1 mb-3">
+                        <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
+                        {{ farmhouse.location.name|default:"Hyderabad" }} • {{ farmhouse.distance_km }} km from city
+                    </p>
+                    <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                        <span class="flex items-center gap-1">
+                            <i data-lucide="bed" class="w-4 h-4"></i>
+                             {{ farmhouse.bedrooms }} Beds
+                            </span>
+                        <span class="flex items-center gap-1"><i data-lucide="bath" class="w-4 h-4"></i> 
+                            {{ farmhouse.ac_bedrooms }} Baths</span>
+                    </div>
+                    <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
+                        {{ farmhouse.short_description|truncatewords:20 }}
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t">
+                        <div><span class="text-xl font-bold text-secondary font-display">
+                            ₹{{ farmhouse.price_per_day|default:"0"|floatformat:0 }}/night</span></div>
+                        <a href="{% url 'farmhouse_detail' farmhouse.slug %}"
+                            class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">Know
+                            More →</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-12">
+                <h3 class="text-xl font-semibold text-gray-700">No Farmhouses Found</h3>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
