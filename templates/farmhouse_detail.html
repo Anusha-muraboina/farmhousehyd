@@ -1,538 +1,145 @@
 {% extends "base.html" %}
-
-{% block title %}Farmhouses Hyderabad - Best Farmhouses{% endblock %}
+{% load static %}
 
 {% block content %}
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
+<div class="container mx-auto px-4 py-10 grid lg:grid-cols-2 gap-10">
 
-<style>
-  .tab-btn {
-    padding: 14px 20px;
-    font-weight: 600;
-    color: #6b4f2c;
-    border-bottom: 3px solid transparent;
-  }
+  <!-- LEFT : DETAILS -->
+  <div>
+    <h1 class="text-3xl font-bold mb-2">{{ farmhouse.title }}</h1>
+    <p class="text-gray-600 mb-4">
+      {{ farmhouse.location.name }} • {{ farmhouse.distance_km }} km from city
+    </p>
 
-  .active-tab {
-    color: #16a34a;
-    border-color: #16a34a;
-  }
+    <p class="mb-6">{{ farmhouse.description }}</p>
 
-  .amenity-card {
-    background: #fef7ed;
-    padding: 16px;
-    border-radius: 12px;
-    text-align: center;
-    font-weight: 600;
-    border: 1px solid #e5d3b3;
-  }
-
-  .review-card {
-    background: #fff;
-    padding: 16px;
-    border-radius: 12px;
-    border: 1px solid #e5d3b3;
-  }
-</style>
-
-
-
-<style>
-  .thumb {
-    width: 128px;
-    height: 96px;
-    object-fit: cover;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    border: 2px solid transparent;
-  }
-
-  .active-thumb {
-    border-color: #f97316;
-    /* orange-500 */
-  }
-</style>
-
-<style>
-  body {
-    font-family: 'Nunito', sans-serif;
-  }
-
-  .bamboo-border {
-    background: repeating-linear-gradient(90deg, #eeeeed 0px, #f5f5f5 3px, #f5f3f2 6px, #e9e6e2 9px);
-  }
-
-  .gallery-img {
-    transition: transform 0.3s ease;
-  }
-
-  .gallery-img:hover {
-    transform: scale(1.05);
-  }
-
-  .amenity-card {
-    transition: all 0.3s ease;
-  }
-
-  .amenity-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  }
-
-  .booking-card {
-    background: linear-gradient(180deg, #fefefe 0%, #ffffff 100%);
-    border: 1px solid #000000;
-  }
-
-  .price-tag {
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-    clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%);
-  }
-
-  .review-card {
-    background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
-  }
-
-  .star-filled {
-    color: #fbbf24;
-  }
-
-  .star-empty {
-    color: #d1d5db;
-  }
-
-  input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(35%) sepia(50%) saturate(500%) hue-rotate(350deg);
-  }
-</style>
-</head>
-
-<body class="bg-white min-h-screen">
-
-
-  <!-- Breadcrumb -->
-  <div class="bg-white py-3 border-b-2 border-wood-light/30">
-    <div class="container mx-auto px-4">
-      <div class="flex items-center gap-2 text-sm text-wood-dark">
-        <a href="home.html" class="hover:text-primary-600 transition-colors">Home</a>
-        <i data-lucide="chevron-right" class="w-4 h-4"></i>
-        <a href="#" class="hover:text-primary-600 transition-colors">Shamirpet</a>
-        <i data-lucide="chevron-right" class="w-4 h-4"></i>
-        <span class="font-semibold text-wood">Green Valley Farmhouse</span>
-      </div>
+    <h3 class="font-semibold mb-2">Amenities</h3>
+    <div class="grid grid-cols-2 gap-3">
+      {% for amenity in farmhouse.amenities.all %}
+        <div class="flex items-center gap-2 bg-gray-100 p-3 rounded">
+          <i data-lucide="{{ amenity.icon_class }}"></i>
+          {{ amenity.name }}
+        </div>
+      {% endfor %}
     </div>
   </div>
 
-  <!-- Main Content -->
-  <main class="container mx-auto px-4 py-8">
+  <!-- RIGHT : BOOKING CARD -->
+  <div class="border rounded-xl p-6 shadow">
 
-    <!-- IMAGE GALLERY -->
-    <div class="flex flex-row gap-4 pb-8 items-start">
+    <h3 class="text-xl font-bold mb-4">Book This Farmhouse</h3>
 
-      <!-- LEFT THUMBNAILS -->
-      <div class="flex flex-col gap-3 w-auto shrink-0">
-        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=300" class="thumb active-thumb"
-          onclick="changeImage(this)">
+    <form method="POST">
+      {% csrf_token %}
 
-        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=300" class="thumb"
-          onclick="changeImage(this)">
+      <input type="hidden" id="base-amount" value="0">
 
-        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300" class="thumb"
-          onclick="changeImage(this)">
-
-        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=300" class="thumb"
-          onclick="changeImage(this)">
+      <!-- Guest Info -->
+      <div class="mb-3">
+        <label class="block text-sm font-semibold">Name</label>
+        <input name="guest_name" required class="w-full border p-2 rounded">
       </div>
 
-      <!-- RIGHT MAIN IMAGE -->
-      <div class="flex-1">
-        <div id="imageWrapper" class="relative overflow-hidden rounded-2xl shadow-xl group cursor-grab bg-black">
+      <div class="mb-3">
+        <label class="block text-sm font-semibold">Email</label>
+        <input name="guest_email" type="email" required class="w-full border p-2 rounded">
+      </div>
 
-          <img id="mainImage" src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1600"
-            class="w-full h-[420px] object-cover transition-transform duration-300 select-none" draggable="false">
+      <div class="mb-3">
+        <label class="block text-sm font-semibold">Phone</label>
+        <input name="guest_phone" required class="w-full border p-2 rounded">
+      </div>
 
-          <!-- CONTROLS -->
-          <div class="absolute bottom-4 right-4 flex gap-2 bg-white/90 p-2 rounded-full shadow
-               opacity-0 group-hover:opacity-100 transition">
-            <button onclick="zoomIn()"><i data-lucide="zoom-in"></i></button>
-            <button onclick="zoomOut()"><i data-lucide="zoom-out"></i></button>
-            <button onclick="resetZoom()"><i data-lucide="refresh-cw"></i></button>
-            <button onclick="openFullscreen()"><i data-lucide="maximize-2"></i></button>
-          </div>
-
+      <!-- Dates -->
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="block text-sm font-semibold">Check-in</label>
+          <input id="checkin" name="check_in" required class="w-full border p-2 rounded">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold">Check-out</label>
+          <input id="checkout" name="check_out" required class="w-full border p-2 rounded">
         </div>
       </div>
 
-    </div>
-
-    <div class="grid lg:grid-cols-2 gap-8">
-      <!-- Right Column - Booking Card -->
-      <div class="lg:col-span-1">
-        <div class="sticky top-24 space-y-6">
-
-          <!-- Price Card -->
-          <div class="booking-card rounded-2xl p-6 shadow-xl">
-
-            <div class="space-y-4">
-
-              <!-- Monday – Friday Row -->
-              <div class="flex items-center justify-between p-4 border rounded-xl">
-                <div>
-                  <p class="text-sm font-semibold text-wood-dark">
-                    Monday – Friday
-                  </p>
-                  <p class="text-sm font-semibold text-wood-dark">
-                    Saturday – Sunday
-                  </p>
-                  <!-- <p class="text-xs text-wood">Weekday Price</p> -->
-                </div>
-
-                <div class="text-right">
-                  <!-- <span class="text-wood line-through text-sm">₹18,000</span> -->
-                  <p class="font-display text-2xl text-primary-600">
-                    ₹15,000 <span class="text-sm text-wood">/day</span>
-                  </p>
-                  <p class="font-display text-2xl text-primary-600">
-                    ₹20,000 <span class="text-sm text-wood">/day</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <form class="space-y-4">
-              <div>
-                <label class="block text-sm font-semibold text-wood-dark mb-2">Check-in Date</label>
-                <div class="relative">
-                  <input type="date"
-                    class="w-full px-4 py-3 rounded-xl border-2 border-wood-light/50 focus:border-primary-500 focus:outline-none bg-white text-wood-dark">
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-sm font-semibold text-wood-dark mb-2">Check-out Date</label>
-                <div class="relative">
-                  <input type="date"
-                    class="w-full px-4 py-3 rounded-xl border-2 border-wood-light/50 focus:border-primary-500 focus:outline-none bg-white text-wood-dark">
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-sm font-semibold text-wood-dark mb-2">Number of Guests</label>
-                <input type="number" name="guest_count" min="1" value="1" class="w-full rounded-xl border border-wood-light px-4 py-3
-             focus:outline-none focus:ring-2 focus:ring-primary
-             focus:border-primary transition" placeholder="Enter guests" required />
-              </div>
-
-              <div>
-                <label class="block text-sm font-semibold text-wood-dark mb-2">Number of Extra Guests</label>
-                <input type="number" name="extra_guest_count" min="0" value="0" class="w-full rounded-xl border border-wood-light px-4 py-3
-             focus:outline-none focus:ring-2 focus:ring-primary
-             focus:border-primary transition" placeholder="Enter extra guests" />
-              </div>
-
-
-
-              <!-- Special Requests -->
-              <div>
-                <label class="block text-sm font-semibold text-wood-dark mb-2">
-                  Special Requests
-                </label>
-                <textarea name="special_requests" rows="3" class="w-full rounded-xl border border-wood-light px-4 py-3
-           focus:outline-none focus:ring-2 focus:ring-primary
-           focus:border-primary transition" placeholder="Any special requests or requirements..."></textarea>
-              </div>
-
-              <!-- Coupon Code -->
-              <div>
-                <label class="block text-sm font-semibold text-wood-dark mb-2">
-                  Coupon Code
-                </label>
-                <input type="text" name="coupon_code" class="w-full rounded-xl border border-wood-light px-4 py-3
-           focus:outline-none focus:ring-2 focus:ring-primary
-           focus:border-primary transition bg-blue-50" placeholder="Enter coupon code" />
-              </div>
-
-              <!-- Payment Method -->
-              <!-- Payment Method -->
-              <div class="space-y-3">
-                <label class="block text-sm font-semibold text-wood-dark mb-2">
-                  Payment Method
-                </label>
-
-                <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer">
-                  <input type="radio" name="payment_method" value="cash" onclick="updateAmount('cash')"
-                    class="accent-primary">
-                  <span>Pay at Check-in (Cash)</span>
-                </label>
-
-                <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer">
-                  <input type="radio" name="payment_method" value="partial" onclick="updateAmount('partial')"
-                    class="accent-primary">
-                  <span>Pay 30% Online (Razorpay)</span>
-                </label>
-
-                <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer">
-                  <input type="radio" name="payment_method" value="full" checked onclick="updateAmount('full')"
-                    class="accent-primary">
-                  <span>Pay Full Online (Razorpay)</span>
-                </label>
-              </div>
-
-              <!-- Amount Display -->
-              <div class="flex justify-between items-center bg-gray-50 p-4 rounded-xl border">
-                <span class="text-wood-dark font-semibold" id="pay-label">
-                  Pay full:
-                </span>
-                <span class="text-orange-600 font-bold text-lg" id="pay-amount">
-                  ₹15,000
-                </span>
-              </div>
-
-              <!-- Razorpay Selection -->
-              <div class="border rounded-xl p-4">
-                <label class="flex items-center gap-3 cursor-pointer">
-                  <input type="radio" checked class="accent-primary" />
-                  <span class="font-semibold text-wood-dark">Razorpay Checkout</span>
-                </label>
-              </div>
-
-              <!-- Submit Button -->
-              <button type="submit" class="w-full bg-orange-600 hover:bg-orange-500 text-white py-4 rounded-xl
-         font-bold text-lg transition shadow-lg flex items-center justify-center gap-2">
-                <i data-lucide="calendar-check" class="w-5 h-5"></i>
-                Book Entire Villa
-              </button>
-
-              <p class="text-center text-sm text-wood mt-3">
-                Secure payment powered by Razorpay
-              </p>
-            </form>
-
-            <p class="text-center text-sm text-wood mt-4">You won't be charged yet</p>
-          </div>
-
-
-        </div>
+      <!-- Time -->
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <input type="time" name="check_in_time" class="border p-2 rounded">
+        <input type="time" name="check_out_time" class="border p-2 rounded">
       </div>
 
-
-
-
-
-
-
-
-
-      <!-- Left Column - Details -->
-      <div class=" space-y-8">
-
-
-        <!-- Title & Info -->
-        <div class="bg-white rounded-2xl p-6 shadow-lg border-2 border-wood-light/20">
-          <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <div>
-              <h1 class="font-display text-3xl text-wood-dark mb-2">Green Valley Farmhouse</h1>
-              <div class="flex items-center gap-2 text-wood">
-                <i data-lucide="map-pin" class="w-5 h-5 text-primary-500"></i>
-                <span>Shamirpet, Hyderabad - 25 km from city</span>
-              </div>
-            </div>
-            <div class="flex items-center gap-4">
-              <div class="text-center">
-                <div class="flex items-center gap-1">
-                  <i data-lucide="users" class="w-5 h-5 text-primary-500"></i>
-                  <span class="font-bold text-wood-dark">50</span>
-                </div>
-                <span class="text-xs text-wood">Max Guests</span>
-              </div>
-              <div class="text-center">
-                <div class="flex items-center gap-1">
-                  <i data-lucide="bed" class="w-5 h-5 text-primary-500"></i>
-                  <span class="font-bold text-wood-dark">6</span>
-                </div>
-                <span class="text-xs text-wood">Bedrooms</span>
-              </div>
-              <div class="text-center">
-                <div class="flex items-center gap-1">
-                  <i data-lucide="bath" class="w-5 h-5 text-primary-500"></i>
-                  <span class="font-bold text-wood-dark">4</span>
-                </div>
-                <span class="text-xs text-wood">Bathrooms</span>
-              </div>
-            </div>
-          </div>
-
-          <p class="text-wood leading-relaxed">
-            Experience the perfect blend of luxury and nature at Green Valley Farmhouse. Nestled in the serene outskirts
-            of Hyderabad, this stunning property offers a peaceful escape with all modern amenities. Ideal for family
-            gatherings, corporate events, birthday parties, and weekend getaways.
-          </p>
-        </div>
+      <!-- Guests -->
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <input type="number" name="guest_count" min="1" value="20" class="border p-2 rounded">
+        <input type="number" name="extra_guest_count" min="0" value="0" class="border p-2 rounded">
       </div>
 
-      <!-- =============== -->
-
-    </div>
-  </main>
-
-
-
-
-
-  <!-- REVIEW MODAL -->
-  <div id="reviewModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
-
-    <div class="bg-white rounded-2xl w-full max-w-md p-6 relative">
-
-      <button onclick="closeReviewModal()" class="absolute top-3 right-3 text-gray-400">✖</button>
-
-      <h3 class="text-xl font-bold mb-4">Add Your Review</h3>
-
-      <input type="text" placeholder="Your Name" class="w-full border p-3 rounded-lg mb-3">
-
-      <!-- STAR RATING -->
-      <div class="flex gap-2 mb-4 text-2xl cursor-pointer">
-        <span onclick="setRating(1)">⭐</span>
-        <span onclick="setRating(2)">⭐</span>
-        <span onclick="setRating(3)">⭐</span>
-        <span onclick="setRating(4)">⭐</span>
-        <span onclick="setRating(5)">⭐</span>
+      <!-- Coupon -->
+      <div class="mb-3">
+        <label class="block text-sm font-semibold">Coupon Code</label>
+        <input id="coupon" class="w-full border p-2 rounded">
+        <p id="coupon-msg" class="text-sm mt-1"></p>
       </div>
 
-      <textarea rows="4" placeholder="Write your review" class="w-full border p-3 rounded-lg mb-4"></textarea>
+      <!-- Payment -->
+      <div class="space-y-2 mb-4">
+        <label><input type="radio" name="payment_method" value="farmhouse" checked> Pay at Farmhouse</label><br>
+        <label><input type="radio" name="payment_method" value="partial_razorpay"> 30% Online</label><br>
+        <label><input type="radio" name="payment_method" value="full_razorpay"> Full Online</label>
+      </div>
 
-      <button class="w-full bg-primary-500 text-white py-3 rounded-lg font-bold">
-        Submit Review
+      <!-- Total -->
+      <div class="bg-gray-100 p-3 rounded flex justify-between mb-4">
+        <strong>Total</strong>
+        <span id="total-price">₹0</span>
+      </div>
+
+      <button class="w-full bg-orange-600 text-white py-3 rounded font-bold">
+        Confirm Booking
       </button>
 
-    </div>
+    </form>
   </div>
-  <script>
-    let rating = 0;
+</div>
 
-    function openReviewModal() {
-      document.getElementById('reviewModal').classList.remove('hidden');
-    }
+<!-- ================= FLATPICKR ================= -->
+<script>
+  const bookedDates = {{ booked_dates|safe }};
+  const blockedDates = {{ blocked_dates|safe }};
+  const disabledDates = bookedDates.concat(blockedDates);
 
-    function closeReviewModal() {
-      document.getElementById('reviewModal').classList.add('hidden');
-    }
+  flatpickr("#checkin", {
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    disable: disabledDates
+  });
 
-    function setRating(value) {
-      rating = value;
-      alert("Rating selected: " + rating + " stars");
-    }
-  </script>
+  flatpickr("#checkout", {
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    disable: disabledDates
+  });
+</script>
 
+<!-- ================= COUPON ================= -->
+<script>
+  document.getElementById("coupon").addEventListener("blur", function () {
+    fetch(`/validate-coupon/?code=${this.value}&amount=10000`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.valid) {
+          document.getElementById("coupon-msg").innerHTML =
+            `<span class="text-green-600">Discount ₹${data.discount}</span>`;
+        } else {
+          document.getElementById("coupon-msg").innerHTML =
+            `<span class="text-red-600">Invalid Coupon</span>`;
+        }
+      });
+  });
+</script>
 
-  <script>
-    lucide.createIcons();
-  </script>
-
-
-
-
-
-  <script>
-    function openTab(tabId) {
-      document.querySelectorAll('.tab-content')
-        .forEach(tab => tab.classList.add('hidden'));
-
-      document.querySelectorAll('.tab-btn')
-        .forEach(btn => btn.classList.remove('active-tab'));
-
-      document.getElementById(tabId).classList.remove('hidden');
-      event.target.classList.add('active-tab');
-    }
-  </script>
-
-
-  <!-- ================= JAVASCRIPT ================= -->
-  <script>
-    let scale = 1, posX = 0, posY = 0, isDragging = false, startX, startY;
-    const img = document.getElementById("mainImage");
-    const wrapper = document.getElementById("imageWrapper");
-
-    function applyTransform() {
-      img.style.transform = `scale(${scale}) translate(${posX}px, ${posY}px)`;
-    }
-    function zoomIn() { scale = Math.min(scale + 0.2, 4); applyTransform(); }
-    function zoomOut() { scale = Math.max(scale - 0.2, 1); if (scale === 1) { posX = posY = 0; } applyTransform(); }
-    function resetZoom() { scale = 1; posX = posY = 0; applyTransform(); }
-    function changeImage(el) {
-      img.src = el.src.replace("w=300", "w=1600");
-      document.querySelectorAll(".thumb").forEach(t => t.classList.remove("active-thumb"));
-      el.classList.add("active-thumb");
-      resetZoom();
-    }
-    wrapper.addEventListener("mousedown", e => {
-      if (scale === 1) return;
-      isDragging = true;
-      startX = e.clientX - posX;
-      startY = e.clientY - posY;
-      wrapper.classList.add("grabbing");
-    });
-    window.addEventListener("mousemove", e => {
-      if (!isDragging) return;
-      posX = e.clientX - startX;
-      posY = e.clientY - startY;
-      applyTransform();
-    });
-    window.addEventListener("mouseup", () => { isDragging = false; wrapper.classList.remove("grabbing"); });
-    img.addEventListener("wheel", e => { e.preventDefault(); e.deltaY < 0 ? zoomIn() : zoomOut(); });
-    function openFullscreen() { if (img.requestFullscreen) img.requestFullscreen(); }
-
-    /* Tabs */
-    function openTab(tabId, btn) {
-      document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active-tab"));
-      document.getElementById(tabId).classList.remove("hidden");
-      btn.classList.add("active-tab");
-    }
-  </script>
-
-
-
-
-
-
-
-
-
-
-  <script>
-    function updateAmount(type) {
-
-      // 🔴 DUMMY VALUES (change later)
-      const fullAmount = 15000;
-      const partialAmount = 4500; // 30%
-      const cashAmount = 0;
-
-      const label = document.getElementById("pay-label");
-      const amount = document.getElementById("pay-amount");
-
-      if (type === "full") {
-        label.innerText = "Pay full:";
-        amount.innerText = "₹" + fullAmount.toLocaleString();
-      }
-
-      if (type === "partial") {
-        label.innerText = "Pay now (30%):";
-        amount.innerText = "₹" + partialAmount.toLocaleString();
-      }
-
-      if (type === "cash") {
-        label.innerText = "Pay at check-in:";
-        amount.innerText = "₹" + cashAmount;
-      }
-    }
-  </script>
-
-  <!-- </body>
-
-</html> -->
-
-
-
-  {% endblock %}
+{% endblock %}

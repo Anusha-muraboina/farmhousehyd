@@ -143,6 +143,10 @@ DEFAULT_FROM_EMAIL = "Farmhouses Hyderabad <anushamuraboina9@gmail.com>"
 
 
 
+RAZORPAY_KEY_ID = "rzp_test_Rv2abPyaI8rKSP"
+RAZORPAY_KEY_SECRET = "cOuReUYXYcYBWeNUg3LSYkmB"
+RAZORPAY_WEBHOOK_SECRET = "kdfwfbsdhfwberfdlnsrojofdiwer4y59ujdnf94yu5u#28nf"
+
 
 
 

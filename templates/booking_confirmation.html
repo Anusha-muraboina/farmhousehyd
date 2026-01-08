@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-xl mx-auto py-16 text-center">
+  <h1 class="text-3xl font-bold text-green-600 mb-4">Booking Confirmed 🎉</h1>
+
+  <p class="mb-4">Booking ID: <strong>{{ booking.booking_id }}</strong></p>
+
+  <div class="bg-gray-100 p-6 rounded">
+    <p><strong>Farmhouse:</strong> {{ booking.farmhouse.title }}</p>
+    <p><strong>Check-in:</strong> {{ booking.check_in }}</p>
+    <p><strong>Check-out:</strong> {{ booking.check_out }}</p>
+    <p><strong>Total:</strong> ₹{{ booking.total_amount }}</p>
+    <p><strong>Status:</strong> {{ booking.status|title }}</p>
+  </div>
+</div>
+
+{% endblock %}

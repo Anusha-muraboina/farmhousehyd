@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; background:#f3f4f6; padding:20px;">
+
+<div style="max-width:600px;margin:auto;background:#fff;padding:25px;border-radius:10px;">
+  <h2>📌 New Booking Confirmed</h2>
+
+  <p><strong>Booking ID:</strong> {{ booking.booking_id }}</p>
+  <p><strong>Guest:</strong> {{ booking.guest_name }}</p>
+  <p><strong>Farmhouse:</strong> {{ booking.farmhouse.title }}</p>
+  <p><strong>Dates:</strong> {{ booking.check_in }} → {{ booking.check_out }}</p>
+  <p><strong>Amount:</strong> ₹{{ booking.total_amount }}</p>
+
+  <p>Please manage this booking in admin panel.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; background:#f9fafb; padding:20px;">
+
+<div style="max-width:600px;margin:auto;background:#fff;padding:25px;border-radius:10px;">
+  <h2 style="color:#16a34a;">🎉 Booking Confirmed!</h2>
+
+  <p>Dear {{ booking.guest_name }},</p>
+
+  <p>Your booking has been <strong>confirmed</strong>. Below are the details:</p>
+
+  <ul>
+    <li><strong>Booking ID:</strong> {{ booking.booking_id }}</li>
+    <li><strong>Farmhouse:</strong> {{ booking.farmhouse.title }}</li>
+    <li><strong>Check-in:</strong> {{ booking.check_in }}</li>
+    <li><strong>Check-out:</strong> {{ booking.check_out }}</li>
+    <li><strong>Total Amount:</strong> ₹{{ booking.total_amount }}</li>
+  </ul>
+
+  <p>We look forward to hosting you.</p>
+
+  <p style="margin-top:20px;">
+    Regards,<br>
+    <strong>Vivaan Farmhouse Team</strong>
+  </p>
+</div>
+
+</body>
+</html>

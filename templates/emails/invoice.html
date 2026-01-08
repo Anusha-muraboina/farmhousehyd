@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice - {{ booking.booking_id }}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      padding: 30px;
+    }
+    .invoice-box {
+      background: #ffffff;
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    h1 {
+      margin-bottom: 5px;
+    }
+    .text-right {
+      text-align: right;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table th, table td {
+      padding: 10px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+    table th {
+      background: #f3f4f6;
+    }
+    .total {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 13px;
+      color: #6b7280;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="invoice-box">
+
+    <table>
+      <tr>
+        <td>
+          <h1>Vivaan Farmhouse</h1>
+          <p>Hyderabad</p>
+        </td>
+        <td class="text-right">
+          <strong>Invoice</strong><br>
+          Invoice ID: {{ booking.invoice.invoice_id|default:"N/A" }}<br>
+          Booking ID: {{ booking.booking_id }}<br>
+          Date: {{ booking.created_at|date:"d M Y" }}
+        </td>
+      </tr>
+    </table>
+
+    <hr>
+
+    <h3>Guest Details</h3>
+    <p>
+      <strong>Name:</strong> {{ booking.guest_name }}<br>
+      <strong>Email:</strong> {{ booking.guest_email }}<br>
+      <strong>Phone:</strong> {{ booking.guest_phone }}
+    </p>
+
+    <h3>Booking Details</h3>
+    <p>
+      <strong>Farmhouse:</strong> {{ booking.farmhouse.title }}<br>
+      <strong>Check-in:</strong> {{ booking.check_in }}<br>
+      <strong>Check-out:</strong> {{ booking.check_out }}<br>
+      <strong>Nights:</strong> {{ booking.nights }}<br>
+      <strong>Guests:</strong> {{ booking.guest_count }} (+{{ booking.extra_guest_count }} extra)
+    </p>
+
+    <table>
+      <tr>
+        <th>Description</th>
+        <th>Amount</th>
+      </tr>
+      <tr>
+        <td>Base Price</td>
+        <td>₹{{ booking.sub_total }}</td>
+      </tr>
+      <tr>
+        <td>Discount</td>
+        <td>- ₹{{ booking.disc_price }}</td>
+      </tr>
+      <tr>
+        <td>Tax</td>
+        <td>₹{{ booking.tax_price }}</td>
+      </tr>
+      <tr>
+        <td class="total">Total Paid</td>
+        <td class="total">₹{{ booking.total_amount }}</td>
+      </tr>
+    </table>
+
+    <div class="footer">
+      Thank you for booking with Vivaan Farmhouse.<br>
+      This is a system generated invoice.
+    </div>
+
+  </div>
+</body>
+</html>

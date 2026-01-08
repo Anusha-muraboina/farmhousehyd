@@ -68,8 +68,6 @@ class Coupon(models.Model):
     class Meta:
         ordering = ['-created_at']
 
-    def __str__(self):
-        return f"{self.title} ({self.code})"
 
     # ✅ Check coupon validity
     def is_valid(self):
@@ -88,6 +86,8 @@ class Coupon(models.Model):
             return discount
 
         return min(self.discount_value, amount)
+    def __str__(self):
+        return f"{self.title} ({self.code})"
 
 class CouponUsage(models.Model):
     coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE)
