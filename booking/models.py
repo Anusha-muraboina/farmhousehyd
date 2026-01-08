@@ -63,7 +63,11 @@ class Booking(models.Model):
 
     check_in = models.DateField()
     check_out = models.DateField()
-
+    check_in_time = models.TimeField(
+        null=True,
+        blank=True,
+        help_text="Example: 10:00 AM"
+    )
     special_requests = models.TextField(blank=True)
 
     sub_total = models.DecimalField(max_digits=10, decimal_places=2)
@@ -75,6 +79,11 @@ class Booking(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True
+    )
+    check_out_time = models.TimeField(
+        null=True,
+        blank=True,
+        help_text="Example: 09:00 AM"
     )
     remaining_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
@@ -122,6 +131,11 @@ class Booking(models.Model):
 
 # models.py
 class BlockedDate(models.Model):
+    farmhouse = models.ForeignKey(
+        Farmhouse,
+        on_delete=models.CASCADE,
+        related_name="blocked_dates"
+    )
     start_date = models.DateField()
     end_date = models.DateField()
     reason = models.CharField(max_length=255, blank=True)

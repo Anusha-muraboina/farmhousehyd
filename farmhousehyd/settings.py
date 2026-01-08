@@ -138,6 +138,12 @@ EMAIL_HOST_PASSWORD = "zdhpxjpgdbyydxyw"
 
 DEFAULT_FROM_EMAIL = "Farmhouses Hyderabad <anushamuraboina9@gmail.com>"
 
+# Admin Email
+ADMIN_EMAIL = "anushamuraboina9@gmail.com"
+
+# Optional: CC emails
+CC_EMAIL = ["anushamuraboina99@gmail.com"]
+
 # =================================================================
 
 

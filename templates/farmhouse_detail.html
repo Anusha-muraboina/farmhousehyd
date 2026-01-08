@@ -3,102 +3,147 @@
 
 {% block content %}
 
+<!-- FLATPICKR -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-<div class="container mx-auto px-4 py-10 grid lg:grid-cols-2 gap-10">
+<style>
+  .flatpickr-day.booked {
+    background: #ef4444 !important;
+    color: white !important;
+    cursor: not-allowed;
+  }
+  .flatpickr-day.blocked {
+    background: #7c2d12 !important;
+    color: white !important;
+    cursor: not-allowed;
+  }
+</style>
 
-  <!-- LEFT : DETAILS -->
+<div class="max-w-7xl mx-auto px-4 py-10 grid lg:grid-cols-2 gap-10">
+
+  <!-- LEFT : FARMHOUSE DETAILS -->
   <div>
     <h1 class="text-3xl font-bold mb-2">{{ farmhouse.title }}</h1>
+
     <p class="text-gray-600 mb-4">
       {{ farmhouse.location.name }} • {{ farmhouse.distance_km }} km from city
     </p>
 
-    <p class="mb-6">{{ farmhouse.description }}</p>
+    <p class="mb-6 text-gray-700 leading-relaxed">
+      {{ farmhouse.description }}
+    </p>
 
-    <h3 class="font-semibold mb-2">Amenities</h3>
+    <h3 class="font-semibold text-lg mb-3">Amenities</h3>
     <div class="grid grid-cols-2 gap-3">
       {% for amenity in farmhouse.amenities.all %}
         <div class="flex items-center gap-2 bg-gray-100 p-3 rounded">
           <i data-lucide="{{ amenity.icon_class }}"></i>
-          {{ amenity.name }}
+          <span>{{ amenity.name }}</span>
         </div>
       {% endfor %}
     </div>
   </div>
 
-  <!-- RIGHT : BOOKING CARD -->
-  <div class="border rounded-xl p-6 shadow">
+  <!-- RIGHT : BOOKING FORM -->
+  <div class="border rounded-xl p-6 shadow-lg bg-white">
 
-    <h3 class="text-xl font-bold mb-4">Book This Farmhouse</h3>
+    <h2 class="text-xl font-bold mb-4">Book This Farmhouse</h2>
 
     <form method="POST">
       {% csrf_token %}
 
-      <input type="hidden" id="base-amount" value="0">
-
-      <!-- Guest Info -->
-      <div class="mb-3">
-        <label class="block text-sm font-semibold">Name</label>
-        <input name="guest_name" required class="w-full border p-2 rounded">
+      <!-- GUEST DETAILS -->
+      <div class="grid grid-cols-1 gap-3 mb-4">
+        <input name="guest_name" placeholder="Full Name" required class="border p-3 rounded">
+        <input name="guest_email" type="email" placeholder="Email" required class="border p-3 rounded">
+        <input name="guest_phone" placeholder="Phone Number" required class="border p-3 rounded">
       </div>
 
-      <div class="mb-3">
-        <label class="block text-sm font-semibold">Email</label>
-        <input name="guest_email" type="email" required class="w-full border p-2 rounded">
-      </div>
-
-      <div class="mb-3">
-        <label class="block text-sm font-semibold">Phone</label>
-        <input name="guest_phone" required class="w-full border p-2 rounded">
-      </div>
-
-      <!-- Dates -->
-      <div class="grid grid-cols-2 gap-3 mb-3">
+      <!-- DATES -->
+      <div class="grid grid-cols-2 gap-3 mb-4">
         <div>
-          <label class="block text-sm font-semibold">Check-in</label>
-          <input id="checkin" name="check_in" required class="w-full border p-2 rounded">
+          <label class="text-sm font-semibold">Check-in Date</label>
+          <!-- <input id="checkin" name="check_in" required class="border p-3 rounded w-full"> -->
+
+
+          <input type="text" id="checkin" name="check_in" required class="border p-3 rounded w-full">
+
         </div>
         <div>
-          <label class="block text-sm font-semibold">Check-out</label>
-          <input id="checkout" name="check_out" required class="w-full border p-2 rounded">
+          <label class="text-sm font-semibold">Check-out Date</label>
+          <!-- <input id="checkout" name="check_out" required class="border p-3 rounded w-full"> -->
+
+          <input type="text" id="checkout" name="check_out" required class="border p-3 rounded w-full">
+
         </div>
       </div>
 
-      <!-- Time -->
-      <div class="grid grid-cols-2 gap-3 mb-3">
-        <input type="time" name="check_in_time" class="border p-2 rounded">
-        <input type="time" name="check_out_time" class="border p-2 rounded">
+      <!-- TIMES -->
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <input type="time" name="check_in_time" class="border p-3 rounded">
+        <input type="time" name="check_out_time" class="border p-3 rounded">
       </div>
 
-      <!-- Guests -->
-      <div class="grid grid-cols-2 gap-3 mb-3">
-        <input type="number" name="guest_count" min="1" value="20" class="border p-2 rounded">
-        <input type="number" name="extra_guest_count" min="0" value="0" class="border p-2 rounded">
+      <!-- GUEST COUNTS -->
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <input type="number" name="guest_count" value="20" min="1" class="border p-3 rounded">
+        <input type="number" name="extra_guest_count" value="0" min="0" class="border p-3 rounded">
       </div>
 
-      <!-- Coupon -->
-      <div class="mb-3">
-        <label class="block text-sm font-semibold">Coupon Code</label>
-        <input id="coupon" class="w-full border p-2 rounded">
+      <!-- SPECIAL REQUEST -->
+      <textarea name="special_requests" rows="3"
+        class="border p-3 rounded w-full mb-4"
+        placeholder="Special requests (optional)"></textarea>
+
+      <!-- COUPON -->
+      <div class="mb-4">
+        <label class="text-sm font-semibold">Coupon Code</label>
+        <input id="coupon" name="coupon_code" class="border p-3 rounded w-full">
         <p id="coupon-msg" class="text-sm mt-1"></p>
       </div>
 
-      <!-- Payment -->
+      <!-- PAYMENT -->
+      <!-- PAYMENT METHOD -->
       <div class="space-y-2 mb-4">
-        <label><input type="radio" name="payment_method" value="farmhouse" checked> Pay at Farmhouse</label><br>
-        <label><input type="radio" name="payment_method" value="partial_razorpay"> 30% Online</label><br>
-        <label><input type="radio" name="payment_method" value="full_razorpay"> Full Online</label>
+        <label class="flex items-center gap-2">
+          <input type="radio" name="payment_method" value="farmhouse" checked onclick="updatePayable()">
+          Pay at Farmhouse
+        </label>
+
+        <label class="flex items-center gap-2">
+          <input type="radio" name="payment_method" value="partial_razorpay" onclick="updatePayable()">
+          Pay 30% Online
+        </label>
+
+        <label class="flex items-center gap-2">
+          <input type="radio" name="payment_method" value="full_razorpay" onclick="updatePayable()">
+          Pay Full Online
+        </label>
       </div>
 
-      <!-- Total -->
-      <div class="bg-gray-100 p-3 rounded flex justify-between mb-4">
-        <strong>Total</strong>
-        <span id="total-price">₹0</span>
+      <!-- PRICE SUMMARY -->
+      <div class="bg-gray-100 p-4 rounded space-y-2">
+        <div class="flex justify-between">
+          <span>Subtotal</span>
+          <span>₹<span id="subtotal">0</span></span>
+        </div>
+
+        <div class="flex justify-between text-green-600 hidden" id="discount-row">
+          <span>Coupon Discount</span>
+          <span>- ₹<span id="discount">0</span></span>
+        </div>
+
+        <hr>
+
+        <div class="flex justify-between font-bold text-lg">
+          <span>Pay Now</span>
+          <span class="text-orange-600">₹<span id="pay-now">0</span></span>
+        </div>
       </div>
 
-      <button class="w-full bg-orange-600 text-white py-3 rounded font-bold">
+
+      <button class="w-full bg-orange-600 text-white py-3 rounded font-bold hover:bg-orange-500">
         Confirm Booking
       </button>
 
@@ -106,39 +151,120 @@
   </div>
 </div>
 
-<!-- ================= FLATPICKR ================= -->
+<!-- ================= FLATPICKR LOGIC ================= -->
+
+
+
+<script>
+  let basePricePerDay = {{ farmhouse.price_per_day|default:0 }};
+  let extraGuestPrice = {{ farmhouse.pricing.extra_guest_price|default:0 }};
+  let appliedDiscount = 0;
+
+  function calculateNights() {
+    const checkin = document.getElementById("checkin").value;
+    const checkout = document.getElementById("checkout").value;
+
+    if (!checkin || !checkout) return 0;
+
+    const start = new Date(checkin);
+    const end = new Date(checkout);
+    return Math.max((end - start) / (1000 * 60 * 60 * 24), 0);
+  }
+
+  function calculateSubtotal() {
+    const nights = calculateNights();
+    const extraGuests = parseInt(
+      document.querySelector("[name='extra_guest_count']").value || 0
+    );
+
+    let total = nights * basePricePerDay;
+    total += extraGuests * extraGuestPrice;
+
+    document.getElementById("subtotal").innerText = total.toFixed(0);
+    return total;
+  }
+
+  function updatePayable() {
+    const subtotal = calculateSubtotal();
+    let payable = subtotal - appliedDiscount;
+
+    const method = document.querySelector("input[name='payment_method']:checked").value;
+
+    if (method === "partial_razorpay") {
+      payable = payable * 0.3;   // ✅ 30%
+    }
+
+    if (method === "farmhouse") {
+      payable = 0;
+    }
+
+    document.getElementById("pay-now").innerText = payable.toFixed(0);
+  }
+
+  // ================= COUPON =================
+  document.getElementById("coupon").addEventListener("blur", function () {
+    const code = this.value;
+    if (!code) return;
+
+    fetch(`/booking/coupon/validate/?code=${code}&amount=${calculateSubtotal()}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.valid) {
+          appliedDiscount = data.discount;
+          document.getElementById("discount").innerText = appliedDiscount.toFixed(0);
+          document.getElementById("discount-row").classList.remove("hidden");
+        } else {
+          appliedDiscount = 0;
+          document.getElementById("discount-row").classList.add("hidden");
+        }
+        updatePayable();
+      });
+  });
+
+  // Auto update when fields change
+  document.getElementById("checkin").addEventListener("change", updatePayable);
+  document.getElementById("checkout").addEventListener("change", updatePayable);
+  document.querySelector("[name='extra_guest_count']").addEventListener("input", updatePayable);
+</script>
+
 <script>
   const bookedDates = {{ booked_dates|safe }};
   const blockedDates = {{ blocked_dates|safe }};
   const disabledDates = bookedDates.concat(blockedDates);
 
+  let checkoutPicker;
+
   flatpickr("#checkin", {
     dateFormat: "Y-m-d",
     minDate: "today",
-    disable: disabledDates
+    disable: disabledDates,
+    onDayCreate: function(_, __, ___, dayElem) {
+      const date = dayElem.dateObj.toISOString().split("T")[0];
+      if (bookedDates.includes(date)) dayElem.classList.add("booked");
+      if (blockedDates.includes(date)) dayElem.classList.add("blocked");
+    },
+    onChange: function(selectedDates) {
+      if (!selectedDates.length) return;
+
+      const minCheckout = new Date(selectedDates[0]);
+      minCheckout.setDate(minCheckout.getDate() + 1);
+
+      checkoutPicker.set("minDate", minCheckout);
+      checkoutPicker.clear();
+      updatePayable();   // 🔥 recalc price
+    }
   });
 
-  flatpickr("#checkout", {
+  checkoutPicker = flatpickr("#checkout", {
     dateFormat: "Y-m-d",
     minDate: "today",
-    disable: disabledDates
-  });
-</script>
-
-<!-- ================= COUPON ================= -->
-<script>
-  document.getElementById("coupon").addEventListener("blur", function () {
-    fetch(`/validate-coupon/?code=${this.value}&amount=10000`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.valid) {
-          document.getElementById("coupon-msg").innerHTML =
-            `<span class="text-green-600">Discount ₹${data.discount}</span>`;
-        } else {
-          document.getElementById("coupon-msg").innerHTML =
-            `<span class="text-red-600">Invalid Coupon</span>`;
-        }
-      });
+    disable: disabledDates,
+    onDayCreate: function(_, __, ___, dayElem) {
+      const date = dayElem.dateObj.toISOString().split("T")[0];
+      if (bookedDates.includes(date)) dayElem.classList.add("booked");
+      if (blockedDates.includes(date)) dayElem.classList.add("blocked");
+    },
+    onChange: updatePayable
   });
 </script>
 
