@@ -39,9 +39,7 @@ class Amenity(models.Model):
 
 
 from django.utils.text import slugify
-
 from django.conf import settings
-
 class Farmhouse(models.Model):
     
     user = models.ForeignKey(
