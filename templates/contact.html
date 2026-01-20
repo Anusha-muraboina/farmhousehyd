@@ -83,23 +83,33 @@
             <div class="rounded-3xl p-10 shadow-md">
                 <h2 class="text-3xl font-bold mb-8">Reach Us Anytime</h2>
 
-                <form method="POST" class="space-y-6">
-                    {% csrf_token %}
+<form method="POST" class="space-y-6">
+    {% csrf_token %}
 
-                    {{ form.name }}
+    <!-- FARMHOUSE DROPDOWN -->
+    <div>
+        <label class="text-sm text-gray-600 mb-1 block">
+            Select Farmhouse
+        </label>
+        {{ form.farmhouse }}
+    </div>
 
-                    <div class="grid md:grid-cols-2 gap-6">
-                        {{ form.phone }}
-                        {{ form.email }}
-                    </div>
+    {{ form.name }}
 
-                    {{ form.message }}
+    <div class="grid md:grid-cols-2 gap-6">
+        {{ form.phone }}
+        {{ form.email }}
+    </div>
 
-                    <button type="submit"
-                        class="bg-orange-500 hover:bg-secondary text-white font-semibold px-10 py-3 rounded-lg">
-                        Submit Now
-                    </button>
-                </form>
+    {{ form.message }}
+
+    <button
+        type="submit"
+        class="bg-orange-500 hover:bg-secondary text-white font-semibold px-10 py-3 rounded-lg">
+        Submit Now
+    </button>
+</form>
+
             </div>
 
         </div>

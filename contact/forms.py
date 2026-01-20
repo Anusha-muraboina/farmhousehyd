@@ -1,11 +1,20 @@
 from django import forms
 from .models import ContactMessage
-
+from farmhouse.models import Farmhouse
 
 class ContactForm(forms.ModelForm):
+    farmhouse = forms.ModelChoiceField(
+        queryset=Farmhouse.objects.filter(is_active=True),
+        empty_label="Select Farmhouse",
+        required=False,
+        widget=forms.Select(attrs={
+            "class": "w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-orange-500"
+        })
+    )
+
     class Meta:
         model = ContactMessage
-        fields = ["name", "phone", "email", "message"]
+        fields = ["farmhouse","name", "phone", "email", "message"]
 
         widgets = {
             "name": forms.TextInput(attrs={
