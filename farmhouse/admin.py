@@ -77,3 +77,13 @@ class FarmhouseAdmin(admin.ModelAdmin):
 
 admin.site.register(Amenity)
 admin.site.register(Banner)
+
+
+
+@admin.register(TouristPlace)
+class TouristPlaceAdmin(admin.ModelAdmin):
+    list_display = ("title", "is_active", "created_at")
+    list_filter = ("is_active",)
+    search_fields = ("title",)
+    
+    

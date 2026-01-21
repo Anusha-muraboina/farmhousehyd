@@ -166,4 +166,36 @@ class FarmhouseImage(models.Model):
         return self.farmhouse.title
 
 
+from django.db import models
+
+
+class TouristPlace(models.Model):
+    title = models.CharField(
+        max_length=150,
+        help_text="Example: Ramoji Film City"
+    )
+
+    image = models.ImageField(
+        upload_to="tourist_places/",
+        help_text="Upload place image"
+    )
+
+    subtitle = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Example: 0 Tour / Nearby Attraction"
+    )
+
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Tourist Place"
+        verbose_name_plural = "Tourist Places"
+
+    def __str__(self):
+        return self.title
 

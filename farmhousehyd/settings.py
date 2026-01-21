@@ -44,11 +44,14 @@ INSTALLED_APPS = [
     'coupon',
     'booking',
     'rating',
+    'cms',
     
     'corsheaders',
     
     # ✅ ADD THIS
     'django.contrib.humanize',
+    
+    "ckeditor",
 ]
 
 MIDDLEWARE = [
@@ -153,6 +156,17 @@ RAZORPAY_KEY_ID = "rzp_test_Rv2abPyaI8rKSP"
 RAZORPAY_KEY_SECRET = "cOuReUYXYcYBWeNUg3LSYkmB"
 RAZORPAY_WEBHOOK_SECRET = "kdfwfbsdhfwberfdlnsrojofdiwer4y59ujdnf94yu5u#28nf"
 
+# ====================================
+
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_CONFIGS = {
+    "default": {
+        "toolbar": "full",
+        "height": 300,
+        "width": "100%",
+    }
+}
 
 
 

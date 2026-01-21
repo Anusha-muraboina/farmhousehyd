@@ -1,6 +1,8 @@
 from django.db import models
 
 # Create your models here.
+from django.db import models
+from ckeditor.fields import RichTextField
 
 class Choos_Services(models.Model):
     title = models.CharField(max_length=200)
@@ -33,9 +35,72 @@ class WhoWeAre(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(null=True,blank=True)
     icon = models.CharField(  max_length=100,   blank=True, help_text="Example: fa-solid fa-house or lucide-home" )
-    image = models.ImageField(upload_to='chosse_banners/')
+    image = models.ImageField(upload_to='chosse_banners/',null=True ,blank=True)
     is_active = models.BooleanField(default=True)
     Slot_position = models.PositiveIntegerField(blank=True,null=True)
     
+    def __str__(self):
+        return self.title
+
+
+
+
+class AboutSection(models.Model):
+    title_tag = models.CharField(
+        max_length=50,
+        default="About Us",
+        help_text="Small green label text"
+    )
+
+    main_title = models.CharField(
+        max_length=200,
+        help_text="Big heading text"
+    )
+
+    description = RichTextField(
+        help_text="You can add HTML tags, lists, bold, etc."
+    )
+
+    image = models.ImageField(
+        upload_to="about/images/",
+        blank=True,
+        null=True
+    )
+
+    video = models.FileField(
+        upload_to="about/videos/",
+        blank=True,
+        null=True,
+        help_text="Upload mp4 video"
+    )
+
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.main_title
+
+
+class AboutFeature(models.Model):
+
+    about = models.ForeignKey(
+        AboutSection,
+        on_delete=models.CASCADE,
+        related_name="features"
+    )
+
+    icon = models.CharField(
+        max_length=100,
+        help_text="Example: fa-solid fa-house or hero-home",
+        null=True,
+        blank=True
+    )
+
+
+    title = models.CharField(max_length=100)
+
+    is_active = models.BooleanField(default=True)
+
     def __str__(self):
         return self.title
