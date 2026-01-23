@@ -24,13 +24,14 @@ urlpatterns = [
     path('', include('farmhouse.urls')),
     
     path('conatct/',include('contact.urls')),
-    path('user/',include('user.urls')),
+    path('api/',include('user.urls')),
     path('blogs/',include('blogs.urls')),
     path('booking/',include('booking.urls')),
     path('coupon/',include('coupon.urls')),
     path('rating/',include('rating.urls')),
     path('cms/',include('cms.urls')),
     path("ckeditor/", include("ckeditor_uploader.urls")),
+    path('api-auth/', include('rest_framework.urls')),
 
 ]
 if settings.DEBUG:

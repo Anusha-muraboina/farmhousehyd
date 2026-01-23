@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     
     "ckeditor",
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -73,6 +74,27 @@ AUTH_USER_MODEL = "user.User"
 
 
 
+from datetime import timedelta
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+    ),
+
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+        "rest_framework.permissions.AllowAny",
+    ),
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 
 
 
@@ -125,7 +147,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-
+LOCAL_URL = "http://127.0.0.1:8000/"
 
 
 # ================= EMAIL (SMTP) SETTINGS =================

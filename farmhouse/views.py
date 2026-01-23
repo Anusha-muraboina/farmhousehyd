@@ -12,56 +12,34 @@ from django.http import HttpResponse
 #     # return HttpResponse("Hello, this is Blog Page")
 #     return render(request , "home.html")
 
-def home(request):
-    banners = Banner.objects.filter(is_active=True).order_by('Slot_position')
-    locations = Location.objects.filter(is_active=True)
-
-    farmhouses = Farmhouse.objects.filter(is_active=True)
-
-    # 🔥 get slug, not name
-    selected_location = request.GET.get('location')
-
-    if selected_location:
-        farmhouses = farmhouses.filter(location__slug=selected_location)
-
-    latest_blogs = Blog.objects.filter(
-        is_published=True
-    ).order_by('-published_at')[:3]
-
-    # 🔥 limit to 3 ONLY for home page
-    farmhouses = farmhouses.order_by('-created_at')[:3]
-
-    return render(request, "home.html", {
-        "farmhouses": farmhouses,
-        "locations": locations,
-        "banners": banners,
-        "latest_blogs": latest_blogs,
-        "selected_location": selected_location,  # ✅ IMPORTANT
-    })
-
 # def home(request):
-#     # Fetch banners
 #     banners = Banner.objects.filter(is_active=True).order_by('Slot_position')
-    
-#     # Fetch recent active farmhouses
-#     farmhouses = Farmhouse.objects.filter(is_active=True)
-    
-#     # Fetch all active locations to show in the banner
 #     locations = Location.objects.filter(is_active=True)
-    
-#     location_param = request.GET.get('location')
-#     if location_param and location_param != 'All Locations':
-#         farmhouses = farmhouses.filter(location__name=location_param)
-        
-#     latest_blogs = Blog.objects.filter(is_published=True).order_by('-published_at')[:3]
-    
+
+#     farmhouses = Farmhouse.objects.filter(is_active=True)
+
+#     # 🔥 get slug, not name
+#     selected_location = request.GET.get('location')
+
+#     if selected_location:
+#         farmhouses = farmhouses.filter(location__slug=selected_location)
+
+#     latest_blogs = Blog.objects.filter(
+#         is_published=True
+#     ).order_by('-published_at')[:3]
+
+#     # 🔥 limit to 3 ONLY for home page
 #     farmhouses = farmhouses.order_by('-created_at')[:3]
+
 #     return render(request, "home.html", {
-#         'farmhouses': farmhouses,
-#         'locations': locations,
-#         'banners': banners,
-#         'latest_blogs': latest_blogs
+#         "farmhouses": farmhouses,
+#         "locations": locations,
+#         "banners": banners,
+#         "latest_blogs": latest_blogs,
+#         "selected_location": selected_location,  # ✅ IMPORTANT
 #     })
+
+
 
 def about(request):
     # return HttpResponse("Hello, this is Blog Page")
@@ -73,9 +51,6 @@ def contact(request):
     return render(request , "contact.html")
 
 
-def destination(request):
-    # return HttpResponse("Hello, this is Blog Page")
-    return render(request , "destination.html")
 
 
 def Farmhouses(request):
@@ -146,19 +121,19 @@ def Farmhouse_detail(request, slug):
 
 
 
-def Login(request):
-    # return HttpResponse("Hello, this is Blog Page")
-    return render(request , "authpages/login.html")
+# def Login(request):
+#     # return HttpResponse("Hello, this is Blog Page")
+#     return render(request , "authpages/login.html")
 
 
-def Register(request):
-    # return HttpResponse("Hello, this is Blog Page")
-    return render(request , "authpages/register.html")
+# def Register(request):
+#     # return HttpResponse("Hello, this is Blog Page")
+#     return render(request , "authpages/register.html")
 
 
-def PasswordResetView(request):
-    # return HttpResponse("Hello, this is Blog Page")
-    return render(request , "authpages/forgot_password.html")
+# def PasswordResetView(request):
+#     # return HttpResponse("Hello, this is Blog Page")
+#     return render(request , "authpages/forgot_password.html")
 
 
 def BlogListing(request):
@@ -169,3 +144,59 @@ def BlogListing(request):
 def BlogDetail(request):
     # return HttpResponse("Hello, this is Blog Page")
     return render(request , "blog_detailpage.html")
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .permissions import AssignedUserPermission
+from .models import Banner, Location, Farmhouse
+from blogs.models import *
+from .serializers import (
+    BannerSerializer,
+    LocationSerializer,
+    FarmhouseSerializer,
+    BlogSerializer
+)
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.permissions import AllowAny
+from cms.models import *
+from cms.serializers import *
+
+class HomeAPIView(APIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        banners = Banner.objects.filter(is_active=True).order_by("Slot_position")
+        locations = Location.objects.filter(is_active=True)
+        farmhouses = Farmhouse.objects.filter(is_active=True)
+        services = Choos_Services.objects.filter(is_active = True)
+        ourfacility = OurFacility.objects.filter(is_active = True)
+        know_whoweare = AboutWhoWeAre.objects.filter(is_active = True)
+        selected_location = request.GET.get("location")
+
+        if selected_location:
+            farmhouses = farmhouses.filter(location__slug=selected_location)
+
+        latest_blogs = Blog.objects.filter(
+            is_published=True
+        ).order_by("-published_at")[:3]
+
+        farmhouses = farmhouses.order_by("-created_at")[:3]
+
+        return Response({
+            "banners": BannerSerializer(banners, many=True , context={"request": request}).data,
+            "locations": LocationSerializer(locations, many=True).data,
+            "farmhouses": FarmhouseSerializer(farmhouses, many=True , context={"request": request}).data,
+            "services" : ChooseServicesSerializer(services ,many=True , context={"request": request}).data,
+            "ourfacility" : OurFacilitySerializer(ourfacility ,many= True , context={"request": request}).data,
+            "know_whoweare" : AboutWhoWeAreSerializer(know_whoweare,many = True , context={"request": request}).data,
+            "latest_blogs": BlogSerializer(latest_blogs, many=True , context={"request": request}).data,
+            "selected_location": selected_location
+        })
+        
+        
+# views.py
+def home_page(request):
+    return render(request, "home.html")

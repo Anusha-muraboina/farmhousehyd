@@ -10,7 +10,7 @@ admin.site.register(WhoWeAre)
 admin.site.register(OurFacility)
 admin.site.register(Facilities)
 admin.site.register(Choos_Services)
-
+admin.site.register(AboutWhoWeAre)                                                                                                       
 class AboutFeatureInline(admin.TabularInline):
     model = AboutFeature
     extra = 4

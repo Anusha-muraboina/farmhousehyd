@@ -58,14 +58,23 @@ class FarmhouseAdmin(admin.ModelAdmin):
     #         kwargs["queryset"] = User.objects.filter(is_staff=True)
     #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
    
+    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
+    #     if db_field.name == "user":
+    #         kwargs["queryset"] = User.objects.filter(
+    #             is_staff= False,
+    #             is_superuser=False,  # 🔥 THIS LINE FIXES IT
+    #             farmhouse_user = True
+    #         )
+    #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
+    # ✅ ONLY farmhouse_user = True USERS
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "user":
             kwargs["queryset"] = User.objects.filter(
-                is_staff=True,
-                is_superuser=False   # 🔥 THIS LINE FIXES IT
+                farmhouse_user=True,
+                is_staff= True,
+                 is_superuser=False,
             )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
 
     # ✅ SINGLE save_model (no duplicates)
     def save_model(self, request, obj, form, change):

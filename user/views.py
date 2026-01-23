@@ -1,136 +1,244 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import AuthenticationForm
-from .forms import CustomUserCreationForm
-from django.contrib import messages
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from django.contrib.auth import authenticate
+
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from .models import User
+from .serializers import (
+    RegisterSerializer,
+    EmailLoginSerializer,
+    UserSerializer,
+    ChangePasswordSerializer
+)
+from django.contrib.auth import login
 
-def register_view(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.email = request.POST.get('email', '')
-            user.phone = request.POST.get('phone', '')
-            user.save()
-            
-            login(request, user)
-            messages.success(request, f"Registration successful. Welcome, {user.username}!")
-            return redirect('home')
-        else:
-            for error in form.errors.values():
-                messages.error(request, error)
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'user/register.html', {'form': form})
 
-def login_view(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                messages.info(request, f"You are now logged in as {username}.")
-                return redirect('home')
-            else:
-                messages.error(request, "Invalid username or password.")
-        else:
-            messages.error(request, "Invalid username or password.")
-    else:
-        form = AuthenticationForm()
-    return render(request, 'user/login.html', {'form': form})
+# ✅ REGISTER
+class RegisterAPIView(generics.CreateAPIView):
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
 
-from django.contrib.auth.decorators import login_required
 
-@login_required
-def user_view(request):
-    if request.method == 'POST':
-        # Simple update logic
-        request.user.first_name = request.POST.get('first_name', '')
-        request.user.last_name = request.POST.get('last_name', '')
-        request.user.email = request.POST.get('email', '')
-        request.user.phone = request.POST.get('phone', '')
-        request.user.save()
-        
-        messages.success(request, "User updated successfully!")
-        return redirect('user')
-        
-    return render(request, 'user/user_detail.html')
+# ✅ LOGIN
+class EmailLoginAPIView(generics.GenericAPIView):
+    serializer_class = EmailLoginSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data["email"]
+        password = serializer.validated_data["password"]
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response(
+                {"error": "Invalid email or password"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        user = authenticate(
+            request,
+            username=user.username,   # IMPORTANT
+            password=password
+        )
+
+        if not user:
+            return Response(
+                {"error": "Invalid email or password"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        # 🔥 THIS IS THE KEY LINE
+        login(request, user)
+
+        return Response({
+            "message": "Login successful",
+            "user": UserSerializer(user).data
+        }, status=status.HTTP_200_OK)
+
+
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 
 def logout_view(request):
     logout(request)
-    messages.info(request, "You have successfully logged out.")
-    return redirect('home')
+    return redirect("home")
 
-from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
-from django.contrib.auth.tokens import default_token_generator
+# ✅ PROFILE
+class ProfileAPIView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
+    
+# ✅ CHANGE PASSWORD
+
+
+class ChangePasswordAPIView(generics.UpdateAPIView):
+    serializer_class = ChangePasswordSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user.set_password(serializer.validated_data['new_password'])
+        user.save()
+
+        return Response({
+            "message": "Password changed successfully"
+        }, status=status.HTTP_200_OK)
+
+
+
+# ✅ PROFILE
+class ProfileAPIView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
+
+
+# ✅ UPDATE PROFILE
+class UpdateProfileAPIView(generics.UpdateAPIView):
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
+
+
+
+
+
+
+
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
-from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from .serializers import ForgotPasswordSerializer, ResetPasswordSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+User = get_user_model()
+token_generator = PasswordResetTokenGenerator()
 
-def password_reset_request_view(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        try:
-            user = User.objects.get(email=email)
-            # Generate token
-            token = default_token_generator.make_token(user)
+
+class PasswordResetView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+
+        # ============================
+        # 1️⃣ FORGOT PASSWORD
+        # ============================
+        if "email" in request.data:
+
+            serializer = ForgotPasswordSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+
+            user = User.objects.filter(
+                email=serializer.validated_data["email"]
+            ).first()
+
+            if not user:
+                return Response(
+                    {"error": "Email not registered"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            
-            # Create reset link
-            reset_link = request.build_absolute_uri(
-                f'/password-reset-confirm/{uid}/{token}/'
-            )
-            
-            # Send email
-            subject = 'Password Reset Request'
-            message = f'Click the link below to reset your password:\n\n{reset_link}\n\nIf you did not request this, please ignore this email.'
-            
-            send_mail(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                [email],
-                fail_silently=False,
-            )
-            
-            messages.success(request, "Password reset link has been sent to your email.")
-            return redirect('login')
-        except User.DoesNotExist:
-            messages.error(request, "No user found with that email address.")
-    
-    return render(request, 'user/password_reset.html')
+            token = token_generator.make_token(user)
 
-def password_reset_confirm_view(request, uidb64, token):
-    try:
-        uid = urlsafe_base64_decode(uidb64).decode()
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-    
-    if user is not None and default_token_generator.check_token(user, token):
-        if request.method == 'POST':
-            form = SetPasswordForm(user, request.POST)
-            if form.is_valid():
-                form.save()
-                messages.success(request, "Your password has been reset successfully! Please login.")
-                return redirect('login')
-            else:
-                for error in form.errors.values():
-                    messages.error(request, error)
-        else:
-            form = SetPasswordForm(user)
+            # reset_link = (
+            #     f"{settings.LOCAL_URL}"
+            #     f"reset-password/{uid}/{token}/"
+            # )
+            reset_link = (
+                f"{settings.LOCAL_URL}"
+                f"api/reset-password/?uid={uid}&token={token}"
+            )
+
+            send_mail(
+                subject="Password Reset",
+                message=f"Click below link to reset password:\n{reset_link}",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+            )
+
+            return Response(
+                {"message": "Password reset link sent to email"},
+                status=status.HTTP_200_OK
+            )
+
+        # ============================
+        # 2️⃣ RESET PASSWORD
+        # ============================
+        elif "new_password" in request.data:
+
+            uid = request.GET.get("uid")
+            token = request.GET.get("token")
+
+            if not uid or not token:
+                return Response(
+                    {"error": "Reset link is invalid"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            serializer = ResetPasswordSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+
+            try:
+                user_id = force_str(urlsafe_base64_decode(uid))
+                user = User.objects.get(pk=user_id)
+            except Exception:
+                return Response(
+                    {"error": "Invalid reset link"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            if not token_generator.check_token(user, token):
+                return Response(
+                    {"error": "Token expired or invalid"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            user.set_password(serializer.validated_data["new_password"])
+            user.save()
+
+            return Response(
+                {"message": "Password reset successfully"},
+                status=status.HTTP_200_OK
+            )
+
+        return Response(
+            {"error": "Invalid request"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
         
-        return render(request, 'user/password_reset_confirm.html', {
-            'form': form,
-            'validlink': True
-        })
-    else:
-        return render(request, 'user/password_reset_confirm.html', {
-            'validlink': False
-        })
+        
+from django.shortcuts import render
+
+def login_page(request):
+    return render(request, "user/login.html")
+
+def register_page(request):
+    return render(request, "user/register.html")
+
+def forgot_password_page(request):
+    return render(request, "user/forgot_password.html")
+
+def reset_password_page(request):
+    return render(request, "user/reset_password.html")

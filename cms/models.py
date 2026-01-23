@@ -8,7 +8,7 @@ class Choos_Services(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(null=True,blank=True)
     icon = models.CharField(  max_length=100,   blank=True, help_text="Example: fa-solid fa-house or lucide-home" )
-    image = models.ImageField(upload_to='chosse_banners/')
+    image = models.ImageField(upload_to='chosse_banners/',null=True ,blank=True)
     is_active = models.BooleanField(default=True)
     Slot_position = models.PositiveIntegerField(blank=True,null=True)
     
@@ -104,3 +104,67 @@ class AboutFeature(models.Model):
 
     def __str__(self):
         return self.title
+
+
+
+
+
+
+
+
+
+from django.db import models
+
+
+class AboutWhoWeAre(models.Model):
+    # Headings
+    small_title = models.CharField(
+        max_length=100,
+        default="About Us"
+    )
+
+    main_title = models.CharField(
+        max_length=200,
+        default="Know Who We Are"
+    )
+
+    # Mission & Vision
+    mission_title = models.CharField(
+        max_length=200,
+        default="Mission & Vision"
+    )
+
+    mission_description = models.TextField()
+
+    # How we do it differently
+    difference_title = models.CharField(
+        max_length=200,
+        default="How We Do It Differently"
+    )
+
+    difference_description = models.TextField()
+
+    # Image
+    image = models.ImageField(
+        upload_to="about/",
+        help_text="Main About Section Image"
+    )
+    # Button
+    button_text = models.CharField(
+        max_length=50,
+        default="More about us"
+    )
+
+    # Status
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Know About Section"
+        verbose_name_plural = "Know About Section"
+
+    def __str__(self):
+        return self.main_title
+
+
+

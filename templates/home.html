@@ -1,30 +1,29 @@
 {% extends "base.html" %}
+{% load humanize %}
 
 {% block title %}Farmhouses Hyderabad - Best Farmhouses{% endblock %}
 
 {% block content %}
-{% load humanize %}
 
 <style>
-    .truncate-text {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;   /* controls visible lines */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+.truncate-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
-</style>
 
-<style>
-  {% comment %} .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  } {% endcomment %}
+/* ===== LADDER STYLE ===== */
+.ladder-top {
+  width: 90%;
+  height: 6px;
+  background: linear-gradient(to right, #7a4a1d, #c18f59, #7a4a1d);
+  border-radius: 6px;
+  margin: 20px auto;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
 
-
-  .wood-item {
+.wood-item {
   min-width: 150px;
   text-align: center;
 }
@@ -32,7 +31,7 @@
 .rope {
   display: block;
   width: 4px;
-  height: 18px;
+  height: 20px;
   background: #b08968;
   margin: 0 auto;
   border-radius: 4px;
@@ -42,7 +41,7 @@
   background: linear-gradient(145deg, #f3d2a2, #ddb27c);
   color: #3a2a1a;
   font-weight: 500;
-  padding: 10px 5px;
+  padding: 10px 6px;
   border-radius: 10px;
   border: 2px solid #c18f59;
   box-shadow:
@@ -50,10 +49,8 @@
     0 8px 18px rgba(0,0,0,0.25);
   cursor: pointer;
   transition: all 0.3s ease;
-    /* ✅ FIX */
-  white-space: normal;        /* allow wrapping */
-  word-break: break-word;     /* break long words */
-  text-align: center;
+  white-space: normal;
+  word-break: break-word;
   line-height: 1.2;
 }
 
@@ -66,253 +63,91 @@
 }
 </style>
 
-<!-- Hero Section -->
-<section class="relative h-auto md:h-[600px] overflow-hidden">
-    <!-- SLIDER -->
-    <!-- <div class="absolute inset-0">
-        <div id="slider" class="relative w-full h-full">
-            
-            <div class="slide absolute inset-0 opacity-100 transition-opacity duration-1000">
-                <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&q=80"
-                     class="w-full h-full object-cover">
-            </div>
-            
-            <div class="slide absolute inset-0 opacity-0 transition-opacity duration-1000">
-                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80"
-                     class="w-full h-full object-cover">
-            </div>
-            
-            <div class="slide absolute inset-0 opacity-0 transition-opacity duration-1000">
-                <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1920&q=80"
-                     class="w-full h-full object-cover">
-            </div>
-            
-            <div class="absolute inset-0 bg-black/40"></div>
-        </div>
-    </div> -->
+<!-- ================= HERO ================= -->
+<section class="relative h-[600px]">
 
-
-    <div class="absolute inset-0">
-    <div id="slider" class="relative w-full h-full overflow-hidden">
-
-        {% for banner in banners %}
-        <div class="slide absolute inset-0 transition-opacity duration-1000
-                    {% if forloop.first %}opacity-100{% else %}opacity-0{% endif %}">
-            
-            {% if banner.image %}
-            <img src="{{ banner.image.url }}"
-                 alt="{{ banner.title }}"
-                 class="w-full h-full object-cover">
-            {% else %}
-            <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&q=80"
-                 class="w-full h-full object-cover">
-            {% endif %}
-
-
-        </div>
-        {% endfor %}
-
-        <!-- Dark Overlay -->
-        <div class="absolute inset-0 bg-black/40"></div>
+  <!-- SLIDER -->
+  <div class="absolute inset-0">
+    <div id="slider" class="relative w-full h-full">
+      <div class="absolute inset-0 bg-black/40"></div>
     </div>
-</div>
-
-    <!-- CONTENT -->
-    <div class="relative  mx-auto px-2 md:px-12  h-full flex items-start justify-center text-center text-white pt-4 md:pt-28 md:pt-36">
-        <div class="w-full flex flex-col items-center gap-6">
-    <h2 class="font-display text-medium  md:text-3xl lg:text-4xl font-bold mb-6 leading-tight">
-        Find the Best Farmhouses  in Hyderabad
-    </h2>
-
-
-                <form action="{% url 'farmhouses' %}" method="GET"
-                class="bg-white rounded-full shadow-xl px-2 md:px-4 py-2 mb-4 w-full max-w-xl">
-                <div class="flex items-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z" />
-                    </svg>
-                    <input type="text" name="search" placeholder="Search farmhouses..."
-                        class="flex-1 py-2 outline-none text-gray-700">
-                    <button type="submit"
-                        class="bg-primary text-white md:px-4 px-2 py-2 rounded-full hover:bg-primary-dark transition">
-                        Search </button>
-                </div>
-            </form>
-     <!-- <div class="bg-white rounded-full shadow-xl px-2 md:px-4 py-2 mb-4 w-full max-w-xl"> 
-        <div class="flex items-center gap-3">
-             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"/> </svg>
-            <input type="text" placeholder="Search farmhouses..." class="flex-1 py-2 outline-none text-gray-700" > 
-        <button class="bg-primary text-white md:px-4 px-2 py-2 rounded-full hover:bg-primary-dark transition"> Search </button> 
-    </div>
- </div> -->
-<section class="w-full py-3">
-  <!-- Rope Divider -->
-  <div class="h-1 bg-[#8b5a2b] rounded-full mb-4 md:mb-6 mx-2 md:mx-10"></div>
-  <!-- WOODEN LOCATION BAR -->
-  <div
-    class="
-   grid grid-cols-2 gap-4
-      px-2
-      sm:grid-cols-3
-      md:flex md:flex-wrap md:justify-center md:gap-5 md:px-4
-    "
-  >
-
-    <!-- ITEM -->
-
-<div class="wood-item">
-    <span class="rope"></span>
-    <a href="{% url 'home' %}"
-       class="block plank {% if not selected_location %}active{% endif %}">
-        All Farmhouses
-    </a>
-</div>
-
-{% for loc in locations %}
-<div class="wood-item">
-    <span class="rope"></span>
-    <a href="{% url 'home' %}?location={{ loc.slug }}"
-       class="block plank {% if selected_location == loc.slug %}active{% endif %}">
-        {{ loc.name }}
-    </a>
-</div>
-{% endfor %}
-
-    {% comment %} <div class="wood-item">
-      <span class="rope"></span>
-      <div class="plank active">All Farmhouses</div>
-    </div>
-    <div class="wood-item"><span class="rope"></span><div class="plank">Gachibowli</div></div>
-    <div class="wood-item"><span class="rope"></span><div class="plank">Moinabad</div></div>
-    <div class="wood-item"><span class="rope"></span><div class="plank">Secunderabad</div></div>
-    <div class="wood-item"><span class="rope"></span><div class="plank">Shamsabad</div></div>
-    <div class="wood-item"><span class="rope"></span><div class="plank">Shamirpet</div></div>
-    <div class="wood-item"><span class="rope"></span><div class="plank">Shadnagar</div></div> {% endcomment %}
   </div>
-</section>
 
+  <!-- CONTENT -->
+  <div class="relative h-full flex items-center justify-center text-center text-white">
+    <div class="space-y-6 w-full">
 
+      <h2 class="text-4xl font-bold">
+        Find the Best Farmhouses in Hyderabad
+      </h2>
+
+      <!-- SEARCH -->
+      <form action="/farmhouses/" method="GET"
+        class="bg-white rounded-full shadow-xl px-4 py-2 max-w-xl mx-auto">
+        <div class="flex gap-3">
+          <input name="search" placeholder="Search farmhouses..."
+            class="flex-1 py-2 outline-none text-gray-700">
+          <button class="bg-primary text-white px-4 py-2 rounded-full">
+            Search
+          </button>
         </div>
+      </form>
+
+      <!-- LADDER TOP STICK -->
+      <div class="ladder-top"></div>
+
+      <!-- LOCATIONS -->
+      <div id="location-bar"
+        class="flex flex-wrap justify-center gap-5">
+
+        <div class="wood-item">
+          <span class="rope"></span>
+          <a href="/" class="block plank active">All Farmhouses</a>
+        </div>
+
+      </div>
+
     </div>
+  </div>
 
-    <!-- ARROWS -->
-    <button onclick="prevSlide()"
-            class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white p-2 rounded-full">
-        ❮
-    </button>
+  <!-- ARROWS -->
+  <button onclick="prevSlide()"
+    class="absolute left-6 top-1/2 bg-white/30 px-3 py-2 rounded-full text-white">
+    ❮
+  </button>
 
-    <button onclick="nextSlide()"
-            class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white p-2 rounded-full">
-        ❯
-    </button>
-
-    <!-- DOTS -->
-    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
-        <span class="dot w-3 h-3 bg-white rounded-full cursor-pointer"></span>
-        <span class="dot w-3 h-3 bg-white/50 rounded-full cursor-pointer"></span>
-        <span class="dot w-3 h-3 bg-white/50 rounded-full cursor-pointer"></span>
-    </div>
+  <button onclick="nextSlide()"
+    class="absolute right-6 top-1/2 bg-white/30 px-3 py-2 rounded-full text-white">
+    ❯
+  </button>
 
 </section>
+
+
+<!-- ================= farmhouse ================= -->
+
 
 <section
-  class="  relative w-full bg-cover bg-center py-2 md:py-8"
+  class="relative w-full bg-cover bg-center py-6 md:py-10"
   style="background-image:url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&q=80');">
 
   <!-- Overlay -->
   <div class="absolute inset-0 bg-white/90"></div>
 
-  <!-- CONTENT WRAPPER -->
-  <div class="relative w-full">
+  <div class="relative mx-auto px-4 md:px-12">
 
-    <section class="py-6 md:py-4">
-      <div class=" mx-auto px-4 md:px-12 ">
-        <div class="text-center mb-10">
-          <p class="text-primary font-medium mb-2">Find Best Farmhouses</p>
-          <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold">
-            Ultimate Stay Experience
-          </h2>
-        </div>
+    <!-- Heading -->
+    <div class="text-center mb-10">
+      <p class="text-primary font-medium mb-2">Find Best Farmhouses</p>
+      <h2 class="font-display text-4xl md:text-5xl font-bold">
+        Ultimate Stay Experience
+      </h2>
+    </div>
 
-
-
-
-
-
-
-
-
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {% for farmhouse in farmhouses %}
-                    <!-- Card -->
-                    <div class="farmhouse-card bg-white rounded-2xl overflow-hidden shadow-lg">
-                        <div class="card-image relative h-56">
-                            {% if farmhouse.images.exists %}
-                            <img src="{{ farmhouse.images.first.image.url }}" alt="{{ farmhouse.title }}"
-                                class="w-full h-full object-cover">
-                            {% else %}
-                            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80"
-                                alt="{{ farmhouse.title }}" class="w-full h-full object-cover">
-                            {% endif %}
-
-                            {% if farmhouse.is_featured %}
-                            <span
-                                class="absolute top-4 left-4 bg-primary text-white text-xs px-3 py-1 rounded-full">Featured</span>
-                            {% endif %}
-                        </div>
-                        <div class="p-5">
-                            <h3 class="font-display text-xl font-bold text-secondary mb-2">{{ farmhouse.title }}</h3>
-                            <p class="text-gray-500 text-sm flex items-center gap-1 mb-3">
-                                <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
-                                {{ farmhouse.location.name|default:"Hyderabad" }} • {{ farmhouse.distance_km }} km from
-                                city
-                            </p>
-
-                            <div class="text-sm text-gray-600 max-w-2xl mx-auto mt-4 truncate-text ">
-                                {{ farmhouse.short_description|truncatewords:20 }}
-                            </div>
-                            <div class="flex items-center gap-4 text-sm text-gray-600 my-4">
-                                <span class="flex items-center gap-1">
-                                    <i data-lucide="bed" class="w-4 h-4"></i> {{ farmhouse.bedrooms }} Beds
-                                </span>
-                                <span class="flex items-center gap-1">
-                                    <i data-lucide="bath" class="w-4 h-4"></i> {{ farmhouse.bedrooms }} Baths
-                                </span>
-                                {% if farmhouse.amenities.count > 0 %}
-                                <span class="flex items-center gap-1">
-                                    <i data-lucide="waves" class="w-4 h-4"></i> Pool
-                                </span>
-                                {% endif %}
-                            </div>
-                            <div class="flex items-center justify-between pt-4 border-t">
-                                <div>
-                                    <span class="text-xl font-bold text-secondary font-display">
-                                        <!-- ₹{{
-                                        farmhouse.price_per_day|floatformat:0 }}/night -->
-                                    </span>
-
-                                        ₹{{ farmhouse.price_per_day|floatformat:0|intcomma }}/night
-
-                                </div>
-                                <a href="{% url 'farmhouse_detail' farmhouse.slug %}"
-                                    class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
-                                    Know More →
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="col-span-full text-center py-8">
-                        <p class="text-gray-500">No featured farmhouses available at the moment.</p>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                            <!-- Load More Button -->
+    <!-- FARMHOUSE GRID -->
+    <div id="farmhouseGrid"
+         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    </div>
                 <div class="text-center mt-4 md:mt-8">
                     <a href="{% url 'farmhouses' %}{% if request.GET.location %}?location={{ request.GET.location }}{% endif %}"
                         class="bg-primary text-white px-8 py-3 rounded-full font-medium hover:bg-primary-dark transition-colors inline-flex items-center gap-2">
@@ -320,11 +155,14 @@
                         See All
                     </a>
                 </div>
-      </div>
-    </section>
-
   </div>
 </section>
+
+
+<!-- ================= farmhouse ================= -->
+
+
+
 
 
 <section class="relative py-20 bg-cover bg-center"
@@ -400,6 +238,10 @@
         </div>
     </div>
 </section>
+
+
+
+
 
 
 
@@ -551,260 +393,195 @@
 
 
 
-    <!-- Why Choose Us Section -->
-    <section class="py-4 md:py-20 relative bg-cover bg-center"  style="background-image:url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&q=80');">
-     
 
-          <!-- Overlay -->
-  <div class="absolute inset-0 bg-white/85"></div>
 
-     
-        <div class="relative   mx-auto px-4 md:px-12 text-center">
-            <p class="text-primary font-medium mb-2 section-subtitle">Our Services</p>
-            <h2 class="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Why Choose Farmhouses Hyderabad</h2>
-            <div class="w-24 h-1 bg-primary mx-auto mb-12 rounded-full"></div>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Feature 1 -->
-                <div class="feature-card bg-white  md:p-4 p-2 rounded-2xl shadow-lg">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i data-lucide="utensils" class="w-8 h-8 text-primary"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-secondary mb-3">Free Breakfast</h3>
-                    <p class="text-gray-900 text-sm">We give complimentary welcome drink and breakfast for early booking customers.</p>
-                </div>
-                
-                <!-- Feature 2 -->
-                <div class="feature-card bg-white md:p-4 p-2 rounded-2xl shadow-lg">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i data-lucide="indian-rupee" class="w-8 h-8 text-primary"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-secondary mb-3">Competitive Pricing</h3>
-                    <p class="text-gray-900 text-sm">Best price guaranteed. Get the best deals on farmhouse bookings in Hyderabad.</p>
-                </div>
-                
-                <!-- Feature 3 -->
-                <div class="feature-card bg-white md:p-4 p-2 rounded-2xl shadow-lg">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i data-lucide="users" class="w-8 h-8 text-primary"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-secondary mb-3">Farmhouses For Family</h3>
-                    <p class="text-gray-900 text-sm">Perfect setting for family gatherings, kids activities, and quality time together.</p>
-                </div>
-                
-                <!-- Feature 4 -->
-                <div class="feature-card bg-white md:p-4 p-2 rounded-2xl shadow-lg">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i data-lucide="calendar-check" class="w-8 h-8 text-primary"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-secondary mb-3">Ultimate Flexibility</h3>
-                    <p class="text-gray-900 text-sm">Flexible booking options with free cancellation up to 48 hours before check-in.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section class="relative py-20 bg-cover bg-center"
-         style="background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1920&q=80');">
 
-    <!-- Overlay -->
-    <div class="absolute inset-0 bg-white/90"></div>
 
-    <div class="relative  mx-auto px-4 md:px-12 ">
 
-        <!-- Heading -->
-        <div class="text-center mb-12">
-            <p class="text-primary font-medium mb-2">Our Blogs</p>
-            <h2 class="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">
-                Latest Travel Blog
-            </h2>
-            <div class="w-24 h-1 bg-primary mx-auto rounded-full"></div>
-        </div>
 
-             <div class="grid lg:grid-cols-3 gap-10">
-            {% if latest_blogs %}
-            {% with featured=latest_blogs.0 %}
-            <!-- BIG BLOG (Latest) -->
-            <div
-                class="lg:col-span-2 group bg-gray-50 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition">
-                <img src="{% if featured.image %}{{ featured.image.url }}{% else %}https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80{% endif %}"
-                    class="w-full h-96 object-cover group-hover:scale-105 transition duration-500">
-                <div class="p-8">
-                    <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                        <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs">
-                            {{ featured.category.name }}
-                        </span>
-                        <span>{{ featured.published_at|date:"M d, Y" }}</span>
-                    </div>
-                    <h3 class="font-display text-2xl md:text-3xl font-bold text-secondary mb-4">
-                        {{ featured.title }}
-                    </h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">
-                        {{ featured.short_description|truncatewords:30 }}
-                    </p>
-                    <a href="{% url 'blog_detail' featured.slug %}"
-                        class="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all">
-                        Read Full Article
-                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </a>
-                </div>
-            </div>
-            {% endwith %}
 
-            <!-- SMALL BLOGS -->
-            <div class="flex flex-col gap-8">
-                {% for blog in latest_blogs|slice:"1:3" %}
-                <div class="group bg-gray-50 rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition">
-                    <img src="{% if blog.image %}{{ blog.image.url }}{% else %}https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80{% endif %}"
-                        class="w-full h-44 object-cover group-hover:scale-105 transition duration-500">
-                    <div class="p-6">
-                        <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full">
-                            {{ blog.category.name }}
-                        </span>
-                        <h4 class="font-display text-lg font-bold text-secondary mt-4 mb-3">
-                            {{ blog.title }}
-                        </h4>
-                        <a href="{% url 'blog_detail' blog.slug %}"
-                            class="inline-flex items-center gap-2 text-primary text-sm font-medium">
-                            Read More
-                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="col-span-full py-12 text-center text-gray-400">
-                <p>Stay tuned for our latest travel guides and stories!</p>
-            </div>
-            {% endif %}
-        </div>
 
-        <div class="text-center mt-12">
-            <a href="{% url 'bloglisting' %}"
-                class="inline-flex items-center gap-2 bg-secondary text-white px-8 py-3 rounded-full font-bold hover:bg-black transition-all shadow-lg">
-                View All Blogs
-                <i data-lucide="chevron-right" class="w-5 h-5"></i>
-            </a>
-        </div>
-            <!-- <div class="grid lg:grid-cols-3 gap-10">
 
-        
-            <div class="lg:col-span-2 group bg-gray-50 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition">
 
-                <img
-                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80"
-                    class="w-full h-96 object-cover group-hover:scale-105 transition duration-500"
-                >
 
-                <div class="p-8">
-                    <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                        <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs">
-                            Featured
-                        </span>
-                        <span>Dec 15, 2024</span>
-                    </div>
 
-                    <h3 class="font-display text-2xl md:text-3xl font-bold text-secondary mb-4">
-                        Why Renting a Farmhouse in Hyderabad Is Better Than Staying in a Hotel
-                    </h3>
 
-                    <p class="text-gray-600 mb-6 leading-relaxed">
-                        Discover why farmhouses are becoming the preferred choice for vacations,
-                        parties, and staycations compared to traditional hotels.
-                    </p>
 
-                    <a href="#"
-                       class="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all">
-                        Read Full Article
-                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </a>
-                </div>
-            </div>
 
-            
-            <div class="flex flex-col gap-8">
 
-              
-                <div class="group bg-gray-50 rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition">
 
-                    <img
-                        src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80"
-                        class="w-full h-44 object-cover group-hover:scale-105 transition duration-500"
-                    >
 
-                    <div class="p-6">
-                        <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full">
-                            Event
-                        </span>
 
-                        <h4 class="font-display text-lg font-bold text-secondary mt-4 mb-3">
-                            Host Your Dream Event at a Farmhouse in Hyderabad
-                        </h4>
 
-                        <a href="#"
-                           class="inline-flex items-center gap-2 text-primary text-sm font-medium">
-                            Read More
-                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+let currentSlide = 0;
+let slideTimer = null;
 
-                
-                <div class="group bg-gray-50 rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition">
+/* ================= GET QUERY PARAMS ================= */
+const params = new URLSearchParams(window.location.search);
 
-                    <img
-                        src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80"
-                        class="w-full h-44 object-cover group-hover:scale-105 transition duration-500"
-                    >
+const locationParam = params.get("location");
+const searchParam = params.get("search");
 
-                    <div class="p-6">
-                        <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full">
-                            Party
-                        </span>
+/* ================= API CALL ================= */
+axios.get("/api/home/", {
+  params: {
+    location: locationParam,
+    search: searchParam
+  }
+})
+.then(res => {
 
-                        <h4 class="font-display text-lg font-bold text-secondary mt-4 mb-3">
-                            Farmhouse in Hyderabad for Party | One-Day Rental Guide
-                        </h4>
+  const data = res.data;
 
-                        <a href="#"
-                           class="inline-flex items-center gap-2 text-primary text-sm font-medium">
-                            Read More
-                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </div>
+  /* ================= BANNERS ================= */
+  const slider = document.getElementById("slider");
+  slider.innerHTML = `<div class="absolute inset-0 bg-black/40"></div>`;
 
-            </div>
-        </div> -->
+  data.banners.forEach((banner, index) => {
+    slider.innerHTML += `
+      <div class="slide absolute inset-0 transition-opacity duration-1000
+        ${index === 0 ? 'opacity-100' : 'opacity-0'}">
+        <img src="${banner.image}"
+             class="w-full h-full object-cover">
+      </div>`;
+  });
+
+  startSlider();
+
+  /* ================= LOCATIONS ================= */
+  const bar = document.getElementById("location-bar");
+  bar.innerHTML = `
+    <div class="wood-item">
+      <span class="rope"></span>
+      <a href="/"
+         class="block plank ${!locationParam ? 'active' : ''}">
+        All Farmhouses
+      </a>
     </div>
-</section>
+  `;
 
+  data.locations.forEach(loc => {
+    bar.innerHTML += `
+      <div class="wood-item">
+        <span class="rope"></span>
+        <a href="/?location=${loc.slug}"
+           class="block plank ${locationParam === loc.slug ? 'active' : ''}">
+          ${loc.name}
+        </a>
+      </div>`;
+  });
 
+  /* ================= FARMHOUSES ================= */
+  const grid = document.getElementById("farmhouseGrid");
+  grid.innerHTML = "";
 
-
-
-
-
-
-
-<!-- <script>
-  const woodCarousel = document.getElementById("woodCarousel");
-
-  function scrollLeftWood() {
-    woodCarousel.scrollBy({
-      left: -300,
-      behavior: "smooth"
-    });
+  if (data.farmhouses.length === 0) {
+    grid.innerHTML = `
+      <div class="col-span-full text-center py-10 text-gray-500">
+        No farmhouses found
+      </div>`;
   }
 
-  function scrollRightWood() {
-    woodCarousel.scrollBy({
-      left: 300,
-      behavior: "smooth"
-    });
-  }
-</script> -->
+  data.farmhouses.forEach(f => {
+
+    const amenitiesHTML = f.amenities.map(a => `
+      <span class="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full text-xs">
+        <i data-lucide="${a.icon_class}" class="w-4 h-4 text-primary"></i>
+        ${a.name}
+      </span>
+    `).join("");
+
+    grid.innerHTML += `
+      <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
+
+        <div class="relative h-56">
+          <img src="${f.primary_image || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80'}"
+               class="w-full h-full object-cover">
+        </div>
+
+        <div class="p-5">
+
+          <h3 class="text-xl font-bold text-secondary mb-2">
+            ${f.title}
+          </h3>
+
+          <p class="text-gray-500 text-sm mb-3 flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
+            ${f.address}
+          </p>
+
+          <p class="text-sm text-gray-600 line-clamp-2 mb-4">
+            ${f.short_description}
+          </p>
+
+          <div class="flex gap-4 text-sm text-gray-600 mb-4">
+            <span class="flex items-center gap-1">
+              <i data-lucide="bed" class="w-4 h-4 text-primary"></i>
+              ${f.bedrooms} Beds
+            </span>
+
+            <span class="flex items-center gap-1">
+              <i data-lucide="home" class="w-4 h-4 text-primary"></i>
+              ${f.halls} Hall
+            </span>
+
+            <span class="flex items-center gap-1">
+              <i data-lucide="snowflake" class="w-4 h-4 text-primary"></i>
+              ${f.ac_bedrooms} AC
+            </span>
+          </div>
+
+
+
+          <div class="flex items-center justify-between pt-4 border-t">
+            <div class="text-xl font-bold text-secondary">
+              ₹${Number(f.price_per_day).toLocaleString()} / night
+            </div>
+            <a href="/farmhouse/${f.slug}/"
+               class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition">
+              Know More →
+            </a>
+          </div>
+
+        </div>
+      </div>`;
+  });
+
+  lucide.createIcons();
+})
+.catch(err => console.error(err));
+
+
+/* ================= SLIDER ================= */
+function showSlide(index) {
+  const slides = document.querySelectorAll(".slide");
+  slides.forEach((s,i)=>{
+    s.classList.toggle("opacity-100", i===index);
+    s.classList.toggle("opacity-0", i!==index);
+  });
+  currentSlide = index;
+}
+
+function nextSlide(){
+  const slides = document.querySelectorAll(".slide");
+  if(!slides.length) return;
+  showSlide((currentSlide+1)%slides.length);
+}
+
+function prevSlide(){
+  const slides = document.querySelectorAll(".slide");
+  if(!slides.length) return;
+  showSlide((currentSlide-1+slides.length)%slides.length);
+}
+
+function startSlider(){
+  if(slideTimer) clearInterval(slideTimer);
+  slideTimer = setInterval(nextSlide, 5000);
+}
+</script>
+
 
 <script>
     let foodIndex = 0;
@@ -834,48 +611,5 @@
     setInterval(nextFoodSlide, 6000);
     
 </script>
-
-
-    <script>
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const dots = document.querySelectorAll('.dot');
-
-    function showSlide(index) {
-        slides.forEach((slide, i) => {
-            slide.classList.toggle('opacity-100', i === index);
-            slide.classList.toggle('opacity-0', i !== index);
-
-            dots[i].classList.toggle('bg-white', i === index);
-            dots[i].classList.toggle('bg-white/50', i !== index);
-        });
-        currentSlide = index;
-    }
-
-    function nextSlide() {
-        showSlide((currentSlide + 1) % slides.length);
-    }
-
-    function prevSlide() {
-        showSlide((currentSlide - 1 + slides.length) % slides.length);
-    }
-
-    // Auto slide
-    setInterval(nextSlide, 5000);
-
-    // Dot click
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => showSlide(index));
-    });
-</script>
-
-<!-- </body>
-</html> -->
-
-
-
-
-
-
 
 {% endblock %}

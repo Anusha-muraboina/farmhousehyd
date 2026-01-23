@@ -166,8 +166,6 @@ class FarmhouseImage(models.Model):
         return self.farmhouse.title
 
 
-from django.db import models
-
 
 class TouristPlace(models.Model):
     title = models.CharField(

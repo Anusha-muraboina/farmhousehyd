@@ -24,7 +24,7 @@
                     <a href="{% url 'home' %}" class="text-secondary hover:text-primary font-medium transition-colors">Home</a>
                     <a href="{% url 'about' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">About</a>
                     <a href="{% url 'farmhouses' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Farm Houses</a>
-                    <a href="{% url 'destination' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Destinations</a>
+                    {% comment %} <a href="{% url 'destination' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Destinations</a> {% endcomment %}
                     <a href="{% url 'blog_list' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Blogs</a>
                     <a href="{% url 'contact' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Contact</a>
                 </nav>
@@ -40,7 +40,7 @@
                 
                
 
-            <div class="hidden lg:flex items-center gap-4">
+            {% comment %} <div class="hidden lg:flex items-center gap-4">
                 {% if user.is_authenticated %}
                 <div class="relative" x-data="{ open: false }" @click.away="open = false">
                     <button @click="open = !open"
@@ -57,13 +57,13 @@
                         x-transition:enter-start="transform opacity-0 scale-95"
                         x-transition:enter-end="transform opacity-100 scale-100"
                         class="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50">
-                        <a href="{% url 'user' %}"
+                        <a href="#"
                             class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                             <i data-lucide="user" class="w-4 h-4"></i>
                             My User
                         </a>
                         <div class="border-t border-gray-50 my-1"></div>
-                        <a href="{% url 'logout' %}"
+                        <a href="#"
                             class="flex items-center gap-3 px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors">
                             <i data-lucide="log-out" class="w-4 h-4"></i>
                             Logout
@@ -77,7 +77,64 @@
                 </a>
 
                 {% endif %}
-            </div>
+            </div> {% endcomment %}
+
+
+{% if user.is_authenticated %}
+
+<!-- ================= USER DROPDOWN ================= -->
+<div class="relative">
+
+  <!-- BUTTON -->
+  <button
+    id="userBtn"
+    class="flex items-center gap-2 bg-gray-50 border px-3 py-1.5 rounded-full shadow hover:bg-gray-100 transition">
+
+    <div
+      class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+      {{ user.username|first|upper }}
+    </div>
+
+    <span class="font-medium text-gray-700">
+      {{ user.username }}
+    </span>
+
+    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+  </button>
+
+  <!-- DROPDOWN -->
+  <div
+    id="userDropdown"
+    class="hidden absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border py-2 z-50">
+
+    <a href="/profile-page/"
+       class="block px-4 py-2 text-sm hover:bg-gray-100">
+      My Profile
+    </a>
+
+    <div class="border-t my-1"></div>
+
+    <a href="{% url 'logout' %}"
+       class="block px-4 py-2 text-sm text-red-500 hover:bg-red-50">
+      Logout
+    </a>
+
+  </div>
+
+</div>
+
+{% else %}
+
+<!-- ================= LOGIN BUTTON ================= -->
+<a href="{% url 'login-page' %}"
+   class="border-2 border-primary text-primary px-6 py-2 rounded-full
+          hover:bg-primary hover:text-white transition font-medium">
+  Login
+</a>
+
+{% endif %}
+
+
 
                 <button id="mobileMenuBtn" class="lg:hidden p-2">
                     <i data-lucide="menu" class="w-6 h-6"></i>
@@ -100,7 +157,7 @@
             <a href="#" class="text-secondary font-medium py-2 border-b">Home</a>
             <a href="#" class="text-gray-600 font-medium py-2 border-b">About</a>
             <a href="#" class="text-gray-600 font-medium py-2 border-b">Farm Houses</a>
-            <a href="#" class="text-gray-600 font-medium py-2 border-b">Destinations</a>
+            {% comment %} <a href="#" class="text-gray-600 font-medium py-2 border-b">Destinations</a> {% endcomment %}
             <a href="#" class="text-gray-600 font-medium py-2 border-b">Blogs</a>
             <a href="#" class="text-gray-600 font-medium py-2 border-b">Contact</a>
             <a href="tel:+917013413092" class="bg-primary text-white text-center py-3 rounded-full mt-4">
@@ -109,3 +166,51 @@
         </nav>
     </div>
     
+
+
+{% comment %} <script> {% endcomment %}
+{% comment %} const token = localStorage.getItem("access");
+
+if (token) {
+  document.getElementById("loginBtn").classList.add("hidden");
+  document.getElementById("userMenu").classList.remove("hidden");
+
+  fetch("/api/profile/", {
+    headers: {
+      Authorization: "Bearer " + token
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("usernameText").innerText = data.username;
+    document.getElementById("userInitial").innerText =
+      data.username.charAt(0).toUpperCase();
+  });
+}
+
+function toggleMenu() {
+  document.getElementById("dropdown").classList.toggle("hidden");
+}
+
+function logout() {
+  localStorage.clear();
+  window.location.href = "/";
+} {% endcomment %}
+
+
+<script>
+const userBtn = document.getElementById("userBtn");
+const dropdown = document.getElementById("userDropdown");
+
+if (userBtn) {
+  userBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle("hidden");
+  });
+
+  document.addEventListener("click", () => {
+    dropdown.classList.add("hidden");
+  });
+}
+</script>
+
