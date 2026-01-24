@@ -7,92 +7,277 @@ from django.shortcuts import render
 from django.db.models import Q, Count
 from .models import Blog, BlogCategory, BlogTag
 
-def blog_list(request):
-    blogs = Blog.objects.filter(is_published=True)
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.permissions import AllowAny
+from cms.models import *
 
-    category_slug = request.GET.get('category')
-    tag_slug = request.GET.get('tag')
-    search_query = request.GET.get('search')
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.db.models import Q, Count
+from django.shortcuts import get_object_or_404
 
-    # Filter by category
-    if category_slug:
-        blogs = blogs.filter(category__slug=category_slug)
+from django.db.models import Count, Q
+from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-    # Filter by tag
-    if tag_slug:
-        blogs = blogs.filter(tags__slug=tag_slug)
+from .models import Blog, BlogCategory, BlogTag
+from .serializers import (
+    BlogListSerializer,
+    BlogCategorySerializer,
+    BlogTagSerializer,
+    BlogDetailSerializer
+)
 
-    # Search
-    if search_query:
-        blogs = blogs.filter(
-            Q(title__icontains=search_query) |
-            Q(content__icontains=search_query) |
-            Q(short_description__icontains=search_query)
-        )
+class BlogListAPIView(ListAPIView):
+    serializer_class = BlogListSerializer
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [AllowAny]
+    def get_queryset(self):
+        queryset = Blog.objects.filter(is_published=True)
 
-    categories = BlogCategory.objects.filter(is_active=True).annotate(
-        blog_count=Count('blogs')
+        search = self.request.GET.get("search")
+        category = self.request.GET.get("category")
+        tag = self.request.GET.get("tag")
+
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) |
+                Q(short_description__icontains=search) |
+                Q(content__icontains=search)
+            )
+
+        if category:
+            queryset = queryset.filter(category__slug=category)
+
+        if tag:
+            queryset = queryset.filter(tags__slug=tag)
+
+        return queryset
+
+    def get_serializer_context(self):
+        return {"request": self.request}
+
+
+
+
+
+
+
+
+# class BlogDetailAPIView(RetrieveAPIView):
+#     authentication_classes = [BasicAuthentication]
+#     permission_classes = [AllowAny]
+#     queryset = Blog.objects.filter(is_published=True)
+#     serializer_class = BlogListSerializer
+#     lookup_field = "slug"
+
+#     def get_serializer_context(self):
+#         return {"request": self.request}
+
+#     def retrieve(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         instance.views += 1
+#         instance.save(update_fields=["views"])
+#         return super().retrieve(request, *args, **kwargs)
+
+
+class BlogDetailAPIView(RetrieveAPIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [AllowAny]
+
+    queryset = Blog.objects.filter(is_published=True)
+    serializer_class = BlogDetailSerializer
+    lookup_field = "slug"
+
+    def get_serializer_context(self):
+        return {"request": self.request}
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.views += 1
+        instance.save(update_fields=["views"])
+        return super().retrieve(request, *args, **kwargs)
+
+
+class BlogCategoryAPIView(ListAPIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [AllowAny]
+    queryset = BlogCategory.objects.filter(is_active=True).annotate(
+        blog_count=Count("blogs")
     )
-    tags = BlogTag.objects.all()
-    latest_blogs = Blog.objects.filter(is_published=True).order_by('-published_at')[:5]
+    serializer_class = BlogCategorySerializer
 
-    context = {
-        'blogs': blogs,
-        'categories': categories,
-        'tags': tags,
-        'latest_blogs': latest_blogs,
-        'selected_category': category_slug,
-        'selected_tag': tag_slug,
-        'search_query': search_query,
-    }
 
-    return render(request, 'blog_listing.html', context)
+class BlogTagAPIView(ListAPIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [AllowAny]
+    queryset = BlogTag.objects.all()
+    serializer_class = BlogTagSerializer
+
+
+
+class RecentBlogsAPIView(ListAPIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = BlogListSerializer
+
+    def get_queryset(self):
+        return Blog.objects.filter(
+            is_published=True
+        ).order_by("-published_at")[:5]
+
+    def get_serializer_context(self):
+        return {"request": self.request}
+
+
+
+def blog_list(request):
+    return render(request, "blog_listing.html")
+
 
 def blog_detail(request, slug):
-    blog = get_object_or_404(Blog, slug=slug, is_published=True)
+    return render(request, "blog_detailpage.html", {"slug": slug})
 
-    # 🔥 Increase view count
-    blog.views += 1
-    blog.save(update_fields=["views"])
 
-    # 💬 Handle comments
-    if request.method == "POST":
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        comment = request.POST.get("comment")
 
-        if name and email and comment:
-            BlogComment.objects.create(
-                blog=blog,
-                name=name,
-                email=email,
-                comment=comment
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+class AddCommentAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, slug):
+        blog = get_object_or_404(Blog, slug=slug, is_published=True)
+
+        name = request.data.get("name")
+        email = request.data.get("email")
+        comment = request.data.get("comment")
+
+        if not name or not email or not comment:
+            return Response(
+                {"error": "All fields required"},
+                status=status.HTTP_400_BAD_REQUEST
             )
-            messages.success(request, "Comment submitted for approval.")
-            return redirect("blog_detail", slug=blog.slug)
 
-    categories = BlogCategory.objects.filter(
-        is_active=True
-    ).annotate(blog_count=Count("blogs"))
+        BlogComment.objects.create(
+            blog=blog,
+            name=name,
+            email=email,
+            comment=comment
+        )
 
-    tags = BlogTag.objects.all()
+        return Response({"success": "Comment added"})
 
-    related_blogs = Blog.objects.filter(
-        category=blog.category,
-        is_published=True
-    ).exclude(id=blog.id)[:3]
 
-    comments = blog.comments.filter(is_active=True)
 
-    context = {
-        "blog": blog,
-        "categories": categories,
-        "tags": tags,
-        "related_blogs": related_blogs,
-        "comments": comments,
-    }
 
-    return render(request, "blog_detailpage.html", context)
+
+
+
+
+# def blog_list(request):
+#     blogs = Blog.objects.filter(is_published=True)
+
+#     category_slug = request.GET.get('category')
+#     tag_slug = request.GET.get('tag')
+#     search_query = request.GET.get('search')
+
+#     # Filter by category
+#     if category_slug:
+#         blogs = blogs.filter(category__slug=category_slug)
+
+#     # Filter by tag
+#     if tag_slug:
+#         blogs = blogs.filter(tags__slug=tag_slug)
+
+#     # Search
+#     if search_query:
+#         blogs = blogs.filter(
+#             Q(title__icontains=search_query) |
+#             Q(content__icontains=search_query) |
+#             Q(short_description__icontains=search_query)
+#         )
+
+#     categories = BlogCategory.objects.filter(is_active=True).annotate(
+#         blog_count=Count('blogs')
+#     )
+#     tags = BlogTag.objects.all()
+#     latest_blogs = Blog.objects.filter(is_published=True).order_by('-published_at')[:5]
+
+#     context = {
+#         'blogs': blogs,
+#         'categories': categories,
+#         'tags': tags,
+#         'latest_blogs': latest_blogs,
+#         'selected_category': category_slug,
+#         'selected_tag': tag_slug,
+#         'search_query': search_query,
+#     }
+
+#     return render(request, 'blog_listing.html', context)
+
+# def blog_detail(request, slug):
+#     blog = get_object_or_404(Blog, slug=slug, is_published=True)
+
+#     # 🔥 Increase view count
+#     blog.views += 1
+#     blog.save(update_fields=["views"])
+
+#     # 💬 Handle comments
+#     if request.method == "POST":
+#         name = request.POST.get("name")
+#         email = request.POST.get("email")
+#         comment = request.POST.get("comment")
+
+#         if name and email and comment:
+#             BlogComment.objects.create(
+#                 blog=blog,
+#                 name=name,
+#                 email=email,
+#                 comment=comment
+#             )
+#             messages.success(request, "Comment submitted for approval.")
+#             return redirect("blog_detail", slug=blog.slug)
+
+#     categories = BlogCategory.objects.filter(
+#         is_active=True
+#     ).annotate(blog_count=Count("blogs"))
+
+#     tags = BlogTag.objects.all()
+
+#     related_blogs = Blog.objects.filter(
+#         category=blog.category,
+#         is_published=True
+#     ).exclude(id=blog.id)[:3]
+
+#     comments = blog.comments.filter(is_active=True)
+
+#     context = {
+#         "blog": blog,
+#         "categories": categories,
+#         "tags": tags,
+#         "related_blogs": related_blogs,
+#         "comments": comments,
+#     }
+
+#     return render(request, "blog_detailpage.html", context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # def blog_detail(request, slug):
 #     """Detail page for a blog post"""

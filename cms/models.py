@@ -113,9 +113,7 @@ class AboutFeature(models.Model):
 
 
 
-from django.db import models
-
-
+# in home know who we are models
 class AboutWhoWeAre(models.Model):
     # Headings
     small_title = models.CharField(

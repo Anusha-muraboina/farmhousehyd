@@ -1,4 +1,338 @@
 {% extends "base.html" %}
+{% block content %}
+<style>
+
+  .blog-content {
+  font-family: "Inter", system-ui, sans-serif;
+  color: #374151;
+  line-height: 1.9;
+  font-size: 16px;
+}
+
+/* Intro */
+.blog-content .intro {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+/* Headings */
+.blog-content h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 36px 0 16px;
+  color: #ca5902ff;
+}
+
+.blog-content h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Paragraphs */
+.blog-content p {
+  margin-bottom: 16px;
+}
+
+/* Divider */
+.blog-content hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 32px 0;
+}
+
+/* ICON LIST (NO EMOJIS) */
+.icon-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.icon-list li {
+  position: relative;
+  padding-left: 44px;
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+
+/* Icon circle */
+.icon-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ca5902ff, #ca5902ff);
+}
+
+/* Check icon */
+.icon-list li::after {
+  content: "✔";
+  position: absolute;
+  left: 8px;
+  top: 3px;
+  font-size: 14px;
+  color: white;
+  font-weight: bold;
+}
+
+/* Benefits box */
+.benefits {
+  background: #f9fafb;
+  border-left: 4px solid #ca5902ff;
+  padding: 18px 22px;
+  border-radius: 10px;
+}
+
+.benefits p {
+  margin-bottom: 12px;
+}
+
+/* CTA BOX */
+.cta-box {
+  background: linear-gradient(135deg, #ca5902ff, #ca5902ff);
+  color: #ffffff;
+  padding: 26px;
+  border-radius: 14px;
+  margin: 40px 0;
+}
+
+.cta-box h3 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .blog-content {
+    font-size: 15px;
+  }
+}
+
+</style>
+<section class="w-full px-6 md:px-12 lg:px-20 py-10">
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+
+    <!-- BLOG CONTENT -->
+    <div class="lg:col-span-8 bg-white p-8 rounded-xl shadow">
+
+      <img id="blogImage"
+           class="w-full h-[420px] object-cover rounded-lg mb-6 hidden">
+
+      <div id="blogMeta"
+           class="flex flex-wrap gap-4 text-sm text-gray-500 mb-4"></div>
+
+      <h1 id="blogTitle"
+          class="text-3xl md:text-4xl font-bold mb-4"></h1>
+
+      <div id="blogContent" class="blog-content"></div>
+
+      <div class="mt-8 flex flex-wrap gap-2" id="blogTags"></div>
+
+      <!-- COMMENTS -->
+      <div class="mt-10">
+        <h3 class="text-xl font-semibold mb-4">Comments</h3>
+        <div id="blogComments"></div>
+      </div>
+
+      <!-- ADD COMMENT -->
+      <div class="mt-8 bg-gray-50 p-6 rounded">
+        <h3 class="text-lg font-semibold mb-4">Leave a Comment</h3>
+
+        <input id="cName" placeholder="Name"
+               class="w-full border p-2 mb-3 rounded">
+
+        <input id="cEmail" placeholder="Email"
+               class="w-full border p-2 mb-3 rounded">
+
+        <textarea id="cComment"
+                  placeholder="Comment"
+                  rows="4"
+                  class="w-full border p-2 mb-3 rounded"></textarea>
+
+        <button onclick="submitComment()"
+                class="bg-primary text-white px-6 py-2 rounded">
+          Submit Comment
+        </button>
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="lg:col-span-4 space-y-6">
+
+      <!-- SEARCH -->
+      <input id="searchInput"
+             placeholder="Search..."
+             class="w-full border p-3 rounded"
+             onkeypress="searchBlogs(event)">
+
+      <!-- CATEGORIES -->
+      <div class="bg-white p-6 rounded shadow">
+        <h3 class="font-semibold mb-3">Categories</h3>
+        <ul id="categoryList" class="space-y-2 text-sm"></ul>
+      </div>
+
+      <!-- RECENT -->
+      <div class="bg-white p-6 rounded shadow">
+        <h3 class="font-semibold mb-3">Recent Posts</h3>
+        <div id="recentBlogs" class="space-y-4"></div>
+      </div>
+
+      <!-- TAGS -->
+      <div class="bg-white p-6 rounded shadow">
+        <h3 class="font-semibold mb-3">Tags</h3>
+        <div id="tagList" class="flex flex-wrap gap-2"></div>
+      </div>
+
+    </aside>
+
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+const slug = window.location.pathname.split("/").filter(Boolean).pop();
+
+/* ================= BLOG DETAIL ================= */
+
+axios.get(`/blogs/api/blogs/${slug}/`)
+.then(res => {
+
+  const blog = res.data;
+
+  document.getElementById("blogTitle").innerText = blog.title;
+  document.getElementById("blogContent").innerHTML = blog.content;
+
+  if (blog.image) {
+    const img = document.getElementById("blogImage");
+    img.src = blog.image;
+    img.classList.remove("hidden");
+  }
+
+  document.getElementById("blogMeta").innerHTML = `
+    <span>📅 ${new Date(blog.published_at).toDateString()}</span>
+    <span>👁 ${blog.views}</span>
+    <span>⏱ ${blog.read_time} min</span>
+  `;
+
+  // TAGS
+  blog.tags.forEach(tag => {
+    document.getElementById("blogTags").innerHTML += `
+      <a href="/blogs/?tag=${tag.slug}"
+         class="px-3 py-1 bg-gray-200 rounded text-sm hover:bg-primary hover:text-white">
+        #${tag.name}
+      </a>
+    `;
+  });
+
+  // COMMENTS
+  const box = document.getElementById("blogComments");
+  if (blog.comments.length === 0) {
+    box.innerHTML = "<p class='text-gray-500'>No comments yet.</p>";
+  }
+
+  blog.comments.forEach(c => {
+    box.innerHTML += `
+      <div class="border-b py-3">
+        <strong>${c.name}</strong>
+        <p class="text-xs text-gray-500">
+          ${new Date(c.created_at).toDateString()}
+        </p>
+        <p>${c.comment}</p>
+      </div>
+    `;
+  });
+
+});
+
+/* ================= SUBMIT COMMENT ================= */
+
+function submitComment() {
+
+  axios.post(`/blogs/api/blogs/${slug}/comment/`, {
+    name: document.getElementById("cName").value,
+    email: document.getElementById("cEmail").value,
+    comment: document.getElementById("cComment").value
+  })
+  .then(() => {
+    alert("Comment added");
+    location.reload();
+  });
+}
+
+/* ================= CATEGORIES ================= */
+
+axios.get("/blogs/api/blog-categories/")
+.then(res => {
+  res.data.forEach(cat => {
+    categoryList.innerHTML += `
+      <li>
+        <a href="/blogs/?category=${cat.slug}">
+          ${cat.name} (${cat.blog_count})
+        </a>
+      </li>
+    `;
+  });
+});
+
+/* ================= TAGS ================= */
+
+axios.get("/blogs/api/blog-tags/")
+.then(res => {
+  res.data.forEach(tag => {
+    tagList.innerHTML += `
+      <a href="/blogs/?tag=${tag.slug}"
+         class="px-3 py-1 bg-gray-100 rounded text-sm hover:bg-primary hover:text-white">
+        ${tag.name}
+      </a>
+    `;
+  });
+});
+
+/* ================= RECENT (ONLY 3) ================= */
+
+axios.get("/blogs/api/blogs-recent/")
+.then(res => {
+  res.data.forEach(post => {
+    recentBlogs.innerHTML += `
+      <a href="/blogs/${post.slug}/"
+         class="flex gap-3 items-center">
+        <img src="${post.image}"
+             class="w-20 h-16 object-cover rounded">
+        <span class="text-sm hover:text-primary">
+          ${post.title}
+        </span>
+      </a>
+    `;
+  });
+});
+
+/* ================= SEARCH ================= */
+
+function searchBlogs(e) {
+  if (e.key === "Enter") {
+    window.location.href = `/blogs/?search=${e.target.value}`;
+  }
+}
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+{% comment %} {% extends "base.html" %}
 {% load static %}
 
 {% block title %}{{ blog.title }}{% endblock %}
@@ -185,22 +519,7 @@
       </div>
 
       <!-- COMMENT FORM -->
-      {% comment %} <div class="mt-8">
-        <h3 class="text-lg font-semibold mb-3">Leave a Comment</h3>
-
-        <form method="POST" class="space-y-4">
-          {% csrf_token %}
-          <input type="text" name="name" placeholder="Your Name"
-                 class="w-full border px-4 py-2 rounded" required>
-          <input type="email" name="email" placeholder="Your Email"
-                 class="w-full border px-4 py-2 rounded" required>
-          <textarea name="comment" rows="4" placeholder="Your Comment"
-                    class="w-full border px-4 py-2 rounded" required></textarea>
-          <button class="bg-primary text-white px-6 py-2 rounded">
-            Submit Comment
-          </button>
-        </form>
-      </div> {% endcomment %}
+  
 
     </div>
 
@@ -235,18 +554,7 @@
       </div>
 
       <!-- RECENT POSTS -->
-      {% comment %} <div class="bg-white p-6 rounded shadow">
-        <h3 class="font-semibold mb-3">Related Posts</h3>
 
-        {% for post in related_blogs %}
-        <a href="{% url 'blog_detail' post.slug %}" class="flex gap-3 mb-4">
-          {% if post.image %}
-            <img src="{{ post.image.url }}" class="w-20 h-16 object-cover rounded">
-          {% endif %}
-          <span class="text-sm hover:text-primary">{{ post.title }}</span>
-        </a>
-        {% endfor %}
-      </div> {% endcomment %}
 
       <!-- TAGS -->
       <div class="bg-white p-6 rounded shadow">
@@ -281,4 +589,4 @@
   </div>
 </section>
 
-{% endblock %}
+{% endblock %} {% endcomment %}

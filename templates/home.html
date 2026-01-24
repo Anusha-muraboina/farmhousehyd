@@ -77,9 +77,9 @@
   <div class="relative h-full flex items-center justify-center text-center text-white">
     <div class="space-y-6 w-full">
 
-      <h2 class="text-4xl font-bold">
+      <h1 class="text-4xl font-bold">
         Find the Best Farmhouses in Hyderabad
-      </h2>
+      </h1>
 
       <!-- SEARCH -->
       <form action="/farmhouses/" method="GET"
@@ -165,7 +165,7 @@
 
 
 
-<section class="relative py-20 bg-cover bg-center"
+{% comment %} <section class="relative py-20 bg-cover bg-center"
     style="background-image: url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80');">
 
 
@@ -237,10 +237,74 @@
 
         </div>
     </div>
+</section> {% endcomment %}
+
+
+
+<section class="relative py-20 bg-cover bg-center"
+    style="background-image:url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80');">
+
+    <div class="absolute inset-0 bg-white/85"></div>
+
+    <div class="relative mx-auto px-4 md:px-12">
+
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+            <!-- LEFT CONTENT -->
+            <div>
+
+                <p class="text-primary font-medium mb-2 flex items-center gap-2">
+                    <i data-lucide="info" class="w-4 h-4"></i>
+                    <span id="aboutSmallTitle"></span>
+                </p>
+
+                <h3 id="aboutMainTitle"
+                    class="font-display text-4xl md:text-5xl font-bold text-secondary mb-6">
+                </h3>
+
+                <div class="flex gap-8 mb-4">
+                    <button
+                        class="flex items-center gap-2 text-primary font-medium border-b-2 border-primary pb-2">
+                        <i data-lucide="target" class="w-5 h-5"></i>
+                        <span id="missionTitle"></span>
+                    </button>
+                </div>
+
+                <p id="missionDescription"
+                   class="text-gray-900 mb-6 leading-relaxed text-md text-justify"></p>
+
+                <div class="flex gap-8 mb-4">
+                    <button
+                        class="flex items-center gap-2 text-primary font-medium border-b-2 border-primary pb-2">
+                        <i data-lucide="flag" class="w-5 h-5"></i>
+                        <span id="differenceTitle"></span>
+                    </button>
+                </div>
+
+                <p id="differenceDescription"
+                   class="text-gray-900 mb-8 leading-relaxed text-md text-justify"></p>
+
+                <a id="aboutBtn"
+                   class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-medium hover:bg-primary-dark transition">
+                </a>
+
+            </div>
+
+            <!-- RIGHT IMAGE -->
+            <div class="relative">
+                <img id="aboutImage"
+                     class="rounded-2xl shadow-xl"
+                     alt="About">
+
+                <div class="absolute -bottom-6 -left-6 bg-primary text-white p-6 rounded-2xl shadow-lg">
+                    <p class="text-3xl font-bold">10+</p>
+                    <p class="text-sm">Years Experience</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </section>
-
-
-
 
 
 
@@ -251,7 +315,7 @@
     <!-- Finest Farmhouses with Food Section -->
 
 
-    <section class="food-section py-20 text-white relative overflow-hidden bg-black">
+    {% comment %} <section class="food-section py-20 text-white relative overflow-hidden bg-black">
 
     <div class=" mx-auto px-4 md:px-12 ">
         <div id="foodSlider" class="relative">
@@ -382,12 +446,38 @@
 
     </div>
 
+</section> {% endcomment %}
+
+
+
+
+
+<section class="food-section py-20 text-white relative overflow-hidden bg-black">
+
+  <div class="mx-auto px-4 md:px-12">
+
+    <div id="foodSlider" class="relative"></div>
+
+    <!-- CONTROLS -->
+    <div class="flex items-center justify-center gap-6 mt-10">
+
+      <button onclick="prevFoodSlide()"
+              class="px-4 py-2 rounded-full bg-white/20 hover:bg-white/40">
+        ❮
+      </button>
+
+      <div id="foodDots" class="flex gap-2"></div>
+
+      <button onclick="nextFoodSlide()"
+              class="px-4 py-2 rounded-full bg-white/20 hover:bg-white/40">
+        ❯
+      </button>
+
+    </div>
+
+  </div>
+
 </section>
-
-
-
-
-
 
 
 
@@ -407,7 +497,7 @@
      
         <div class="relative   mx-auto px-4 md:px-12 text-center">
             <p class="text-primary font-medium mb-2 section-subtitle">Our Services</p>
-            <h2 class="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Why Choose Farmhouses Hyderabad</h2>
+            <h3 class="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Why Choose Farmhouses Hyderabad</h3>
             <div class="w-24 h-1 bg-primary mx-auto mb-12 rounded-full"></div>
             
             <div id="servicesGrid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -441,14 +531,14 @@
         <!-- Heading -->
         <div class="text-center mb-12">
             <p class="text-primary font-medium mb-2">Our Blogs</p>
-            <h2 class="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">
+            <h3 class="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">
                 Latest Travel Blog
-            </h2>
+            </h3>
             <div class="w-24 h-1 bg-primary mx-auto rounded-full"></div>
         </div>
 
         <!-- BLOG GRID -->
-        <div id="latestBlogGrid" class="grid grid-cols-1 lg:grid-cols-3 gap-10"></div>
+        <div id="latestBlogGrid" class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10"></div>
 
         <div class="text-center mt-12">
             <a href="/blogs/"
@@ -558,59 +648,149 @@ data.services.forEach(service => {
 
 /*  blog  */
 
+/* ================= ABOUT SECTION ================= */
+
+if (data.know_whoweare && data.know_whoweare.length > 0) {
+
+  const about = data.know_whoweare[0];
+
+  document.getElementById("aboutSmallTitle").innerText = about.small_title;
+  document.getElementById("aboutMainTitle").innerText = about.main_title;
+
+  document.getElementById("missionTitle").innerText = about.mission_title;
+  document.getElementById("missionDescription").innerText =
+      about.mission_description;
+
+  document.getElementById("differenceTitle").innerText =
+      about.difference_title;
+
+  document.getElementById("differenceDescription").innerText =
+      about.difference_description;
+
+  document.getElementById("aboutImage").src = about.image;
+
+  const btn = document.getElementById("aboutBtn");
+  btn.innerText = about.button_text;
+  btn.href = "/about/";
+}
 
 
-/* ================= LATEST BLOGS ================= */
-/* ================= LATEST BLOGS ================= */
+/* ================= OUR FACILITY SLIDER ================= */
+
+const foodSlider = document.getElementById("foodSlider");
+const foodDots = document.getElementById("foodDots");
+
+foodSlider.innerHTML = "";
+foodDots.innerHTML = "";
+
+if (data.ourfacility && data.ourfacility.length > 0) {
+
+  data.ourfacility.forEach((item, index) => {
+
+    const facilitiesHTML = item.facilities.map(f =>
+      `<li class="flex items-center gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-orange-400"></i>  ${f.name}</li>`
+    ).join("");
+
+    foodSlider.innerHTML += `
+      <div class="food-slide grid lg:grid-cols-2 gap-12 items-center
+                  transition-opacity duration-700
+                  ${index === 0 ? 'opacity-100' : 'opacity-0 absolute inset-0'}">
+
+        <!-- CONTENT -->
+        <div>
+          <p class="text-white/80 font-medium mb-2 flex items-center gap-2">
+            <span class="w-8 h-0.5 bg-white"></span>
+            Our Specialty
+          </p>
+
+          <h3 class="font-display text-4xl font-poppins md:text-5xl font-bold mb-6">
+            ${item.main_title}
+          </h3>
+
+          <p class="text-white text-md font-poppins mb-8 leading-relaxed">
+            ${item.description}
+          </p>
+
+          ${item.facilities.length > 0 ? `
+          <ul class="space-y-3 mb-8 font-poppins">
+            ${facilitiesHTML}
+          </ul>` : ``}
+        </div>
+
+        <!-- IMAGE -->
+        <div>
+          <img src="${item.image}"
+               class="rounded-2xl shadow-2xl">
+        </div>
+      </div>
+    `;
+
+    foodDots.innerHTML += `
+      <span class="food-dot w-8 h-1 rounded-full
+            ${index === 0 ? 'bg-white' : 'bg-white/40'}"></span>
+    `;
+  });
+}
+
 /* ================= LATEST BLOGS ================= */
 const blogGrid = document.getElementById("latestBlogGrid");
 blogGrid.innerHTML = "";
 
 const blogs = data.latest_blogs;
 
-if (blogs.length === 0) {
+if (!blogs || blogs.length === 0) {
   blogGrid.innerHTML = `
-    <div class="col-span-full py-12 text-center text-gray-400">
+    <div class="col-span-full text-center py-12 text-gray-400">
       Stay tuned for our latest travel guides and stories!
-    </div>`;
-}
-
-/* ================= BIG BLOG ================= */
-if (blogs.length >= 1) {
-
-  const featured = blogs[0];
-
-  blogGrid.innerHTML += `
-    <div class="lg:col-span-2 group bg-gray-50 rounded-3xl overflow-hidden shadow-xl">
-
-      <img src="${featured.image}" class="w-full h-96 object-cover">
-
-      <div class="p-8">
-        <h3 class="text-3xl font-bold mb-4">${featured.title}</h3>
-        <p class="text-gray-600 mb-6">${featured.short_description}</p>
-      </div>
-
     </div>
   `;
+  return;
 }
+
+/* ================= LEFT BIG BLOG ================= */
+const featured = blogs[0];
+
+blogGrid.innerHTML += `
+  <div class="bg-gray-50 rounded-3xl overflow-hidden shadow-xl">
+
+    <img src="${featured.image}"
+         class="w-full h-96 object-cover">
+
+    <div class="p-8">
+      <h3 class="text-3xl font-bold mb-4">${featured.title}</h3>
+
+      <p class="text-gray-600 mb-6 truncate-text">
+        ${featured.short_description}
+      </p>
+
+      <a href="/blog/${featured.slug}/"
+         class="text-primary font-medium">
+        Read Full Article →
+      </a>
+    </div>
+
+  </div>
+`;
 
 /* ================= RIGHT SIDE SMALL BLOGS ================= */
 if (blogs.length > 1) {
 
-  blogGrid.innerHTML += `
-    <div class="lg:col-start-3 grid grid-rows-2 gap-8 h-full">
-  `;
+  let rightColumn = `<div class="flex flex-col gap-8">`;
 
   blogs.slice(1, 3).forEach(blog => {
-
-    blogGrid.innerHTML += `
+    rightColumn += `
       <div class="bg-gray-50 rounded-3xl overflow-hidden shadow-lg">
 
-        <img src="${blog.image}" class="w-full h-44 object-cover">
+        <img src="${blog.image}"
+             class="w-full h-44 object-cover">
 
         <div class="p-6">
-          <h4 class="font-bold text-lg mb-3">${blog.title}</h4>
-          <a href="/blog/${blog.slug}/" class="text-primary text-sm font-medium">
+          <h4 class="font-bold text-lg mb-3 truncate-text">
+            ${blog.title}
+          </h4>
+
+          <a href="/blog/${blog.slug}/"
+             class="text-primary text-sm font-medium">
             Read More →
           </a>
         </div>
@@ -619,9 +799,10 @@ if (blogs.length > 1) {
     `;
   });
 
-  blogGrid.innerHTML += `</div>`;
-}
+  rightColumn += `</div>`;
 
+  blogGrid.innerHTML += rightColumn;
+}
 
 
 
@@ -737,7 +918,7 @@ function startSlider(){
 
 
 <script>
-    let foodIndex = 0;
+    {% comment %} let foodIndex = 0;
     const foodSlides = document.querySelectorAll('.food-slide');
     const foodDots = document.querySelectorAll('.food-dot');
 
@@ -761,8 +942,41 @@ function startSlider(){
     }
 
     // Auto slide every 6 seconds
-    setInterval(nextFoodSlide, 6000);
+    setInterval(nextFoodSlide, 6000); {% endcomment %}
     
+
+
+
+
+let foodIndex = 0;
+
+function showFoodSlide(index) {
+  const slides = document.querySelectorAll('.food-slide');
+  const dots = document.querySelectorAll('.food-dot');
+
+  slides.forEach((slide, i) => {
+    slide.classList.toggle('opacity-100', i === index);
+    slide.classList.toggle('opacity-0', i !== index);
+
+    dots[i].classList.toggle('bg-white', i === index);
+    dots[i].classList.toggle('bg-white/40', i !== index);
+  });
+
+  foodIndex = index;
+}
+
+function nextFoodSlide() {
+  const slides = document.querySelectorAll('.food-slide');
+  showFoodSlide((foodIndex + 1) % slides.length);
+}
+
+function prevFoodSlide() {
+  const slides = document.querySelectorAll('.food-slide');
+  showFoodSlide((foodIndex - 1 + slides.length) % slides.length);
+}
+
+setInterval(nextFoodSlide, 6000);
+
 </script>
 
 {% endblock %}

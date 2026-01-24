@@ -7,6 +7,22 @@ from blogs.models import Blog
 # Create your views here.
 # views.py
 from django.http import HttpResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .permissions import AssignedUserPermission
+from .models import Banner, Location, Farmhouse
+from blogs.models import *
+from .serializers import (
+    BannerSerializer,
+    LocationSerializer,
+    FarmhouseSerializer,
+    BlogSerializer
+)
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.permissions import AllowAny
+from cms.models import *
+from cms.serializers import *
 
 # def home(request):
 #     # return HttpResponse("Hello, this is Blog Page")
@@ -38,6 +54,10 @@ from django.http import HttpResponse
 #         "latest_blogs": latest_blogs,
 #         "selected_location": selected_location,  # ✅ IMPORTANT
 #     })
+
+# views.py
+def home_page(request):
+    return render(request, "home.html")
 
 
 
@@ -146,22 +166,6 @@ def BlogDetail(request):
     return render(request , "blog_detailpage.html")
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from .permissions import AssignedUserPermission
-from .models import Banner, Location, Farmhouse
-from blogs.models import *
-from .serializers import (
-    BannerSerializer,
-    LocationSerializer,
-    FarmhouseSerializer,
-    BlogSerializer
-)
-from rest_framework.authentication import BasicAuthentication
-from rest_framework.permissions import AllowAny
-from cms.models import *
-from cms.serializers import *
 
 class HomeAPIView(APIView):
     authentication_classes = [BasicAuthentication]
@@ -197,6 +201,32 @@ class HomeAPIView(APIView):
         })
         
         
-# views.py
-def home_page(request):
-    return render(request, "home.html")
+
+
+class AboutAPIView(APIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        aboutsections = AboutSection.objects.filter(is_active=True)
+        aboutwhoweare = WhoWeAre.objects.filter(is_active=True).order_by("Slot_position")
+        travel_blogs = Blog.objects.filter(
+            is_published=True
+        ).order_by("-published_at")[:3]
+        return Response({
+            "banners": AboutSectionSerializer(
+                aboutsections,
+                many=True,
+                context={"request": request}   # ✅ THIS IS THE FIX
+            ).data,
+            "travel_blogs": BlogSerializer(travel_blogs, many=True , context={"request": request}).data,
+            "aboutwhoweare": WhoWeAreSerializer(
+                aboutwhoweare,
+                many=True,
+                context={"request": request}
+            ).data,
+        })
+
+        
+
+        

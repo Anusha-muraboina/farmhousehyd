@@ -92,11 +92,13 @@ class AboutFeatureSerializer(serializers.ModelSerializer):
             "icon",
             "title",
         ]
+        
+from django.utils.html import strip_tags
 class AboutSectionSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
     video = serializers.SerializerMethodField()
     features = AboutFeatureSerializer(many=True)
-
+    description = serializers.SerializerMethodField()
     class Meta:
         model = AboutSection
         fields = [
@@ -108,7 +110,9 @@ class AboutSectionSerializer(serializers.ModelSerializer):
             "video",
             "features",
         ]
-
+    def get_description(self, obj):
+                # ✅ removes all HTML tags
+        return strip_tags(obj.description)
     def get_image(self, obj):
         request = self.context.get("request")
         if obj.image and request:
