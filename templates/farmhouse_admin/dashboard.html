@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Farmhouse Owner Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-white shadow-lg fixed h-full">
+
+    <div class="p-6 border-b">
+      <h2 class="text-2xl font-bold text-orange-500">Farmhouse</h2>
+      <p class="text-sm text-gray-500">Owner Panel</p>
+    </div>
+
+    <nav class="p-4 space-y-2">
+
+      <a href="#" class="flex items-center gap-3 p-3 rounded-lg bg-orange-100 text-orange-600 font-semibold">
+        <i data-lucide="layout-dashboard"></i>
+        Dashboard
+      </a>
+
+      <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
+        <i data-lucide="home"></i>
+        My Farmhouses
+      </a>
+
+      <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
+        <i data-lucide="calendar"></i>
+        Bookings
+      </a>
+
+      <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
+        <i data-lucide="credit-card"></i>
+        Payments
+      </a>
+
+      <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
+        <i data-lucide="star"></i>
+        Reviews
+      </a>
+
+      <a href="/logout/" class="flex items-center gap-3 p-3 rounded-lg text-red-500 hover:bg-red-50">
+        <i data-lucide="log-out"></i>
+        Logout
+      </a>
+
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="ml-64 flex-1 p-8">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold">Dashboard</h1>
+      <div class="flex items-center gap-3">
+        <div class="text-right">
+          <p class="font-semibold">{{ request.user.username }}</p>
+          <p class="text-sm text-gray-500">Farmhouse Owner</p>
+        </div>
+        <div class="w-10 h-10 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold">
+          {{ request.user.username|slice:":1"|upper }}
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="grid md:grid-cols-4 gap-6 mb-10">
+
+      <div class="bg-white p-6 rounded-xl shadow">
+        <p class="text-gray-500 text-sm">Total Farmhouses</p>
+        <h2 class="text-3xl font-bold mt-2">3</h2>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow">
+        <p class="text-gray-500 text-sm">Total Bookings</p>
+        <h2 class="text-3xl font-bold mt-2">28</h2>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow">
+        <p class="text-gray-500 text-sm">Upcoming Bookings</p>
+        <h2 class="text-3xl font-bold mt-2">5</h2>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow">
+        <p class="text-gray-500 text-sm">Total Earnings</p>
+        <h2 class="text-3xl font-bold mt-2">₹1,25,000</h2>
+      </div>
+
+    </div>
+
+    <!-- RECENT BOOKINGS -->
+    <div class="bg-white rounded-xl shadow p-6">
+
+      <h2 class="text-xl font-bold mb-4">Recent Bookings</h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b">
+              <th class="py-3">Customer</th>
+              <th>Farmhouse</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody class="text-sm">
+            <tr class="border-b hover:bg-gray-50">
+              <td class="py-3">Rahul Kumar</td>
+              <td>Green Valley Farm</td>
+              <td>20 Jan 2026</td>
+              <td>₹12,000</td>
+              <td>
+                <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs">
+                  Confirmed
+                </span>
+              </td>
+            </tr>
+
+            <tr class="border-b hover:bg-gray-50">
+              <td class="py-3">Anjali Sharma</td>
+              <td>Sunset Villa</td>
+              <td>18 Jan 2026</td>
+              <td>₹9,000</td>
+              <td>
+                <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-xs">
+                  Pending
+                </span>
+              </td>
+            </tr>
+
+            <tr class="hover:bg-gray-50">
+              <td class="py-3">Vikram Singh</td>
+              <td>Lake View Farm</td>
+              <td>15 Jan 2026</td>
+              <td>₹15,000</td>
+              <td>
+                <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs">
+                  Cancelled
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    lucide.createIcons();
+  </script>
+
+</body>
+</html>

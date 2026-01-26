@@ -17,32 +17,54 @@ from django.contrib import messages
 from farmhouse.models import Farmhouse
 
 
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 def owner_login(request):
     if request.method == "POST":
-        username = request.POST.get("username")
+        email = request.POST.get("email")
         password = request.POST.get("password")
 
-        user = authenticate(request, username=username, password=password)
+        # authenticate using EMAIL
+        user = authenticate(
+            request,
+            email=email,
+            password=password
+        )
 
-        if user and user.farmhouse_user:
-            login(request, user)
-            return redirect("owner_dashboard")
-        else:
-            messages.error(request, "Invalid credentials or not a farmhouse owner")
+        if user is None:
+            messages.error(request, "Invalid email or password")
+            return redirect("owner_login")
+
+        # ✅ ONLY FARMHOUSE OWNER
+        if not user.farmhouse_user:
+            messages.error(request, "You are not authorized as a farmhouse owner")
+            return redirect("owner_login")
+
+        login(request, user)
+        return redirect("owner_dashboard")
 
     return render(request, "farmhouse_admin/login.html")
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 
-@login_required
+def owner_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect("owner_login")
+
+        if not request.user.farmhouse_user:
+            return redirect("owner_login")
+
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+@owner_required
 def owner_dashboard(request):
-    if not request.user.farmhouse_user:
-        return redirect("owner_login")
-
-    farmhouses = Farmhouse.objects.filter(user=request.user)
-
-    return render(request, "farmhouse_admin/dashboard.html", {
-        "farmhouses": farmhouses
-    })
+    return render(request, "farmhouse_admin/dashboard.html")
 
 
 def owner_logout(request):

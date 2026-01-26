@@ -1,28 +1,58 @@
-{% extends "base.html" %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Farmhouse Owner Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<div class="min-h-screen flex items-center justify-center bg-gray-100">
-  <form method="POST" class="bg-white p-8 rounded-xl shadow w-96">
-    {% csrf_token %}
-    <h2 class="text-2xl font-bold mb-6 text-center">Farmhouse Owner Login</h2>
+    <!-- Tailwind CDN (optional – you can remove if not needed) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-    <input name="username"
-           placeholder="Username"
-           class="w-full border p-3 mb-4 rounded">
+<body class="min-h-screen flex items-center justify-center bg-gray-100">
 
-    <input name="password"
-           type="password"
-           placeholder="Password"
-           class="w-full border p-3 mb-4 rounded">
+    <form method="POST"
+          class="bg-white p-8 rounded-xl shadow-lg w-96">
 
-    <button class="w-full bg-orange-500 text-white py-3 rounded">
-      Login
-    </button>
+        {% csrf_token %}
 
-    {% for message in messages %}
-      <p class="text-red-500 mt-3 text-center">{{ message }}</p>
-    {% endfor %}
-  </form>
-</div>
+        <h2 class="text-2xl font-bold mb-6 text-center">
+            Farmhouse Owner Login
+        </h2>
 
-{% endblock %}
+        <!-- EMAIL -->
+        <input
+            type="email"
+            name="email"
+            placeholder="Email address"
+            required
+            class="w-full border p-3 mb-4 rounded focus:outline-none focus:ring-2 focus:ring-orange-400">
+
+        <!-- PASSWORD -->
+        <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+            class="w-full border p-3 mb-4 rounded focus:outline-none focus:ring-2 focus:ring-orange-400">
+
+        <!-- SUBMIT -->
+        <button
+            type="submit"
+            class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded font-semibold transition">
+            Login
+        </button>
+
+        <!-- ERROR MESSAGES -->
+        {% if messages %}
+            {% for message in messages %}
+                <p class="text-red-500 text-sm text-center mt-4">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+
+    </form>
+
+</body>
+</html>
