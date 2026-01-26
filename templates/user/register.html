@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Register{% endblock %}
 
+
 {% block content %}
 <section class="md:py-14 py-2 bg-gray-100 flex items-center justify-center px-4">
-
+{% csrf_token %}
   <div class="w-full max-w-xl bg-white rounded-3xl shadow-xl p-8">
 
     <!-- Title -->
@@ -111,10 +112,34 @@ function togglePassword(id) {
   input.type = input.type === "password" ? "text" : "password";
 }
 
+function getCookie(name) {
+  let cookieValue = null;
+
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+
+      if (cookie.startsWith(name + "=")) {
+        cookieValue = decodeURIComponent(
+          cookie.substring(name.length + 1)
+        );
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
 async function register() {
   const res = await fetch("{% url 'user-register' %}", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    credentials: "include",   // 🔥 REQUIRED
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCookie("csrftoken")
+    },
     body: JSON.stringify({
       username: username.value,
       email: email.value,

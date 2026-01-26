@@ -6,6 +6,9 @@ class User(AbstractUser):
     assignedpermission = models.BooleanField(default=False)
     phone = models.CharField(max_length=15)
     farmhouse_user = models.BooleanField(default=False)
+    
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
     def __str__(self):
         return self.username
 

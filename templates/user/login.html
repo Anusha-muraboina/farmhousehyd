@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
 
+
 {% block content %}
 <section class="bg-gray-100 flex items-center justify-center px-4 md:py-16 py-6">
-
+{% csrf_token %}
   <div class="w-full max-w-xl bg-white rounded-3xl shadow-xl md:p-8 p-6">
 
     <!-- Title -->
@@ -88,7 +89,50 @@ function togglePassword() {
   lucide.createIcons();
 }
 
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+      if (cookie.startsWith(name + "=")) {
+        cookieValue = decodeURIComponent(
+          cookie.substring(name.length + 1)
+        );
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
 async function loginUser() {
+
+  const csrfToken = getCookie("csrftoken");
+
+  const res = await fetch("/api/login/", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken
+    },
+    body: JSON.stringify({
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value
+    })
+  });
+
+  const data = await res.json();
+
+  if (res.ok) {
+    window.location.href = "/";
+  } else {
+    alert(data.error || "Invalid login");
+  }
+}
+
+{% comment %} async function loginUser() {
   const res = await fetch("{% url 'user-login' %}", {
     method: "POST",
     credentials: "include",   // 🔥 REQUIRED FOR SESSION
@@ -108,7 +152,7 @@ async function loginUser() {
   } else {
     alert(data.error || "Invalid login");
   }
-}
+} {% endcomment %}
 
 lucide.createIcons();
 </script>

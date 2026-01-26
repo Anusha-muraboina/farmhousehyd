@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+  <form method="POST" class="bg-white p-8 rounded-xl shadow w-96">
+    {% csrf_token %}
+    <h2 class="text-2xl font-bold mb-6 text-center">Farmhouse Owner Login</h2>
+
+    <input name="username"
+           placeholder="Username"
+           class="w-full border p-3 mb-4 rounded">
+
+    <input name="password"
+           type="password"
+           placeholder="Password"
+           class="w-full border p-3 mb-4 rounded">
+
+    <button class="w-full bg-orange-500 text-white py-3 rounded">
+      Login
+    </button>
+
+    {% for message in messages %}
+      <p class="text-red-500 mt-3 text-center">{{ message }}</p>
+    {% endfor %}
+  </form>
+</div>
+
+{% endblock %}

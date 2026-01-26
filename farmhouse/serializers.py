@@ -48,6 +48,7 @@ class FarmhouseSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
+            "user",
             "slug",
             "location",
             "address",

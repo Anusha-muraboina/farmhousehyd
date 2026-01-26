@@ -22,6 +22,46 @@ class RegisterAPIView(generics.CreateAPIView):
 
 
 # ✅ LOGIN
+# class EmailLoginAPIView(generics.GenericAPIView):
+#     serializer_class = EmailLoginSerializer
+#     permission_classes = [AllowAny]
+
+#     def post(self, request):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+
+#         email = serializer.validated_data["email"]
+#         password = serializer.validated_data["password"]
+
+#         try:
+#             user = User.objects.get(email=email)
+#         except User.DoesNotExist:
+#             return Response(
+#                 {"error": "Invalid email or password"},
+#                 status=status.HTTP_401_UNAUTHORIZED
+#             )
+
+#         user = authenticate(
+#             request,
+#             username=user.username,   # IMPORTANT
+#             password=password
+#         )
+
+#         if not user:
+#             return Response(
+#                 {"error": "Invalid email or password"},
+#                 status=status.HTTP_401_UNAUTHORIZED
+#             )
+
+#         # 🔥 THIS IS THE KEY LINE
+#         login(request, user)
+
+#         return Response({
+#             "message": "Login successful",
+#             "user": UserSerializer(user).data
+#         }, status=status.HTTP_200_OK)
+
+
 class EmailLoginAPIView(generics.GenericAPIView):
     serializer_class = EmailLoginSerializer
     permission_classes = [AllowAny]
@@ -33,17 +73,11 @@ class EmailLoginAPIView(generics.GenericAPIView):
         email = serializer.validated_data["email"]
         password = serializer.validated_data["password"]
 
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return Response(
-                {"error": "Invalid email or password"},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
+        # ✅ authenticate using EMAIL
         user = authenticate(
             request,
-            username=user.username,   # IMPORTANT
+            # email=email,
+            username=email,
             password=password
         )
 
@@ -53,15 +87,21 @@ class EmailLoginAPIView(generics.GenericAPIView):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-        # 🔥 THIS IS THE KEY LINE
+        # optional: restrict to farmhouse users
+        if not user:
+            return Response(
+                {"error": "You are not authorized"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         login(request, user)
 
         return Response({
             "message": "Login successful",
             "user": UserSerializer(user).data
         }, status=status.HTTP_200_OK)
-
-
+        
+        
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 
