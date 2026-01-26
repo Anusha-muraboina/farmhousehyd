@@ -23,7 +23,7 @@ urlpatterns = [
     
     path('', include('farmhouse.urls')),
     
-    path('conatct/',include('contact.urls')),
+    path('contact/',include('contact.urls')),
     path('api/',include('user.urls')),
     path('blogs/',include('blogs.urls')),
     path('booking/',include('booking.urls')),

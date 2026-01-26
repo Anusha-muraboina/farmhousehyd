@@ -301,7 +301,7 @@ axios.get("/blogs/api/blogs-recent/")
 .then(res => {
   res.data.forEach(post => {
     recentBlogs.innerHTML += `
-      <a href="/blogs/${post.slug}/"
+      <a href="/blogs/blogs/${post.slug}/"
          class="flex gap-3 items-center">
         <img src="${post.image}"
              class="w-20 h-16 object-cover rounded">
@@ -315,11 +315,41 @@ axios.get("/blogs/api/blogs-recent/")
 
 /* ================= SEARCH ================= */
 
+{% comment %} function searchBlogs(e) {
+  if (e.key === "Enter") {
+    window.location.href = `/blogs/blogs/?search=${e.target.value}`;
+  }
+} {% endcomment %}
+
+{% comment %} function searchBlogs(e) {
+  if (e.key === "Enter") {
+    const value = e.target.value.trim();
+
+    if (value) {
+      // Always redirect to the correct listing page with absolute path
+      window.location.href = `/blogs/blogs/?search=${encodeURIComponent(value)}`;
+    } else {
+      window.location.href = `/blogs/`;
+    }
+  }
+} {% endcomment %}
 function searchBlogs(e) {
   if (e.key === "Enter") {
-    window.location.href = `/blogs/?search=${e.target.value}`;
+    const value = e.target.value.trim();
+
+    // 🔥 clear input immediately
+    e.target.value = "";
+
+    if (value) {
+      // ✅ correct absolute URL
+      window.location.href = `/blogs/blogs/?search=${encodeURIComponent(value)}`;
+    } else {
+      window.location.href = `/blogs/`;
+    }
   }
 }
+
+
 </script>
 
 {% endblock %}

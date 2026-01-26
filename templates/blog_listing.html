@@ -30,9 +30,13 @@
   <aside class="space-y-6 bg-white md:p-6 p-2 rounded">
 
     <!-- SEARCH -->
-    <input id="searchInput"
+    {% comment %} <input id="searchInput"
            placeholder="Search..."
-           class="w-full border p-3 rounded">
+           class="w-full border p-3 rounded"> {% endcomment %}
+<input id="searchInput"
+       placeholder="Search..."
+       class="w-full border p-3 rounded"
+       value="{{ request.GET.search|default:'' }}">
 
     <!-- CATEGORIES -->
     <div>
@@ -58,14 +62,70 @@
 </div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <script>
 const params = new URLSearchParams(window.location.search);
 
 /* ================= BLOGS ================= */
-
 function loadBlogs() {
+  axios.get("/blogs/api/blogs/?" + params.toString())
+    .then(res => {
+
+      const box = document.getElementById("blogList");
+      box.innerHTML = "";
+
+      // 🔴 NO BLOGS FOUND
+      if (res.data.length === 0) {
+        box.innerHTML = `
+          <div class="bg-white p-10 rounded shadow text-center">
+            <h2 class="text-2xl font-bold mb-2">No Blogs Found</h2>
+            <p class="text-gray-500 mb-4">
+              We couldn't find any blogs matching your search.
+            </p>
+            <a href="/blogs/"
+               class="inline-block bg-primary text-white px-6 py-2 rounded">
+               View All Blogs
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      // ✅ BLOGS EXIST
+      res.data.forEach(blog => {
+        box.innerHTML += `
+          <article class="bg-white rounded shadow">
+            <img src="${blog.image}" class="w-full h-64 object-cover">
+
+            <div class="p-6">
+              <h2 class="text-xl font-bold mb-2">
+                <a href="/blogs/${blog.slug}/">
+                  ${blog.title}
+                </a>
+              </h2>
+
+              <p class="text-gray-600 mb-4">
+                ${blog.short_description}
+              </p>
+
+              <a href="/blogs/blogs/${blog.slug}/"
+                 class="text-primary font-semibold">
+                View Post →
+              </a>
+            </div>
+          </article>
+        `;
+      });
+
+    })
+    .catch(() => {
+      document.getElementById("blogList").innerHTML = `
+        <p class="text-red-500">Failed to load blogs.</p>
+      `;
+    });
+}
+
+{% comment %} function loadBlogs() {
   axios.get("/blogs/api/blogs/?" + params.toString())
     .then(res => {
       const box = document.getElementById("blogList");
@@ -88,7 +148,7 @@ function loadBlogs() {
         `;
       });
     });
-}
+} {% endcomment %}
 
 /* ================= CATEGORIES ================= */
 
@@ -121,6 +181,28 @@ axios.get("/blogs/api/blog-tags/")
     });
   });
 
+
+
+
+
+document.getElementById("searchInput").addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    
+    const value = this.value.trim();
+    e.target.value = ""; // clear input
+    if (value) {
+      window.location.href = `/blogs/blogs/?search=${encodeURIComponent(value)}`;
+    } else {
+      window.location.href = "/blogs/";
+    }
+  }
+});
+
+
+
+
+
 /* ================= RECENT ================= */
 
 axios.get("/blogs/api/blogs-recent/")
@@ -130,7 +212,7 @@ axios.get("/blogs/api/blogs-recent/")
       box.innerHTML += `
         <div class="flex gap-3">
           <img src="${post.image}" class="w-16 h-14 object-cover rounded">
-          <a href="/blogs/${post.slug}" class="text-sm font-medium">
+          <a href="/blogs/blogs/${post.slug}" class="text-sm font-medium">
             ${post.title}
           </a>
         </div>

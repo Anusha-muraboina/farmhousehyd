@@ -1,119 +1,155 @@
 {% extends "base.html" %}
-
-{% block title %}Farmhouses Hyderabad - Best Farmhouses{% endblock %}
-
+{% block title %}Contact Us{% endblock %}
 {% block content %}
 
-<section class="relative h-[300px] md:h-[400px] overflow-hidden">
-    <div class="absolute inset-0 bg-cover bg-center"
-         style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80');">
-        <div class="absolute inset-0 bg-gradient-to-r from-gray-900/70 to-gray-900/40"></div>
+<section class="py-20 bg-gray-50">
+  <div class="px-4 md:px-12 mx-auto max-w-7xl">
+
+    <!-- HEADING -->
+    <div class="text-center mb-14">
+      <h1 class="text-4xl font-serif font-bold text-orange-500 mb-3">
+        Get in Touch
+      </h1>
+      <p class="text-gray-600">
+        We'd love to hear from you. Reach out anytime.
+      </p>
     </div>
 
-    <div class="relative h-full container mx-auto px-4 flex flex-col items-center justify-center text-center">
-        <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">
-            Contact Us
-        </h1>
-    </div>
-</section>
+    <div class="grid lg:grid-cols-2 gap-12">
 
-<section class="py-20">
-    <div class="px-4 md:px-12 mx-auto">
-        <div class="grid lg:grid-cols-2 gap-12 items-start">
+      <!-- LEFT CONTACT INFO -->
+      <div class="space-y-6">
 
-            <!-- LEFT INFO -->
-            <div class="space-y-6">
-
-                <!-- PHONE -->
-                <div class="flex items-center gap-5 border rounded-2xl p-6 shadow-sm">
-                    <div class="w-14 h-14 bg-orange-500 text-white rounded-full flex items-center justify-center">
-                                                <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2"
-                             viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M3 5a2 2 0 012-2h2.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-1.548.774a11.042 11.042 0 005.516 5.516l.774-1.548a1 1 0 011.21-.502l4.493 1.498A1 1 0 0121 17.72V20a2 2 0 01-2 2h-1C9.716 22 2 14.284 2 5V4a1 1 0 011-1z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-gray-500 text-sm mb-1">Phone</p>
-                        <p class="font-semibold text-lg">
-                            {{ contact_info.phone }}
-                        </p>
-                    </div>
-                </div>
-
-                <!-- EMAIL -->
-                <div class="flex items-center gap-5 border rounded-2xl p-6 shadow-sm">
-                    <div class="w-14 h-14 bg-orange-500 text-white rounded-full flex items-center justify-center">
-                                             
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2"
-                             viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-18 8h18a2 2 0 002-2V6a2 2 0 00-2-2H3a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-gray-500 text-sm mb-1">Email</p>
-                        <p class="font-semibold">{{ contact_info.email_1 }}</p>
-                        {% if contact_info.email_2 %}
-                            <p class="font-semibold">{{ contact_info.email_2 }}</p>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- TIME -->
-                <div class="flex items-center gap-5 border rounded-2xl p-6 shadow-sm">
-                    <div class="w-14 h-14 bg-orange-500 text-white rounded-full flex items-center justify-center">
-                                                <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2"
-                             viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M12 6v6l4 2M12 22a10 10 0 100-20 10 10 0 000 20z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-gray-500 text-sm mb-1">Opening Time</p>
-                        <p class="font-semibold">
-                            {{ contact_info.opening_time }}
-                        </p>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- RIGHT FORM -->
-            <div class="rounded-3xl p-10 shadow-md">
-                <h2 class="text-3xl font-bold mb-8">Reach Us Anytime</h2>
-
-<form method="POST" class="space-y-6">
-    {% csrf_token %}
-
-    <!-- FARMHOUSE DROPDOWN -->
-    <div>
-        <label class="text-sm text-gray-600 mb-1 block">
-            Select Farmhouse
-        </label>
-        {{ form.farmhouse }}
-    </div>
-
-    {{ form.name }}
-
-    <div class="grid md:grid-cols-2 gap-6">
-        {{ form.phone }}
-        {{ form.email }}
-    </div>
-
-    {{ form.message }}
-
-    <button
-        type="submit"
-        class="bg-orange-500 hover:bg-secondary text-white font-semibold px-10 py-3 rounded-lg">
-        Submit Now
-    </button>
-</form>
-
-            </div>
-
+        <!-- PHONE -->
+        <div class="flex items-center gap-6 bg-white p-6 rounded-2xl shadow hover:shadow-lg transition">
+          <div class="w-14 h-14 bg-orange-500 text-white rounded-full flex items-center justify-center text-xl">
+             <i data-lucide="phone" class="w-7 h-7"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Phone</p>
+            <p id="phone" class="font-semibold text-lg text-gray-900"></p>
+          </div>
         </div>
+
+        <!-- EMAIL -->
+        <div class="flex items-center gap-6 bg-white p-6 rounded-2xl shadow hover:shadow-lg transition">
+          <div class="w-14 h-14 bg-orange-500 text-white rounded-full flex items-center justify-center text-xl">
+             <i data-lucide="mail" class="w-7 h-7"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Email</p>
+            <p id="email1" class="font-semibold text-gray-900"></p>
+            <p id="email2" class="font-semibold text-gray-900"></p>
+          </div>
+        </div>
+
+        <!-- TIME -->
+        <div class="flex items-center gap-6 bg-white p-6 rounded-2xl shadow hover:shadow-lg transition">
+          <div class="w-14 h-14 bg-orange-500 text-white rounded-full flex items-center justify-center text-xl">
+             <i data-lucide="clock" class="w-7 h-7"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Opening Time</p>
+            <p id="time" class="font-semibold text-gray-900"></p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT FORM -->
+      <div class="bg-white p-10 rounded-3xl shadow-xl">
+
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">
+          Reach Us Anytime
+        </h2>
+
+        <form onsubmit="submitContact(event)" class="space-y-5">
+
+          <select id="farmhouse"
+                  class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none">
+            <option value="">Select Farmhouse</option>
+          </select>
+
+          <input id="name"
+                 placeholder="Your Name"
+                 class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none">
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <input id="phoneInput"
+                   placeholder="Phone Number"
+                   class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none">
+
+            <input id="emailInput"
+                   placeholder="Email Address"
+                   class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none">
+          </div>
+
+          <textarea id="message"
+                    rows="4"
+                    placeholder="Write your message..."
+                    class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"></textarea>
+
+          <button
+            class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg font-semibold transition">
+            Submit Message
+          </button>
+
+          <p id="successMsg" class="text-green-600 text-center font-medium"></p>
+
+        </form>
+
+      </div>
+
     </div>
+  </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+
+/* ================= CONTACT INFO ================= */
+
+axios.get("/contact/api/contact-info/")
+.then(res => {
+  document.getElementById("phone").innerText = res.data.phone;
+  document.getElementById("email1").innerText = res.data.email_1;
+  document.getElementById("email2").innerText = res.data.email_2 || "";
+  document.getElementById("time").innerText = res.data.opening_time;
+});
+
+/* ================= FARMHOUSES ================= */
+
+axios.get("/contact/api/farmhouses/")
+.then(res => {
+  const box = document.getElementById("farmhouse");
+  res.data.forEach(f => {
+    box.innerHTML += `<option value="${f.id}">${f.title}</option>`;
+  });
+});
+
+/* ================= SUBMIT ================= */
+
+function submitContact(e) {
+  e.preventDefault();
+
+  axios.post("/contact/api/contact-message/", {
+    farmhouse: document.getElementById("farmhouse").value || null,
+    name: document.getElementById("name").value,
+    phone: document.getElementById("phoneInput").value,
+    email: document.getElementById("emailInput").value,
+    message: document.getElementById("message").value
+  })
+  .then(() => {
+    document.getElementById("successMsg").innerText =
+      "✅ Message sent successfully!";
+    e.target.reset();
+  })
+  .catch(() => {
+    alert("Please fill all fields");
+  });
+}
+
+</script>
 
 {% endblock %}
