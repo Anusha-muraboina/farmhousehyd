@@ -1,11 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
-# Create your views here.
-def farmhouse_owner(request):
-    return HttpResponse("Hello, this is farmhouse_owner Page")
-
-
 
 
 
@@ -65,6 +60,11 @@ def owner_required(view_func):
 @owner_required
 def owner_dashboard(request):
     return render(request, "farmhouse_admin/dashboard.html")
+
+
+@owner_required
+def owner_farmhouse(request):
+    return render(request, "farmhouse_admin/farmhouse.html")
 
 
 def owner_logout(request):

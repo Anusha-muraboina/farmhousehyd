@@ -1,0 +1,27 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="max-w-xl bg-white p-10 rounded-xl shadow text-center">
+  <h2 class="text-2xl font-bold mb-4 text-red-600">
+    Delete Banner
+  </h2>
+
+  <p class="mb-6">
+    Are you sure you want to delete <b>{{ obj.title }}</b>?
+  </p>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <a href="{% url 'banner-list' %}"
+       class="px-6 py-2 border rounded-xl mr-4">
+      Cancel
+    </a>
+
+    <button class="bg-red-600 text-white px-6 py-2 rounded-xl">
+      Yes, Delete
+    </button>
+  </form>
+</div>
+
+{% endblock %}

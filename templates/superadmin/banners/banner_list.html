@@ -1,0 +1,61 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="flex justify-between items-center mb-6">
+  <h2 class="text-2xl font-bold text-gray-800">
+    {{ title }}
+  </h2>
+
+  <a href="{% url 'banner-add' %}"
+     class="bg-orange-500 text-white px-5 py-2 rounded-xl">
+    + Add
+  </a>
+</div>
+
+<table class="w-full bg-white rounded-xl shadow">
+  <thead class="bg-gray-100">
+    <tr>
+      <th class="p-3 text-left">Name</th>
+      <th class="p-3 text-left">Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for obj in items %}
+    <tr class="border-t">
+      <td class="p-3 font-medium">
+        {{ obj }}
+      </td>
+      <td class="p-3 flex gap-4">
+        <a href="{{ obj.id }}/edit/"
+           class="text-blue-600 hover:underline">
+           Edit
+        </a>
+        <!-- DELETE -->
+        <form method="POST"
+              action="{% url 'banner-delete' obj.id %}"
+              onsubmit="return confirmDelete()">
+          {% csrf_token %}
+          <button type="submit"
+                  class="text-red-600 hover:underline">
+            Delete
+          </button>
+        </form>
+
+        {% comment %} <a href="{{ obj.id }}/delete/"
+           class="text-red-600 hover:underline">
+           Delete
+        </a> {% endcomment %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="2" class="p-6 text-center text-gray-500">
+        No records found
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

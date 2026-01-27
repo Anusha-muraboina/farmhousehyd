@@ -1,0 +1,21 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-6">
+  Edit: {{ farmhouse.title }}
+</h1>
+
+<form method="POST" class="bg-white p-8 rounded shadow space-y-5">
+  {% csrf_token %}
+
+  {{ form.as_p }}
+
+  <h3 class="font-bold mt-6">Pricing</h3>
+  {{ pricing_form.as_p }}
+
+  <button class="bg-orange-500 text-white px-8 py-2 rounded">
+    Update
+  </button>
+</form>
+
+{% endblock %}

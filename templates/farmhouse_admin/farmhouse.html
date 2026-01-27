@@ -1,0 +1,44 @@
+{% extends "farmhouse_admin/base.html" %}
+{% block title %}My Farmhouses{% endblock %}
+
+{% block content %}
+
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">My Farmhouses</h1>
+
+    <a href="#"
+       class="bg-orange-500 text-white px-5 py-2 rounded">
+        + Add Farmhouse
+    </a>
+</div>
+
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- CARD -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9"
+             class="h-48 w-full object-cover">
+
+        <div class="p-5">
+            <h3 class="font-bold text-lg mb-1">
+                Luxury Farmhouse
+            </h3>
+
+            <p class="text-sm text-gray-500 mb-2">
+                Hyderabad • 3 Bedrooms
+            </p>
+
+            <p class="font-semibold text-orange-600 mb-3">
+                ₹12,000 / day
+            </p>
+
+            <div class="flex justify-between text-sm">
+                <a href="#" class="text-blue-600">Edit</a>
+                <a href="#" class="text-red-600">Delete</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

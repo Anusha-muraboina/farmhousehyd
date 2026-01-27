@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Super Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<!-- HEADER -->
+<header class="bg-white shadow px-6 py-4 flex justify-between items-center">
+
+  <!-- LEFT -->
+  <div class="flex items-center gap-4">
+    <button onclick="toggleSidebar()"
+            class="p-2 rounded hover:bg-gray-100">
+      <i data-lucide="menu"></i>
+    </button>
+
+    <h2 class="text-xl font-bold text-orange-600">
+      Super Admin
+    </h2>
+  </div>
+
+  <!-- RIGHT USER -->
+  <div class="relative">
+    <button onclick="toggleUserMenu()"
+            class="flex items-center gap-2">
+      <div class="w-9 h-9 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold">
+        {{ request.user.username|first|upper }}
+      </div>
+      <span class="font-medium">{{ request.user.username }}</span>
+      <i data-lucide="chevron-down" class="w-4 h-4"></i>
+    </button>
+
+    <!-- DROPDOWN -->
+    <div id="userMenu"
+         class="hidden absolute right-0 mt-3 bg-white w-40 rounded shadow z-50">
+
+      <a href="#"
+         class="block px-4 py-2 hover:bg-gray-100">
+         Profile
+      </a>
+
+      <a href="{% url 'superadmin-logout' %}"
+         class="block px-4 py-2 text-red-600 hover:bg-gray-100">
+         Logout
+      </a>
+
+    </div>
+  </div>
+
+</header>
+
+<!-- BODY -->
+<div class="flex">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar"
+         class="w-64 bg-white min-h-screen shadow transition-all duration-300">
+
+    <nav class="p-5 space-y-2">
+
+      <a href="{% url 'superadmin-dashboard' %}"
+         class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
+        <i data-lucide="layout-dashboard"></i>
+        <span class="sidebar-text">Dashboard</span>
+      </a>
+
+      <a href="{% url 'superadmin-farmhouses' %}"
+         class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
+        <i data-lucide="home"></i>
+        <span class="sidebar-text">Farmhouses</span>
+      </a>
+
+
+
+
+            <a href="{% url 'banner-list' %}"
+                class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
+                <i data-lucide="home"></i>
+                <span class="sidebar-text">Banners</span>
+            </a>
+
+            <a href="{% url 'location-list' %}"
+         class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
+        <i data-lucide="home"></i>
+        <span class="sidebar-text">Locations</span>
+      </a>
+
+
+            <a href="{% url 'amenity-list' %}"
+         class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
+        <i data-lucide="home"></i>
+        <span class="sidebar-text">Amenities</span>
+      </a>
+
+
+
+
+    </nav>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="flex-1 p-8">
+    {% block content %}{% endblock %}
+  </main>
+
+</div>
+
+<script>
+lucide.createIcons();
+
+/* SIDEBAR COLLAPSE */
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const texts = document.querySelectorAll(".sidebar-text");
+
+  if (sidebar.classList.contains("w-64")) {
+    sidebar.classList.remove("w-64");
+    sidebar.classList.add("w-20");
+
+    texts.forEach(t => t.style.display = "none");
+  } else {
+    sidebar.classList.remove("w-20");
+    sidebar.classList.add("w-64");
+
+    texts.forEach(t => t.style.display = "inline");
+  }
+}
+
+/* USER DROPDOWN */
+function toggleUserMenu() {
+  document.getElementById("userMenu").classList.toggle("hidden");
+}
+
+/* CLOSE ON OUTSIDE CLICK */
+document.addEventListener("click", function (e) {
+  const menu = document.getElementById("userMenu");
+  if (!e.target.closest(".relative")) {
+    menu.classList.add("hidden");
+  }
+});
+</script>
+
+</body>
+</html>

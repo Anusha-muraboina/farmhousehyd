@@ -12,7 +12,7 @@ class Banner(models.Model):
     Slot_position = models.PositiveIntegerField(blank=True,null=True)
     
     def __str__(self):
-        return self.title    
+        return self.title  or "banner" 
 
 
 class Location(models.Model):

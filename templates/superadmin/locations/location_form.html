@@ -1,0 +1,14 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<form method="POST" enctype="multipart/form-data"
+      class="bg-white p-10 rounded-xl shadow space-y-6 max-w-3xl">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <button class="bg-orange-500 text-white px-8 py-3 rounded-xl">
+    Save
+  </button>
+</form>
+
+{% endblock %}

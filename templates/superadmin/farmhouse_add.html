@@ -1,0 +1,194 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-4">
+
+  <!-- HEADER -->
+  <div class="flex justify-between items-center mb-10">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800">Add Farmhouse</h1>
+      <p class="text-gray-500 mt-1">
+        Manage all farmhouse details from here
+      </p>
+    </div>
+
+    <a href="{% url 'superadmin-farmhouses' %}"
+       class="text-sm text-gray-600 hover:text-orange-500">
+      ← Back
+    </a>
+  </div>
+<form method="POST" class="bg-white p-8 rounded shadow space-y-5">
+  {% csrf_token %}
+
+  {{ form.as_p }}
+
+  <h3 class="font-bold mt-6">Pricing</h3>
+  {{ pricing_form.as_p }}
+
+
+  <h3 class="font-bold mt-6"> image gallery</h3>
+  {{farmhouse_gallery.as_P}}
+
+      <div class="flex justify-end gap-4 pt-8 border-t">
+      <a href="{% url 'superadmin-farmhouses' %}"
+         class="px-6 py-3 border rounded-xl text-gray-600 hover:bg-gray-100">
+        Cancel
+      </a>
+
+      <button type="submit"
+              class="px-12 py-3 rounded-xl bg-orange-500 hover:bg-orange-600
+                     text-white font-semibold shadow">
+        Save Farmhouse
+      </button>
+    </div>
+  <!-- <button class="bg-orange-500 text-white px-8 py-2 rounded">
+    Update
+  </button> -->
+</form>
+  <!-- <form method="POST"
+        class="bg-white rounded-3xl shadow-xl p-10 space-y-14">
+    {% csrf_token %}
+
+ 
+    <div>
+      <h2 class="text-xl font-semibold mb-6 text-gray-800">
+       Basic Information
+      </h2>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="text-sm font-medium mb-1 block">Title</label>
+          {{ form.title }}
+        </div>
+
+        <div>
+          <label class="text-sm font-medium mb-1 block">Location</label>
+          {{ form.location }}
+        </div>
+        <div>
+          <label class="text-sm font-medium mb-1 block">User</label>
+          {{ form.user }}
+        </div>
+        <div>
+          <label class="text-sm font-medium mb-1 block">Address</label>
+          {{ form.address }}
+        </div>
+
+        <div>
+          <label class="text-sm font-medium mb-1 block">Distance (KM)</label>
+          {{ form.distance_km }}
+        </div>
+      </div>
+    </div>
+
+  
+    <div>
+      <h2 class="text-xl font-semibold mb-6">Property Details</h2>
+
+      <div class="grid md:grid-cols-3 gap-6">
+
+        <div>
+          <label class="text-sm font-medium mb-1 block">Halls</label>
+          {{ form.halls }}
+        </div>
+               <div>
+          <label class="text-sm font-medium mb-1 block">Bedrooms</label>
+          {{ form.bedrooms }}
+        </div>
+                <div>
+          <label class="text-sm font-medium mb-1 block">Ac Bedrooms</label>
+          {{ form.ac_bedrooms }}
+        </div>
+        {% comment %} {{ form.bedrooms }}
+        {{ form.ac_bedrooms }} {% endcomment %}
+      </div>
+    </div>
+
+   
+    <div>
+      <h2 class="text-xl font-semibold mb-6"> Amenities</h2>
+
+      <div class="bg-gray-50 p-6 rounded-xl grid md:grid-cols-4 gap-4">
+        {{ form.amenities }}
+      </div>
+    </div>
+
+
+    <div>
+      <h2 class="text-xl font-semibold mb-6">Short Description</h2>
+
+      <div class="space-y-6">
+        {{ form.short_description }}
+       
+      </div>
+    </div>
+    <div>
+      <h2 class="text-xl font-semibold mb-6"> Description</h2>
+
+      <div class="space-y-6">
+       
+        {{ form.description }}
+      </div>
+    </div>
+ 
+    <div>
+      <h2 class="text-xl font-semibold mb-6"> Pricing</h2>
+
+      <div class="grid md:grid-cols-3 gap-6">
+
+        <div>
+          <label class="text-sm font-medium mb-1 block">Normal Price</label>
+          {{ pricing_form.normal_day_price }}
+        </div>
+        <div>
+          <label class="text-sm font-medium mb-1 block">Weekend Price</label>
+          {{ pricing_form.weekend_price }}
+        </div>
+                <div>
+          <label class="text-sm font-medium mb-1 block">Extra Guest Price</label>
+           {{ pricing_form.extra_guest_price }}
+        </div>
+
+
+        
+      
+      </div>
+    </div>
+
+
+    <div>
+      <h2 class="text-xl font-semibold mb-6">Settings</h2>
+
+      <div class="flex gap-10 bg-gray-50 p-6 rounded-xl">
+        <label class="flex items-center gap-2">
+          {{ form.is_active }} Active
+        </label>
+
+        <label class="flex items-center gap-2">
+          {{ form.is_featured }} Featured
+        </label>
+
+        <label class="flex items-center gap-2">
+          {{ form.free_cancellation }} Free Cancellation
+        </label>
+      </div>
+    </div>
+
+  
+    <div class="flex justify-end gap-4 pt-8 border-t">
+      <a href="{% url 'superadmin-farmhouses' %}"
+         class="px-6 py-3 border rounded-xl text-gray-600 hover:bg-gray-100">
+        Cancel
+      </a>
+
+      <button type="submit"
+              class="px-12 py-3 rounded-xl bg-orange-500 hover:bg-orange-600
+                     text-white font-semibold shadow">
+        Save Farmhouse
+      </button>
+    </div>
+
+  </form> -->
+</div>
+
+{% endblock %}

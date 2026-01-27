@@ -1,0 +1,52 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="flex justify-between items-center mb-6">
+  <h1 class="text-2xl font-bold">Farmhouses</h1>
+
+  <a href="{% url 'superadmin-farmhouse-add' %}"
+     class="bg-orange-500 text-white px-5 py-2 rounded">
+    + Add Farmhouse
+  </a>
+</div>
+
+<table class="w-full bg-white rounded shadow">
+  <thead class="bg-gray-100">
+    <tr>
+      <th class="p-3 text-left">Title</th>
+      <th class="p-3 text-left">farmhouse owner</th>
+      <th class="p-3 text-left">Price</th>
+      <th class="p-3 text-left">Status</th>
+      <th class="p-3 text-left">Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for f in farmhouses %}
+    <tr class="border-t">
+      <td class="p-3">{{ f.title }}</td>
+      <td class="p-3">{{ f.user.email }}</td>
+      <td class="p-3">₹{{ f.price_per_day }}</td>
+      <td class="p-3">
+        {% if f.is_active %}
+          <span class="text-green-600">Active</span>
+        {% else %}
+          <span class="text-red-600">Inactive</span>
+        {% endif %}
+      </td>
+      <td class="p-3 flex gap-3">
+        <a href="{% url 'superadmin-farmhouse-edit' f.id %}"
+           class="text-blue-600">Edit</a>
+
+        <a href="{% url 'superadmin-farmhouse-delete' f.id %}"
+           onclick="return confirm('Delete farmhouse?')"
+           class="text-red-600">
+           Delete
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
