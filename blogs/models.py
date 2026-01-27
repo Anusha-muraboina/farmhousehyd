@@ -98,8 +98,6 @@ class Blog(models.Model):
         super().save(*args, **kwargs)
 
 
-
-
 class BlogComment(models.Model):
     blog = models.ForeignKey(
         Blog,

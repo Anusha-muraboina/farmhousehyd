@@ -3,6 +3,10 @@ from django.shortcuts import render
 # Create your views here.
 # Create your views here.
 
+from django.utils.text import slugify
+from django.contrib.auth.decorators import login_required
+from blogs.models import *
+
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -297,3 +301,204 @@ def amenity_delete(request, pk):
         return redirect("amenity-list")
     # return render(request, "superadmin/amenities/amenities_delete.html", {"obj": obj})
 
+
+
+@login_required
+@user_passes_test(superadmin_required)
+def category_list(request):
+    categories = BlogCategory.objects.all()
+    return render(request, "superadmin/blog/category_list.html", {
+        "categories": categories
+    })
+
+
+@login_required
+@user_passes_test(superadmin_required)
+def category_add(request):
+    if request.method == "POST":
+        BlogCategory.objects.create(
+            name=request.POST.get("name"),
+            is_active=True if request.POST.get("is_active") else False
+        )
+        messages.success(request, "Category added successfully")
+        return redirect("category_list")
+
+    return render(request, "superadmin/blog/category_form.html")
+
+
+@login_required
+@user_passes_test(superadmin_required)
+def category_edit(request, pk):
+    category = get_object_or_404(BlogCategory, pk=pk)
+
+    if request.method == "POST":
+        category.name = request.POST.get("name")
+        category.is_active = True if request.POST.get("is_active") else False
+        category.save()
+
+        messages.success(request, "Category updated")
+        return redirect("category_list")
+
+    return render(request, "superadmin/blog/category_form.html", {
+        "category": category
+    })
+
+
+@login_required
+@user_passes_test(superadmin_required)
+def category_delete(request, pk):
+    BlogCategory.objects.filter(pk=pk).delete()
+    messages.success(request, "Category deleted")
+    return redirect("category_list")
+
+
+# ===============================
+# TAG CRUD
+# ===============================
+
+@login_required
+@user_passes_test(superadmin_required)
+def tag_list(request):
+    tags = BlogTag.objects.all()
+    return render(request, "superadmin/blog/tag_list.html", {"tags": tags})
+
+
+@login_required
+@user_passes_test(superadmin_required)
+def tag_add(request):
+    if request.method == "POST":
+        BlogTag.objects.create(
+            name=request.POST.get("name")
+        )
+        messages.success(request, "Tag added")
+        return redirect("tag_list")
+
+    return render(request, "superadmin/blog/tag_form.html")
+
+
+@login_required
+@user_passes_test(superadmin_required)
+def tag_edit(request, pk):
+    tag = get_object_or_404(BlogTag, pk=pk)
+
+    if request.method == "POST":
+        tag.name = request.POST.get("name")
+        tag.save()
+        messages.success(request, "Tag updated")
+        return redirect("tag_list")
+
+    return render(request, "superadmin/blog/tag_form.html", {"tag": tag})
+
+
+@login_required
+@user_passes_test(superadmin_required)
+def tag_delete(request, pk):
+    BlogTag.objects.filter(pk=pk).delete()
+    messages.success(request, "Tag deleted")
+    return redirect("tag_list")
+
+
+# ===============================
+# BLOG CRUD
+# ===============================
+
+@login_required
+@user_passes_test(superadmin_required)
+def blog_list(request):
+    blogs = Blog.objects.all()
+    return render(request, "superadmin/blog/blog_list.html", {
+        "blogs": blogs
+    })
+
+
+@login_required
+@user_passes_test(superadmin_required)
+def blog_add(request):
+    categories = BlogCategory.objects.filter(is_active=True)
+    tags = BlogTag.objects.all()
+
+    if request.method == "POST":
+        blog = Blog.objects.create(
+            title=request.POST.get("title"),
+            category_id=request.POST.get("category"),
+            short_description=request.POST.get("short_description"),
+            content=request.POST.get("content"),
+            read_time=request.POST.get("read_time"),
+            is_published=True if request.POST.get("is_published") else False,
+        )
+
+        if request.FILES.get("image"):
+            blog.image = request.FILES.get("image")
+            blog.save()
+
+        tag_ids = request.POST.getlist("tags")
+        blog.tags.set(tag_ids)
+
+        messages.success(request, "Blog created successfully")
+        return redirect("blog_list")
+
+    return render(request, "superadmin/blog/blog_form.html", {
+        "categories": categories,
+        "tags": tags
+    })
+
+
+@login_required
+@user_passes_test(superadmin_required)
+def blog_edit(request, pk):
+    blog = get_object_or_404(Blog, pk=pk)
+    categories = BlogCategory.objects.filter(is_active=True)
+    tags = BlogTag.objects.all()
+
+    if request.method == "POST":
+        blog.title = request.POST.get("title")
+        blog.category_id = request.POST.get("category")
+        blog.short_description = request.POST.get("short_description")
+        blog.content = request.POST.get("content")
+        blog.read_time = request.POST.get("read_time")
+        blog.is_published = True if request.POST.get("is_published") else False
+
+        if request.FILES.get("image"):
+            blog.image = request.FILES.get("image")
+
+        blog.save()
+        blog.tags.set(request.POST.getlist("tags"))
+
+        messages.success(request, "Blog updated successfully")
+        return redirect("blog_list")
+
+    return render(request, "superadmin/blog/blog_form.html", {
+        "blog": blog,
+        "categories": categories,
+        "tags": tags
+    })
+
+
+@login_required
+@user_passes_test(superadmin_required)
+def blog_delete(request, pk):
+    Blog.objects.filter(pk=pk).delete()
+    messages.success(request, "Blog deleted")
+    return redirect("blog_list")
+
+
+# ===============================
+# COMMENTS MODERATION
+# ===============================
+
+@login_required
+@user_passes_test(superadmin_required)
+def comment_list(request):
+    comments = BlogComment.objects.select_related("blog").order_by("-created_at")
+    return render(request, "superadmin/blog/comment_list.html", {
+        "comments": comments
+    })
+
+
+@login_required
+@user_passes_test(superadmin_required)
+def comment_toggle(request, pk):
+    comment = get_object_or_404(BlogComment, pk=pk)
+    comment.is_active = not comment.is_active
+    comment.save()
+    return redirect("comment_list")

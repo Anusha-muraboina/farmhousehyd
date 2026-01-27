@@ -1,0 +1,122 @@
+{% extends "superadmin/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-6">
+  {% if blog %}Edit Blog{% else %}Add Blog{% endif %}
+</h1>
+
+<form method="post" enctype="multipart/form-data"
+      class="bg-white p-8 rounded-xl shadow-md max-w-4xl">
+
+  {% csrf_token %}
+
+  <!-- TITLE -->
+  <div class="mb-5">
+    <label class="block font-semibold mb-2">Blog Title</label>
+    <input type="text"
+           name="title"
+           value="{{ blog.title }}"
+           class="w-full border rounded px-4 py-2"
+           required>
+  </div>
+
+  <!-- CATEGORY -->
+  <div class="mb-5">
+    <label class="block font-semibold mb-2">Category</label>
+    <select name="category"
+            class="w-full border rounded px-4 py-2">
+      <option value="">-- Select Category --</option>
+      {% for cat in categories %}
+        <option value="{{ cat.id }}"
+          {% if blog.category_id == cat.id %}selected{% endif %}>
+          {{ cat.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- TAGS -->
+  <div class="mb-5">
+    <label class="block font-semibold mb-2">Tags</label>
+    <select name="tags" multiple
+            class="w-full border rounded px-4 py-2 h-36">
+      {% for tag in tags %}
+        <option value="{{ tag.id }}"
+          {% if blog and tag in blog.tags.all %}selected{% endif %}>
+          {{ tag.name }}
+        </option>
+      {% endfor %}
+    </select>
+    <p class="text-sm text-gray-500 mt-1">Hold CTRL to select multiple tags</p>
+  </div>
+
+  <!-- IMAGE -->
+  <div class="mb-5">
+    <label class="block font-semibold mb-2">Featured Image</label>
+
+    {% if blog.image %}
+      <img src="{{ blog.image.url }}"
+           class="h-32 mb-3 rounded shadow">
+    {% endif %}
+
+    <input type="file"
+           name="image"
+           class="w-full border rounded px-3 py-2">
+  </div>
+
+  <!-- SHORT DESCRIPTION -->
+  <div class="mb-5">
+    <label class="block font-semibold mb-2">Short Description</label>
+    <textarea name="short_description"
+              rows="3"
+              class="w-full border rounded px-4 py-2"
+              required>{{ blog.short_description }}</textarea>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="mb-5">
+    <label class="block font-semibold mb-2">Blog Content</label>
+    <textarea name="content"
+              rows="10"
+              class="w-full border rounded px-4 py-2"
+              required>{{ blog.content }}</textarea>
+  </div>
+
+  <!-- READ TIME -->
+  <div class="mb-5 w-40">
+    <label class="block font-semibold mb-2">Read Time (minutes)</label>
+    <input type="number"
+           name="read_time"
+           value="{{ blog.read_time|default:3 }}"
+           class="w-full border rounded px-4 py-2">
+  </div>
+
+  <!-- STATUS -->
+  <div class="mb-6">
+    <label class="flex items-center gap-2">
+      <input type="checkbox"
+             name="is_published"
+             {% if blog.is_published %}checked{% endif %}>
+      Publish Blog
+    </label>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="flex gap-4">
+    <button type="submit"
+            class="bg-emerald-600 hover:bg-emerald-700
+                   text-white px-8 py-2 rounded font-semibold">
+      Save Blog
+    </button>
+
+    <a href="{% url 'blog_lists' %}"
+       class="bg-gray-200 px-8 py-2 rounded">
+      Cancel
+    </a>
+  </div>
+
+</form>
+
+{% endblock %}

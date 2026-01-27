@@ -1,0 +1,27 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-6">
+  {% if category %}Edit{% else %}Add{% endif %} Category
+</h1>
+
+<form method="post" class="bg-white p-6 rounded shadow w-1/2">
+  {% csrf_token %}
+
+  <label class="block mb-2">Category Name</label>
+  <input type="text" name="name"
+         value="{{ category.name }}"
+         class="w-full border p-2 rounded mb-4" required>
+
+  <label class="flex items-center gap-2 mb-4">
+    <input type="checkbox" name="is_active"
+           {% if category.is_active %}checked{% endif %}>
+    Active
+  </label>
+
+  <button class="bg-emerald-600 text-white px-6 py-2 rounded">
+    Save
+  </button>
+</form>
+
+{% endblock %}

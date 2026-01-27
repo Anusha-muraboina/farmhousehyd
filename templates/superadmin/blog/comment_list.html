@@ -1,0 +1,29 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-6">Blog Comments</h1>
+
+<table class="w-full bg-white shadow rounded">
+  <tr class="bg-gray-100">
+    <th class="p-3">User</th>
+    <th>Blog</th>
+    <th>Comment</th>
+    <th>Status</th>
+  </tr>
+
+  {% for c in comments %}
+  <tr class="border-t">
+    <td class="p-3">{{ c.name }}</td>
+    <td>{{ c.blog.title }}</td>
+    <td>{{ c.comment|truncatewords:12 }}</td>
+    <td>
+      <a href="{% url 'comment_toggle' c.id %}"
+         class="text-blue-600">
+        {% if c.is_active %}Disable{% else %}Approve{% endif %}
+      </a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

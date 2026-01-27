@@ -1,0 +1,21 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-6">
+  {% if tag %}Edit{% else %}Add{% endif %} Tag
+</h1>
+
+<form method="post" class="bg-white p-6 rounded shadow w-1/2">
+  {% csrf_token %}
+
+  <label class="block mb-2">Tag Name</label>
+  <input type="text" name="name"
+         value="{{ tag.name }}"
+         class="w-full border p-2 rounded mb-4" required>
+
+  <button class="bg-emerald-600 text-white px-6 py-2 rounded">
+    Save
+  </button>
+</form>
+
+{% endblock %}
