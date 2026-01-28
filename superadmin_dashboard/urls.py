@@ -53,4 +53,49 @@ urlpatterns = [
     # COMMENTS
     path("comments/", views.comment_list, name="comment_list"),
     path("comments/toggle/<int:pk>/", views.comment_toggle, name="comment_toggle"),
+    
+    
+    # cms
+    # Choose Services
+    path("choose-services/", views.choose_services_list, name="choose_services_list"),
+    path("choose-services/add/", views.choose_services_add, name="choose_services_add"),
+    path("choose-services/edit/<int:id>/", views.choose_services_edit, name="choose_services_edit"),
+    path("choose-services/delete/<int:id>/", views.choose_services_delete, name="choose_services_delete"),
+
+    # Facilities
+    path("facilities/", views.facilities_list, name="facilities_list"),
+    path("facilities/add/", views.facilities_add, name="facilities_add"),
+    path("facilities/edit/<int:id>/", views.facilities_edit, name="facilities_edit"),
+    path("facilities/delete/<int:id>/", views.facilities_delete, name="facilities_delete"),
+
+    # Our Facility
+    path("our-facility/", views.our_facility_list, name="our_facility_list"),
+    path("our-facility/add/", views.our_facility_add, name="our_facility_add"),
+    path("our-facility/edit/<int:id>/", views.our_facility_edit, name="our_facility_edit"),
+    path("our-facility/delete/<int:id>/", views.our_facility_delete, name="our_facility_delete"),
+
+    # Who We Are
+    path("who-we-are/", views.who_we_are_list, name="who_we_are_list"),
+    path("who-we-are/add/", views.who_we_are_add, name="who_we_are_add"),
+    path("who-we-are/edit/<int:id>/", views.who_we_are_edit, name="who_we_are_edit"),
+    path("who-we-are/delete/<int:id>/", views.who_we_are_delete, name="who_we_are_delete"),
+
+    # About Section
+    path("about-section/", views.about_section_list, name="about_section_list"),
+    path("about-section/add/", views.about_section_add, name="about_section_add"),
+    path("about-section/edit/<int:id>/", views.about_section_edit, name="about_section_edit"),
+    path("about-section/delete/<int:id>/", views.about_section_delete, name="about_section_delete"),
+
+    # About Feature
+    path("about-feature/", views.about_feature_list, name="about_feature_list"),
+    path("about-feature/add/", views.about_feature_add, name="about_feature_add"),
+    path("about-feature/edit/<int:id>/", views.about_feature_edit, name="about_feature_edit"),
+    path("about-feature/delete/<int:id>/", views.about_feature_delete, name="about_feature_delete"),
+
+    # About Who We Are
+    path("about-who-we-are/", views.about_who_we_are_list, name="about_who_we_are_list"),
+    path("about-who-we-are/add/", views.about_who_we_are_add, name="about_who_we_are_add"),
+    path("about-who-we-are/edit/<int:id>/", views.about_who_we_are_edit, name="about_who_we_are_edit"),
+    path("about-who-we-are/delete/<int:id>/", views.about_who_we_are_delete, name="about_who_we_are_delete"),
+
 ]

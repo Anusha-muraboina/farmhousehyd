@@ -168,3 +168,54 @@ class AmenityForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"class": INPUT}),
             "icon_class": forms.TextInput(attrs={"class": INPUT}),
         }
+
+
+
+# cms
+
+from django import forms
+from cms.models import *
+
+class ChooseServiceForm(forms.ModelForm):
+    class Meta:
+        model = Choos_Services
+        fields = "__all__"
+
+
+class FacilityForm(forms.ModelForm):
+    class Meta:
+        model = Facilities
+        fields = "__all__"
+
+
+class OurFacilityForm(forms.ModelForm):
+    class Meta:
+        model = OurFacility
+        fields = "__all__"
+        widgets = {
+            "facilities": forms.CheckboxSelectMultiple()
+        }
+
+
+class WhoWeAreForm(forms.ModelForm):
+    class Meta:
+        model = WhoWeAre
+        fields = "__all__"
+
+
+class AboutSectionForm(forms.ModelForm):
+    class Meta:
+        model = AboutSection
+        fields = "__all__"
+
+
+class AboutFeatureForm(forms.ModelForm):
+    class Meta:
+        model = AboutFeature
+        fields = "__all__"
+
+
+class AboutWhoWeAreForm(forms.ModelForm):
+    class Meta:
+        model = AboutWhoWeAre
+        fields = "__all__"

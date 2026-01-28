@@ -502,3 +502,236 @@ def comment_toggle(request, pk):
     comment.is_active = not comment.is_active
     comment.save()
     return redirect("comment_list")
+
+
+# cms views
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator
+from django.contrib import messages
+from cms.models import *
+from superadmin_dashboard.forms import *
+
+
+def paginate(request, queryset):
+    paginator = Paginator(queryset, 10)
+    page = request.GET.get("page")
+    return paginator.get_page(page)
+
+
+# ================= CHOOSE SERVICES =================
+
+def choose_services_list(request):
+    services = paginate(request, Choos_Services.objects.all())
+    return render(request, "cms/choose_services_list.html", {"services": services})
+
+
+def choose_services_add(request):
+    form = ChooseServiceForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Service added successfully")
+        return redirect("choose_services_list")
+    return render(request, "cms/choose_services_form.html", {"form": form})
+
+
+def choose_services_edit(request, id):
+    obj = get_object_or_404(Choos_Services, id=id)
+    form = ChooseServiceForm(request.POST or None, request.FILES or None, instance=obj)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Service updated successfully")
+        return redirect("choose_services_list")
+    return render(request, "cms/choose_services_form.html", {"form": form})
+
+
+def choose_services_delete(request, id):
+    get_object_or_404(Choos_Services, id=id).delete()
+    messages.success(request, "Deleted successfully")
+    return redirect("choose_services_list")
+
+
+# ================= FACILITIES =================
+def facilities_list(request):
+    facilities = paginate(request, Facilities.objects.all())
+    return render(request, "cms/facilities_list.html", {"facilities": facilities})
+
+
+def facilities_add(request):
+    form = FacilityForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Facility added")
+        return redirect("facilities_list")
+    return render(request, "cms/facilities_form.html", {"form": form})
+
+
+def facilities_edit(request, id):
+    obj = get_object_or_404(Facilities, id=id)
+    form = FacilityForm(request.POST or None, instance=obj)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Facility updated")
+        return redirect("facilities_list")
+    return render(request, "cms/facilities_form.html", {"form": form})
+
+
+def facilities_delete(request, id):
+    get_object_or_404(Facilities, id=id).delete()
+    messages.success(request, "Deleted successfully")
+    return redirect("facilities_list")
+
+
+# ================= OUR FACILITY =================
+def our_facility_list(request):
+    items = paginate(request, OurFacility.objects.all())
+    return render(request, "cms/our_facility_list.html", {"items": items})
+
+
+def our_facility_add(request):
+    form = OurFacilityForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Facility added")
+        return redirect("our_facility_list")
+    return render(request, "cms/our_facility_form.html", {"form": form})
+
+
+def our_facility_edit(request, id):
+    obj = get_object_or_404(OurFacility, id=id)
+    form = OurFacilityForm(request.POST or None, request.FILES or None, instance=obj)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Updated successfully")
+        return redirect("our_facility_list")
+    return render(request, "cms/our_facility_form.html", {"form": form})
+
+
+def our_facility_delete(request, id):
+    get_object_or_404(OurFacility, id=id).delete()
+    messages.success(request, "Deleted")
+    return redirect("our_facility_list")
+
+
+# ================= WHO WE ARE =================
+def who_we_are_list(request):
+    items = paginate(request, WhoWeAre.objects.all())
+    return render(request, "cms/who_we_are_list.html", {"items": items})
+
+
+def who_we_are_add(request):
+    form = WhoWeAreForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Added")
+        return redirect("who_we_are_list")
+    return render(request, "cms/who_we_are_form.html", {"form": form})
+
+
+def who_we_are_edit(request, id):
+    obj = get_object_or_404(WhoWeAre, id=id)
+    form = WhoWeAreForm(request.POST or None, request.FILES or None, instance=obj)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Updated")
+        return redirect("who_we_are_list")
+    return render(request, "cms/who_we_are_form.html", {"form": form})
+
+
+def who_we_are_delete(request, id):
+    get_object_or_404(WhoWeAre, id=id).delete()
+    messages.success(request, "Deleted")
+    return redirect("who_we_are_list")
+
+
+# ================= ABOUT SECTION =================
+def about_section_list(request):
+    items = paginate(request, AboutSection.objects.all())
+    return render(request, "cms/about_section_list.html", {"items": items})
+
+
+def about_section_add(request):
+    form = AboutSectionForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Saved")
+        return redirect("about_section_list")
+    return render(request, "cms/about_section_form.html", {"form": form})
+
+
+def about_section_edit(request, id):
+    obj = get_object_or_404(AboutSection, id=id)
+    form = AboutSectionForm(request.POST or None, request.FILES or None, instance=obj)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Updated")
+        return redirect("about_section_list")
+    return render(request, "cms/about_section_form.html", {"form": form})
+
+
+def about_section_delete(request, id):
+    get_object_or_404(AboutSection, id=id).delete()
+    messages.success(request, "Deleted")
+    return redirect("about_section_list")
+
+
+# ================= ABOUT FEATURE =================
+def about_feature_list(request):
+    items = paginate(request, AboutFeature.objects.all())
+    return render(request, "cms/about_feature_list.html", {"items": items})
+
+
+def about_feature_add(request):
+    form = AboutFeatureForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Added")
+        return redirect("about_feature_list")
+    return render(request, "cms/about_feature_form.html", {"form": form})
+
+
+def about_feature_edit(request, id):
+    obj = get_object_or_404(AboutFeature, id=id)
+    form = AboutFeatureForm(request.POST or None, instance=obj)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Updated")
+        return redirect("about_feature_list")
+    return render(request, "cms/about_feature_form.html", {"form": form})
+
+
+def about_feature_delete(request, id):
+    get_object_or_404(AboutFeature, id=id).delete()
+    messages.success(request, "Deleted")
+    return redirect("about_feature_list")
+
+
+# ================= ABOUT WHO WE ARE =================
+def about_who_we_are_list(request):
+    items = paginate(request, AboutWhoWeAre.objects.all())
+    return render(request, "cms/about_who_we_are_list.html", {"items": items})
+
+
+def about_who_we_are_add(request):
+    form = AboutWhoWeAreForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Saved")
+        return redirect("about_who_we_are_list")
+    return render(request, "cms/about_who_we_are_form.html", {"form": form})
+
+
+def about_who_we_are_edit(request, id):
+    obj = get_object_or_404(AboutWhoWeAre, id=id)
+    form = AboutWhoWeAreForm(request.POST or None, request.FILES or None, instance=obj)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Updated")
+        return redirect("about_who_we_are_list")
+    return render(request, "cms/about_who_we_are_form.html", {"form": form})
+
+
+def about_who_we_are_delete(request, id):
+    get_object_or_404(AboutWhoWeAre, id=id).delete()
+    messages.success(request, "Deleted")
+    return redirect("about_who_we_are_list")
