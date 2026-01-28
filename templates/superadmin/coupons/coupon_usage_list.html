@@ -1,0 +1,31 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<h2 class="text-xl font-semibold mb-6">Coupon Usage</h2>
+
+<div class="bg-white rounded shadow overflow-x-auto">
+<table class="w-full text-sm">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="p-3">Coupon</th>
+            <th>User</th>
+            <th>Used At</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in usages %}
+        <tr class="border-b hover:bg-gray-50">
+            <td class="p-3">{{ u.coupon.code }}</td>
+            <td>{{ u.user.username }}</td>
+            <td>{{ u.used_at }}</td>
+            <td>{{ u.usage_count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% include "superadmin/cms/pagination.html" with page=usages %}
+
+{% endblock %}

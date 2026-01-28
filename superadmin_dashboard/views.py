@@ -523,7 +523,7 @@ def paginate(request, queryset):
 
 def choose_services_list(request):
     services = paginate(request, Choos_Services.objects.all())
-    return render(request, "cms/choose_services_list.html", {"services": services})
+    return render(request, "superadmin/cms/choose_services_list.html", {"services": services})
 
 
 def choose_services_add(request):
@@ -532,7 +532,7 @@ def choose_services_add(request):
         form.save()
         messages.success(request, "Service added successfully")
         return redirect("choose_services_list")
-    return render(request, "cms/choose_services_form.html", {"form": form})
+    return render(request, "superadmin/cms/choose_services_form.html", {"form": form})
 
 
 def choose_services_edit(request, id):
@@ -542,7 +542,7 @@ def choose_services_edit(request, id):
         form.save()
         messages.success(request, "Service updated successfully")
         return redirect("choose_services_list")
-    return render(request, "cms/choose_services_form.html", {"form": form})
+    return render(request, "superadmin/cms/choose_services_form.html", {"form": form})
 
 
 def choose_services_delete(request, id):
@@ -554,7 +554,7 @@ def choose_services_delete(request, id):
 # ================= FACILITIES =================
 def facilities_list(request):
     facilities = paginate(request, Facilities.objects.all())
-    return render(request, "cms/facilities_list.html", {"facilities": facilities})
+    return render(request, "superadmin/cms/facility_list.html", {"facilities": facilities})
 
 
 def facilities_add(request):
@@ -563,7 +563,7 @@ def facilities_add(request):
         form.save()
         messages.success(request, "Facility added")
         return redirect("facilities_list")
-    return render(request, "cms/facilities_form.html", {"form": form})
+    return render(request, "superadmin/facility_form.html", {"form": form})
 
 
 def facilities_edit(request, id):
@@ -573,7 +573,7 @@ def facilities_edit(request, id):
         form.save()
         messages.success(request, "Facility updated")
         return redirect("facilities_list")
-    return render(request, "cms/facilities_form.html", {"form": form})
+    return render(request, "superadmin/cms/facilities_form.html", {"form": form})
 
 
 def facilities_delete(request, id):
@@ -585,7 +585,7 @@ def facilities_delete(request, id):
 # ================= OUR FACILITY =================
 def our_facility_list(request):
     items = paginate(request, OurFacility.objects.all())
-    return render(request, "cms/our_facility_list.html", {"items": items})
+    return render(request, "superadmin/cms/our_facility_list.html", {"items": items})
 
 
 def our_facility_add(request):
@@ -594,7 +594,7 @@ def our_facility_add(request):
         form.save()
         messages.success(request, "Facility added")
         return redirect("our_facility_list")
-    return render(request, "cms/our_facility_form.html", {"form": form})
+    return render(request, "superadmin/cms/our_facility_form.html", {"form": form})
 
 
 def our_facility_edit(request, id):
@@ -604,7 +604,7 @@ def our_facility_edit(request, id):
         form.save()
         messages.success(request, "Updated successfully")
         return redirect("our_facility_list")
-    return render(request, "cms/our_facility_form.html", {"form": form})
+    return render(request, "superadmin/cms/our_facility_form.html", {"form": form})
 
 
 def our_facility_delete(request, id):
@@ -616,7 +616,7 @@ def our_facility_delete(request, id):
 # ================= WHO WE ARE =================
 def who_we_are_list(request):
     items = paginate(request, WhoWeAre.objects.all())
-    return render(request, "cms/who_we_are_list.html", {"items": items})
+    return render(request, "superadmin/cms/who_we_are_list.html", {"items": items})
 
 
 def who_we_are_add(request):
@@ -625,7 +625,7 @@ def who_we_are_add(request):
         form.save()
         messages.success(request, "Added")
         return redirect("who_we_are_list")
-    return render(request, "cms/who_we_are_form.html", {"form": form})
+    return render(request, "superadmin/cms/who_we_are_form.html", {"form": form})
 
 
 def who_we_are_edit(request, id):
@@ -635,7 +635,7 @@ def who_we_are_edit(request, id):
         form.save()
         messages.success(request, "Updated")
         return redirect("who_we_are_list")
-    return render(request, "cms/who_we_are_form.html", {"form": form})
+    return render(request, "superadmin/cms/who_we_are_form.html", {"form": form})
 
 
 def who_we_are_delete(request, id):
@@ -647,7 +647,7 @@ def who_we_are_delete(request, id):
 # ================= ABOUT SECTION =================
 def about_section_list(request):
     items = paginate(request, AboutSection.objects.all())
-    return render(request, "cms/about_section_list.html", {"items": items})
+    return render(request, "superadmin/cms/about_section_list.html", {"items": items})
 
 
 def about_section_add(request):
@@ -656,7 +656,7 @@ def about_section_add(request):
         form.save()
         messages.success(request, "Saved")
         return redirect("about_section_list")
-    return render(request, "cms/about_section_form.html", {"form": form})
+    return render(request, "superadmin/cms/about_section_form.html", {"form": form})
 
 
 def about_section_edit(request, id):
@@ -666,7 +666,7 @@ def about_section_edit(request, id):
         form.save()
         messages.success(request, "Updated")
         return redirect("about_section_list")
-    return render(request, "cms/about_section_form.html", {"form": form})
+    return render(request, "superadmin/cms/about_section_form.html", {"form": form})
 
 
 def about_section_delete(request, id):
@@ -678,7 +678,7 @@ def about_section_delete(request, id):
 # ================= ABOUT FEATURE =================
 def about_feature_list(request):
     items = paginate(request, AboutFeature.objects.all())
-    return render(request, "cms/about_feature_list.html", {"items": items})
+    return render(request, "superadmin/cms/about_feature_list.html", {"items": items})
 
 
 def about_feature_add(request):
@@ -687,7 +687,7 @@ def about_feature_add(request):
         form.save()
         messages.success(request, "Added")
         return redirect("about_feature_list")
-    return render(request, "cms/about_feature_form.html", {"form": form})
+    return render(request, "superadmin/cms/about_feature_form.html", {"form": form})
 
 
 def about_feature_edit(request, id):
@@ -697,7 +697,7 @@ def about_feature_edit(request, id):
         form.save()
         messages.success(request, "Updated")
         return redirect("about_feature_list")
-    return render(request, "cms/about_feature_form.html", {"form": form})
+    return render(request, "superadmin/cms/about_feature_form.html", {"form": form})
 
 
 def about_feature_delete(request, id):
@@ -709,7 +709,7 @@ def about_feature_delete(request, id):
 # ================= ABOUT WHO WE ARE =================
 def about_who_we_are_list(request):
     items = paginate(request, AboutWhoWeAre.objects.all())
-    return render(request, "cms/about_who_we_are_list.html", {"items": items})
+    return render(request, "superadmin/cms/about_who_we_are_list.html", {"items": items})
 
 
 def about_who_we_are_add(request):
@@ -718,7 +718,7 @@ def about_who_we_are_add(request):
         form.save()
         messages.success(request, "Saved")
         return redirect("about_who_we_are_list")
-    return render(request, "cms/about_who_we_are_form.html", {"form": form})
+    return render(request, "superadmin/cms/about_who_we_are_form.html", {"form": form})
 
 
 def about_who_we_are_edit(request, id):
@@ -728,10 +728,69 @@ def about_who_we_are_edit(request, id):
         form.save()
         messages.success(request, "Updated")
         return redirect("about_who_we_are_list")
-    return render(request, "cms/about_who_we_are_form.html", {"form": form})
+    return render(request, "superadmin/cms/about_who_we_are_form.html", {"form": form})
 
 
 def about_who_we_are_delete(request, id):
     get_object_or_404(AboutWhoWeAre, id=id).delete()
     messages.success(request, "Deleted")
     return redirect("about_who_we_are_list")
+
+# coupon
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator
+from django.contrib import messages
+from coupon.models import Coupon, CouponUsage
+from .forms import CouponForm
+
+
+
+# ================= COUPON =================
+
+def coupon_list(request):
+    coupons = paginate(request, Coupon.objects.all())
+    return render(request, "superadmin/coupons/coupon_list.html", {
+        "coupons": coupons
+    })
+
+
+def coupon_add(request):
+    form = CouponForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Coupon created successfully")
+        return redirect("coupon_list")
+    return render(request, "superadmin/coupons/coupon_form.html", {
+        "form": form,
+        "title": "Add Coupon"
+    })
+
+
+def coupon_edit(request, id):
+    coupon = get_object_or_404(Coupon, id=id)
+    form = CouponForm(request.POST or None, instance=coupon)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Coupon updated successfully")
+        return redirect("coupon_list")
+    return render(request, "superadmin/coupons/coupon_form.html", {
+        "form": form,
+        "title": "Edit Coupon"
+    })
+
+
+def coupon_delete(request, id):
+    get_object_or_404(Coupon, id=id).delete()
+    messages.success(request, "Coupon deleted")
+    return redirect("coupon_list")
+
+
+# ================= COUPON USAGE =================
+
+def coupon_usage_list(request):
+    usages = paginate(request, CouponUsage.objects.select_related("coupon", "user"))
+    return render(request, "superadmin/coupons/coupon_usage_list.html", {
+        "usages": usages
+    })
+

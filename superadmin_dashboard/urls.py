@@ -97,5 +97,14 @@ urlpatterns = [
     path("about-who-we-are/add/", views.about_who_we_are_add, name="about_who_we_are_add"),
     path("about-who-we-are/edit/<int:id>/", views.about_who_we_are_edit, name="about_who_we_are_edit"),
     path("about-who-we-are/delete/<int:id>/", views.about_who_we_are_delete, name="about_who_we_are_delete"),
+    
+    
+    
+    path("coupons/", views.coupon_list, name="coupon_list"),
+    path("coupons/add/", views.coupon_add, name="coupon_add"),
+    path("coupons/edit/<int:id>/", views.coupon_edit, name="coupon_edit"),
+    path("coupons/delete/<int:id>/", views.coupon_delete, name="coupon_delete"),
+
+    path("coupon-usage/", views.coupon_usage_list, name="coupon_usage_list"),
 
 ]

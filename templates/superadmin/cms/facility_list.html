@@ -1,0 +1,49 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="flex justify-between mb-6">
+    <h2 class="text-xl font-semibold">Facilities</h2>
+    <a href="{% url 'facilities_add' %}"
+       class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        + Add Facility
+    </a>
+</div>
+
+<div class="bg-white rounded shadow overflow-x-auto">
+<table class="w-full text-sm">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="p-3 text-left">Name</th>
+            <th>Status</th>
+            <th class="text-right pr-4">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for f in facilities %}
+        <tr class="border-b hover:bg-gray-50">
+            <td class="p-3">{{ f.name }}</td>
+            <td>
+                {% if f.is_active %}
+                    <span class="text-green-600">Active</span>
+                {% else %}
+                    <span class="text-red-600">Inactive</span>
+                {% endif %}
+            </td>
+            <td class="text-right pr-4 space-x-3">
+                <a href="{% url 'facilities_edit' f.id %}" class="text-blue-600">Edit</a>
+                <a href="{% url 'facilities_delete' f.id %}" class="text-red-600">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3" class="text-center p-6 text-gray-400">No facilities found</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% include "superadmin/cms/pagination.html" with page=facilities %}
+
+{% endblock %}

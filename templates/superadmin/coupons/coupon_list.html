@@ -1,0 +1,48 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="flex justify-between mb-6">
+    <h2 class="text-xl font-semibold">Coupons</h2>
+    <a href="{% url 'coupon_add' %}"
+       class="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700">
+        + Add Coupon
+    </a>
+</div>
+
+<div class="bg-white rounded shadow overflow-x-auto">
+<table class="w-full text-sm">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="p-3">Code</th>
+            <th>Type</th>
+            <th>Value</th>
+            <th>Status</th>
+            <th class="text-right pr-4">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in coupons %}
+        <tr class="border-b hover:bg-gray-50">
+            <td class="p-3 font-semibold">{{ c.code }}</td>
+            <td>{{ c.discount_type }}</td>
+            <td>{{ c.discount_value }}</td>
+            <td>
+                {% if c.is_active %}
+                    <span class="text-green-600">Active</span>
+                {% else %}
+                    <span class="text-red-600">Inactive</span>
+                {% endif %}
+            </td>
+            <td class="text-right pr-4 space-x-3">
+                <a href="{% url 'coupon_edit' c.id %}" class="text-blue-600">Edit</a>
+                <a href="{% url 'coupon_delete' c.id %}" class="text-red-600">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% include "superadmin/cms/pagination.html" with page=coupons %}
+
+{% endblock %}

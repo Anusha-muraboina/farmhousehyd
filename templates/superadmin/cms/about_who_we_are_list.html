@@ -1,0 +1,49 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="flex justify-between mb-6">
+    <h2 class="text-xl font-semibold">Know Who We Are</h2>
+    <a href="{% url 'about_who_we_are_add' %}"
+       class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        + Add
+    </a>
+</div>
+
+<div class="bg-white rounded shadow overflow-x-auto">
+<table class="w-full text-sm">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="p-3 text-left">Main Title</th>
+            <th>Status</th>
+            <th class="text-right pr-4">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for obj in items %}
+        <tr class="border-b hover:bg-gray-50">
+            <td class="p-3">{{ obj.main_title }}</td>
+            <td>
+                {% if obj.is_active %}
+                    <span class="text-green-600">Active</span>
+                {% else %}
+                    <span class="text-red-600">Inactive</span>
+                {% endif %}
+            </td>
+            <td class="text-right pr-4 space-x-3">
+                <a href="{% url 'about_who_we_are_edit' obj.id %}" class="text-blue-600">Edit</a>
+                <a href="{% url 'about_who_we_are_delete' obj.id %}" class="text-red-600">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3" class="text-center p-6 text-gray-400">No records found</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% include "superadmin/cms/pagination.html" with page=items %}
+
+{% endblock %}

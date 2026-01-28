@@ -1,0 +1,20 @@
+<div class="flex justify-center mt-6 gap-2 text-sm">
+
+    {% if page.has_previous %}
+        <a href="?page={{ page.previous_page_number }}"
+           class="px-3 py-1 bg-white border rounded hover:bg-gray-100">
+           Prev
+        </a>
+    {% endif %}
+
+    <span class="px-3 py-1 bg-gray-200 rounded">
+        {{ page.number }} / {{ page.paginator.num_pages }}
+    </span>
+
+    {% if page.has_next %}
+        <a href="?page={{ page.next_page_number }}"
+           class="px-3 py-1 bg-white border rounded hover:bg-gray-100">
+           Next
+        </a>
+    {% endif %}
+</div>

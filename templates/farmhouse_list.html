@@ -15,7 +15,15 @@
         </div>
     </div>
 </section>
-<section class="py-16 bg-gray-50">
+
+    <!-- Heading -->
+    {% comment %} <div class="text-center mt-8">
+      <h2 class="text-primary font-display text-3xl md:text-3xl font-bold">Find Best Farmhouses</h2>
+
+    </div> {% endcomment %}
+
+
+<section class="md:py-16 py-4 bg-gray-50">
     <div class="md:px-12 px-4 mx-auto">
         <form id="filterForm" method="GET"
             class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 w-full">
@@ -31,6 +39,8 @@
                 <span class="text-secondary font-semibold">{{ current_location }}</span>
                 {% endif %}
             </nav>
+
+            
             <div class="flex flex-wrap gap-3">
                 <div class="relative">
                     <select name="location" onchange="this.form.submit()"
@@ -68,7 +78,7 @@
                     {% endif %}
                 </div>
                 <div class="p-5">
-                    <h3 class="font-display text-xl font-bold text-secondary mb-2">{{ farmhouse.title }}</h3>
+                    <p class="font-display text-xl font-bold text-secondary mb-2">{{ farmhouse.title }}</p>
                     <p class="text-gray-500 text-sm flex items-center gap-1 mb-3">
                         <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
                         {{ farmhouse.location.name|default:"Hyderabad" }} • {{ farmhouse.distance_km }} km from city
@@ -95,7 +105,7 @@
             </div>
             {% empty %}
             <div class="col-span-full text-center py-12">
-                <h3 class="text-xl font-semibold text-gray-700">No Farmhouses Found</h3>
+                <p class="text-xl font-semibold text-gray-700">No Farmhouses Found</p>
             </div>
             {% endfor %}
         </div>
