@@ -88,12 +88,16 @@ def farmhouse_list(request):
 # ===============================
 # ADD
 # ===============================
+@login_required
+@user_passes_test(superadmin_required)
 def farmhouse_add(request):
+
     if request.method == "POST":
         form = FarmhouseForm(request.POST)
         pricing_form = FarmhousePricingForm(request.POST)
 
         if form.is_valid() and pricing_form.is_valid():
+
             farmhouse = form.save(commit=False)
             farmhouse.user = request.user
             farmhouse.save()
@@ -103,23 +107,26 @@ def farmhouse_add(request):
             pricing.farmhouse = farmhouse
             pricing.save()
 
+            # ✅ GALLERY SAVE
+            images = request.FILES.getlist("gallery_images")
+
+            for i, img in enumerate(images):
+                FarmhouseImage.objects.create(
+                    farmhouse=farmhouse,
+                    image=img,
+                    is_primary=(i == 0)
+                )
+
             return redirect("superadmin-farmhouses")
 
     else:
         form = FarmhouseForm()
         pricing_form = FarmhousePricingForm()
-        farmhouse_gallery = FarmhouseImageForm()
 
     return render(request, "superadmin/farmhouse_add.html", {
         "form": form,
-        "pricing_form": pricing_form,
-        "farmhouse_gallery":farmhouse_gallery
+        "pricing_form": pricing_form
     })
-
-
-# ===============================
-# EDIT
-# ===============================
 @login_required
 @user_passes_test(superadmin_required)
 def farmhouse_edit(request, id):
@@ -129,29 +136,32 @@ def farmhouse_edit(request, id):
 
     if request.method == "POST":
         form = FarmhouseForm(request.POST, instance=farmhouse)
-        pricing_form = FarmhousePricingForm(
-            request.POST,
-            instance=pricing
-        )
+        pricing_form = FarmhousePricingForm(request.POST, instance=pricing)
 
         if form.is_valid() and pricing_form.is_valid():
             form.save()
             pricing_form.save()
+
+            # ✅ ADD NEW IMAGES
+            images = request.FILES.getlist("gallery_images")
+            for img in images:
+                FarmhouseImage.objects.create(
+                    farmhouse=farmhouse,
+                    image=img
+                )
+
             return redirect("superadmin-farmhouses")
 
     else:
         form = FarmhouseForm(instance=farmhouse)
         pricing_form = FarmhousePricingForm(instance=pricing)
 
-    return render(
-        request,
-        "superadmin/farmhouse_edit.html",
-        {
-            "form": form,
-            "pricing_form": pricing_form,
-            "farmhouse": farmhouse
-        }
-    )
+    return render(request, "superadmin/farmhouse_edit.html", {
+        "form": form,
+        "pricing_form": pricing_form,
+        "farmhouse": farmhouse
+    })
+
 
 
 # ===============================
@@ -551,7 +561,8 @@ def choose_services_delete(request, id):
     return redirect("choose_services_list")
 
 
-# ================= FACILITIES =================
+# ================= FACILITIES =====================================
+
 def facilities_list(request):
     facilities = paginate(request, Facilities.objects.all())
     return render(request, "superadmin/cms/facility_list.html", {"facilities": facilities})
@@ -563,7 +574,7 @@ def facilities_add(request):
         form.save()
         messages.success(request, "Facility added")
         return redirect("facilities_list")
-    return render(request, "superadmin/facility_form.html", {"form": form})
+    return render(request, "superadmin/cms/facility_form.html", {"form": form})
 
 
 def facilities_edit(request, id):
@@ -793,4 +804,6 @@ def coupon_usage_list(request):
     return render(request, "superadmin/coupons/coupon_usage_list.html", {
         "usages": usages
     })
+
+
 

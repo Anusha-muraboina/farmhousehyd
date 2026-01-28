@@ -1,4 +1,366 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Super Admin</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            background: #f5f6fa;
+            font-family: system-ui;
+            margin: 0;
+        }
+
+        /* ================= HEADER ================= */
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* ================= SIDEBAR ================= */
+        .sidebar {
+            width: 260px;
+            background: #fff;
+            min-height: 100vh;
+            border-right: 1px solid #eee;
+            transition: 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar a {
+            width: 100%;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .sidebar a:hover {
+            background: #fff4e5;
+            color: #ff7a00;
+        }
+
+        .sidebar i {
+            width: 22px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .menu-text {
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .menu-text {
+            display: none;
+        }
+
+        .submenu {
+            margin-left: 40px;
+        }
+
+        .sidebar.collapsed .submenu {
+            display: none !important;
+        }
+
+        /* ================= MOBILE ICON ONLY ================= */
+        @media (max-width: 768px) {
+
+            .sidebar {
+                width: 80px !important;
+            }
+
+            /* FORCE hide text */
+            .sidebar .menu-text {
+                display: none !important;
+            }
+
+            /* FORCE hide submenu */
+            .sidebar .submenu {
+                display: none !important;
+            }
+
+            /* prevent expanding */
+            .sidebar.collapsed {
+                width: 80px !important;
+            }
+        }
+
+        .content {
+            width: 100%;
+            padding: 25px;
+        }
+
+        .brand {
+            color: #ff7a00;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<nav class="navbar header px-4 py-3 d-flex justify-content-between">
+
+    <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-light" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <h5 class="mb-0 brand">Super Admin</h5>
+    </div>
+
+    <div class="dropdown">
+        <button class="btn d-flex align-items-center gap-2"
+                data-bs-toggle="dropdown">
+            <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center"
+                 style="width:36px;height:36px;">
+                {{ request.user.username|first|upper }}
+            </div>
+            {{ request.user.username }}
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li>
+                <a class="dropdown-item text-danger"
+                   href="{% url 'superadmin-logout' %}">
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- ================= BODY ================= -->
+<div class="d-flex">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar p-3" id="sidebar">
+
+        <a href="{% url 'superadmin-dashboard' %}">
+            <i class="fa-solid fa-gauge"></i>
+            <span class="menu-text">Dashboard</span>
+        </a>
+
+        <a href="{% url 'superadmin-farmhouses' %}">
+            <i class="fa-solid fa-house"></i>
+            <span class="menu-text">Farmhouses</span>
+        </a>
+
+        <a onclick="toggleMenu('blogMenu')">
+            <i class="fa-solid fa-file-lines"></i>
+            <span class="menu-text">Blogs</span>
+        </a>
+
+       <div id="blogMenu" class="submenu d-none">
+
+    <a href="{% url 'blog_lists' %}">
+        <i class="fa-solid fa-list"></i>
+        <span class="menu-text">All Blogs</span>
+    </a>
+
+    <a href="{% url 'category_list' %}">
+        <i class="fa-solid fa-folder"></i>
+        <span class="menu-text">Categories</span>
+    </a>
+
+    <a href="{% url 'tag_list' %}">
+        <i class="fa-solid fa-tag"></i>
+        <span class="menu-text">Tags</span>
+    </a>
+
+    <a href="{% url 'comment_list' %}">
+        <i class="fa-solid fa-comments"></i>
+        <span class="menu-text">Comments</span>
+    </a>
+
+</div>
+
+
+        <a onclick="toggleMenu('cmsMenu')">
+            <i class="fa-solid fa-layer-group"></i>
+            <span class="menu-text">CMS</span>
+        </a>
+
+<div id="cmsMenu" class="submenu d-none">
+
+    <a href="{% url 'choose_services_list' %}">
+        <i class="fa-solid fa-briefcase"></i>
+        <span class="menu-text">Choose Services</span>
+    </a>
+
+    <a href="{% url 'our_facility_list' %}">
+        <i class="fa-solid fa-building"></i>
+        <span class="menu-text">Our Facility</span>
+    </a>
+
+    <a href="{% url 'who_we_are_list' %}">
+        <i class="fa-solid fa-users"></i>
+        <span class="menu-text">Who We Are</span>
+    </a>
+
+    <a href="{% url 'about_section_list' %}">
+        <i class="fa-solid fa-circle-info"></i>
+        <span class="menu-text">About Section</span>
+    </a>
+
+    <a href="{% url 'about_feature_list' %}">
+        <i class="fa-solid fa-star"></i>
+        <span class="menu-text">About Feature</span>
+    </a>
+
+    <a href="{% url 'about_who_we_are_list' %}">
+        <i class="fa-solid fa-id-card"></i>
+        <span class="menu-text">Know Who We Are</span>
+    </a>
+
+    <a href="{% url 'facilities_list' %}">
+        <i class="fa-solid fa-hotel"></i>
+        <span class="menu-text">Facilities</span>
+    </a>
+
+</div>
+
+
+        <a onclick="toggleMenu('couponMenu')">
+            <i class="fa-solid fa-ticket"></i>
+            <span class="menu-text">Coupons</span>
+        </a>
+
+        <div id="couponMenu" class="submenu d-none">
+
+    <a href="{% url 'coupon_list' %}">
+        <i class="fa-solid fa-ticket"></i>
+        <span class="menu-text">All Coupons</span>
+    </a>
+
+    <a href="{% url 'coupon_usage_list' %}">
+        <i class="fa-solid fa-chart-line"></i>
+        <span class="menu-text">Coupon Usage</span>
+    </a>
+
+</div>
+
+
+    </aside>
+
+    <!-- ================= CONTENT ================= -->
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+
+</div>
+
+<!-- ================= JS ================= -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("collapsed");
+}
+
+function toggleMenu(id) {
+    document.getElementById(id).classList.toggle("d-none");
+}
+</script>
+<script>
+const sidebar = document.getElementById("sidebar");
+
+function handleSidebar() {
+    if (window.innerWidth <= 768) {
+        sidebar.classList.add("collapsed");
+    } else {
+        sidebar.classList.remove("collapsed");
+    }
+}
+
+handleSidebar();
+window.addEventListener("resize", handleSidebar);
+
+function toggleSidebar() {
+    if (window.innerWidth > 768) {
+        sidebar.classList.toggle("collapsed");
+    }
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} <!DOCTYPE html>
 <html>
 <head>
   <title>Super Admin</title>
@@ -96,21 +458,58 @@
         <span class="sidebar-text">Amenities</span>
       </a>
 
+<!-- BLOG DROPDOWN -->
+<div class="w-full">
 
-    <a href="{% url 'blog_lists' %}"         class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-        <i data-lucide="home"></i>
-      Blogs</a>
-    <a href="{% url 'category_list' %}"          class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-        <i data-lucide="home"></i>
-      Categories</a>
-    <a href="{% url 'tag_list' %}"          class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-        <i data-lucide="home"></i>
-      Tags</a>
-    <a href="{% url 'comment_list' %}"          class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-        <i data-lucide="home"></i>
-      
-      Comments</a>
+    <button
+        type="button"
+        id="blogToggle"
+        class="w-full flex items-center justify-between px-3 py-2 rounded hover:bg-orange-50">
 
+        <span class="flex items-center gap-3">
+            <i data-lucide="file-text"></i>
+            Blogs
+        </span>
+
+        <i id="blogArrow"
+           data-lucide="chevron-down"
+           class="transition-transform duration-200"></i>
+    </button>
+
+    <div id="blogMenu" class="hidden ml-6 mt-1 space-y-1">
+
+        <a href="{% url 'blog_lists' %}" data-blog-link
+           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
+            <i data-lucide="list"></i>
+            All Blogs
+        </a>
+
+        <a href="{% url 'category_list' %}" data-blog-link
+           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
+            <i data-lucide="folder"></i>
+            Categories
+        </a>
+
+        <a href="{% url 'tag_list' %}" data-blog-link
+           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
+            <i data-lucide="tag"></i>
+            Tags
+        </a>
+
+        <a href="{% url 'comment_list' %}" data-blog-link
+           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
+            <i data-lucide="message-circle"></i>
+            Comments
+        </a>
+
+    </div>
+</div>
+
+
+
+
+
+     
          <div class="w-full">
 
     <button
@@ -345,6 +744,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const blogToggle = document.getElementById("blogToggle");
+    const blogMenu = document.getElementById("blogMenu");
+    const blogArrow = document.getElementById("blogArrow");
+
+    // restore state
+    if (sessionStorage.getItem("blogOpen") === "true") {
+        blogMenu.classList.remove("hidden");
+        blogArrow.classList.add("rotate-180");
+    }
+
+    // toggle dropdown
+    blogToggle.addEventListener("click", function () {
+        const isOpen = !blogMenu.classList.contains("hidden");
+
+        if (isOpen) {
+            blogMenu.classList.add("hidden");
+            blogArrow.classList.remove("rotate-180");
+            sessionStorage.setItem("blogOpen", "false");
+        } else {
+            blogMenu.classList.remove("hidden");
+            blogArrow.classList.add("rotate-180");
+            sessionStorage.setItem("blogOpen", "true");
+        }
+    });
+
+    // keep open when submenu clicked
+    document.querySelectorAll("[data-blog-link]").forEach(link => {
+        link.addEventListener("click", () => {
+            sessionStorage.setItem("blogOpen", "true");
+        });
+    });
+
+});
+</script>
 
 </body>
-</html>
+</html> {% endcomment %}

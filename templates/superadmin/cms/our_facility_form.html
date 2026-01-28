@@ -1,0 +1,22 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<h2 class="text-xl font-semibold mb-6">Our Facilities</h2>
+
+<form method="post" enctype="multipart/form-data"
+      class="bg-white p-6 rounded shadow max-w-3xl">
+
+    {% csrf_token %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {{ form.as_p }}
+    </div>
+
+    <button
+        class="mt-6 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+        Save
+    </button>
+
+</form>
+
+{% endblock %}
