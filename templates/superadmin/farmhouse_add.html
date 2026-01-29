@@ -3,120 +3,136 @@
 
 <div class="container-fluid">
 
-<h3 class="mb-4 fw-bold">Add Farmhouse</h3>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="fw-bold">Add Farmhouse</h3>
+  <a href="{% url 'superadmin-farmhouses' %}" class="btn btn-outline-secondary">
+    Back
+  </a>
+</div>
 
 <form method="POST" enctype="multipart/form-data">
 {% csrf_token %}
 
 <div class="row g-4">
 
-  <!-- LEFT -->
-  <div class="col-lg-8">
+<!-- LEFT -->
+<div class="col-lg-8">
 
-    <!-- BASIC INFO -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header fw-bold">Basic Information</div>
-      <div class="card-body">
-        {{ form.title }}
-        {{ form.location }}
-        {{ form.address }}
+<div class="card shadow-sm border-0 rounded-4">
+  <div class="card-header bg-white fw-bold fs-5">
+    Basic Information
+  </div>
+
+  <div class="card-body">
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Farmhouse Title</label>
+      {{ form.title }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Location</label>
+      {{ form.location }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Full Address</label>
+      {{ form.address }}
+    </div>
+
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label class="form-label fw-semibold">Distance (KM)</label>
         {{ form.distance_km }}
+      </div>
 
+      <div class="col-md-4 mb-3">
+        <label class="form-label fw-semibold">Halls</label>
         {{ form.halls }}
+      </div>
+
+      <div class="col-md-4 mb-3">
+        <label class="form-label fw-semibold">Bedrooms</label>
         {{ form.bedrooms }}
-        {{ form.ac_bedrooms }}
-
-        {{ form.short_description }}
-        {{ form.description }}
       </div>
     </div>
 
-    <!-- AMENITIES -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header fw-bold">Amenities</div>
-      <div class="card-body" style="max-height:220px; overflow-y:auto;">
-        {{ form.amenities }}
-      </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold">AC Bedrooms</label>
+      {{ form.ac_bedrooms }}
     </div>
 
-    <!-- PRICING -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header fw-bold">Pricing</div>
-      <div class="card-body">
-        {{ pricing_form.normal_day_price }}
-        {{ pricing_form.weekend_price }}
-        {{ pricing_form.extra_guest_price }}
-      </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Short Description</label>
+      {{ form.short_description }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Detailed Description</label>
+      {{ form.description }}
     </div>
 
   </div>
-
-  <!-- RIGHT -->
-  <div class="col-lg-4">
-
-    <!-- SETTINGS -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header fw-bold">Settings</div>
-      <div class="card-body">
-        {{ form.price_per_day }}
-        {{ form.free_cancellation }}
-        {{ form.is_active }}
-        {{ form.is_featured }}
-      </div>
-    </div>
-
-    <!-- GALLERY -->
-    <div class="card shadow-sm">
-      <div class="card-header fw-bold">Gallery</div>
-      <div class="card-body">
-
-        <label class="btn btn-warning text-white w-100 mb-3">
-          Upload Images
-          <input type="file"
-                 name="gallery_images"
-                 id="galleryInput"
-                 multiple
-                 hidden>
-        </label>
-
-        <div id="previewBox" class="row g-2"></div>
-
-      </div>
-    </div>
-
-  </div>
+</div>
 
 </div>
 
+<!-- RIGHT -->
+<div class="col-lg-4">
+
+<div class="card shadow-sm border-0 rounded-4 mb-4">
+  <div class="card-header bg-white fw-bold fs-5">
+    Settings
+  </div>
+
+  <div class="card-body">
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Base Price / Day</label>
+      {{ form.price_per_day }}
+    </div>
+
+    <div class="form-check mb-2">
+      {{ form.free_cancellation }}
+      <label class="form-check-label ms-2">Free Cancellation</label>
+    </div>
+
+    <div class="form-check mb-2">
+      {{ form.is_active }}
+      <label class="form-check-label ms-2">Active</label>
+    </div>
+
+    <div class="form-check">
+      {{ form.is_featured }}
+      <label class="form-check-label ms-2">Featured Farmhouse</label>
+    </div>
+
+  </div>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4">
+  <div class="card-header bg-white fw-bold fs-5">
+    Gallery
+  </div>
+
+  <div class="card-body">
+    <label class="btn btn-warning w-100 text-white py-3">
+      Upload Images
+      <input type="file" name="gallery_images" multiple hidden>
+    </label>
+  </div>
+</div>
+
+</div>
+</div>
+
 <div class="mt-4 text-end">
-  <a href="{% url 'superadmin-farmhouses' %}" class="btn btn-secondary">Cancel</a>
-  <button class="btn btn-warning px-5 text-white">Save Farmhouse</button>
+  <button class="btn btn-warning px-5 py-2 text-white fw-semibold">
+    Save Farmhouse
+  </button>
 </div>
 
 </form>
 </div>
-
-<script>
-document.getElementById("galleryInput").addEventListener("change", function () {
-    const preview = document.getElementById("previewBox");
-    preview.innerHTML = "";
-
-    Array.from(this.files).forEach((file, i) => {
-        const reader = new FileReader();
-        reader.onload = e => {
-            preview.innerHTML += `
-              <div class="col-6">
-                <div class="card">
-                  <img src="${e.target.result}"
-                       class="card-img-top"
-                       style="height:120px;object-fit:cover">
-                  ${i==0 ? '<span class="badge bg-warning position-absolute m-2">Primary</span>' : ''}
-                </div>
-              </div>`;
-        };
-        reader.readAsDataURL(file);
-    });
-});
-</script>
 
 {% endblock %}

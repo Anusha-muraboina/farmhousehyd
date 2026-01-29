@@ -1,0 +1,94 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold">Users</h4>
+
+        <a href="{% url 'admin_user_add' %}" class="btn btn-primary">
+            + Add User
+        </a>
+    </div>
+
+    <!-- CARD -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+
+            <!-- HORIZONTAL SCROLL ONLY -->
+            <div style="overflow-x: auto; overflow-y: visible; width: 100%;">
+
+                <table class="table table-hover align-middle mb-0"
+                       style="min-width: 1200px; white-space: nowrap;">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Username</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for u in users %}
+                        <tr>
+                            <td class="ps-4 fw-semibold">{{ u.username }}</td>
+                            <td>{{ u.email }}</td>
+                            <td>{{ u.phone }}</td>
+
+                            <td>
+                                {% if u.is_staff and u.farmhouse_user %}
+                                    <span class="badge bg-warning text-dark">
+                                        Farmhouse Owner
+                                    </span>
+                                {% elif u.is_staff %}
+                                    <span class="badge bg-info">
+                                        Admin
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        User
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if u.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-end pe-4">
+                                <a href="{% url 'admin_user_edit' u.id %}"
+                                   class="btn btn-sm btn-outline-primary">
+                                    Edit
+                                </a>
+
+                                <a href="{% url 'admin_user_delete' u.id %}"
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Delete this user?')">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+
+    {% include "superadmin/cms/pagination.html" with page=users %}
+
+</div>
+
+{% endblock %}

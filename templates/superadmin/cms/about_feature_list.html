@@ -1,51 +1,79 @@
 {% extends "superadmin/base.html" %}
 {% block content %}
 
-<div class="flex justify-between mb-6">
-    <h2 class="text-xl font-semibold">About Features</h2>
-    <a href="{% url 'about_feature_add' %}"
-       class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        + Add
-    </a>
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-dark mb-0">About Features</h4>
+
+        <a href="{% url 'about_feature_add' %}" class="btn btn-primary">
+            + Add Feature
+        </a>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Title</th>
+                        <th>Section</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for obj in items %}
+                    <tr>
+                        <td class="ps-4 fw-semibold">
+                            {{ obj.title }}
+                        </td>
+
+                        <td>
+                            {{ obj.about.main_title }}
+                        </td>
+
+                        <td>
+                            {% if obj.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactive</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="text-end pe-4">
+                            <a href="{% url 'about_feature_edit' obj.id %}"
+                               class="btn btn-sm btn-outline-primary">
+                                Edit
+                            </a>
+
+                            <a href="{% url 'about_feature_delete' obj.id %}"
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Are you sure?')">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">
+                            No features found
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% include "superadmin/cms/pagination.html" with page=items %}
+
 </div>
-
-<div class="bg-white rounded shadow overflow-x-auto">
-<table class="w-full text-sm">
-    <thead class="bg-gray-100">
-        <tr>
-            <th class="p-3 text-left">Title</th>
-            <th>Section</th>
-            <th>Status</th>
-            <th class="text-right pr-4">Action</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for obj in items %}
-        <tr class="border-b hover:bg-gray-50">
-            <td class="p-3">{{ obj.title }}</td>
-            <td>{{ obj.about.main_title }}</td>
-            <td>
-                {% if obj.is_active %}
-                    <span class="text-green-600">Active</span>
-                {% else %}
-                    <span class="text-red-600">Inactive</span>
-                {% endif %}
-            </td>
-            <td class="text-right pr-4 space-x-3">
-                <a href="{% url 'about_feature_edit' obj.id %}" class="text-blue-600">Edit</a>
-                <a href="{% url 'about_feature_delete' obj.id %}" class="text-red-600">Delete</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="4" class="text-center p-6 text-gray-400">No features found</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-</div>
-
-{% include "superadmin/cms/pagination.html" with page=items %}
 
 {% endblock %}

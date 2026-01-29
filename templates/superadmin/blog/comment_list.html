@@ -1,29 +1,89 @@
 {% extends "superadmin/base.html" %}
+{% load static %}
+
 {% block content %}
 
-<h1 class="text-2xl font-bold mb-6">Blog Comments</h1>
+<div class="container-fluid mt-4">
 
-<table class="w-full bg-white shadow rounded">
-  <tr class="bg-gray-100">
-    <th class="p-3">User</th>
-    <th>Blog</th>
-    <th>Comment</th>
-    <th>Status</th>
-  </tr>
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold text-dark mb-1"> Blog Comments</h3>
+      <p class="text-muted mb-0">Manage and moderate blog comments</p>
+    </div>
+  </div>
 
-  {% for c in comments %}
-  <tr class="border-t">
-    <td class="p-3">{{ c.name }}</td>
-    <td>{{ c.blog.title }}</td>
-    <td>{{ c.comment|truncatewords:12 }}</td>
-    <td>
-      <a href="{% url 'comment_toggle' c.id %}"
-         class="text-blue-600">
-        {% if c.is_active %}Disable{% else %}Approve{% endif %}
-      </a>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
+  <!-- Card -->
+  <div class="card border-0 shadow-sm">
+
+    <div class="card-body p-0">
+
+      <table class="table table-hover align-middle mb-0">
+
+        <thead class="table-light">
+          <tr>
+            <th class="ps-4">User</th>
+            <th>Blog</th>
+            <th>Comment</th>
+            <th>Status</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {% for c in comments %}
+          <tr>
+            <td class="ps-4 fw-semibold">
+              <i class="fa fa-user text-secondary me-1"></i>
+              {{ c.name }}
+            </td>
+
+            <td>
+              <span class="fw-medium">{{ c.blog.title }}</span>
+            </td>
+
+            <td class="text-muted">
+              {{ c.comment|truncatewords:12 }}
+            </td>
+
+            <td>
+              {% if c.is_active %}
+                <span class="badge bg-success">Approved</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">Pending</span>
+              {% endif %}
+            </td>
+
+            <td class="text-center">
+              {% if c.is_active %}
+                <a href="{% url 'comment_toggle' c.id %}"
+                   class="btn btn-sm btn-outline-danger">
+                  <i class="fa fa-ban"></i> Disable
+                </a>
+              {% else %}
+                <a href="{% url 'comment_toggle' c.id %}"
+                   class="btn btn-sm btn-outline-success">
+                  <i class="fa fa-check"></i> Approve
+                </a>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-center py-4 text-muted">
+              No comments available
+            </td>
+          </tr>
+          {% endfor %}
+
+        </tbody>
+
+      </table>
+
+    </div>
+  </div>
+
+</div>
 
 {% endblock %}

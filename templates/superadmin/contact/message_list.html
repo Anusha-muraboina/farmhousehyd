@@ -1,0 +1,43 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<h4 class="fw-bold mb-4">Contact Messages</h4>
+
+<div class="card border-0 shadow-sm">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Farmhouse</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th class="text-end">Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for m in messages %}
+            <tr>
+                <td>{{ m.name }}</td>
+                <td>{{ m.phone }}</td>
+                <td>{{ m.email }}</td>
+                <td>{{ m.farmhouse }}</td>
+                <td>{{ m.message|truncatechars:50 }}</td>
+                <td>{{ m.created_at|date:"d M Y, h:i A" }}</td>
+                <td class="text-end">
+                    <a href="{% url 'contact_message_delete' m.id %}"
+                       class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Delete message?')">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% include "superadmin/cms/pagination.html" with page=messages %}
+{% endblock %}

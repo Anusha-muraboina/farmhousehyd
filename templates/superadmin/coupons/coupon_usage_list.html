@@ -1,31 +1,47 @@
 {% extends "superadmin/base.html" %}
 {% block content %}
 
-<h2 class="text-xl font-semibold mb-6">Coupon Usage</h2>
+<div class="container-fluid">
 
-<div class="bg-white rounded shadow overflow-x-auto">
-<table class="w-full text-sm">
-    <thead class="bg-gray-100">
-        <tr>
-            <th class="p-3">Coupon</th>
-            <th>User</th>
-            <th>Used At</th>
-            <th>Count</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for u in usages %}
-        <tr class="border-b hover:bg-gray-50">
-            <td class="p-3">{{ u.coupon.code }}</td>
-            <td>{{ u.user.username }}</td>
-            <td>{{ u.used_at }}</td>
-            <td>{{ u.usage_count }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <h4 class="fw-bold mb-4">Coupon Usage</h4>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Coupon</th>
+                        <th>User</th>
+                        <th>Used At</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for u in usages %}
+                    <tr>
+                        <td class="ps-4 fw-semibold">{{ u.coupon.code }}</td>
+                        <td>{{ u.user.username }}</td>
+                        <td>{{ u.used_at|date:"d M Y H:i" }}</td>
+                        <td>{{ u.usage_count }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">
+                            No usage found
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+    {% include "superadmin/cms/pagination.html" with page=usages %}
+
 </div>
-
-{% include "superadmin/cms/pagination.html" with page=usages %}
 
 {% endblock %}

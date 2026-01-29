@@ -1,21 +1,195 @@
 {% extends "superadmin/base.html" %}
 {% block content %}
+<style>
+    .description-box {
+        min-height: 260px;
+        padding: 14px 16px;
+        font-size: 14px;
+        border-radius: 12px;
+        border: 1px solid #dee2e6;
+        background-color: #f9fafb;
+        line-height: 1.6;
+    }
 
-<h2 class="text-xl font-semibold mb-6">About Section</h2>
+    .description-box:focus {
+        background-color: #ffffff;
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.2rem rgba(13,110,253,.12);
+    }
+</style>
 
-<form method="post" enctype="multipart/form-data"
-      class="bg-white p-6 rounded shadow max-w-2xl">
+<style>
+    .cms-card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
 
-    {% csrf_token %}
+    .cms-label {
+        font-weight: 600;
+        font-size: 14px;
+        color: #343a40;
+    }
 
-    <div class="space-y-4">
-        {{ form.as_p }}
+    .form-control,
+    .form-select {
+        border-radius: 8px;
+        padding: 11px 14px;
+        font-size: 14px;
+    }
+
+    textarea.form-control {
+        min-height: 240px;
+        background: #f9fafb;
+    }
+
+    textarea.form-control:focus {
+        background: #fff;
+        box-shadow: 0 0 0 0.2rem rgba(13,110,253,.12);
+    }
+
+    .section-head {
+        font-size: 13px;
+        font-weight: 700;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        margin-bottom: 14px;
+    }
+
+    .image-preview {
+        border-radius: 10px;
+        border: 1px solid #dee2e6;
+        padding: 6px;
+        max-height: 150px;
+    }
+
+    .action-bar {
+        border-top: 1px solid #eee;
+        margin-top: 30px;
+        padding-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>
+
+<div class="container-fluid">
+
+    <!-- PAGE HEADER -->
+    <div class="mb-4">
+        <h3 class="fw-bold mb-1">
+            {% if form.instance.pk %}
+                Edit About Section
+            {% else %}
+                Add About Section
+            {% endif %}
+        </h3>
+        <p class="text-muted mb-0">
+            Manage your website about section content
+        </p>
     </div>
 
-    <button
-        class="mt-6 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
-        Save
-    </button>
-</form>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="row">
+
+            <!-- LEFT SIDE -->
+            <div class="col-lg-8">
+
+                <div class="card cms-card mb-4">
+                    <div class="card-body p-4">
+
+                        <div class="section-head">Content Details</div>
+
+                        <div class="mb-3">
+                            <label class="cms-label">Title Tag</label>
+                            {{ form.title_tag }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="cms-label">Main Title</label>
+                            {{ form.main_title }}
+                        </div>
+
+<div class="mb-4 w-100" >
+    <label class="cms-label d-block">Description</label>
+
+    <div class="w-100">
+        {{ form.description }}
+    </div>
+
+    {% comment %} <small class="text-muted">
+        Enter complete information about your farmhouse or business.
+    </small> {% endcomment %}
+</div>
+
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="col-lg-4">
+
+                <!-- STATUS -->
+                <div class="card cms-card mb-4">
+                    <div class="card-body p-4">
+                        <div class="section-head">Status</div>
+
+                        <div class="form-check">
+                            {{ form.is_active }}
+                            <label class="form-check-label cms-label">
+                                Publish this section
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MEDIA -->
+                <div class="card cms-card mb-4">
+                    <div class="card-body p-4">
+
+                        <div class="section-head">Media</div>
+
+                        <div class="mb-3">
+                            <label class="cms-label">Image</label>
+                            {{ form.image }}
+
+                            {% if form.instance.image %}
+                                <div class="mt-2">
+                                    <img src="{{ form.instance.image.url }}"
+                                         class="image-preview w-100">
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="cms-label">Video</label>
+                            {{ form.video }}
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ACTION BAR -->
+        <div class="action-bar">
+            <a href="{% url 'about_section_list' %}" class="btn btn-light px-4">
+                Cancel
+            </a>
+
+            <button type="submit" class="btn btn-success px-5">
+                💾 Save Changes
+            </button>
+        </div>
+
+    </form>
+
+</div>
 
 {% endblock %}

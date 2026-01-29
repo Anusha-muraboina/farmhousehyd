@@ -1,22 +1,118 @@
 {% extends "superadmin/base.html" %}
 {% block content %}
 
-<h2 class="text-xl font-semibold mb-6">Who We wre </h2>
+<div class="container-fluid">
 
-<form method="post" enctype="multipart/form-data"
-      class="bg-white p-6 rounded shadow max-w-3xl">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">
+                {% if form.instance.pk %}
+                    Edit Who We Are
+                {% else %}
+                    Add Who We Are
+                {% endif %}
+            </h4>
+            <p class="text-muted mb-0">
+                Manage who we are content section
+            </p>
+        </div>
 
-    {% csrf_token %}
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {{ form.as_p }}
+        <a href="{% url 'who_we_are_list' %}" class="btn btn-outline-secondary">
+            ← Back
+        </a>
     </div>
 
-    <button
-        class="mt-6 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
-        Save
-    </button>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
-</form>
+        <div class="row">
+
+            <!-- LEFT SIDE -->
+            <div class="col-lg-8">
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+
+                        <h6 class="text-uppercase text-muted fw-bold mb-3">
+                            Content Details
+                        </h6>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Title</label>
+                            {{ form.title }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Description</label>
+                            {{ form.description }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Icon Class</label>
+                            {{ form.icon }}
+                            <small class="text-muted">
+                                Example: fa-solid fa-user
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Slot Position</label>
+                            {{ form.Slot_position }}
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="col-lg-4">
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+
+                        <h6 class="text-uppercase text-muted fw-bold mb-3">
+                            Media & Status
+                        </h6>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Image</label>
+                            {{ form.image }}
+
+                            {% if form.instance.image %}
+                                <img src="{{ form.instance.image.url }}"
+                                     class="img-thumbnail mt-2 w-100"
+                                     style="max-height: 160px;">
+                            {% endif %}
+                        </div>
+
+                        <div class="form-check mt-3">
+                            {{ form.is_active }}
+                            <label class="form-check-label fw-semibold">
+                                Active
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ACTION BAR -->
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'who_we_are_list' %}" class="btn btn-light px-4">
+                Cancel
+            </a>
+
+            <button type="submit" class="btn btn-success px-5">
+                💾 Save
+            </button>
+        </div>
+
+    </form>
+
+</div>
 
 {% endblock %}

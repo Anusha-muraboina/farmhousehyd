@@ -20,7 +20,9 @@ from django.db import models
 class Facilities(models.Model):
     name =  models.CharField(max_length=200)
     is_active = models.BooleanField(default=True)
-
+    def __str__(self):
+        return self.name
+    
 class OurFacility(models.Model):
     facilities = models.ManyToManyField(Facilities , blank=True, related_name='our_facilities')
     main_title = models.CharField(   max_length=200,      help_text="Example: Finest Farmhouses with Food"  )

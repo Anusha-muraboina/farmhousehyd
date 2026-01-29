@@ -1,27 +1,63 @@
 {% extends "superadmin/base.html" %}
+{% load static %}
+
 {% block content %}
 
-<h1 class="text-2xl font-bold mb-6">
-  {% if category %}Edit{% else %}Add{% endif %} Category
-</h1>
+<div class="container-fluid mt-4">
 
-<form method="post" class="bg-white p-6 rounded shadow w-1/2">
-  {% csrf_token %}
+  <!-- Title -->
+  <div class="mb-4">
+    <h3 class="fw-bold ">
+      {% if category %} Edit Category{% else %} Add Category{% endif %}
+    </h3>
+  </div>
 
-  <label class="block mb-2">Category Name</label>
-  <input type="text" name="name"
-         value="{{ category.name }}"
-         class="w-full border p-2 rounded mb-4" required>
+  <!-- Form Card -->
+  <div class="card border-0 shadow-sm col-md-6">
+    <div class="card-body">
 
-  <label class="flex items-center gap-2 mb-4">
-    <input type="checkbox" name="is_active"
-           {% if category.is_active %}checked{% endif %}>
-    Active
-  </label>
+      <form method="post">
+        {% csrf_token %}
 
-  <button class="bg-emerald-600 text-white px-6 py-2 rounded">
-    Save
-  </button>
-</form>
+        <!-- Category Name -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Category Name</label>
+          <input type="text"
+                 name="name"
+                 value="{{ category.name }}"
+                 class="form-control"
+                 placeholder="Enter category name"
+                 required>
+        </div>
+
+        <!-- Status -->
+        <div class="form-check mb-4">
+          <input class="form-check-input"
+                 type="checkbox"
+                 name="is_active"
+                 id="active"
+                 {% if category.is_active or not category %}checked{% endif %}>
+          <label class="form-check-label" for="active">
+            Active
+          </label>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-warning text-white px-4">
+             Save
+          </button>
+
+          <a href="{% url 'category_list' %}" class="btn btn-secondary px-4">
+            Cancel
+          </a>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>
 
 {% endblock %}

@@ -1,21 +1,57 @@
 {% extends "superadmin/base.html" %}
+{% load static %}
+
 {% block content %}
 
-<h1 class="text-2xl font-bold mb-6">
-  {% if tag %}Edit{% else %}Add{% endif %} Tag
-</h1>
+<div class="container-fluid mt-4">
 
-<form method="post" class="bg-white p-6 rounded shadow w-1/2">
-  {% csrf_token %}
+  <!-- Page Title -->
+  <div class="mb-4">
+    <h3 class="fw-bold text-dark">
+      {% if tag %} Edit Tag{% else %} Add Tag{% endif %}
+    </h3>
+    <p class="text-muted mb-0">
+      Manage blog tags for better content organization
+    </p>
+  </div>
 
-  <label class="block mb-2">Tag Name</label>
-  <input type="text" name="name"
-         value="{{ tag.name }}"
-         class="w-full border p-2 rounded mb-4" required>
+  <!-- Card -->
+  <div class="card border-0 shadow-sm col-md-6">
 
-  <button class="bg-emerald-600 text-white px-6 py-2 rounded">
-    Save
-  </button>
-</form>
+    <div class="card-body">
+
+      <form method="post">
+        {% csrf_token %}
+
+        <!-- Tag Name -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Tag Name</label>
+          <input
+            type="text"
+            name="name"
+            value="{{ tag.name }}"
+            class="form-control form-control-lg"
+            placeholder="Enter tag name"
+            required
+          >
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex gap-3">
+          <button type="submit" class="btn btn-success px-4">
+            <i class="fa fa-save me-1"></i> Save
+          </button>
+
+          <a href="{% url 'tag_list' %}" class="btn btn-secondary px-4">
+            <i class="fa fa-times me-1"></i> Cancel
+          </a>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>
 
 {% endblock %}

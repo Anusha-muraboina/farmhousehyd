@@ -1,25 +1,159 @@
 {% extends "superadmin/base.html" %}
-
 {% block content %}
 
-<h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+<div class="container-fluid">
 
-<div class="grid md:grid-cols-3 gap-6">
+    <!-- PAGE TITLE -->
+    <div class="mb-4">
+        <h3 class="fw-bold mb-1">Dashboard</h3>
+        <p class="text-muted mb-0">Welcome back, {{ request.user.username }}</p>
+    </div>
 
-  <div class="bg-white p-6 rounded shadow">
-    <p class="text-gray-500">Total Users</p>
-    <p class="text-3xl font-bold">{{ total_users }}</p>
-  </div>
+    <!-- STAT CARDS -->
+    <div class="row g-4 mb-4">
 
-  <div class="bg-white p-6 rounded shadow">
-    <p class="text-gray-500">Farmhouses</p>
-    <p class="text-3xl font-bold">{{ total_farmhouses }}</p>
-  </div>
+        <!-- USERS -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body d-flex align-items-center">
+                    <div class="me-3 text-primary fs-3">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">Users</h6>
+                        <h4 class="fw-bold mb-0">{{ total_users }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  <div class="bg-white p-6 rounded shadow">
-    <p class="text-gray-500">Active Farmhouses</p>
-    <p class="text-3xl font-bold">{{ active_farmhouses }}</p>
-  </div>
+        <!-- FARMHOUSES -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body d-flex align-items-center">
+                    <div class="me-3 text-success fs-3">
+                        <i class="fa-solid fa-house"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">Farmhouses</h6>
+                        <h4 class="fw-bold mb-0">{{ total_farmhouses }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOOKINGS -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body d-flex align-items-center">
+                    <div class="me-3 text-warning fs-3">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">Bookings</h6>
+                        <h4 class="fw-bold mb-0">{{ total_bookings }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTACT MESSAGES -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body d-flex align-items-center">
+                    <div class="me-3 text-danger fs-3">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">Messages</h6>
+                        <h4 class="fw-bold mb-0">{{ total_messages }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RECENT ACTIVITY -->
+    <div class="row g-4">
+
+        <!-- RECENT USERS -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white fw-bold">
+                    Recent Users
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in recent_users %}
+                            <tr>
+                                <td class="ps-3">{{ u.username }}</td>
+                                <td>{{ u.email }}</td>
+                                <td>
+                                    {% if u.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Inactive</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-3">
+                                    No users found
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECENT MESSAGES -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white fw-bold">
+                    Recent Contact Messages
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Name</th>
+                                <th>Phone</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m in recent_messages %}
+                            <tr>
+                                <td class="ps-3">{{ m.name }}</td>
+                                <td>{{ m.phone }}</td>
+                                <td>{{ m.created_at|date:"d M Y" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-3">
+                                    No messages found
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
 </div>
 

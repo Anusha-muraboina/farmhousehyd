@@ -47,49 +47,69 @@ TEXTAREA_CLASS = (
     "focus:border-orange-400 transition"
 )
 
-
+INPUT_CLASS = "form-control form-control-lg"
+TEXTAREA_CLASS = "form-control form-control-lg"
 class FarmhouseForm(forms.ModelForm):
     class Meta:
         model = Farmhouse
-        fields = [
-            "title",
-            "user",
-            "location",
-            "address",
-            "distance_km",
-            "halls",
-            "bedrooms",
-            "ac_bedrooms",
-            "amenities",
-            "short_description",
-            "description",
-            "price_per_day",
-            "free_cancellation",
-            "is_active",
-            "is_featured",
-        ]
+        fields = "__all__"
 
         widgets = {
-            "title": forms.TextInput(attrs={"class": INPUT_CLASS}),
-            "user": forms.Select(attrs={"class": INPUT_CLASS}),
-            "location": forms.Select(attrs={"class": INPUT_CLASS}),
-            "address": forms.TextInput(attrs={"class": INPUT_CLASS}),
-            "distance_km": forms.NumberInput(attrs={"class": INPUT_CLASS}),
-            "halls": forms.NumberInput(attrs={"class": INPUT_CLASS}),
-            "bedrooms": forms.NumberInput(attrs={"class": INPUT_CLASS}),
-            "ac_bedrooms": forms.NumberInput(attrs={"class": INPUT_CLASS}),
-            "price_per_day": forms.NumberInput(attrs={"class": INPUT_CLASS}),
+            "title": forms.TextInput(attrs={
+                "class": INPUT_CLASS,
+                "placeholder": "Enter farmhouse title"
+            }),
 
-            "short_description": forms.Textarea(
-                attrs={"class": TEXTAREA_CLASS, "rows": 3}
-            ),
-            "description": forms.Textarea(
-                attrs={"class": TEXTAREA_CLASS, "rows": 6}
-            ),
+            "location": forms.Select(attrs={
+                "class": INPUT_CLASS
+            }),
 
-            "amenities": forms.CheckboxSelectMultiple(
-                attrs={"class": "space-y-2"}
-            ),
+            "address": forms.TextInput(attrs={
+                "class": INPUT_CLASS,
+                "placeholder": "Enter full address"
+            }),
+
+            "distance_km": forms.NumberInput(attrs={
+                "class": INPUT_CLASS
+            }),
+
+            "halls": forms.NumberInput(attrs={
+                "class": INPUT_CLASS
+            }),
+
+            "bedrooms": forms.NumberInput(attrs={
+                "class": INPUT_CLASS
+            }),
+
+            "ac_bedrooms": forms.NumberInput(attrs={
+                "class": INPUT_CLASS
+            }),
+
+            "short_description": forms.Textarea(attrs={
+                "class": TEXTAREA_CLASS,
+                "rows": 3
+            }),
+
+            "description": forms.Textarea(attrs={
+                "class": TEXTAREA_CLASS,
+                "rows": 6
+            }),
+
+            "price_per_day": forms.NumberInput(attrs={
+                "class": INPUT_CLASS
+            }),
+
+            "free_cancellation": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
+            }),
+
+            "is_active": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
+            }),
+
+            "is_featured": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
+            }),
         }
 
 
@@ -220,48 +240,100 @@ from cms.models import *
 #         model = AboutWhoWeAre
 #         fields = "__all__"
 
-
 from django import forms
 from .models import *
 
-TAILWIND_INPUT = "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-TAILWIND_TEXTAREA = "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-TAILWIND_CHECKBOX = "mr-2"
-TAILWIND_FILE = "w-full border rounded-md p-2 bg-white"
+BOOTSTRAP_INPUT = "form-control"
+BOOTSTRAP_TEXTAREA = "form-control"
+BOOTSTRAP_FILE = "form-control"
+BOOTSTRAP_SELECT = "form-select"
+BOOTSTRAP_CHECKBOX = "form-check-input"
+
 
 class ChooseServiceForm(forms.ModelForm):
     class Meta:
         model = Choos_Services
         fields = "__all__"
         widgets = {
-            "title": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
-            "description": forms.Textarea(attrs={"class": TAILWIND_TEXTAREA, "rows": 4}),
-            "icon": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
-            "image": forms.ClearableFileInput(attrs={"class": TAILWIND_FILE}),
-            "Slot_position": forms.NumberInput(attrs={"class": TAILWIND_INPUT}),
+            "title": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Service title"
+            }),
+            "description": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 5,
+                "placeholder": "Service description"
+            }),
+            "icon": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "fa-solid fa-star"
+            }),
+            "image": forms.ClearableFileInput(attrs={
+                "class": "form-control"
+            }),
+            "Slot_position": forms.NumberInput(attrs={
+                "class": "form-control"
+            }),
+            "is_active": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
+            }),
         }
 
+
+# class FacilityForm(forms.ModelForm):
+#     class Meta:
+#         model = Facilities
+#         fields = "__all__"
+#         widgets = {
+#             "name": forms.TextInput(attrs={"class": BOOTSTRAP_INPUT}),
+#             "is_active": forms.CheckboxInput(attrs={"class": BOOTSTRAP_CHECKBOX}),
+#         }
 
 class FacilityForm(forms.ModelForm):
     class Meta:
         model = Facilities
         fields = "__all__"
         widgets = {
-            "name": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
+            "name": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Facility name"
+            }),
+            "is_active": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
+            }),
         }
 
-
+# class OurFacilityForm(forms.ModelForm):
+#     class Meta:
+#         model = OurFacility
+#         fields = "__all__"
+#         widgets = {
+#             "main_title": forms.TextInput(attrs={"class": BOOTSTRAP_INPUT}),
+#             "description": forms.Textarea(attrs={"class": BOOTSTRAP_TEXTAREA, "rows": 4}),
+#             "image": forms.ClearableFileInput(attrs={"class": BOOTSTRAP_FILE}),
+#             "facilities": forms.CheckboxSelectMultiple(
+#                 attrs={"class": "form-check-input me-2"}
+#             ),
+#             "is_active": forms.CheckboxInput(attrs={"class": BOOTSTRAP_CHECKBOX}),
+#         }
 class OurFacilityForm(forms.ModelForm):
     class Meta:
         model = OurFacility
         fields = "__all__"
         widgets = {
-            "main_title": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
-            "description": forms.Textarea(attrs={"class": TAILWIND_TEXTAREA, "rows": 4}),
-            "image": forms.ClearableFileInput(attrs={"class": TAILWIND_FILE}),
+            "main_title": forms.TextInput(attrs={"class": "form-control"}),
+            "description": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 4
+            }),
+            "image": forms.ClearableFileInput(attrs={"class": "form-control"}),
+
+            # 🔥 IMPORTANT
             "facilities": forms.CheckboxSelectMultiple(
-                attrs={"class": "space-y-2"}
+                attrs={"class": "form-check-input"}
             ),
+
+            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
 
@@ -270,24 +342,33 @@ class WhoWeAreForm(forms.ModelForm):
         model = WhoWeAre
         fields = "__all__"
         widgets = {
-            "title": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
-            "description": forms.Textarea(attrs={"class": TAILWIND_TEXTAREA, "rows": 4}),
-            "icon": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
-            "image": forms.ClearableFileInput(attrs={"class": TAILWIND_FILE}),
-            "Slot_position": forms.NumberInput(attrs={"class": TAILWIND_INPUT}),
+            "title": forms.TextInput(attrs={"class": BOOTSTRAP_INPUT}),
+            "description": forms.Textarea(attrs={"class": BOOTSTRAP_TEXTAREA, "rows": 4}),
+            "icon": forms.TextInput(attrs={"class": BOOTSTRAP_INPUT}),
+            "image": forms.ClearableFileInput(attrs={"class": BOOTSTRAP_FILE}),
+            "Slot_position": forms.NumberInput(attrs={"class": BOOTSTRAP_INPUT}),
+            "is_active": forms.CheckboxInput(attrs={"class": BOOTSTRAP_CHECKBOX}),
         }
-
 
 class AboutSectionForm(forms.ModelForm):
     class Meta:
         model = AboutSection
         fields = "__all__"
         widgets = {
-            "title_tag": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
-            "main_title": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
-            "description": forms.Textarea(attrs={"class": TAILWIND_TEXTAREA, "rows": 6}),
-            "image": forms.ClearableFileInput(attrs={"class": TAILWIND_FILE}),
-            "video": forms.ClearableFileInput(attrs={"class": TAILWIND_FILE}),
+            "title_tag": forms.TextInput(attrs={"class": BOOTSTRAP_INPUT}),
+            "main_title": forms.TextInput(attrs={"class": BOOTSTRAP_INPUT}),
+            "description": forms.Textarea(
+                attrs={
+                    "class": "form-control description-box w-100  ",
+                      "style": "width:100%; max-width:100%;",
+                    "placeholder": "Write full about description here...",
+                    "rows": 10,
+                }
+            ),
+
+            "image": forms.ClearableFileInput(attrs={"class": BOOTSTRAP_FILE}),
+            "video": forms.ClearableFileInput(attrs={"class": BOOTSTRAP_FILE}),
+            "is_active": forms.CheckboxInput(attrs={"class": BOOTSTRAP_CHECKBOX}),
         }
 
 
@@ -296,9 +377,10 @@ class AboutFeatureForm(forms.ModelForm):
         model = AboutFeature
         fields = "__all__"
         widgets = {
-            "about": forms.Select(attrs={"class": TAILWIND_INPUT}),
-            "icon": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
-            "title": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
+            "about": forms.Select(attrs={"class": BOOTSTRAP_SELECT}),
+            "icon": forms.TextInput(attrs={"class": BOOTSTRAP_INPUT}),
+            "title": forms.TextInput(attrs={"class": BOOTSTRAP_INPUT}),
+            "is_active": forms.CheckboxInput(attrs={"class": BOOTSTRAP_CHECKBOX}),
         }
 
 
@@ -307,14 +389,15 @@ class AboutWhoWeAreForm(forms.ModelForm):
         model = AboutWhoWeAre
         fields = "__all__"
         widgets = {
-            "small_title": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
-            "main_title": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
-            "mission_title": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
-            "mission_description": forms.Textarea(attrs={"class": TAILWIND_TEXTAREA, "rows": 4}),
-            "difference_title": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
-            "difference_description": forms.Textarea(attrs={"class": TAILWIND_TEXTAREA, "rows": 4}),
-            "image": forms.ClearableFileInput(attrs={"class": TAILWIND_FILE}),
-            "button_text": forms.TextInput(attrs={"class": TAILWIND_INPUT}),
+            "small_title": forms.TextInput(attrs={"class": BOOTSTRAP_INPUT}),
+            "main_title": forms.TextInput(attrs={"class": BOOTSTRAP_INPUT}),
+            "mission_title": forms.TextInput(attrs={"class": BOOTSTRAP_INPUT}),
+            "mission_description": forms.Textarea(attrs={"class": BOOTSTRAP_TEXTAREA, "rows": 4}),
+            "difference_title": forms.TextInput(attrs={"class": BOOTSTRAP_INPUT}),
+            "difference_description": forms.Textarea(attrs={"class": BOOTSTRAP_TEXTAREA, "rows": 4}),
+            "image": forms.ClearableFileInput(attrs={"class": BOOTSTRAP_FILE}),
+            "button_text": forms.TextInput(attrs={"class": BOOTSTRAP_INPUT}),
+            "is_active": forms.CheckboxInput(attrs={"class": BOOTSTRAP_CHECKBOX}),
         }
 
 
@@ -326,20 +409,115 @@ class AboutWhoWeAreForm(forms.ModelForm):
 from django import forms
 from coupon.models import Coupon
 
-TAILWIND = "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-
 class CouponForm(forms.ModelForm):
     class Meta:
         model = Coupon
         fields = "__all__"
         widgets = {
-            "title": forms.TextInput(attrs={"class": TAILWIND}),
-            "code": forms.TextInput(attrs={"class": TAILWIND}),
-            "discount_type": forms.Select(attrs={"class": TAILWIND}),
-            "discount_value": forms.NumberInput(attrs={"class": TAILWIND}),
-            "min_booking_amount": forms.NumberInput(attrs={"class": TAILWIND}),
-            "max_discount_amount": forms.NumberInput(attrs={"class": TAILWIND}),
-            "start_date": forms.DateInput(attrs={"type": "date", "class": TAILWIND}),
-            "end_date": forms.DateInput(attrs={"type": "date", "class": TAILWIND}),
-            "usage_limit": forms.NumberInput(attrs={"class": TAILWIND}),
+            "title": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Coupon title"
+            }),
+            "code": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "EXAMPLE10"
+            }),
+            "discount_type": forms.Select(attrs={
+                "class": "form-select"
+            }),
+            "discount_value": forms.NumberInput(attrs={
+                "class": "form-control"
+            }),
+            "min_booking_amount": forms.NumberInput(attrs={
+                "class": "form-control"
+            }),
+            "max_discount_amount": forms.NumberInput(attrs={
+                "class": "form-control"
+            }),
+            "start_date": forms.DateInput(attrs={
+                "type": "date",
+                "class": "form-control"
+            }),
+            "end_date": forms.DateInput(attrs={
+                "type": "date",
+                "class": "form-control"
+            }),
+            "usage_limit": forms.NumberInput(attrs={
+                "class": "form-control"
+            }),
+            "is_active": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
+            }),
+        }
+
+
+
+# user
+
+
+from django import forms
+from user.models import User
+from django import forms
+from user.models import User
+class AdminUserForm(forms.ModelForm):
+    password = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control",
+            "placeholder": "Leave blank to keep current password"
+        })
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "email",
+            "phone",
+            "password",
+            "is_staff",
+            "farmhouse_user",
+            "is_active",
+        ]
+
+        widgets = {
+            "username": forms.TextInput(attrs={"class": "form-control"}),
+            "email": forms.EmailInput(attrs={"class": "form-control"}),
+            "phone": forms.TextInput(attrs={"class": "form-control"}),
+            "is_staff": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "farmhouse_user": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+
+        if self.cleaned_data.get("password"):
+            user.set_password(self.cleaned_data["password"])
+
+        if commit:
+            user.save()
+
+        return user
+
+
+
+from contact.models import ContactInfo
+
+BOOTSTRAP = "form-control"
+
+class ContactInfoForm(forms.ModelForm):
+    class Meta:
+        model = ContactInfo
+        fields = "__all__"
+
+        widgets = {
+            "phone": forms.TextInput(attrs={"class": BOOTSTRAP}),
+            "email_1": forms.EmailInput(attrs={"class": BOOTSTRAP}),
+            "email_2": forms.EmailInput(attrs={"class": BOOTSTRAP}),
+            "opening_time": forms.TextInput(attrs={
+                "class": BOOTSTRAP,
+                "placeholder": "8:00AM - 10:00PM, Sunday - Saturday"
+            }),
+            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }

@@ -9,12 +9,28 @@
     <!-- Font Awesome -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    {% comment %} font-family:  sans-serif; {% endcomment %}
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
+                 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f5f7fb;
+  }
+</style>
 
     <style>
         body {
             background: #f5f6fa;
-            font-family: system-ui;
             margin: 0;
+        }
+        .form-control,
+        .form-control-lg {
+            font-size: 14px !important;
+            padding: 10px 14px;
+                font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
+                 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
 
         /* ================= HEADER ================= */
@@ -68,7 +84,7 @@
         }
 
         .submenu {
-            margin-left: 40px;
+            margin-left: 10px;
         }
 
         .sidebar.collapsed .submenu {
@@ -104,7 +120,7 @@
         }
 
         .brand {
-            color: #ff7a00;
+            color: #fa7a03;
             font-weight: 700;
         }
     </style>
@@ -253,6 +269,53 @@
     </a>
 
 </div>
+
+<!-- USERS MENU -->
+<a onclick="toggleMenu('userMenu')">
+    <i class="fa-solid fa-users"></i>
+    <span class="menu-text">Users</span>
+</a>
+
+<div id="userMenu" class="submenu d-none">
+
+    <a href="{% url 'admin_user_list' %}">
+        <i class="fa-solid fa-user"></i>
+        <span class="menu-text">All Users</span>
+    </a>
+
+    <a href="{% url 'admin_user_add' %}">
+        <i class="fa-solid fa-user-plus"></i>
+        <span class="menu-text">Add User</span>
+    </a>
+
+</div>
+
+
+
+
+
+<!-- CONTACT MENU -->
+<a onclick="toggleMenu('contactMenu')">
+    <i class="fa-solid fa-address-book"></i>
+    <span class="menu-text">Contact</span>
+</a>
+
+<div id="contactMenu" class="submenu d-none">
+
+    <a href="{% url 'contact_info_list' %}">
+        <i class="fa-solid fa-phone"></i>
+        <span class="menu-text">Contact Info</span>
+    </a>
+
+    <a href="{% url 'contact_message_list' %}">
+        <i class="fa-solid fa-envelope"></i>
+        <span class="menu-text">Messages</span>
+    </a>
+
+</div>
+
+
+
 
 
     </aside>

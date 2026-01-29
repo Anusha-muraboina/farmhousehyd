@@ -1,21 +1,58 @@
 {% extends "superadmin/base.html" %}
 {% block content %}
 
-<h2 class="text-xl font-semibold mb-6">About feature</h2>
+<div class="container-fluid">
 
-<form method="post" enctype="multipart/form-data"
-      class="bg-white p-6 rounded shadow max-w-2xl">
+    <!-- Page Title -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-dark mb-0">
+            {% if form.instance.pk %} Edit {% else %} Add {% endif %} About Feature
+        </h4>
 
-    {% csrf_token %}
-
-    <div class="space-y-4">
-        {{ form.as_p }}
+        <a href="{% url 'about_feature_list' %}" class="btn btn-outline-secondary">
+            ← Back
+        </a>
     </div>
 
-    <button
-        class="mt-6 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
-        Save
-    </button>
-</form>
+    <!-- Card -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            {{ field.label }}
+                        </label>
+
+                        {{ field }}
+
+                        {% if field.help_text %}
+                            <small class="text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-success px-4">
+                        Save
+                    </button>
+
+                    <a href="{% url 'about_feature_list' %}" class="btn btn-secondary px-4">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</div>
 
 {% endblock %}

@@ -107,4 +107,20 @@ urlpatterns = [
 
     path("coupon-usage/", views.coupon_usage_list, name="coupon_usage_list"),
 
+
+
+    path("users/", views.admin_user_list, name="admin_user_list"),
+    path("users/add/", views.admin_user_add, name="admin_user_add"),
+    path("users/edit/<int:id>/", views.admin_user_edit, name="admin_user_edit"),
+    path("users/delete/<int:id>/", views.admin_user_delete, name="admin_user_delete"),
+    
+    
+    
+    path("info/", views.contact_info_list, name="contact_info_list"),
+    path("info/add/", views.contact_info_add, name="contact_info_add"),
+    path("info/edit/<int:id>/", views.contact_info_edit, name="contact_info_edit"),
+    path("info/delete/<int:id>/", views.contact_info_delete, name="contact_info_delete"),
+
+    path("messages/", views.contact_message_list, name="contact_message_list"),
+    path("messages/delete/<int:id>/", views.contact_message_delete, name="contact_message_delete"),
 ]

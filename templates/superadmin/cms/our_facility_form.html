@@ -1,22 +1,121 @@
 {% extends "superadmin/base.html" %}
 {% block content %}
 
-<h2 class="text-xl font-semibold mb-6">Our Facilities</h2>
+<div class="container-fluid">
 
-<form method="post" enctype="multipart/form-data"
-      class="bg-white p-6 rounded shadow max-w-3xl">
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">
+                {% if form.instance.pk %}
+                    Edit Facility
+                {% else %}
+                    Add Facility
+                {% endif %}
+            </h4>
+            <p class="text-muted mb-0">Manage facility content</p>
+        </div>
 
-    {% csrf_token %}
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {{ form.as_p }}
+        <a href="{% url 'our_facility_list' %}" class="btn btn-outline-secondary">
+            ← Back
+        </a>
     </div>
 
-    <button
-        class="mt-6 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
-        Save
-    </button>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
-</form>
+        <div class="row">
+
+            <!-- LEFT SIDE -->
+            <div class="col-lg-8">
+
+                <!-- FACILITY DETAILS -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+
+                        <h6 class="text-uppercase text-muted fw-bold mb-3">
+                            Facility Details
+                        </h6>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Main Title</label>
+                            {{ form.main_title }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Description</label>
+                            {{ form.description }}
+                        </div>
+
+                        <!-- FACILITIES CHECKBOX -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Facilities</label>
+
+                            <div class="border rounded p-3" style="max-height: 220px; overflow-y: auto;">
+                                {% for checkbox in form.facilities %}
+                                    <div class="form-check mb-2">
+                                        {{ checkbox.tag }}
+                                        <label class="form-check-label ms-2">
+                                            {{ checkbox.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="col-lg-4">
+
+                <!-- MEDIA -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+
+                        <h6 class="text-uppercase text-muted fw-bold mb-3">
+                            Media
+                        </h6>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Image</label>
+                            {{ form.image }}
+
+                            {% if form.instance.image %}
+                                <img src="{{ form.instance.image.url }}"
+                                     class="img-thumbnail mt-2 w-100"
+                                     style="max-height:180px;">
+                            {% endif %}
+                        </div>
+
+                        <div class="form-check mt-3">
+                            {{ form.is_active }}
+                            <label class="form-check-label fw-semibold">
+                                Active
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ACTION BAR -->
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'our_facility_list' %}" class="btn btn-light px-4">
+                Cancel
+            </a>
+
+            <button type="submit" class="btn btn-success px-5">
+                💾 Save
+            </button>
+        </div>
+
+    </form>
+
+</div>
 
 {% endblock %}

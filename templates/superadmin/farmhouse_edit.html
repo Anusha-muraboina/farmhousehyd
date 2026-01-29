@@ -3,15 +3,13 @@
 
 <div class="container-fluid">
 
-<!-- HEADER -->
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between mb-4">
   <div>
-    <h3 class="fw-bold mb-1">Edit Farmhouse</h3>
-    <p class="text-muted mb-0">{{ farmhouse.title }}</p>
+    <h3 class="fw-bold">Edit Farmhouse</h3>
+    <small class="text-muted">{{ farmhouse.title }}</small>
   </div>
 
-  <a href="{% url 'superadmin-farmhouses' %}"
-     class="btn btn-outline-secondary btn-sm">
+  <a href="{% url 'superadmin-farmhouses' %}" class="btn btn-outline-secondary btn-sm">
     ← Back
   </a>
 </div>
@@ -19,162 +17,9 @@
 <form method="POST" enctype="multipart/form-data">
 {% csrf_token %}
 
-<div class="row g-4">
-
-  <!-- LEFT COLUMN -->
-  <div class="col-lg-8">
-
-    <!-- BASIC INFO -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header fw-bold">Basic Information</div>
-      <div class="card-body">
-        {{ form.title }}
-        {{ form.location }}
-        {{ form.address }}
-        {{ form.distance_km }}
-        {{ form.halls }}
-        {{ form.bedrooms }}
-        {{ form.ac_bedrooms }}
-        {{ form.short_description }}
-        {{ form.description }}
-      </div>
-    </div>
-
-    <!-- AMENITIES -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header fw-bold">Amenities</div>
-      <div class="card-body" style="max-height:220px; overflow-y:auto;">
-        {{ form.amenities }}
-      </div>
-    </div>
-
-    <!-- PRICING -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header fw-bold">Pricing</div>
-      <div class="card-body">
-        {{ pricing_form.normal_day_price }}
-        {{ pricing_form.weekend_price }}
-        {{ pricing_form.extra_guest_price }}
-      </div>
-    </div>
-
-  </div>
-
-  <!-- RIGHT COLUMN -->
-  <div class="col-lg-4">
-
-    <!-- SETTINGS -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header fw-bold">Settings</div>
-      <div class="card-body">
-        {{ form.price_per_day }}
-        {{ form.free_cancellation }}
-        {{ form.is_active }}
-        {{ form.is_featured }}
-      </div>
-    </div>
-
-    <!-- ADD NEW IMAGES -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header fw-bold">Add More Images</div>
-      <div class="card-body">
-
-        <label class="btn btn-warning w-100 text-white mb-3">
-          Upload Images
-          <input type="file"
-                 name="gallery_images"
-                 id="galleryInput"
-                 multiple
-                 hidden>
-        </label>
-
-        <div id="previewBox" class="row g-2"></div>
-      </div>
-    </div>
-
-  </div>
-
-</div>
-
-<!-- EXISTING IMAGES -->
-<div class="card shadow-sm mt-4">
-  <div class="card-header fw-bold">Existing Gallery</div>
-
-  <div class="card-body">
-    <div class="row g-3">
-
-      {% for img in farmhouse.images.all %}
-      <div class="col-6 col-md-3">
-        <div class="card position-relative">
-
-          <img src="{{ img.image.url }}"
-               class="card-img-top"
-               style="height:130px; object-fit:cover">
-
-          {% if img.is_primary %}
-          <span class="badge bg-warning position-absolute top-0 start-0 m-2">
-            Primary
-          </span>
-          {% endif %}
-
-          <a href="{% url 'delete_farmhouse_image' img.id %}"
-             class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"
-             onclick="return confirm('Delete this image?')">
-            ✕
-          </a>
-
-        </div>
-      </div>
-      {% endfor %}
-
-    </div>
-  </div>
-</div>
-
-<!-- ACTION BUTTONS -->
-<div class="mt-4 text-end">
-  <a href="{% url 'superadmin-farmhouses' %}"
-     class="btn btn-secondary me-2">
-    Cancel
-  </a>
-
-  <button type="submit"
-          class="btn btn-warning text-white px-5">
-    Update Farmhouse
-  </button>
-</div>
+{% include "superadmin/farmhouse_add.html" %}
 
 </form>
+
 </div>
-
-<!-- PREVIEW SCRIPT -->
-<script>
-document.getElementById("galleryInput")?.addEventListener("change", function () {
-
-  const preview = document.getElementById("previewBox");
-  preview.innerHTML = "";
-
-  Array.from(this.files).forEach((file, index) => {
-
-    const reader = new FileReader();
-
-    reader.onload = function (e) {
-      preview.innerHTML += `
-        <div class="col-6">
-          <div class="card">
-            <img src="${e.target.result}"
-                 class="card-img-top"
-                 style="height:120px;object-fit:cover">
-            ${index === 0
-              ? '<span class="badge bg-warning position-absolute m-2">Primary</span>'
-              : ''}
-          </div>
-        </div>`;
-    };
-
-    reader.readAsDataURL(file);
-  });
-});
-</script>
-
 {% endblock %}

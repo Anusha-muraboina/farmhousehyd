@@ -41,15 +41,34 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-@superadmin_required
+# @superadmin_required
+# def superadmin_dashboard(request):
+#     context = {
+#         "total_users": User.objects.count(),
+#         "total_farmhouses": Farmhouse.objects.count(),
+#         "active_farmhouses": Farmhouse.objects.filter(is_active=True).count(),
+#     }
+#     return render(request, "superadmin/dashboard.html", context)
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from user.models import User
+from farmhouse.models import Farmhouse
+from contact.models import ContactMessage
+
+@login_required
 def superadmin_dashboard(request):
     context = {
         "total_users": User.objects.count(),
         "total_farmhouses": Farmhouse.objects.count(),
-        "active_farmhouses": Farmhouse.objects.filter(is_active=True).count(),
-    }
-    return render(request, "superadmin/dashboard.html", context)
+        "total_bookings": 0,  # add later
+        "total_messages": ContactMessage.objects.count(),
 
+        "recent_users": User.objects.order_by("-date_joined")[:5],
+        "recent_messages": ContactMessage.objects.order_by("-created_at")[:5],
+    }
+
+    return render(request, "superadmin/dashboard.html", context)
 
 # @superadmin_required
 # def all_farmhouses(request):
@@ -77,6 +96,10 @@ def superadmin_required(user):
 @login_required
 @user_passes_test(superadmin_required)
 def farmhouse_list(request):
+        # ✅ permission check
+    if not is_farmhouse_staff(request.user) and not request.user.is_superuser:
+        return HttpResponseForbidden("Not allowed")
+
     farmhouses = Farmhouse.objects.all()
     return render(
         request,
@@ -156,7 +179,7 @@ def farmhouse_edit(request, id):
         form = FarmhouseForm(instance=farmhouse)
         pricing_form = FarmhousePricingForm(instance=pricing)
 
-    return render(request, "superadmin/farmhouse_edit.html", {
+    return render(request, "superadmin/farmhouse_add.html", {
         "form": form,
         "pricing_form": pricing_form,
         "farmhouse": farmhouse
@@ -584,7 +607,7 @@ def facilities_edit(request, id):
         form.save()
         messages.success(request, "Facility updated")
         return redirect("facilities_list")
-    return render(request, "superadmin/cms/facilities_form.html", {"form": form})
+    return render(request, "superadmin/cms/facility_form.html", {"form": form})
 
 
 def facilities_delete(request, id):
@@ -806,4 +829,136 @@ def coupon_usage_list(request):
     })
 
 
+# =============================
+from django.http import HttpResponseForbidden
 
+def is_farmhouse_staff(user):
+    """
+    Farmhouse staff = staff + farmhouse_user true
+    """
+    return (
+        user.is_authenticated and
+        user.is_staff and
+        user.farmhouse_user
+    )
+
+
+
+@login_required
+def admin_user_list(request):
+    users = User.objects.all().order_by("-id")
+
+    return render(request, "superadmin/user/user_list.html", {
+        "users": users
+    })
+
+
+@login_required
+def admin_user_add(request):
+    form = AdminUserForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        return redirect("admin_user_list")
+
+    return render(request, "superadmin/user/user_form.html", {
+        "form": form,
+        "title": "Add User"
+    })
+from django.contrib.auth import update_session_auth_hash
+
+
+@login_required
+def admin_user_edit(request, id):
+    user = get_object_or_404(User, id=id)
+    form = AdminUserForm(request.POST or None, instance=user)
+
+    if form.is_valid():
+        form.save()
+        return redirect("admin_user_list")
+
+    return render(request, "superadmin/user/user_form.html", {
+        "form": form,
+        "title": "Edit User"
+    })
+
+
+@login_required
+def admin_user_delete(request, id):
+    user = get_object_or_404(User, id=id)
+    user.delete()
+    return redirect("admin_user_list")
+
+
+# ==============
+from contact.models import ContactInfo, ContactMessage
+from superadmin_dashboard.forms import ContactInfoForm
+
+@login_required
+def contact_info_list(request):
+    items = ContactInfo.objects.all().order_by("-id")
+    paginator = Paginator(items, 10)
+    page = paginator.get_page(request.GET.get("page"))
+
+    return render(request, "superadmin/contact/info_list.html", {
+        "items": page
+    })
+
+
+@login_required
+def contact_info_add(request):
+    form = ContactInfoForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        return redirect("contact_info_list")
+
+    return render(request, "superadmin/contact/info_form.html", {
+        "form": form,
+        "title": "Add Contact Info"
+    })
+
+
+@login_required
+def contact_info_edit(request, id):
+    obj = get_object_or_404(ContactInfo, id=id)
+    form = ContactInfoForm(request.POST or None, instance=obj)
+
+    if form.is_valid():
+        form.save()
+        return redirect("contact_info_list")
+
+    return render(request, "superadmin/contact/info_form.html", {
+        "form": form,
+        "title": "Edit Contact Info"
+    })
+
+
+@login_required
+def contact_info_delete(request, id):
+    obj = get_object_or_404(ContactInfo, id=id)
+    obj.delete()
+    return redirect("contact_info_list")
+
+
+
+
+
+
+
+@login_required
+def contact_message_list(request):
+    messages = ContactMessage.objects.all().order_by("-created_at")
+    paginator = Paginator(messages, 10)
+    page = paginator.get_page(request.GET.get("page"))
+
+    return render(request, "superadmin/contact/message_list.html", {
+        "messages": page
+    })
+
+
+@login_required
+def contact_message_delete(request, id):
+    msg = get_object_or_404(ContactMessage, id=id)
+    msg.delete()
+    return redirect("contact_message_list")
