@@ -1,17 +1,18 @@
 from django.urls import path
 from . import views
 
+from .views import create_farmhouse_booking, razorpay_webhook
+
 urlpatterns = [
+        path("api/create-booking/", create_farmhouse_booking),
+        path("razorpay-webhook/", razorpay_webhook),
+
+]
 
 
 
 
-
-
-
-
-
-
+# urlpatterns = [
 
     # ==========================
     # FARMHOUSE DETAIL + BOOKING
@@ -54,4 +55,4 @@ urlpatterns = [
     
     
     
-]
+# ]

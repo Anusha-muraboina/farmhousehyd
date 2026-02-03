@@ -15,6 +15,56 @@ razorpay_client = razorpay.Client(
 )
 
 
+
+
+from decimal import Decimal
+from datetime import timedelta
+from farmhouse.models import FarmhousePricing
+
+
+def calculate_booking_cost(check_in, check_out, extra_guest_count):
+
+    pricing = FarmhousePricing.objects.first()
+
+    total = Decimal("0.00")
+    current = check_in
+
+    while current < check_out:
+
+        if current.weekday() in [5, 6]:  # weekend
+            total += pricing.weekend_price
+        else:
+            total += pricing.weekday_price
+
+        current += timedelta(days=1)
+
+    # Extra guests
+    total += Decimal(extra_guest_count) * pricing.extra_guest_price
+
+    return total
+
+
+
+
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from datetime import datetime
+from decimal import Decimal
+
+from django.conf import settings
+import razorpay
+
+from farmhouse.models import Farmhouse
+from .models import Booking
+# from .utils import calculate_booking_cost
+
+
+razorpay_client = razorpay.Client(
+    auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
+)
+
+
 @api_view(["POST"])
 def create_farmhouse_booking(request):
 
@@ -25,26 +75,29 @@ def create_farmhouse_booking(request):
     check_in = datetime.strptime(data["check_in"], "%Y-%m-%d").date()
     check_out = datetime.strptime(data["check_out"], "%Y-%m-%d").date()
 
-    days = (check_out - check_in).days
-    total = farmhouse.price_per_day * days
+    total = calculate_booking_cost(
+        check_in,
+        check_out,
+        int(data.get("extra_guest_count", 0))
+    )
 
     booking = Booking.objects.create(
         farmhouse=farmhouse,
         guest_name=data["guest_name"],
         guest_email=data["guest_email"],
         guest_phone=data["guest_phone"],
+        guest_count=data.get("guest_count", 1),
+        extra_guest_count=data.get("extra_guest_count", 0),
         check_in=check_in,
         check_out=check_out,
         sub_total=total,
         total_amount=total,
         remaining_amount=total,
         payment_method=data["payment_method"],
-        payment_status="pending",
-        status="pending"
     )
 
-    # ✅ CASH
-    if data["payment_method"] == "farmhouse":
+    # ✅ PAY AT FARMHOUSE
+    if booking.payment_method == "farmhouse":
         booking.status = "confirmed"
         booking.save()
 
@@ -53,7 +106,11 @@ def create_farmhouse_booking(request):
         })
 
     # ✅ ONLINE PAYMENT
-    pay_amount = total * Decimal("0.30") if data["payment_method"] == "partial_razorpay" else total
+    pay_amount = (
+        total * Decimal("0.30")
+        if booking.payment_method == "partial_razorpay"
+        else total
+    )
 
     order = razorpay_client.order.create({
         "amount": int(pay_amount * 100),
@@ -64,17 +121,28 @@ def create_farmhouse_booking(request):
     booking.transaction_id = order["id"]
     booking.save(update_fields=["transaction_id"])
 
+    # return Response({
+    #     "razorpay": True,
+    #     "order_id": order["id"],
+    #     "amount": order["amount"],
+    #     "key": settings.RAZORPAY_KEY_ID
+    # })
+
     return Response({
         "razorpay": True,
         "order_id": order["id"],
         "amount": order["amount"],
-        "key": settings.RAZORPAY_KEY_ID
+        "key": settings.RAZORPAY_KEY_ID,
+        "booking_id": booking.booking_id   # ⭐ ADD THIS
     })
 
 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import json
+from decimal import Decimal
+
+from .models import Booking
 
 
 @csrf_exempt
@@ -104,19 +172,9 @@ def razorpay_webhook(request):
         booking.status = "confirmed"
         booking.payment_id = payment["id"]
 
-        booking.save()  # ⭐ EMAIL AUTO SENT HERE
+        booking.save()   # ⭐ EMAIL AUTO SENT
 
     return HttpResponse("OK")
-
-
-
-
-
-
-
-
-
-
 
 
 

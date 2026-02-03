@@ -124,21 +124,20 @@ class Booking(models.Model):
         ordering = ['-created_at']
     def send_confirmation_email(self):
 
-        # USER EMAIL
-        user_html = render_to_string(
+        html = render_to_string(
             "emails/user_booking_email.html",
             {"booking": self}
         )
 
-        user_email = EmailMultiAlternatives(
+        email = EmailMultiAlternatives(
             subject="Booking Confirmed – Vivaan Farmhouse",
-            body="Your booking is confirmed",
+            body="Your booking is confirmed.",
             from_email=settings.DEFAULT_FROM_EMAIL,
             to=[self.guest_email],
         )
 
-        user_email.attach_alternative(user_html, "text/html")
-        user_email.send(fail_silently=False)
+        email.attach_alternative(html, "text/html")
+        email.send(fail_silently=False)
 
         # ADMIN EMAIL
         admin_html = render_to_string(
@@ -146,20 +145,22 @@ class Booking(models.Model):
             {"booking": self}
         )
 
-        admin_email = EmailMultiAlternatives(
-            subject=f"New Booking – {self.booking_id}",
+        admin = EmailMultiAlternatives(
+            subject=f"New Booking - {self.booking_id}",
             body="New booking received",
             from_email=settings.DEFAULT_FROM_EMAIL,
             to=[settings.ADMIN_EMAIL],
         )
 
-        admin_email.attach_alternative(admin_html, "text/html")
-        admin_email.send(fail_silently=False)
+        admin.attach_alternative(admin_html, "text/html")
+        admin.send(fail_silently=False)
 
-        # ⭐ SAVE TIMESTAMP (NO LOOP)
         Booking.objects.filter(pk=self.pk).update(
             confirmation_email_sent_at=timezone.now()
         )
+
+    # ================= SAVE =================
+
     def save(self, *args, **kwargs):
 
         is_new = self.pk is None
@@ -168,13 +169,8 @@ class Booking(models.Model):
         if not is_new:
             old_status = Booking.objects.get(pk=self.pk).status
 
-        # Generate booking id
         if not self.booking_id:
-            self.booking_id = 'VFH' + ''.join(random.choices(string.digits, k=8))
-
-        # Set confirmed time
-        if self.status == "confirmed" and not self.confirmed_at:
-            self.confirmed_at = timezone.now()
+            self.booking_id = "VFH" + ''.join(random.choices(string.digits, k=8))
 
         super().save(*args, **kwargs)
 

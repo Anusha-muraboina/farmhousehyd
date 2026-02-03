@@ -5,6 +5,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
   .gallery-thumb {
@@ -65,6 +67,10 @@
 <div id="farmhouse-container" style="display:none;"></div>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 
 
@@ -229,7 +235,7 @@ new Razorpay(options).open();
 
 
     <!-- LEFT BOOKING -->
-    <div class="booking-card lg:sticky top-24">
+    {% comment %} <div class="booking-card lg:sticky top-24">
 
     <h2 class="text-3xl font-bold text-green-600 mb-4">
     ₹${f.price_per_day}
@@ -244,9 +250,100 @@ new Razorpay(options).open();
     You won't be charged yet
     </p>
 
-    </div>
+    </div> {% endcomment %}
 
 
+
+<div class="bg-white rounded-2xl shadow-xl p-8 max-w-xl mx-auto">
+
+<h2 class="text-3xl font-bold text-green-600 mb-6">
+₹{{ farmhouse.price_per_day }}
+<span class="text-sm text-gray-500">/night</span>
+</h2>
+
+<div id="bookingError"
+class="hidden bg-red-100 text-red-700 p-3 rounded mb-4">
+</div>
+
+<form id="bookingForm" class="space-y-4">
+
+<input type="hidden"
+id="farmhouse_id"
+value="{{ farmhouse.id }}">
+
+<!-- ===== DATES ===== -->
+
+<div class="grid grid-cols-2 gap-4">
+
+<input type="text"
+id="check_in"
+placeholder="Check In"
+required
+class="border p-3 rounded-lg w-full">
+
+<input type="text"
+id="check_out"
+placeholder="Check Out"
+required
+class="border p-3 rounded-lg w-full">
+
+</div>
+
+<!-- ===== GUEST ===== -->
+
+<input id="guest_name"
+placeholder="Full Name"
+required
+class="border p-3 rounded-lg w-full">
+
+<input id="guest_phone"
+placeholder="Phone"
+required
+class="border p-3 rounded-lg w-full">
+
+<input id="guest_email"
+placeholder="Email"
+required
+class="border p-3 rounded-lg w-full">
+
+<!-- ===== PAYMENT ===== -->
+
+<div class="space-y-2">
+
+<label class="flex gap-2">
+<input type="radio"
+name="payment_method"
+value="farmhouse"
+checked>
+<span>Pay at Farmhouse</span>
+</label>
+
+<label class="flex gap-2">
+<input type="radio"
+name="payment_method"
+value="partial_razorpay">
+<span>Pay 30%</span>
+</label>
+
+<label class="flex gap-2">
+<input type="radio"
+name="payment_method"
+value="full_razorpay">
+<span>Pay Full</span>
+</label>
+
+</div>
+
+<button id="bookBtn"
+class="w-full bg-orange-600 hover:bg-orange-500 text-white py-4 rounded-xl font-bold">
+
+Book Now
+
+</button>
+
+</form>
+
+</div>
 
 
     <!-- RIGHT DETAILS -->
@@ -343,4 +440,184 @@ new Razorpay(options).open();
 
 </script>
 
+
+
+
+
+<script>
+
+// ================= CSRF =================
+
+function getCookie(name){
+let cookieValue=null;
+
+if(document.cookie){
+document.cookie.split(';').forEach(cookie=>{
+cookie=cookie.trim();
+if(cookie.startsWith(name+'=')){
+cookieValue=decodeURIComponent(
+cookie.slice(name.length+1)
+);
+}
+});
+}
+return cookieValue;
+}
+
+axios.defaults.headers.common['X-CSRFToken']
+= getCookie('csrftoken');
+
+
+// ================= DATE PICKER =================
+
+flatpickr("#check_in",{
+minDate:"today",
+dateFormat:"Y-m-d"
+});
+
+flatpickr("#check_out",{
+minDate:"today",
+dateFormat:"Y-m-d"
+});
+
+
+// ================= BOOKING =================
+
+document
+.getElementById("bookingForm")
+.addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+const btn=document.getElementById("bookBtn");
+
+btn.innerText="Processing...";
+btn.disabled=true;
+
+try{
+
+const payload={
+
+farmhouse_id:
+document.getElementById("farmhouse_id").value,
+
+guest_name:
+document.getElementById("guest_name").value,
+
+guest_email:
+document.getElementById("guest_email").value,
+
+guest_phone:
+document.getElementById("guest_phone").value,
+
+check_in:
+document.getElementById("check_in").value,
+
+check_out:
+document.getElementById("check_out").value,
+
+payment_method:
+document.querySelector(
+'input[name="payment_method"]:checked'
+).value
+
+};
+
+
+// 🔥 CALL DJANGO API
+const res = await axios.post(
+"/api/create-farmhouse-booking/",
+payload
+);
+
+
+// ================= CASH =================
+
+if(res.data.redirect){
+
+window.location.href=res.data.redirect;
+return;
+
+}
+
+
+// ================= RAZORPAY =================
+
+if(res.data.razorpay){
+
+const options={
+
+key:res.data.key,
+amount:res.data.amount,
+currency:"INR",
+order_id:res.data.order_id,
+name:"Vivaan Farmhouse",
+
+handler:function(){
+
+// redirect after payment
+window.location.href=
+"/booking-confirmation/"+res.data.booking_id+"/";
+
+},
+
+modal:{
+ondismiss:function(){
+btn.disabled=false;
+btn.innerText="Book Now";
+}
+}
+
+};
+
+new Razorpay(options).open();
+
+}
+
+}catch(err){
+
+const errorBox=
+document.getElementById("bookingError");
+
+errorBox.classList.remove("hidden");
+
+errorBox.innerText=
+err.response?.data?.error ||
+"Booking failed. Try again.";
+
+btn.disabled=false;
+btn.innerText="Book Now";
+
+}
+
+});
+
+</script>
+
+
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ================= BOOKING SECTION ================= -->
+
