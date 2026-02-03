@@ -13,11 +13,13 @@ urlpatterns = [
     path('farmhouses/', Farmhouses, name = 'farmhouses'),
     path('farmhouse/<slug:slug>/', Farmhouse_detail, name='farmhouse_detail'),
     
+    path("api/farmhouses/", FarmhouseListAPI.as_view(), name="api_farmhouses"),
+    path("api/farmhouses/<slug:slug>/", FarmhouseDetailAPI.as_view(), name="api_farmhouse_detail"),
     
     # path('login/', Login, name = 'login'),
     # path('register/', Register, name = 'register'),
     
-    # path('password-reset/', PasswordResetView, name='password_reset'),
+    # path('password-reset/', PasswordResetView, name='passwsord_reset'),
     
     path('bloglisting/', BlogListing,name= 'bloglisting'),
     path('blogdetail/',BlogDetail,name='blogdetail'),

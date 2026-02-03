@@ -42,7 +42,7 @@ class FarmhouseSerializer(serializers.ModelSerializer):
         # 🔥 THIS IS THE KEY LINE
     amenities = AmenitySerializer(many=True, read_only=True)
     primary_image = serializers.SerializerMethodField()
-
+    images = FarmhouseImageSerializer(many=True, read_only=True)
     class Meta:
         model = Farmhouse
         fields = [
@@ -60,6 +60,7 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             "ac_bedrooms",
             "halls",
             "amenities",
+            "images",
             
         ]
 

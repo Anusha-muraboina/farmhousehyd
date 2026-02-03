@@ -7,12 +7,18 @@ from django.db import models
 
 
 
+import random
+import string
+from decimal import Decimal
+
+from django.db import models, transaction
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 
 
 
 
 # bookings/models.py
-from decimal import Decimal
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -107,18 +113,86 @@ class Booking(models.Model):
     transaction_id = models.CharField(max_length=100, blank=True, null=True)
     payment_id = models.CharField(max_length=100, blank=True, null=True)
 
+    confirmation_email_sent_at = models.DateTimeField(null=True, blank=True)
 
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+
+
     class Meta:
         ordering = ['-created_at']
+    def send_confirmation_email(self):
 
+        # USER EMAIL
+        user_html = render_to_string(
+            "emails/user_booking_email.html",
+            {"booking": self}
+        )
+
+        user_email = EmailMultiAlternatives(
+            subject="Booking Confirmed – Vivaan Farmhouse",
+            body="Your booking is confirmed",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[self.guest_email],
+        )
+
+        user_email.attach_alternative(user_html, "text/html")
+        user_email.send(fail_silently=False)
+
+        # ADMIN EMAIL
+        admin_html = render_to_string(
+            "emails/admin_booking_email.html",
+            {"booking": self}
+        )
+
+        admin_email = EmailMultiAlternatives(
+            subject=f"New Booking – {self.booking_id}",
+            body="New booking received",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[settings.ADMIN_EMAIL],
+        )
+
+        admin_email.attach_alternative(admin_html, "text/html")
+        admin_email.send(fail_silently=False)
+
+        # ⭐ SAVE TIMESTAMP (NO LOOP)
+        Booking.objects.filter(pk=self.pk).update(
+            confirmation_email_sent_at=timezone.now()
+        )
     def save(self, *args, **kwargs):
+
+        is_new = self.pk is None
+        old_status = None
+
+        if not is_new:
+            old_status = Booking.objects.get(pk=self.pk).status
+
+        # Generate booking id
         if not self.booking_id:
-            import random, string
             self.booking_id = 'VFH' + ''.join(random.choices(string.digits, k=8))
+
+        # Set confirmed time
+        if self.status == "confirmed" and not self.confirmed_at:
+            self.confirmed_at = timezone.now()
+
         super().save(*args, **kwargs)
+
+        # ✅ SEND EMAIL ONLY ONCE
+        if (
+            self.status == "confirmed"
+            and self.confirmation_email_sent_at is None
+            and old_status != "confirmed"
+        ):
+            transaction.on_commit(
+                lambda: self.send_confirmation_email()
+            )
+
+    # def save(self, *args, **kwargs):
+    #     if not self.booking_id:
+    #         import random, string
+    #         self.booking_id = 'VFH' + ''.join(random.choices(string.digits, k=8))
+    #     super().save(*args, **kwargs)
 
     @property
     def nights(self):

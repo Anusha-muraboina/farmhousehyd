@@ -178,9 +178,9 @@ CC_EMAIL = ["anushamuraboina99@gmail.com"]
 
 
 
-RAZORPAY_KEY_ID = "rzp_test_Rv2abPyaI8rKSP"
-RAZORPAY_KEY_SECRET = "cOuReUYXYcYBWeNUg3LSYkmB"
-RAZORPAY_WEBHOOK_SECRET = "kdfwfbsdhfwberfdlnsrojofdiwer4y59ujdnf94yu5u#28nf"
+RAZORPAY_KEY_ID = "rzp_test_SBYvT8xD1uirfa"
+RAZORPAY_KEY_SECRET = "0ss566690QyQc7rnGotK0Q6q"
+RAZORPAY_WEBHOOK_SECRET = "sfeifhiafpehr293576shf87^T^$Hbduyhf"
 
 # ====================================
 
@@ -237,3 +237,27 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     "https://d496df2c6bfe.ngrok-free.app",
 ]
+
+# 
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'anushamuraboina9@gmail.com'
+EMAIL_HOST_PASSWORD = 'mpywwnwfrubgkxoe'
+DEFAULT_FROM_EMAIL = 'anushamuraboina9@gmail.com'
+ADMIN_EMAIL = 'anushamuraboina9@gmail.com' 
+
+# FRONTEND_URL = 'http://127.0.0.1:9000'  
+
+CC_EMAIL = [
+    'anushamuraboina9@gmail.com',
+    'info@vivaanfarmhouse.com',
+]
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_REQUIRED = True
+
+
+

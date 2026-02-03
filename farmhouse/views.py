@@ -70,74 +70,172 @@ def contact(request):
     # return HttpResponse("Hello, this is Blog Page")
     return render(request , "contact.html")
 
-
-
-
 def Farmhouses(request):
-    # farmhouses = Farmhouse.objects.filter(is_active=True)
-    farmhouses = Farmhouse.objects.filter(is_active=True).select_related('location').prefetch_related('images')
+    # return HttpResponse("Hello, this is Blog Page")
+    return render(request , "farmhouse_list.html")
+# def Farmhouse_detail(request):
+#     # return HttpResponse("Hello, this is Blog Page")
+#     return render(request , "farmhouse_detail.html")
+def Farmhouse_detail(request, slug):
+    return render(request, "farmhouse_detail.html", {"slug": slug})
 
-    locations = Location.objects.filter(is_active=True)
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
-    # Search Logic Improved
-    search_query = request.GET.get('search')
-    if search_query:
-        farmhouses = farmhouses.filter(
-            Q(title__icontains=search_query) | 
-            Q(location__name__icontains=search_query) |
-            Q(short_description__icontains=search_query) |
-            Q(description__icontains=search_query)
+from .models import Farmhouse, Location
+from .serializers import FarmhouseSerializer, LocationSerializer
+
+
+# ------------------ FARMHOUSE LIST API ------------------
+class FarmhouseListAPI(APIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        # farmhouses = Farmhouse.objects.filter(
+        #     is_active=True
+        # ).select_related("location").prefetch_related(
+        #     "images", "amenities"
+        # )
+        farmhouses = Farmhouse.objects.filter(
+            is_active=True
+        ).select_related("location").prefetch_related(
+            "images", "amenities"
         )
 
-    # Location Filter (Dropdown)
-    location_param = request.GET.get('location')
-    if location_param and location_param != 'All Locations':
-        farmhouses = farmhouses.filter(location__name=location_param)
+        # 🔍 Search
+        search = request.GET.get("search")
+        if search:
+            farmhouses = farmhouses.filter(
+                Q(title__icontains=search) |
+                Q(location__name__icontains=search) |
+                Q(short_description__icontains=search) |
+                Q(description__icontains=search)
+            )
 
-    # Price Sorting
-    sort_param = request.GET.get('sort')
-    if sort_param == 'low_to_high':
-        farmhouses = farmhouses.order_by('price_per_day')
-    elif sort_param == 'high_to_low':
-        farmhouses = farmhouses.order_by('-price_per_day')
+        # 📍 Location filter
+        location = request.GET.get("location")
+        if location:
+            farmhouses = farmhouses.filter(location__name=location)
 
-    # Prepare location list with selected status for template
-    location_list = []
-    for loc in locations:
-        location_list.append({
-            'name': loc.name,
-            'selected': loc.name == location_param
+        # 💰 Price sort
+        sort = request.GET.get("sort")
+        if sort == "low_to_high":
+            farmhouses = farmhouses.order_by("price_per_day")
+        elif sort == "high_to_low":
+            farmhouses = farmhouses.order_by("-price_per_day")
+
+        serializer = FarmhouseSerializer(
+            farmhouses, many=True, context={"request": request}
+        )
+        
+        
+
+        locations = Location.objects.filter(is_active=True)
+        location_serializer = LocationSerializer(locations, many=True)
+
+        return Response({
+            "farmhouses": serializer.data,
+            "locations": location_serializer.data
         })
 
-    context = {
-        'farmhouses': farmhouses,
-        'locations': location_list,
-        'current_location': location_param,
-        'is_low_to_high': sort_param == 'low_to_high',
-        'is_high_to_low': sort_param == 'high_to_low',
-    }
-    return render(request, "farmhouse_list.html", context)
+
+# ------------------ FARMHOUSE DETAIL API ------------------
+class FarmhouseDetailAPI(APIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        farmhouse = get_object_or_404(
+            Farmhouse.objects.prefetch_related(
+                "images", "amenities"
+            ),
+            slug=slug,
+            is_active=True
+        )
+
+        similar = Farmhouse.objects.filter(
+            location=farmhouse.location,
+            is_active=True
+        ).exclude(id=farmhouse.id)[:3]
+
+        return Response({
+            "farmhouse": FarmhouseSerializer(
+                farmhouse, context={"request": request}
+            ).data,
+            "similar_farmhouses": FarmhouseSerializer(
+                similar, many=True, context={"request": request}
+            ).data
+        })
 
 
-def Farmhouse_detail(request, slug):
-    farmhouse = get_object_or_404(Farmhouse, slug=slug)
+# def Farmhouses(request):
+#     # farmhouses = Farmhouse.objects.filter(is_active=True)
+#     farmhouses = Farmhouse.objects.filter(is_active=True).select_related('location').prefetch_related('images')
+
+#     locations = Location.objects.filter(is_active=True)
+
+#     # Search Logic Improved
+#     search_query = request.GET.get('search')
+#     if search_query:
+#         farmhouses = farmhouses.filter(
+#             Q(title__icontains=search_query) | 
+#             Q(location__name__icontains=search_query) |
+#             Q(short_description__icontains=search_query) |
+#             Q(description__icontains=search_query)
+#         )
+
+#     # Location Filter (Dropdown)
+#     location_param = request.GET.get('location')
+#     if location_param and location_param != 'All Locations':
+#         farmhouses = farmhouses.filter(location__name=location_param)
+
+#     # Price Sorting
+#     sort_param = request.GET.get('sort')
+#     if sort_param == 'low_to_high':
+#         farmhouses = farmhouses.order_by('price_per_day')
+#     elif sort_param == 'high_to_low':
+#         farmhouses = farmhouses.order_by('-price_per_day')
+
+#     # Prepare location list with selected status for template
+#     location_list = []
+#     for loc in locations:
+#         location_list.append({
+#             'name': loc.name,
+#             'selected': loc.name == location_param
+#         })
+
+#     context = {
+#         'farmhouses': farmhouses,
+#         'locations': location_list,
+#         'current_location': location_param,
+#         'is_low_to_high': sort_param == 'low_to_high',
+#         'is_high_to_low': sort_param == 'high_to_low',
+#     }
+#     return render(request, "farmhouse_list.html", context)
+
+
+# def Farmhouse_detail(request, slug):
+#     farmhouse = get_object_or_404(Farmhouse, slug=slug)
     
-    # Get similar farmhouses in the same location
-    similar_farmhouses = Farmhouse.objects.filter(
-        location=farmhouse.location, 
-        is_active=True
-    ).exclude(id=farmhouse.id)[:3]
+#     # Get similar farmhouses in the same location
+#     similar_farmhouses = Farmhouse.objects.filter(
+#         location=farmhouse.location, 
+#         is_active=True
+#     ).exclude(id=farmhouse.id)[:3]
     
-    # If not enough in same location, get some featured ones
-    if similar_farmhouses.count() < 2:
-        additional = Farmhouse.objects.filter(is_active=True).exclude(id=farmhouse.id).exclude(id__in=[f.id for f in similar_farmhouses])[:2]
-        similar_farmhouses = list(similar_farmhouses) + list(additional)
+#     # If not enough in same location, get some featured ones
+#     if similar_farmhouses.count() < 2:
+#         additional = Farmhouse.objects.filter(is_active=True).exclude(id=farmhouse.id).exclude(id__in=[f.id for f in similar_farmhouses])[:2]
+#         similar_farmhouses = list(similar_farmhouses) + list(additional)
 
-    context = {
-        'farmhouse': farmhouse,
-        'similar_farmhouses': similar_farmhouses[:3]
-    }
-    return render(request , "farmhouse_detail.html", context)
+#     context = {
+#         'farmhouse': farmhouse,
+#         'similar_farmhouses': similar_farmhouses[:3]
+#     }
+#     return render(request , "farmhouse_detail.html", context)
 
 
 
@@ -230,3 +328,8 @@ class AboutAPIView(APIView):
         
 
         
+# =======================================
+
+
+
+
