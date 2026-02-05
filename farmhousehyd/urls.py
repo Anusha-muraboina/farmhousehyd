@@ -26,7 +26,7 @@ urlpatterns = [
     path('contact/',include('contact.urls')),
     path('api/',include('user.urls')),
     path('blogs/',include('blogs.urls')),
-    path('booking/',include('booking.urls')),
+    path('bookings/',include('booking.urls')),
     path('coupon/',include('coupon.urls')),
     path('rating/',include('rating.urls')),
     path('cms/',include('cms.urls')),

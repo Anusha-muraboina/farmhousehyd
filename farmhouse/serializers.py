@@ -5,6 +5,7 @@ from .models import (
     Amenity,
     Farmhouse,
     FarmhouseImage,
+    FarmhousePricing,
 )
 from blogs.models import *
 
@@ -32,13 +33,32 @@ class AmenitySerializer(serializers.ModelSerializer):
         fields = ["id", "name", "icon_class"]
 
 
+# class FarmhouseImageSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = FarmhouseImage
+#         fields = ["image", "is_primary"]
 class FarmhouseImageSerializer(serializers.ModelSerializer):
+
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = FarmhouseImage
         fields = ["image", "is_primary"]
 
+    def get_image(self, obj):
+        request = self.context.get("request")
+        if obj.image and request:
+            return request.build_absolute_uri(obj.image.url)
+        return None
+
+class FarmhousePricingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FarmhousePricing
+        fields = "__all__"
+
 
 class FarmhouseSerializer(serializers.ModelSerializer):
+    pricing = FarmhousePricingSerializer(read_only=True)
         # 🔥 THIS IS THE KEY LINE
     amenities = AmenitySerializer(many=True, read_only=True)
     primary_image = serializers.SerializerMethodField()
@@ -52,6 +72,8 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             "slug",
             "location",
             "address",
+            "guest_count",
+            "extra_guest_count",
             "description",
             "short_description",
             "price_per_day",
@@ -61,6 +83,7 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             "halls",
             "amenities",
             "images",
+            "pricing",
             
         ]
 
@@ -98,3 +121,5 @@ class BlogSerializer(serializers.ModelSerializer):
         if obj.image and request:
             return request.build_absolute_uri(obj.image.url)
         return None
+    
+    

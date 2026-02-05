@@ -17,7 +17,13 @@ class Coupon(models.Model):
         ('flat', 'Flat Amount'),
         ('percentage', 'Percentage'),
     )
-
+    farmhouse = models.ForeignKey(
+        "farmhouse.Farmhouse",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="coupons"
+    )
     title = models.CharField(
         max_length=150,
         help_text="Example: New Year Coupon"

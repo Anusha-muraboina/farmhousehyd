@@ -229,16 +229,17 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 CORS_ALLOWED_ORIGINS = [
-    "https://d496df2c6bfe.ngrok-free.app",
+    "http://127.0.0.1:9000",
     
 ]
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://d496df2c6bfe.ngrok-free.app",
+    "http://127.0.0.1:9000",
 ]
 
 # 
+CSRF_COOKIE_HTTPONLY = False
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

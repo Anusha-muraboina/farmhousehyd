@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Pending - Farmhousehyd</title>
+</head>
+
+<body style="margin: 0; padding: 0; background-color: #f7f4f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+<table width="100%" cellspacing="0" cellpadding="0" style="background-color: #f7f4f0;">
+<tr>
+<td align="center" style="padding: 40px 20px;">
+
+<table width="600" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
+
+<!-- HEADER -->
+<tr>
+<td style="background: linear-gradient(135deg, #065823 0%, #024827 100%); padding: 40px 50px; text-align: center;">
+  <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 600;">Farmhousehyd</h1>
+  <!-- <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.9); font-size: 14px; letter-spacing: 3px; text-transform: uppercase;">
+    Farmhouse & Resort
+  </p> -->
+</td>
+</tr>
+
+<!-- WARNING ICON -->
+<tr>
+<td style="padding: 40px 50px 30px; text-align: center; border-bottom: 1px solid #e8e4df;">
+  <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); border-radius: 50%; margin: 0 auto 20px; line-height: 70px;">
+    <span style="font-size: 32px; color: #fff;">⏳</span>
+  </div>
+
+  <h2 style="margin: 0 0 10px 0; color: #92400e; font-size: 28px; font-weight: 600;">
+    Booking Pending
+  </h2>
+
+  <p style="margin: 0; color: #6b7280; font-size: 16px;">
+    Payment required to confirm your booking
+  </p>
+</td>
+</tr>
+
+<!-- MESSAGE -->
+<tr>
+<td style="padding: 30px 50px 20px;">
+  <p style="margin: 0; color: #374151; font-size: 16px; line-height: 1.6;">
+    Hello <strong style="color:#92400e;">{{ booking.guest_name }}</strong>,
+  </p>
+
+  <p style="margin: 15px 0 0 0; color: #6b7280; font-size: 15px; line-height: 1.8;">
+    Thank you for booking with <strong>Farmhousehyd</strong>.
+  </p>
+
+  <p style="margin: 12px 0 0 0; color: #6b7280; font-size: 15px; line-height: 1.8;">
+    Your booking has been <strong>successfully created</strong>, but it is currently
+    <strong style="color:#b45309;">not confirmed</strong>.
+  </p>
+</td>
+</tr>
+
+<!-- IMPORTANT NOTICE -->
+<tr>
+<td style="padding: 0 50px 30px;">
+  <div style="background:#fff7ed; border-left:5px solid #f59e0b; padding:20px; border-radius:10px;">
+    <p style="margin:0; font-size:15px; color:#92400e; line-height:1.7;">
+      ⚠️ <strong>Important:</strong><br><br>
+      To confirm your booking, you must complete the payment of
+      <strong>at least 30% advance</strong> or <strong>100% full amount</strong>.
+      <br><br>
+      Once payment is received, your booking will be automatically
+      <strong>confirmed</strong>.
+    </p>
+  </div>
+</td>
+</tr>
+
+<!-- BOOKING SUMMARY -->
+<tr>
+<td style="padding: 0 50px 30px;">
+<table width="100%" cellspacing="0" cellpadding="0" style="background:#f9fafb; border-radius:12px; border:1px solid #e5e7eb;">
+<tr>
+<td style="padding:25px;">
+  <h3 style="margin:0 0 15px 0; color:#045019;">📋 Booking Summary</h3>
+
+  <table width="100%">
+    <tr>
+      <td style="padding:6px 0; color:#6b7280;">Booking ID</td>
+      <td style="padding:6px 0; font-weight:600;">{{ booking.booking_id }}</td>
+    </tr>
+    <tr>
+      <td style="padding:6px 0; color:#6b7280;">Check-in</td>
+      <td style="padding:6px 0; font-weight:600;">{{ booking.check_in }}</td>
+    </tr>
+    <tr>
+      <td style="padding:6px 0; color:#6b7280;">Check-out</td>
+      <td style="padding:6px 0; font-weight:600;">{{ booking.check_out }}</td>
+    </tr>
+    <tr>
+      <td style="padding:6px 0; color:#6b7280;">Total Amount</td>
+      <td style="padding:6px 0; font-weight:600;">₹{{ booking.total_amount }}</td>
+    </tr>
+  </table>
+
+</td>
+</tr>
+</table>
+</td>
+</tr>
+
+<!-- CTA -->
+<tr>
+<td style="padding: 0 50px 40px; text-align:center;">
+  {% comment %} <a href="https://vivaanfarmhouse.com/complete-payment/{{ booking.booking_id }}/"
+     style="display:inline-block; background:#014216; color:#ffffff; padding:16px 40px;
+     text-decoration:none; border-radius:8px; font-size:16px; font-weight:600;">
+    💳 Complete Payment
+  </a> {% endcomment %}
+
+  <p style="margin-top:15px; font-size:13px; color:#9ca3af;">
+    Booking will be confirmed only after payment
+  </p>
+</td>
+</tr>
+
+<!-- FOOTER -->
+<tr>
+<td style="background:#2d3a35; padding:30px 50px; text-align:center;">
+  <p style="margin:0; color:#ffffff; font-size:15px; font-weight:600;">
+    Farmhousehyd Team
+  </p>
+  <p style="margin:10px 0 0 0; color:rgba(255,255,255,0.7); font-size:13px;">
+    📧 info@vivaanfarmhouse.com | 📞 +91 96668 58675
+  </p>
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

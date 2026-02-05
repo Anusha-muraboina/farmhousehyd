@@ -39,7 +39,7 @@ class FarmhouseAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Basic Information', {
-            'fields': ('title', 'slug', 'user', 'location', 'address', 'distance_km')
+            'fields': ('title', 'slug', 'user', 'location', 'address','guest_count','extra_guest_count' , 'distance_km')
         }),
         ('Property Details', {
             'fields': ('halls', 'bedrooms', 'ac_bedrooms', 'amenities')

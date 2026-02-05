@@ -15,7 +15,7 @@ from django.db import models, transaction
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
-
+from datetime import timedelta
 
 
 # bookings/models.py
@@ -52,7 +52,7 @@ class Booking(models.Model):
     ]
 
     booking_id = models.CharField(max_length=20, unique=True, editable=False)
-
+    
     farmhouse = models.ForeignKey(
         Farmhouse,
         on_delete=models.CASCADE,
@@ -122,42 +122,105 @@ class Booking(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-    def send_confirmation_email(self):
+    # def send_confirmation_email(self):
 
-        html = render_to_string(
-            "emails/user_booking_email.html",
-            {"booking": self}
-        )
+    #     html = render_to_string(
+    #         "emails/user_booking_email.html",
+    #         {"booking": self}
+    #     )
 
-        email = EmailMultiAlternatives(
-            subject="Booking Confirmed – Vivaan Farmhouse",
-            body="Your booking is confirmed.",
+    #     email = EmailMultiAlternatives(
+    #         subject="Booking Confirmed – Farmhousehyd",
+    #         body="Your booking is confirmed.",
+    #         from_email=settings.DEFAULT_FROM_EMAIL,
+    #         to=[self.guest_email],
+    #     )
+
+    #     email.attach_alternative(html, "text/html")
+    #     email.send(fail_silently=False)
+
+    #     # ADMIN EMAIL
+    #     admin_html = render_to_string(
+    #         "emails/admin_booking_email.html",
+    #         {"booking": self}
+    #     )
+
+    #     admin = EmailMultiAlternatives(
+    #         subject=f"New Booking - {self.booking_id}",
+    #         body="New booking received",
+    #         from_email=settings.DEFAULT_FROM_EMAIL,
+    #         to=[settings.ADMIN_EMAIL],
+    #     )
+
+    #     admin.attach_alternative(admin_html, "text/html")
+    #     admin.send(fail_silently=False)
+
+    #     Booking.objects.filter(pk=self.pk).update(
+    #         confirmation_email_sent_at=timezone.now()
+    #     )
+        
+    def send_booking_email(self, email_type):
+        """
+        email_type:
+        pending / confirmed / cancelled / completed
+        """
+
+        templates = {
+            "pending": {
+                "user": "emails/booking_pending_user.html",
+                "admin": "emails/booking_pending_user.html",
+                "subject_user": "Booking Received – Awaiting Confirmation",
+                "subject_admin": f"New Pending Booking - {self.booking_id}",
+            },
+            "confirmed": {
+                "user": "emails/user_booking_email.html",
+                "admin": "emails/admin_booking_email.html",
+                "subject_user": "✅ Booking Confirmed – Farmhousehyd",
+                "subject_admin": f"Booking Confirmed - {self.booking_id}",
+            },
+            "cancelled": {
+                "user": "emails/booking_cancelled_user.html",
+                # "admin": "emails/admin_cancelled.html",
+                "subject_user": "❌ Booking Cancelled",
+                "subject_admin": f"Booking Cancelled - {self.booking_id}",
+            },
+            "completed": {
+                "user": "emails/booking_completed_admin.html",
+                "admin": "emails/booking_completed_user.html",
+                "subject_user": "🎉 Stay Completed – Thank You!",
+                "subject_admin": f"Stay Completed - {self.booking_id}",
+            }
+        }
+
+        config = templates[email_type]
+
+        context = {"booking": self}
+
+        # USER EMAIL
+        user_html = render_to_string(config["user"], context)
+
+        user_email = EmailMultiAlternatives(
+            subject=config["subject_user"],
+            body="Booking update",
             from_email=settings.DEFAULT_FROM_EMAIL,
             to=[self.guest_email],
         )
 
-        email.attach_alternative(html, "text/html")
-        email.send(fail_silently=False)
+        user_email.attach_alternative(user_html, "text/html")
+        user_email.send()
 
         # ADMIN EMAIL
-        admin_html = render_to_string(
-            "emails/admin_booking_email.html",
-            {"booking": self}
-        )
+        admin_html = render_to_string(config["admin"], context)
 
-        admin = EmailMultiAlternatives(
-            subject=f"New Booking - {self.booking_id}",
-            body="New booking received",
+        admin_email = EmailMultiAlternatives(
+            subject=config["subject_admin"],
+            body="Booking update",
             from_email=settings.DEFAULT_FROM_EMAIL,
             to=[settings.ADMIN_EMAIL],
         )
 
-        admin.attach_alternative(admin_html, "text/html")
-        admin.send(fail_silently=False)
-
-        Booking.objects.filter(pk=self.pk).update(
-            confirmation_email_sent_at=timezone.now()
-        )
+        admin_email.attach_alternative(admin_html, "text/html")
+        admin_email.send()
 
     # ================= SAVE =================
 
@@ -173,17 +236,51 @@ class Booking(models.Model):
             self.booking_id = "VFH" + ''.join(random.choices(string.digits, k=8))
 
         super().save(*args, **kwargs)
+        ########################################
+        # ✅ AUTO BLOCK DATES WHEN CONFIRMED
+        ########################################
 
-        # ✅ SEND EMAIL ONLY ONCE
         if (
             self.status == "confirmed"
-            and self.confirmation_email_sent_at is None
             and old_status != "confirmed"
         ):
+            # BlockedDate.objects.get_or_create(
+            #     farmhouse=self.farmhouse,
+            #     start_date=self.check_in,
+            #     end_date=self.check_out,
+            #     defaults={
+            #         "reason": f"Booking {self.booking_id}"
+            #     }
+            # )
+            BlockedDate.objects.get_or_create(
+                farmhouse=self.farmhouse,
+                start_date=self.check_in,
+                # ⭐ block only nights, NOT checkout day
+                end_date=self.check_out - timedelta(days=1),
+                defaults={
+                    "reason": f"Booking {self.booking_id}"
+                }
+            )
+        # ✅ SEND EMAIL ONLY ONCE
+        # if (
+        #     self.status == "confirmed"
+        #     and self.confirmation_email_sent_at is None
+        #     and old_status != "confirmed"
+        # ):
+        #     transaction.on_commit(
+        #         lambda: self.send_confirmation_email()
+        #     )
+        if is_new:
+            # NEW BOOKING = pending email
             transaction.on_commit(
-                lambda: self.send_confirmation_email()
+                lambda: self.send_booking_email("pending")
             )
 
+        elif old_status != self.status:
+
+            transaction.on_commit(
+                lambda: self.send_booking_email(self.status)
+            )
     # def save(self, *args, **kwargs):
     #     if not self.booking_id:
     #         import random, string
@@ -195,7 +292,7 @@ class Booking(models.Model):
         return (self.check_out - self.check_in).days
 
     def __str__(self):
-        return f"{self.booking_id} - {self.guest_name}"
+        return f"{self.booking_id} - {self.guest_name}-{self.check_in} - {self.check_out}"
 
 
 
@@ -215,6 +312,7 @@ class BlockedDate(models.Model):
             raise ValidationError("End date must be after start date.")
 
         overlaps = BlockedDate.objects.filter(
+            farmhouse=self.farmhouse,
             start_date__lte=self.end_date,
             end_date__gte=self.start_date
         ).exclude(pk=self.pk)

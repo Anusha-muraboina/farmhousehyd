@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking completed - Farmhousehyd</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f7f4f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f7f4f0;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%); padding: 40px 50px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 600; letter-spacing: 1px;">Farmhousehyd</h1>
+              {% comment %} <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.9); font-size: 14px; letter-spacing: 3px; text-transform: uppercase;">Farmhouse & Resort</p> {% endcomment %}
+            </td>
+          </tr>
+
+          <!-- Success Banner -->
+          <tr>
+            <td style="padding: 40px 50px 30px; text-align: center; border-bottom: 1px solid #e8e4df;">
+              <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #40916c 0%, #52b788 100%); border-radius: 50%; margin: 0 auto 20px; line-height: 70px;">
+                <span style="font-size: 32px; color: #fff;">✓</span>
+              </div>
+              <h2 style="margin: 0 0 10px 0; color: #2d6a4f; font-size: 28px; font-weight: 600;">Booking completed!</h2>
+              <p style="margin: 0; color: #6b7280; font-size: 16px;">Thank you for choosing Farmhousehyd</p>
+            </td>
+          </tr>
+
+          <!-- Greeting -->
+          <tr>
+            <td style="padding: 30px 50px 20px;">
+              <p style="margin: 0; color: #374151; font-size: 16px; line-height: 1.6;">
+                Hello Admin,
+              </p>
+              <p style="margin: 15px 0 0 0; color: #6b7280; font-size: 15px; line-height: 1.7;">
+                We're thrilled to confirm your reservation. Get ready for an unforgettable experience surrounded by nature's tranquility.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Booking Details Card -->
+          <tr>
+            <td style="padding: 10px 50px 30px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background: linear-gradient(135deg, #fefcf9 0%, #f7f4f0 100%); border-radius: 12px; border: 1px solid #e8e4df;">
+                <tr>
+                  <td style="padding: 25px;">
+                    <h3 style="margin: 0 0 20px 0; color: #2d6a4f; font-size: 18px; font-weight: 600; border-bottom: 2px solid #2d6a4f; padding-bottom: 10px;">
+                      📋 Booking Details
+                    </h3>
+                    
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td style="padding: 10px 0; color: #6b7280; font-size: 14px; width: 40%;">Booking ID</td>
+                        <td style="padding: 10px 0; color: #374151; font-size: 14px; font-weight: 600;">{{ booking.booking_id }}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 10px 0; color: #6b7280; font-size: 14px; border-top: 1px solid #e8e4df;">Guest Name</td>
+                        <td style="padding: 10px 0; color: #374151; font-size: 14px; font-weight: 600; border-top: 1px solid #e8e4df;">{{ booking.guest_name }}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 10px 0; color: #6b7280; font-size: 14px; border-top: 1px solid #e8e4df;">Phone</td>
+                        <td style="padding: 10px 0; color: #374151; font-size: 14px; font-weight: 600; border-top: 1px solid #e8e4df;">{{ booking.guest_phone }}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 10px 0; color: #6b7280; font-size: 14px; border-top: 1px solid #e8e4df;">Email</td>
+                        <td style="padding: 10px 0; color: #374151; font-size: 14px; font-weight: 600; border-top: 1px solid #e8e4df;">{{ booking.guest_email }}</td>
+                      </tr>
+                      <!-- <tr>
+                        <td style="padding: 10px 0; color: #6b7280; font-size: 14px; border-top: 1px solid #e8e4df;">Room</td>
+                        <td style="padding: 10px 0; color: #2d6a4f; font-size: 14px; font-weight: 600; border-top: 1px solid #e8e4df;">{{ booking.room }}</td>
+                      </tr> -->
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Stay Dates -->
+          <tr>
+            <td style="padding: 0 50px 30px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td width="48%" style="background: #2d6a4f; border-radius: 10px; padding: 20px; text-align: center;">
+                    <p style="margin: 0 0 5px 0; color: rgba(255,255,255,0.8); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Check-in</p>
+                    <p style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 600;">{{ booking.check_in }}</p>
+                    <p style="margin: 5px 0 0 0; color: rgba(255,255,255,0.7); font-size: 12px;">   </p>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="48%" style="background: #40916c; border-radius: 10px; padding: 20px; text-align: center;">
+                    <p style="margin: 0 0 5px 0; color: rgba(255,255,255,0.8); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Check-out</p>
+                    <p style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 600;">{{ booking.check_out }}</p>
+                    <p style="margin: 5px 0 0 0; color: rgba(255,255,255,0.7); font-size: 12px;">    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Payment Summary -->
+          <tr>
+            <td style="padding: 0 50px 30px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background: #fff8f0; border-radius: 12px; border: 2px solid #d4a574;">
+                <tr>
+                  <td style="padding: 25px;">
+                    <h3 style="margin: 0 0 20px 0; color: #92400e; font-size: 18px; font-weight: 600;">💰 Payment Summary</h3>
+                    
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Total Amount</td>
+                        <td style="padding: 8px 0; color: #374151; font-size: 14px; font-weight: 600; text-align: right;">₹{{ booking.total_amount }}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-top: 1px dashed #d4a574;">Payment Method</td>
+                        <td style="padding: 8px 0; color: #374151; font-size: 14px; font-weight: 600; text-align: right; border-top: 1px dashed #d4a574;">{{ booking.payment_method }}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 12px 0; color: #92400e; font-size: 16px; font-weight: 600; border-top: 2px solid #d4a574;">Balance Due</td>
+                        <td style="padding: 12px 0; color: #92400e; font-size: 18px; font-weight: 700; text-align: right; border-top: 2px solid #d4a574;">₹{{ booking.remaining_amount }}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- CTA Button -->
+          <tr>
+            <td style="padding: 0 50px 40px; text-align: center;">
+              <a href="http://127.0.0.1:8000/invoice/{{ booking.booking_id }}/" style="display: inline-block; background: linear-gradient(135deg, #d4a574 0%, #c28b5a 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 15px rgba(212,165,116,0.4);">
+                📄 View Invoice Online
+              </a>
+              {% comment %} <p style="margin: 15px 0 0 0; color: #9ca3af; font-size: 13px;">Your invoice is also attached to this email</p> {% endcomment %}
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background: #2d3a35; padding: 30px 50px; text-align: center;">
+              <p style="margin: 0 0 10px 0; color: #ffffff; font-size: 16px; font-weight: 600;">We look forward to hosting you!</p>
+              <p style="margin: 0 0 20px 0; color: rgba(255,255,255,0.7); font-size: 14px;">Our team will contact you shortly with more details.</p>
+              <p style="margin: 0; color: rgba(255,255,255,0.5); font-size: 13px;">
+                📍 Farmhousehyd, Nature Valley Road<br>
+                📞 +91 98765 12345 | ✉️ hello@vivaanfarmhouse.com
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
