@@ -15,7 +15,8 @@ from django.http import HttpResponse
 
 # from .forms import ContactForm
 # from .models import ContactInfo
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -62,7 +63,8 @@ class FarmhouseListAPIView(APIView):
 
 # ✅ CONTACT MESSAGE SUBMIT
 class ContactMessageAPIView(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = ContactMessageSerializer(data=request.data)

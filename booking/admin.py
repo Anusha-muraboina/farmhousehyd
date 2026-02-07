@@ -16,6 +16,7 @@ class BlockedDateAdmin(admin.ModelAdmin):
 
     list_display = (
         "farmhouse",
+        
         "start_date",
         "end_date",
         "reason"

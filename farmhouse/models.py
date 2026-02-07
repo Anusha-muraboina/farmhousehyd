@@ -102,6 +102,12 @@ class Farmhouse(models.Model):
         """
         date → datetime.date
         """
+        pricing = self.pricing
+
+    #  SALE PRICE ALWAYS WINS
+        if pricing.sale_price and pricing.sale_price > 0:
+            return pricing.sale_price
+
         weekday = date.weekday()  # Monday=0, Sunday=6
 
         if weekday >= 5:  # Saturday, Sunday
@@ -129,7 +135,14 @@ class FarmhousePricing(models.Model):
         on_delete=models.CASCADE,
         related_name='pricing'
     )
-
+    # 
+    sale_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Optional sale price. Overrides all prices."
+    )
     normal_day_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,

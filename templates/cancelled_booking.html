@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}Cancel Booking{% endblock %}
+
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<div class="max-w-3xl mx-auto py-16 px-6">
+
+    <!-- CARD -->
+    <div class="bg-white shadow-2xl rounded-2xl p-8 border">
+
+        <!-- Title -->
+        <h1 class="text-3xl font-bold text-orange-800 mb-2">
+            Cancel Booking
+        </h1>
+
+        <p class="text-gray-500 mb-6">
+            We're sorry to see you cancel , 
+            Please tell us why you're cancelling.
+        </p>
+
+        <!-- Warning -->
+        <div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-6">
+             Cancellation within 24 hours of check-in is not allowed.
+        </div>
+
+        <!-- Reason -->
+        <label class="font-semibold">
+            Select Cancellation Reason
+        </label>
+
+        <select id="reason"
+            class="w-full mt-2 mb-5 border rounded-lg p-3 focus:ring-1 focus:ring-red-400">
+
+            <option value="" class="bg-red">Loading reasons...</option>
+
+        </select>
+
+        <!-- Comment -->
+        <label class="font-semibold">
+            Additional Comments (optional)
+        </label>
+
+        <textarea id="comment"
+            rows="4"
+            placeholder="Tell us more..."
+            class="w-full mt-2 border rounded-lg p-3 focus:ring-2 focus:ring-red-400"></textarea>
+
+        <!-- Refund Box -->
+        <div class="bg-gray-50 border rounded-lg p-4 mt-6">
+            <p class="text-gray-600 text-sm">
+                 Refund Policy:
+            </p>
+
+            <ul class="text-sm mt-2 text-gray-700 space-y-1">
+                <li> 3+ days before check-in → <b>100% refund</b></li>
+                <li> 1–2 days before → <b>50% refund</b></li>
+                <li> Less than 24 hrs → <b>No refund</b></li>
+            </ul>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-4 mt-8">
+
+            <button onclick="cancelBooking()"
+                id="cancelBtn"
+                class="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold transition">
+
+                Cancel Booking
+
+            </button>
+
+            <a href="/my-bookings/"
+                class="flex-1 text-center border py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+
+                Go Back
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+//////////////////////////////////////////////////
+// LOAD REASONS
+//////////////////////////////////////////////////
+
+const bookingId = "{{ booking.booking_id }}";
+
+async function loadReasons(){
+
+    try{
+
+        const res = await axios.get("/bookings/cancel-reasons/");
+
+        let html = `<option value="">Select reason</option>`;
+
+        res.data.forEach(r=>{
+
+            html += `<option value="${r.id}">
+                        ${r.reason}
+                     </option>`;
+
+        });
+
+        document.getElementById("reason").innerHTML = html;
+
+    }catch{
+
+        document.getElementById("reason").innerHTML =
+        `<option>Error loading reasons</option>`;
+    }
+}
+
+loadReasons();
+
+
+//////////////////////////////////////////////////
+// CANCEL BOOKING
+//////////////////////////////////////////////////
+
+async function cancelBooking(){
+
+    const btn = document.getElementById("cancelBtn");
+
+    const reason = document.getElementById("reason").value;
+    const comment = document.getElementById("comment").value;
+
+    if(!reason){
+        alert("Please select a reason");
+        return;
+    }
+
+    //////////////////////////////////////////
+    // confirm popup ⭐⭐⭐⭐⭐
+    //////////////////////////////////////////
+
+    const confirmCancel = confirm(
+        "Are you sure you want to cancel this booking?"
+    );
+
+    if(!confirmCancel) return;
+
+    //////////////////////////////////////////
+
+    btn.disabled = true;
+    btn.innerText = "Cancelling...";
+
+    try{
+
+        await axios.post(
+            `/bookings/cancel-booking/${bookingId}/`,
+            {
+                reason: reason,
+                comment: comment
+            }
+        );
+
+        alert("Booking cancelled successfully");
+
+        window.location.href = "/user/my-bookings-page/";
+
+    }catch(err){
+
+        alert(
+            err?.response?.data?.error ||
+            "Cancellation failed"
+        );
+
+        btn.disabled = false;
+        btn.innerText = "Cancel Booking";
+    }
+}
+
+</script>
+
+{% endblock %}

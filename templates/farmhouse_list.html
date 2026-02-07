@@ -66,61 +66,12 @@
      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 </div>
 
-        <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {% for farmhouse in farmhouses %}
-            <div class="farmhouse-card bg-white rounded-2xl overflow-hidden shadow-lg">
-                <div class="card-image relative h-56">
-                    {% if farmhouse.images.exists %}
-                    <img src="{% if farmhouse.images.first.image %}{{ farmhouse.images.first.image.url }}{% else %}https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80{% endif %}"
-                        alt="{{ farmhouse.title }}" class="w-full h-full object-cover">
-                    {% else %}
-                    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80"
-                        alt="{{ farmhouse.title }}" class="w-full h-full object-cover">
-                    {% endif %}
-                    {% if farmhouse.is_featured %}
-                    <span
-                        class="absolute top-4 left-4 bg-primary text-white text-xs px-3 py-1 rounded-full">Featured</span>
-                    {% endif %}
-                </div>
-                <div class="p-5">
-                    <p class="font-display text-xl font-bold text-secondary mb-2">{{ farmhouse.title }}</p>
-                    <p class="text-gray-500 text-sm flex items-center gap-1 mb-3">
-                        <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
-                        {{ farmhouse.location.name|default:"Hyderabad" }} • {{ farmhouse.distance_km }} km from city
-                    </p>
-                    <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                        <span class="flex items-center gap-1">
-                            <i data-lucide="bed" class="w-4 h-4"></i>
-                             {{ farmhouse.bedrooms }} Beds
-                            </span>
-                        <span class="flex items-center gap-1"><i data-lucide="bath" class="w-4 h-4"></i> 
-                            {{ farmhouse.ac_bedrooms }} Baths</span>
-                    </div>
-                    <div class="text-sm text-gray-600 max-w-2xl mx-auto my-2 md:my-4 truncate-text ">
-                        {{ farmhouse.short_description|truncatewords:20 }}
-                    </div>
-                    <div class="flex items-center justify-between pt-4 border-t">
-                        <div><span class="text-xl font-bold text-secondary font-display">
-                            ₹{{ farmhouse.price_per_day|default:"0"|floatformat:0 }}/night</span></div>
-                        <a href="{% url 'farmhouse_detail' farmhouse.slug %}"
-                            class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">Know
-                            More →</a>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="col-span-full text-center py-12">
-                <p class="text-xl font-semibold text-gray-700">No Farmhouses Found</p>
-            </div>
-            {% endfor %}
-        </div> -->
     </div>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <script>
-
 async function loadFarmhouses() {
 
     const container = document.getElementById("farmhouse-container");
@@ -132,82 +83,122 @@ async function loadFarmhouses() {
         const res = await axios.get("/api/farmhouses/");
         const farmhouses = res.data.farmhouses;
 
-        container.innerHTML = "";
+
+
+
+        let html = "";   // ⭐ use single render (faster)
 
         farmhouses.forEach(f => {
 
             const image = f.primary_image ||
             "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80";
 
-            const location = f.location?.name || "Hyderabad";
 
-            // ⭐ Amenities (limit to 4 for UI)
-            const amenities = f.amenities
-                ?.slice(0,4)
-                .map(a => `
-                    <span class="text-xs bg-gray-100 px-2 py-1 rounded">
-                        ${a.name}
-                    </span>
-                `).join("") || "";
 
-            container.innerHTML += `
 
+
+
+        const sale = Number(f.pricing?.sale_price || 0);
+        const weekday = Number(f.pricing?.normal_day_price || 0);
+        const weekend = Number(f.pricing?.weekend_price || 0);
+
+        let displayPrice = 0;
+        let originalPrice = 0;
+
+        // ⭐ If sale exists → show sale
+        if (sale > 0) {
+
+            displayPrice = sale;
+            originalPrice = Math.min(weekday, weekend);
+
+        } else {
+
+            displayPrice = Math.min(weekday, weekend);
+        }
+
+
+
+
+
+
+
+
+
+            html += `
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition">
 
-                <!-- IMAGE -->
                 <div class="relative h-56">
-                    <img src="${image}"
-                         class="w-full h-full object-cover">
+                    <img src="${image}" class="w-full h-full object-cover">
                 </div>
 
-                <!-- CONTENT -->
                 <div class="p-5">
 
-                    <h3 class="text-xl font-bold mb-1">
+                    <p class="text-xl font-bold mb-1">
                         ${f.title}
-                    </h3>
+                    </p>
 
-<p class="text-gray-500 text-sm mb-2 flex items-center gap-1">
-    <i data-lucide="map-pin" class="w-4 h-4 text-gray-400"></i>
-    ${f.address || ""}
-</p>
-
-                    <!-- DESCRIPTION -->
-                    <p class="text-sm text-gray-600 mb-3">
+                    <p class="text-gray-500 text-sm mb-2 flex items-center gap-1">
+                        <i data-lucide="map-pin" class="w-4 h-4"></i>
+                        ${f.address || ""}
+                    </p>
+  <p class="text-sm text-gray-600 mb-3">
                         ${f.short_description?.substring(0,90) || ""}
                         ...
                     </p>
-
-                    <!-- ROOMS -->
                     <div class="flex gap-4 text-sm text-gray-700 mb-3">
 
-    <span class="flex items-center gap-1">
-        <i data-lucide="bed" class="w-4 h-4"></i>
-        ${f.bedrooms} Beds
-    </span>
+                        <span class="flex items-center gap-1">
+                            <i data-lucide="bed" class="w-4 h-4"></i>
+                            ${f.bedrooms} Beds
+                        </span>
 
-    <span class="flex items-center gap-1">
-        <i data-lucide="home" class="w-4 h-4"></i>
-        ${f.halls} Halls
-    </span>
+                        <span class="flex items-center gap-1">
+                            <i data-lucide="home" class="w-4 h-4"></i>
+                            ${f.halls} Halls
+                        </span>
 
-    <span class="flex items-center gap-1">
-        <i data-lucide="snowflake" class="w-4 h-4"></i>
-        ${f.ac_bedrooms} AC
-    </span>
+                        <span class="flex items-center gap-1">
+                            <i data-lucide="snowflake" class="w-4 h-4"></i>
+                            ${f.ac_bedrooms} AC
+                        </span>
+
                     </div>
 
-                    <!-- AMENITIES -->
-                    <!-- <div class="flex flex-wrap gap-2 mb-4">
-                        ${amenities}
-                    </div> -->
-
-                    <!-- PRICE -->
                     <div class="flex justify-between items-center border-t pt-4">
 
-                        <span class="text-lg font-bold text-green-600">
+
+<div class="flex flex-col ">
+
+    ${
+        originalPrice > 0
+        ? `<span class="text-xs text-gray-400 line-through">
+              ₹${originalPrice.toLocaleString()}
+           </span>`
+        : ""
+    }
+
+    <span class="text-lg font-bold text-green-600">
+        ₹${displayPrice.toLocaleString()} / night
+    </span>
+
+    ${
+        sale > 0
+        ? `<span class="text-xs text-red-500 font-semibold">
+               Limited Time Deal
+           </span>`
+        : `<span class="text-xs text-gray-500">
+              Weekday ₹${weekday.toLocaleString()} • Weekend ₹${weekend.toLocaleString()}
+           </span>`
+    }
+
+</div>
+
+
+
+
+                        {% comment %} <span class="text-lg font-bold text-green-600">
                             ₹${f.price_per_day}/night
-                        </span>
+                        </span> {% endcomment %}
 
                         <a href="/farmhouse/${f.slug}/"
                            class="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-600">
@@ -219,6 +210,11 @@ async function loadFarmhouses() {
             </div>
             `;
         });
+
+        container.innerHTML = html;
+
+        
+        lucide.createIcons();
 
     } catch (err) {
 
@@ -232,6 +228,7 @@ async function loadFarmhouses() {
 }
 
 loadFarmhouses();
+
 
 </script>
 

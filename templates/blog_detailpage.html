@@ -216,10 +216,11 @@ axios.get(`/blogs/api/blogs/${slug}/`)
   }
 
   document.getElementById("blogMeta").innerHTML = `
-    <span>📅 ${new Date(blog.published_at).toDateString()}</span>
+    <span> ${new Date(blog.published_at).toDateString()}</span>
     <span>👁 ${blog.views}</span>
     <span>⏱ ${blog.read_time} min</span>
   `;
+
 
   // TAGS
   blog.tags.forEach(tag => {
@@ -273,7 +274,7 @@ axios.get("/blogs/api/blog-categories/")
   res.data.forEach(cat => {
     categoryList.innerHTML += `
       <li>
-        <a href="/blogs/?category=${cat.slug}">
+        <a href="?category=${cat.slug}">
           ${cat.name} (${cat.blog_count})
         </a>
       </li>
@@ -287,7 +288,7 @@ axios.get("/blogs/api/blog-tags/")
 .then(res => {
   res.data.forEach(tag => {
     tagList.innerHTML += `
-      <a href="/blogs/?tag=${tag.slug}"
+      <a href="?tag=${tag.slug}"
          class="px-3 py-1 bg-gray-100 rounded text-sm hover:bg-primary hover:text-white">
         ${tag.name}
       </a>

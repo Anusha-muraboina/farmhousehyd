@@ -151,7 +151,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LOCAL_URL = "http://127.0.0.1:8000/"
+LOCAL_URL = "http://127.0.0.1:9000/"
 
 
 # ================= EMAIL (SMTP) SETTINGS =================
@@ -180,7 +180,7 @@ CC_EMAIL = ["anushamuraboina99@gmail.com"]
 
 RAZORPAY_KEY_ID = "rzp_test_SBYvT8xD1uirfa"
 RAZORPAY_KEY_SECRET = "0ss566690QyQc7rnGotK0Q6q"
-RAZORPAY_WEBHOOK_SECRET = "sfeifhiafpehr293576shf87^T^$Hbduyhf"
+RAZORPAY_WEBHOOK_SECRET = "kbidshinvirgsdbgi2378057sgh8hkrh@herwer782SaD"
 
 # ====================================
 
@@ -226,30 +226,32 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CORS_ALLOW_ALL_ORIGINS = True
-
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:9000",
+    "https://5639-2404-1f00-8047-a466-dc0a-9cc6-4d68-1ae6.ngrok-free.app",
     
 ]
 
 
 CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:9000",
+    "https://5639-2404-1f00-8047-a466-dc0a-9cc6-4d68-1ae6.ngrok-free.app",
 ]
 
 # 
 CSRF_COOKIE_HTTPONLY = False
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'anushamuraboina9@gmail.com'
-EMAIL_HOST_PASSWORD = 'mpywwnwfrubgkxoe'
-DEFAULT_FROM_EMAIL = 'anushamuraboina9@gmail.com'
-ADMIN_EMAIL = 'anushamuraboina9@gmail.com' 
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_USE_TLS = True
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'anushamuraboina9@gmail.com'
+# EMAIL_HOST_PASSWORD = 'mpywwnwfrubgkxoe'
+# DEFAULT_FROM_EMAIL = 'anushamuraboina9@gmail.com'
+# ADMIN_EMAIL = 'anushamuraboina9@gmail.com' 
 
 # FRONTEND_URL = 'http://127.0.0.1:9000'  
 

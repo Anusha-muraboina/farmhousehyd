@@ -107,10 +107,22 @@
     id="userDropdown"
     class="hidden absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border py-2 z-50">
 
-    <a href="/profile-page/"
+
+    <a href="{% url 'profile_page' %}"
+   class="block px-4 py-2 text-sm hover:bg-gray-100">
+   My Profile
+</a>
+
+
+<a href="/user/my-bookings-page/"
+class="block px-4 py-2 text-sm hover:bg-gray-100">
+My Bookings
+</a>
+
+    {% comment %} <a href="/profile-page/"
        class="block px-4 py-2 text-sm hover:bg-gray-100">
       My Profile
-    </a>
+    </a> {% endcomment %}
 
     <div class="border-t my-1"></div>
 

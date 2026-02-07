@@ -9,15 +9,44 @@ urlpatterns = [
     
     path("logout/", logout_view, name="logout"),
 
-    path('profile/', ProfileAPIView.as_view(), name='user-profile'),
+    # path('profile/', ProfileAPIView.as_view(), name='user-profile'),
 
-    path('profile/update/', UpdateProfileAPIView.as_view(), name='user-profile-update'),
+    # path('profile/update/', UpdateProfileAPIView.as_view(), name='user-profile-update'),
 
-    path('change-password/', ChangePasswordAPIView.as_view(), name='user-change-password'),
+    path(
+        "profile/",
+        ProfileAPIView.as_view(),
+        name="profile-api"
+    ),
+
+    path(
+        "change-password/",
+        ChangePasswordAPIView.as_view(),
+        name="change-password-api"
+    ),
     path(
     "forgot-password/",
     PasswordResetView.as_view(),
     name="forgot-password"
+    ),
+
+    path("profile_page/", profile_page, name="profile_page"),
+
+
+    path(
+        "my-bookings/",
+        UserBookingListAPIView.as_view(),
+        name="user-bookings"
+    ),
+
+    path(
+        "my-bookings/<str:booking_id>/",
+        MyBookingDetailAPIView.as_view(),
+    ),
+    path(
+        "my-bookings-page/",
+        my_bookings_page,
+        name="my-bookings-page"
     ),
 
     path("login-page/", login_page, name="login-page"),

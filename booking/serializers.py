@@ -16,6 +16,7 @@ class BookingSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
         read_only_fields = [
+            "id",
             "booking_id",
             "payment_status",
             "status",
@@ -163,3 +164,19 @@ class BlockedDateSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlockedDate
         fields = ["start_date", "end_date"]
+
+
+# cancellation
+
+
+
+from rest_framework.generics import ListAPIView
+from .models import *
+
+
+class CancelReasonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CancelReason
+        fields = ["id", "reason"]
+
+

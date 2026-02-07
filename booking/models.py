@@ -10,7 +10,7 @@ from django.db import models
 import random
 import string
 from decimal import Decimal
-
+from django.urls import reverse
 from django.db import models, transaction
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -57,6 +57,12 @@ class Booking(models.Model):
         Farmhouse,
         on_delete=models.CASCADE,
         related_name="bookings"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
     )
 
     # Guest snapshot (VERY IMPORTANT)
@@ -114,7 +120,18 @@ class Booking(models.Model):
     payment_id = models.CharField(max_length=100, blank=True, null=True)
 
     confirmation_email_sent_at = models.DateTimeField(null=True, blank=True)
+    cancelled_at = models.DateTimeField(null=True, blank=True)
 
+    cancelled_by = models.CharField(
+        max_length=20,
+        choices=[
+            ("user", "User"),
+            ("admin", "Admin"),
+            ("farmhouse_owner","Farmhouse_owner"),
+        ],
+        null=True,
+        blank=True
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -158,8 +175,18 @@ class Booking(models.Model):
     #     Booking.objects.filter(pk=self.pk).update(
     #         confirmation_email_sent_at=timezone.now()
     #     )
-        
-    def send_booking_email(self, email_type):
+    @property
+    def advance_paid(self):
+
+        if self.payment_status == "paid":
+            return self.total_amount
+
+        if self.payment_status == "partial":
+            return (self.total_amount * Decimal("0.30")).quantize(Decimal("0.01"))
+
+        return Decimal("0.00")
+
+    def send_booking_email(self, email_type,request=None):
         """
         email_type:
         pending / confirmed / cancelled / completed
@@ -180,7 +207,7 @@ class Booking(models.Model):
             },
             "cancelled": {
                 "user": "emails/booking_cancelled_user.html",
-                # "admin": "emails/admin_cancelled.html",
+                "admin": "emails/booking_cancelled_user.html",
                 "subject_user": "❌ Booking Cancelled",
                 "subject_admin": f"Booking Cancelled - {self.booking_id}",
             },
@@ -194,8 +221,22 @@ class Booking(models.Model):
 
         config = templates[email_type]
 
-        context = {"booking": self}
+        # context = {"booking": self}
+        ####################################
+        # ⭐ Generate Invoice URL
+        ####################################
 
+        invoice_url = None
+
+        if hasattr(self, "invoice") and request:
+            invoice_url = request.build_absolute_uri(
+                self.invoice.get_absolute_url()
+            )
+
+        context = {
+            "booking": self,
+            "invoice_url": invoice_url
+        }
         # USER EMAIL
         user_html = render_to_string(config["user"], context)
 
@@ -287,6 +328,54 @@ class Booking(models.Model):
     #         self.booking_id = 'VFH' + ''.join(random.choices(string.digits, k=8))
     #     super().save(*args, **kwargs)
 
+    def cancel_booking(self, user=None, reason=None, comment=None):
+
+        if self.status == "cancelled":
+            raise ValidationError("Booking already cancelled")
+
+        if self.status == "completed":
+            raise ValidationError("Completed booking cannot be cancelled")
+
+        from datetime import timedelta
+        from django.utils import timezone
+
+        if self.check_in <= timezone.now().date() + timedelta(days=1):
+            raise ValidationError("Free cancellation closed (within 24 hrs)")
+
+        self.status = "cancelled"
+        self.cancelled_at = timezone.now()
+        self.cancelled_by = "user" if user else "admin"
+
+        # unblock dates
+        BlockedDate.objects.filter(
+            farmhouse=self.farmhouse,
+            start_date=self.check_in,
+            end_date=self.check_out - timedelta(days=1)
+        ).delete()
+
+        if reason or comment:
+            OrderCancelComment.objects.create(
+                user=user,
+                booking=self,
+                reason=reason,
+                comment=comment or ""
+            )
+
+        if self.payment_status == "paid":
+            self.payment_status = "failed"
+
+        ###################################
+        # SAVE FIRST
+        ###################################
+        self.save()
+
+        ###################################
+        # SEND EMAIL AFTER DB COMMIT
+        ###################################
+        transaction.on_commit(
+            lambda: self.send_booking_email("cancelled")
+        )
+
     @property
     def nights(self):
         return (self.check_out - self.check_in).days
@@ -342,7 +431,14 @@ class Invoice(models.Model):
     )
 
     is_active = models.BooleanField(default=True)
+    def save(self, *args, **kwargs):
 
+        if not self.invoice_id:
+            self.invoice_id = "INV-" + ''.join(
+                random.choices(string.digits, k=10)
+            )
+
+        super().save(*args, **kwargs)
     def __str__(self):
         return self.invoice_id
 
@@ -375,7 +471,11 @@ class OrderCancelComment(models.Model):
 
     comment = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-
+    def get_absolute_url(self):
+        return reverse(
+            "view_invoice",
+            args=[self.booking.booking_id]
+        )
     def __str__(self):
         return f"Cancellation - {self.booking.booking_id}"
 

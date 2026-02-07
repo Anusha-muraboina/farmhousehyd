@@ -110,7 +110,7 @@ async function loginUser() {
 
   const csrfToken = getCookie("csrftoken");
 
-  const res = await fetch("/api/login/", {
+  const res = await fetch("/user/login/", {
     method: "POST",
     credentials: "include",
     headers: {

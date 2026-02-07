@@ -2,8 +2,10 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from django.contrib.auth import authenticate
-
+from django.contrib.auth.decorators import login_required
 from rest_framework_simplejwt.tokens import RefreshToken
+# from farmhouse.authentication import CsrfExemptSessionAuthentication
+from rest_framework.authentication import SessionAuthentication
 
 from .models import User
 from .serializers import (
@@ -19,7 +21,11 @@ from django.contrib.auth import login
 class RegisterAPIView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
+    def perform_create(self, serializer):
+        user = serializer.save()
 
+        # ⭐ AUTO LOGIN AFTER REGISTER
+        login(self.request, user)
 
 # ✅ LOGIN
 # class EmailLoginAPIView(generics.GenericAPIView):
@@ -110,50 +116,32 @@ def logout_view(request):
     return redirect("home")
 
 # ✅ PROFILE
-class ProfileAPIView(generics.RetrieveAPIView):
-    serializer_class = UserSerializer
+# class ProfileAPIView(generics.RetrieveAPIView):
+#     serializer_class = UserSerializer
 
-    def get_object(self):
-        return self.request.user
+#     def get_object(self):
+#         return self.request.user
     
 # ✅ CHANGE PASSWORD
 
 
-class ChangePasswordAPIView(generics.UpdateAPIView):
-    serializer_class = ChangePasswordSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
-
-    def update(self, request, *args, **kwargs):
-        user = self.get_object()
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        user.set_password(serializer.validated_data['new_password'])
-        user.save()
-
-        return Response({
-            "message": "Password changed successfully"
-        }, status=status.HTTP_200_OK)
 
 
 
 # ✅ PROFILE
-class ProfileAPIView(generics.RetrieveAPIView):
-    serializer_class = UserSerializer
+# class ProfileAPIView(generics.RetrieveAPIView):
+#     serializer_class = UserSerializer
 
-    def get_object(self):
-        return self.request.user
+#     def get_object(self):
+#         return self.request.user
 
 
-# ✅ UPDATE PROFILE
-class UpdateProfileAPIView(generics.UpdateAPIView):
-    serializer_class = UserSerializer
+# # ✅ UPDATE PROFILE
+# class UpdateProfileAPIView(generics.UpdateAPIView):
+#     serializer_class = UserSerializer
 
-    def get_object(self):
-        return self.request.user
+#     def get_object(self):
+#         return self.request.user
 
 
 
@@ -208,7 +196,7 @@ class PasswordResetView(APIView):
             # )
             reset_link = (
                 f"{settings.LOCAL_URL}"
-                f"api/reset-password/?uid={uid}&token={token}"
+                f"user/reset-password/?uid={uid}&token={token}"
             )
 
             send_mail(
@@ -267,7 +255,77 @@ class PasswordResetView(APIView):
             {"error": "Invalid request"},
             status=status.HTTP_400_BAD_REQUEST
         )
-        
+    
+    
+    
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from django.contrib.auth import update_session_auth_hash
+
+from .serializers import (
+    ProfileSerializer,
+    ChangePasswordSerializer
+)
+
+###################################################
+# PROFILE VIEW
+###################################################
+
+class ProfileAPIView(generics.RetrieveUpdateAPIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    serializer_class = ProfileSerializer
+    
+
+    def get_object(self):
+        return self.request.user
+
+
+###################################################
+# CHANGE PASSWORD VIEW
+###################################################
+
+class ChangePasswordAPIView(generics.UpdateAPIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
+    
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+
+        user = self.get_object()
+
+        serializer = self.get_serializer(
+            data=request.data
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        user.set_password(
+            serializer.validated_data["new_password"]
+        )
+        user.save()
+
+        ###################################################
+        # ⭐ VERY IMPORTANT (PREVENT LOGOUT)
+        ###################################################
+        update_session_auth_hash(request, user)
+
+        return Response(
+            {"message": "Password changed successfully"},
+            status=status.HTTP_200_OK
+        )
+
+
+
+
+
         
 from django.shortcuts import render
 
@@ -282,3 +340,54 @@ def forgot_password_page(request):
 
 def reset_password_page(request):
     return render(request, "user/reset_password.html")
+
+
+
+
+# def profile_page(request):
+#     return render(request, "user/profile.html")
+
+
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.contrib.auth.decorators import login_required
+
+@ensure_csrf_cookie
+@login_required
+def profile_page(request):
+    return render(request, "user/profile.html")
+
+
+
+
+
+
+
+
+# from rest_framework import generics
+# from rest_framework.permissions import IsAuthenticated
+from booking.models import Booking
+from .serializers import UserBookingSerializer
+
+
+class UserBookingListAPIView(generics.ListAPIView):
+
+    serializer_class = UserBookingSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+
+        return Booking.objects.filter(
+            user=self.request.user
+        ).select_related("farmhouse")
+from booking.serializers import BookingSerializer
+class MyBookingDetailAPIView(generics.RetrieveAPIView):
+
+    serializer_class = UserBookingSerializer
+    lookup_field = "booking_id"
+
+    def get_queryset(self):
+        return Booking.objects.filter(user=self.request.user)
+
+@login_required
+def my_bookings_page(request):
+    return render(request, "user/user_bookings.html")

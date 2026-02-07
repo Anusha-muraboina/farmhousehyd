@@ -1,0 +1,372 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="min-h-screen bg-gray-50 py-14">
+
+<div class="max-w-7xl mx-auto px-6">
+
+<!-- HEADER -->
+<div class="mb-10">
+<h1 class="text-3xl font-bold text-gray-800">
+My Bookings
+</h1>
+<p class="text-gray-500">
+View and manage your farmhouse reservations
+</p>
+</div>
+
+
+
+<div class="grid lg:grid-cols-12 gap-8">
+
+<!-- ================= LEFT LIST ================= -->
+
+<div id="bookingList"
+class="lg:col-span-4 bg-white rounded-2xl border shadow-sm max-h-[650px] overflow-y-auto">
+</div>
+
+
+
+<!-- ================= RIGHT DETAIL ================= -->
+
+<div id="bookingDetail"
+class="lg:col-span-8 bg-white rounded-2xl border shadow-sm p-10 flex items-center justify-center">
+
+<p class="text-gray-400 text-lg">
+Select a booking to view details
+</p>
+
+</div>
+
+</div>
+</div>
+</div>
+
+
+
+<style>
+
+/* LEFT ITEM */
+.booking-row{
+padding:18px 22px;
+border-bottom:1px solid #eee;
+cursor:pointer;
+transition:.2s;
+}
+
+.booking-row:hover{
+background:#fafafa;
+}
+
+.booking-row.active{
+border-left:5px solid #f77518;
+background:#fff7ed;
+}
+
+/* Scrollbar */
+#bookingList::-webkit-scrollbar{
+width:6px;
+}
+#bookingList::-webkit-scrollbar-thumb{
+background:#ddd;
+border-radius:10px;
+}
+
+</style>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+
+axios.defaults.withCredentials = true;
+axios.defaults.xsrfCookieName = "csrftoken";
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
+
+//////////////////////////////////////////////////
+// LOAD BOOKINGS
+//////////////////////////////////////////////////
+
+async function loadBookings(){
+
+const res = await axios.get("/user/my-bookings/");
+const box = document.getElementById("bookingList");
+
+if(!res.data.length){
+
+box.innerHTML = `
+<div class="text-center py-20">
+
+<h2 class="text-xl font-semibold mb-3">
+No bookings yet
+</h2>
+
+<a href="/farmhouses/"
+class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg">
+Explore Farmhouses
+</a>
+
+</div>
+`;
+
+return;
+}
+
+
+box.innerHTML = res.data.map(b=>`
+
+<div class="booking-row"
+onclick="loadDetail('${b.booking_id}', this)">
+
+<div class="flex justify-between">
+
+<div>
+<p class="font-semibold text-gray-800">
+${b.farmhouse_name}
+</p>
+
+<p class="text-sm text-gray-400">
+${b.check_in} → ${b.check_out}
+</p>
+</div>
+
+<p class="font-bold text-orange-600">
+₹${b.total_amount}
+</p>
+
+</div>
+
+</div>
+
+`).join("");
+
+
+// ⭐ AUTO LOAD FIRST BOOKING
+setTimeout(()=>{
+const first = document.querySelector(".booking-row");
+if(first) first.click();
+},200);
+
+}
+
+loadBookings();
+
+
+
+//////////////////////////////////////////////////
+// LOAD DETAIL
+//////////////////////////////////////////////////
+
+async function loadDetail(id, el){
+
+document.querySelectorAll(".booking-row")
+.forEach(x=>x.classList.remove("active"));
+
+el.classList.add("active");
+
+const res = await axios.get(`/user/my-bookings/${id}/`);
+const b = res.data;
+
+
+
+document.getElementById("bookingDetail").innerHTML = `
+
+<div class="w-full">
+
+<!-- TOP -->
+<div class="flex justify-between items-start border-b pb-6 mb-8">
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">
+${b.farmhouse_name}
+</h2>
+
+<p class="text-gray-400 text-sm mt-1">
+Booking ID: <span class="font-semibold">${b.booking_id}</span>
+</p>
+</div>
+
+<div class="flex gap-2">
+${statusBadge(b.status)}
+${paymentBadge(b.payment_status)}
+</div>
+
+</div>
+
+
+
+<!-- INFO -->
+<div class="grid md:grid-cols-2 gap-x-20 gap-y-5 text-[15px]">
+
+${row("Check In", b.check_in)}
+${row("Check Out", b.check_out)}
+${row("Guests", b.guest_count)}
+${row("Extra Guests", b.extra_guest_count)}
+${row("Payment Method", formatText(b.payment_method))}
+${row("Booked On", formatDate(b.created_at))}
+
+</div>
+
+
+
+<!-- PAYMENT -->
+<div class="mt-10 border-t pt-8">
+
+<h3 class="font-semibold text-gray-700 mb-5">
+Payment Summary
+</h3>
+
+<div class="space-y-3">
+
+${moneyRow("Subtotal", "₹"+b.total_amount)}
+${moneyRow("Discount", "- ₹"+b.disc_price)}
+${moneyRow("Remaining", "₹"+b.remaining_amount, true)}
+
+<div class="flex justify-between border-t pt-4 mt-4 text-lg font-bold">
+<span>Total Paid</span>
+<span class="text-green-600">
+₹${b.total_amount}
+</span>
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- ACTION -->
+<div class="flex justify-between mt-10">
+${ cancelButton(b) }
+<a href="/invoice/${b.booking_id}/"
+class="bg-orange-500 hover:bg-orange-600 text-white px-7 py-3 rounded-lg font-semibold">
+View Invoice
+</a>
+
+</div>
+
+</div>
+`;
+
+}
+
+
+
+//////////////////////////////////////////////////
+// ROW
+//////////////////////////////////////////////////
+
+function row(label,value){
+return `
+<div class="flex justify-between border-b pb-2">
+<span class="text-gray-500">${label}</span>
+<span class="font-semibold text-gray-800">${value}</span>
+</div>
+`;
+}
+
+
+
+//////////////////////////////////////////////////
+// MONEY ROW
+//////////////////////////////////////////////////
+
+function moneyRow(label,value,highlight=false){
+return `
+<div class="flex justify-between ${highlight ? "text-red-500 font-semibold":""}">
+<span class="text-gray-500">${label}</span>
+<span>${value}</span>
+</div>
+`;
+}
+
+
+
+//////////////////////////////////////////////////
+// BADGES
+//////////////////////////////////////////////////
+
+function statusBadge(status){
+
+const colors = {
+pending:"bg-yellow-100 text-yellow-700",
+confirmed:"bg-green-100 text-green-700",
+cancelled:"bg-red-100 text-red-700",
+completed:"bg-blue-100 text-blue-700",
+};
+
+return `
+<span class="px-3 py-1 rounded-lg text-sm font-semibold ${colors[status]}">
+${status.toUpperCase()}
+</span>
+`;
+}
+
+
+
+function paymentBadge(status){
+
+const colors = {
+pending:"bg-yellow-100 text-yellow-700",
+partial:"bg-purple-100 text-purple-700",
+paid:"bg-green-100 text-green-700",
+failed:"bg-red-100 text-red-700",
+};
+
+return `
+<span class="px-3 py-1 rounded-lg text-sm font-semibold ${colors[status]}">
+Payment: ${status.toUpperCase()}
+</span>
+`;
+}
+
+
+
+//////////////////////////////////////////////////
+// HELPERS
+//////////////////////////////////////////////////
+
+function formatText(text){
+return text.replaceAll("_"," ")
+           .replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function formatDate(date){
+return new Date(date).toLocaleDateString("en-IN",{
+day:"numeric",
+month:"short",
+year:"numeric"
+});
+}
+
+
+
+
+function cancelButton(b){
+
+if(b.status === "pending" || b.status === "confirmed"){
+
+return `
+<a href="/bookings/cancel_booking_page/${b.booking_id}/"
+   class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold">
+   Cancel Booking
+</a>
+`;
+}
+
+return `
+<span class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold">
+Cancelled
+</span>
+`;
+
+}
+
+
+
+
+
+</script>
+
+{% endblock %}

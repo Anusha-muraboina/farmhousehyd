@@ -1,226 +1,295 @@
 {% extends "base.html" %}
 {% block content %}
-  {% comment %} <style>
 
-    h1, h2, h3, h4, h5, h6 {
-      font-family: 'Playfair Display', serif;
-    }
-    .blog-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    }
-    .tag-chip:hover {
-      background-color: #22a855;
-      color: white;
-    }
-    .view-post:hover {
-      color: #1a8a44;
-    }
-    .view-post:hover svg {
-      transform: translateX(4px);
-    }
-  </style> {% endcomment %}
+<div class="bg-[#fafafa] py-16">
 
-<div class=" p-16 mx-auto grid lg:grid-cols-3 gap-8">
+<div class="max-w-7xl mx-auto px-6">
 
-  <!-- BLOG LIST -->
-  <div class="lg:col-span-2 space-y-8" id="blogList"></div>
+<!-- HEADER -->
+<div class="mb-14 text-center">
+<h1 class="text-5xl font-extrabold text-gray-800 mb-3">
+Our Blog
+</h1>
 
-  <!-- SIDEBAR -->
-  <aside class="space-y-6 bg-white md:p-6 p-2 rounded">
-
-    <!-- SEARCH -->
-    {% comment %} <input id="searchInput"
-           placeholder="Search..."
-           class="w-full border p-3 rounded"> {% endcomment %}
-<input id="searchInput"
-       placeholder="Search..."
-       class="w-full border p-3 rounded"
-       value="{{ request.GET.search|default:'' }}">
-
-    <!-- CATEGORIES -->
-    <div>
-      <h3 class="font-bold mb-3">Categories</h3>
-      <ul id="categoryList" class="space-y-2"></ul>
-    </div>
-
-
-    <!-- TAGS -->
-    <div>
-      <h3 class="font-bold mb-3">Tags</h3>
-      <div id="tagList" class="flex flex-wrap gap-2"></div>
-    </div>
-
-
-        <!-- RECENT -->
-    <div>
-      <h3 class="font-bold mb-3">Recent Posts</h3>
-      <div id="recentBlogs" class="space-y-4"></div>
-    </div>
-
-  </aside>
+<p class="text-gray-500 text-lg">
+Travel tips, farmhouse guides, and getaway inspiration
+</p>
 </div>
 
 
 
+<div class="grid lg:grid-cols-12 gap-12">
+
+<!-- ================= BLOGS ================= -->
+
+<div id="blogList"
+class="lg:col-span-8 grid md:grid-cols-1 gap-10">
+</div>
+
+
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="lg:col-span-4 space-y-8">
+
+<!-- SEARCH -->
+<div class="bg-white p-6 rounded-2xl shadow-sm border">
+
+<input id="searchInput"
+placeholder="Search blogs..."
+class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-400 outline-none"
+value="{{ request.GET.search|default:'' }}">
+
+</div>
+
+
+
+<!-- CATEGORIES -->
+<div class="bg-white p-6 rounded-2xl shadow-sm border">
+
+<h3 class="font-bold text-lg mb-4">
+Categories
+</h3>
+
+<ul id="categoryList" class="space-y-3 text-gray-600"></ul>
+
+</div>
+
+
+
+<!-- RECENT -->
+<div class="bg-white p-6 rounded-2xl shadow-sm border">
+
+<h3 class="font-bold text-lg mb-4">
+Recent Posts
+</h3>
+
+<div id="recentBlogs" class="space-y-4"></div>
+
+</div>
+
+
+
+<!-- TAGS -->
+<div class="bg-white p-6 rounded-2xl shadow-sm border">
+
+<h3 class="font-bold text-lg mb-4">
+Popular Tags
+</h3>
+
+<div id="tagList" class="flex flex-wrap gap-2"></div>
+
+</div>
+
+</aside>
+
+</div>
+</div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <script>
+
 const params = new URLSearchParams(window.location.search);
 
-/* ================= BLOGS ================= */
-function loadBlogs() {
-  axios.get("/blogs/api/blogs/?" + params.toString())
-    .then(res => {
+////////////////////////////////////////////////////////////
+// LOAD BLOGS
+////////////////////////////////////////////////////////////
 
-      const box = document.getElementById("blogList");
-      box.innerHTML = "";
+function loadBlogs(){
 
-      // 🔴 NO BLOGS FOUND
-      if (res.data.length === 0) {
-        box.innerHTML = `
-          <div class="bg-white p-10 rounded shadow text-center">
-            <h2 class="text-2xl font-bold mb-2">No Blogs Found</h2>
-            <p class="text-gray-500 mb-4">
-              We couldn't find any blogs matching your search.
-            </p>
-            <a href="/blogs/"
-               class="inline-block bg-primary text-white px-6 py-2 rounded">
-               View All Blogs
-            </a>
-          </div>
-        `;
-        return;
-      }
+axios.get("/blogs/api/blogs/?" + params.toString())
+.then(res=>{
 
-      // ✅ BLOGS EXIST
-      res.data.forEach(blog => {
-        box.innerHTML += `
-          <article class="bg-white rounded shadow">
-            <img src="${blog.image}" class="w-full h-64 object-cover">
+const box = document.getElementById("blogList");
 
-            <div class="p-6">
-              <h2 class="text-xl font-bold mb-2">
-                <a href="/blogs/${blog.slug}/">
-                  ${blog.title}
-                </a>
-              </h2>
+box.innerHTML="";
 
-              <p class="text-gray-600 mb-4">
-                ${blog.short_description}
-              </p>
+if(res.data.length===0){
 
-              <a href="/blogs/blogs/${blog.slug}/"
-                 class="text-primary font-semibold">
-                View Post →
-              </a>
-            </div>
-          </article>
-        `;
-      });
+box.innerHTML=`
+<div class="col-span-2 text-center py-20">
 
-    })
-    .catch(() => {
-      document.getElementById("blogList").innerHTML = `
-        <p class="text-red-500">Failed to load blogs.</p>
-      `;
-    });
+<h2 class="text-2xl font-bold mb-3">
+No blogs found 😔
+</h2>
+
+<a href="/blogs/"
+class="bg-orange-500 text-white px-6 py-3 rounded-xl">
+View All Blogs
+</a>
+
+</div>
+`;
+
+return;
 }
 
-{% comment %} function loadBlogs() {
-  axios.get("/blogs/api/blogs/?" + params.toString())
-    .then(res => {
-      const box = document.getElementById("blogList");
-      box.innerHTML = "";
 
-      res.data.forEach(blog => {
-        box.innerHTML += `
-          <article class="bg-white rounded shadow">
-            <img src="${blog.image}" class="w-full h-64 object-cover">
-            <div class="p-6">
-              <h2 class="text-xl font-bold mb-2">
-                <a href="/blogs/${blog.slug}/">${blog.title}</a>
-              </h2>
-              <p class="text-gray-600 mb-4">${blog.short_description}</p>
-              <a href="/blogs/blogs/${blog.slug}/" class="text-primary font-semibold">
-                View Post →
-              </a>
-            </div>
-          </article>
-        `;
-      });
-    });
-} {% endcomment %}
+res.data.forEach(blog=>{
 
-/* ================= CATEGORIES ================= */
+box.innerHTML+=`
 
-axios.get("/blogs/api/blog-categories/")
-  .then(res => {
-    const box = document.getElementById("categoryList");
-    res.data.forEach(cat => {
-      box.innerHTML += `
-        <li>
-          <a href="?category=${cat.slug}">
-            ${cat.name} (${cat.blog_count})
-          </a>
-        </li>
-      `;
-    });
-  });
+<!-- BLOG CARD -->
 
-/* ================= TAGS ================= */
+<article
+class="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition duration-300 border">
 
-axios.get("/blogs/api/blog-tags/")
-  .then(res => {
-    const box = document.getElementById("tagList");
-    res.data.forEach(tag => {
-      box.innerHTML += `
-        <a href="?tag=${tag.slug}"
-           class="px-3 py-1 bg-gray-100 rounded hover:bg-primary hover:text-white">
-          ${tag.name}
-        </a>
-      `;
-    });
-  });
+<div class="overflow-hidden">
 
+<img src="${blog.image}"
+class="h-60 w-full object-cover group-hover:scale-110 transition duration-500">
 
+</div>
 
+<div class="p-6">
 
+<!-- CATEGORY -->
+<p class="text-orange-500 font-semibold text-sm mb-2">
+${blog.category?.name ?? ""}
+</p>
 
-document.getElementById("searchInput").addEventListener("keydown", function (e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    
-    const value = this.value.trim();
-    e.target.value = ""; // clear input
-    if (value) {
-      window.location.href = `/blogs/blogs/?search=${encodeURIComponent(value)}`;
-    } else {
-      window.location.href = "/blogs/";
-    }
-  }
+<h2 class="text-xl font-bold mb-2 group-hover:text-orange-600 transition">
+<a href="/blogs/blogs/${blog.slug}/">
+${blog.title}
+</a>
+</h2>
+
+<p class="text-gray-500 text-sm mb-4 line-clamp-3">
+${blog.short_description}
+</p>
+
+<div class="flex justify-between items-center text-sm text-gray-400">
+
+<span>
+📅 ${new Date(blog.published_at).toDateString()}
+</span>
+
+<span>
+⏱ ${blog.read_time} min
+</span>
+
+</div>
+
+</div>
+</article>
+`;
+
 });
 
+});
 
-
-
-
-/* ================= RECENT ================= */
-
-axios.get("/blogs/api/blogs-recent/")
-  .then(res => {
-    const box = document.getElementById("recentBlogs");
-    res.data.forEach(post => {
-      box.innerHTML += `
-        <div class="flex gap-3">
-          <img src="${post.image}" class="w-16 h-14 object-cover rounded">
-          <a href="/blogs/blogs/${post.slug}" class="text-sm font-medium">
-            ${post.title}
-          </a>
-        </div>
-      `;
-    });
-  });
+}
 
 loadBlogs();
+
+////////////////////////////////////////////////////////////
+// SEARCH
+////////////////////////////////////////////////////////////
+
+document.getElementById("searchInput")
+.addEventListener("keydown",function(e){
+
+if(e.key==="Enter"){
+
+const value=this.value.trim();
+
+if(value){
+window.location.href=`/blogs/?search=${encodeURIComponent(value)}`;
+}else{
+window.location.href="/blogs/";
+}
+
+}
+
+});
+
+////////////////////////////////////////////////////////////
+// CATEGORIES
+////////////////////////////////////////////////////////////
+
+axios.get("/blogs/api/blog-categories/")
+.then(res=>{
+
+const box=document.getElementById("categoryList");
+
+res.data.forEach(cat=>{
+
+box.innerHTML+=`
+<li>
+
+<a href="?category=${cat.slug}"
+class="hover:text-orange-600 transition flex justify-between">
+
+<span>${cat.name}</span>
+
+<span class="text-gray-400">
+(${cat.blog_count})
+</span>
+
+</a>
+
+</li>
+`;
+
+});
+
+});
+
+////////////////////////////////////////////////////////////
+// TAGS
+////////////////////////////////////////////////////////////
+
+axios.get("/blogs/api/blog-tags/")
+.then(res=>{
+
+const box=document.getElementById("tagList");
+
+res.data.forEach(tag=>{
+
+box.innerHTML+=`
+<a href="?tag=${tag.slug}"
+class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-orange-500 hover:text-white transition">
+${tag.name}
+</a>
+`;
+
+});
+
+});
+
+////////////////////////////////////////////////////////////
+// RECENT
+////////////////////////////////////////////////////////////
+
+axios.get("/blogs/api/blogs-recent/")
+.then(res=>{
+
+const box=document.getElementById("recentBlogs");
+
+res.data.forEach(post=>{
+
+box.innerHTML+=`
+<a href="/blogs/blogs/${post.slug}/"
+class="flex gap-3 items-center group">
+
+<img src="${post.image}"
+class="w-20 h-16 object-cover rounded-lg">
+
+<span class="text-sm font-semibold group-hover:text-orange-600 transition">
+${post.title}
+</span>
+
+</a>
+`;
+
+});
+
+});
+
 </script>
 
 {% endblock %}

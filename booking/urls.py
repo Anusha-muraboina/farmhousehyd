@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import CreateBookingAPI, razorpay_webhook ,blocked_dates_api ,BookingSuccessAPI ,booking_success_page
+from .views import CreateBookingAPI,CancelReasonListAPI, razorpay_webhook ,blocked_dates_api ,BookingSuccessAPI ,booking_success_page ,CancelBookingAPI,VerifyPaymentAPI
 
 urlpatterns = [
     # BOOKINGS
@@ -28,6 +28,26 @@ urlpatterns = [
         booking_success_page,  name="booking_success"
     ),
 
+    path(
+        "invoice/<str:booking_id>/",
+        views.view_invoice,
+        name="view_invoice"
+    ),
+    path(
+        "cancel-booking/<str:booking_id>/",
+        CancelBookingAPI.as_view(),
+    ),
+    
+    path(
+        "cancel-reasons/",
+        CancelReasonListAPI.as_view(),
+    ),
+    path(
+        "cancel_booking_page/<str:booking_id>/",
+        views.cancel_booking_page  ,name="cancel_booking_page"
+    ),
+    
+    path("verify-payment/", VerifyPaymentAPI.as_view(), name="verify_payment"),
 
 
 ]

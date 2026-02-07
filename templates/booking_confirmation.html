@@ -11,9 +11,9 @@
 
 <template id="success-template">
   {% comment %} <div class="min-h-screen bg-gradient-to-b from-orange-50/40 via-white to-gray-50 py-10 px-4 sm:px-6 lg:px-8"> {% endcomment %}
-  <div class="min-h-screen bg-gradient-to-b from-orange-50/40 via-white to-gray-50 py-10 px-4 sm:px-6 lg:px-8">
+  <div class=" bg-gradient-to-b from-orange-50/40 via-white to-gray-50 py-10 px-4 sm:px-6 lg:px-8">
 
-    <div class="max-w-5xl mx-auto">
+    <div class="md:px-16 px-2 mx-auto">
 
       <!-- Hero / Confirmation Banner -->
       <div class="bg-white rounded-3xl shadow-xl overflow-hidden mb-10 border border-green-100">
@@ -126,7 +126,10 @@
                 <span>Discount</span>
                 <span>- ₹${b.discount}</span>
               </div>
-
+              <div class="flex justify-between text-black font-medium">
+                <span>Advanced Amount</span>
+                <span>₹${b.advance_paid}</span>
+              </div>
               <div class="flex justify-between text-red-600 font-medium">
                 <span>Remaining</span>
                 <span>₹${b.remaining_amount}</span>
@@ -134,13 +137,13 @@
 
             </div>
 
-            <div class="mt-6 flex justify-between items-center bg-gradient-to-r from-green-50 to-emerald-50 p-5 rounded-xl border border-green-200">
+            <div class="mt-6 flex justify-between items-center bg-gradient-to-r from-orange-50 to-emerald-50 p-5 rounded-xl border border-green-200">
               <span class="text-md font-semibold text-gray-800">Total Amount</span>
               <span class="text-xl font-extrabold text-green-700">₹${b.total_amount}</span>
             </div>
 
             <a href="/farmhouses/"
-               class="mt-8 block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-center py-4 rounded-xl font-bold text-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
+               class="mt-8 block w-full bg-gradient-to-r from-orange-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-center py-4 rounded-xl font-bold text-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
               Explore Farmhouses →
             </a>
 
@@ -184,6 +187,7 @@ async function loadBooking() {
       .replace(/\${b\.sub_total}/g,     Number(b.sub_total||0).toLocaleString('en-IN'))
       .replace(/\${b\.discount}/g,      Number(b.discount||0).toLocaleString('en-IN'))
       .replace(/\${b\.remaining_amount}/g, Number(b.remaining_amount||0).toLocaleString('en-IN'))
+      .replace(/\${b\.advance_paid}/g, Number(b.advance_paid||0).toLocaleString('en-IN'))
       .replace(/\${b\.total_amount}/g,  Number(b.total_amount||0).toLocaleString('en-IN'));
 
     document.getElementById("box").innerHTML = html;

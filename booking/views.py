@@ -10,9 +10,10 @@ from farmhouse.models import Farmhouse
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import json
-
+from django.contrib.auth import login
 from datetime import timedelta
 from farmhouse.models import FarmhousePricing
+from rest_framework.permissions import IsAuthenticated
 
 from django.urls import reverse
 from django.http import JsonResponse
@@ -25,6 +26,7 @@ from rest_framework.views import APIView
 
 
 
+from rest_framework.authentication import SessionAuthentication
 
 
 import json
@@ -45,6 +47,15 @@ from .models import Booking
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import BlockedDate
+
+
+
+
+
+
+
+
+
 
 client = razorpay.Client(
     auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
@@ -107,6 +118,11 @@ def blocked_dates_api(request, farmhouse_id):
 
     # return Response(blocked_ranges)
 from django.db.models import Q
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
+
+User = get_user_model()
 class CreateBookingAPI(APIView):
 
     authentication_classes = []   # 🔥 REMOVE BASIC AUTH (causing 401)
@@ -132,12 +148,21 @@ class CreateBookingAPI(APIView):
         except Farmhouse.DoesNotExist:
             return Response({"error": "Invalid farmhouse"}, status=400)
 
-        pricing = farmhouse.pricing
+        # pricing = farmhouse.pricing
+        pricing = getattr(farmhouse, "pricing", None)
+
+        if not pricing:
+            return Response(
+                {"error": "Pricing not configured for this farmhouse"},
+                status=400
+            )
 
         normal_price = pricing.normal_day_price
         weekend_price = pricing.weekend_price
         extra_price = pricing.extra_guest_price
+        sale_price = pricing.sale_price
 
+# 
         ###################################
         # SERVER SIDE PRICE CALCULATION
         ###################################
@@ -165,17 +190,65 @@ class CreateBookingAPI(APIView):
         sub_total = Decimal("0.00")
 
         while start < end:
+            if sale_price and sale_price > 0:
 
-            # Saturday=5, Sunday=6
-            if start.weekday() in [5, 6]:
-                sub_total += weekend_price
+                sub_total += sale_price
+
             else:
-                sub_total += normal_price
+
+                # Saturday=5, Sunday=6
+                if start.weekday() in [5, 6]:
+                    sub_total += weekend_price
+                else:
+                    sub_total += normal_price
 
             start += timedelta(days=1)
+            # Saturday=5, Sunday=6
+            # if start.weekday() in [5, 6]:
+            #     sub_total += weekend_price
+            # else:
+            #     sub_total += normal_price
+
+            # start += timedelta(days=1)
 
         sub_total += extra_guest_count * extra_price
 
+
+        ############################################
+        # CREATE / ATTACH USER
+        ############################################
+
+        is_new_user = False
+        password = None
+
+        if request.user.is_authenticated:
+
+            user = request.user
+
+        else:
+
+            email = data.get("guest_email")
+            name = data.get("guest_name")
+
+            user = User.objects.filter(email=email).first()
+
+            if not user:
+
+                password = get_random_string(10)
+
+                user = User.objects.create_user(
+                    username=email,
+                    email=email,
+                    first_name=name,
+                    password=password
+                )
+
+                is_new_user = True
+
+                # ⭐ AUTO LOGIN
+                login(request, user)
+
+                is_new_user = True
         ###################################
         # APPLY COUPON (SAFE)
         ###################################
@@ -250,6 +323,7 @@ class CreateBookingAPI(APIView):
 
         serializer.is_valid(raise_exception=True)
         booking = serializer.save(
+            user=user,
             sub_total=sub_total,
             disc_price=discount,
             total_amount=total_amount,
@@ -258,6 +332,44 @@ class CreateBookingAPI(APIView):
             status="pending",
             coupon_applied=coupon_obj
         )
+        
+        ###################################
+        # AUTO CREATE INVOICE ⭐⭐⭐⭐⭐
+        ###################################
+
+        # Invoice.objects.create(
+        #     booking=booking,
+        #     user=user,
+        #     invoice_id=f"INV-{get_random_string(8)}"
+        # )
+        ############################################
+        # SEND ACCOUNT EMAIL IF NEW USER
+        ############################################
+
+        if is_new_user:
+
+            send_mail(
+                subject="Your Vivaan Farmhouse Account Created 🎉",
+                message=f"""
+        Welcome to Vivaan Farmhouse!
+
+        Your account was created automatically during booking.
+
+        LOGIN DETAILS:
+
+        Email: {user.email}
+        Password: {password}
+
+        Login:
+        https://yourdomain.com/login
+
+        IMPORTANT:
+        Please change your password after login.
+                """,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+            )
+
 
         # booking = serializer.save(
         #         sub_total=sub_total,
@@ -372,7 +484,9 @@ def razorpay_webhook(request):
     # PAYMENT CAPTURED
     ###################################
 
-    if event == "payment.captured":
+    # if event == "payment.captured":
+    if event in ["payment.captured", "payment.authorized"]:
+        
 
         payment = payload["payload"]["payment"]["entity"]
         order_id = payment["order_id"]
@@ -461,6 +575,7 @@ class BookingSuccessAPI(APIView):
             "sub_total": booking.sub_total,
             "discount": booking.disc_price,
             "total_amount": booking.total_amount,
+            "advance_paid": booking.advance_paid,
             "remaining_amount": booking.remaining_amount,
 
             "payment_status": booking.payment_status,
@@ -477,3 +592,165 @@ def booking_success_page(request, booking_id):
         "booking_confirmation.html",
         {"booking_id": booking_id}
     )
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404
+from booking.models import Invoice
+
+
+@login_required
+def view_invoice(request, booking_id):
+
+    invoice = get_object_or_404(
+        Invoice.objects.select_related(
+            "booking",
+            "booking__farmhouse"
+        ),
+        booking__booking_id=booking_id,
+        booking__user=request.user
+    )
+
+    return render(
+        request,
+        "invoice/invoice.html",
+        {
+            "invoice": invoice,
+            "booking": invoice.booking
+        }
+    )
+
+
+
+
+class CancelReasonListAPI(ListAPIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    queryset = CancelReason.objects.filter(is_active=True)
+    serializer_class = CancelReasonSerializer
+    
+    
+    
+
+
+class CancelBookingAPI(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, booking_id):
+
+        try:
+            booking = Booking.objects.get(
+                booking_id=booking_id,
+                user=request.user
+            )
+
+        except Booking.DoesNotExist:
+            return Response(
+                {"error": "Booking not found"},
+                status=404
+            )
+
+        reason_id = request.data.get("reason")
+        comment = request.data.get("comment", "")
+
+        reason = None
+
+        if reason_id:
+            reason = CancelReason.objects.filter(
+                id=reason_id
+            ).first()
+
+        try:
+
+            booking.cancel_booking(
+                user=request.user,
+                reason=reason,
+                comment=comment
+            )
+
+        except ValidationError as e:
+
+            return Response(
+                {"error": str(e)},
+                status=400
+            )
+
+        return Response({
+            "message": "Booking cancelled successfully"
+        })
+        
+        
+@login_required
+def cancel_booking_page(request, booking_id):
+
+    booking = get_object_or_404(
+        Booking,
+        booking_id=booking_id,   # using booking code 👍
+        user=request.user
+    )
+
+    return render(
+        request,
+        "cancelled_booking.html",
+        {
+            "booking": booking   # ⭐ PASS OBJECT, not just id
+        }
+    )
+
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from decimal import Decimal
+from .models import Booking
+
+
+class VerifyPaymentAPI(APIView):
+
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def post(self, request):
+
+        order_id = request.data.get("order_id")
+        payment_id = request.data.get("payment_id")
+
+        booking = Booking.objects.filter(
+            transaction_id=order_id
+        ).first()
+
+        if not booking:
+            return Response({"error": "Booking not found"}, status=404)
+
+        # Prevent duplicate update
+        if booking.payment_status in ["paid", "partial"]:
+            return Response({"message": "Already updated"})
+
+        ###################################
+        # FULL PAYMENT
+        ###################################
+        if booking.payment_method == "full_razorpay":
+
+            booking.payment_status = "paid"
+            booking.remaining_amount = Decimal("0.00")
+
+        ###################################
+        # PARTIAL PAYMENT
+        ###################################
+        else:
+
+            paid_amount = (
+                booking.total_amount * Decimal("0.30")
+            ).quantize(Decimal("0.01"))
+
+            booking.payment_status = "partial"
+            booking.remaining_amount = booking.total_amount - paid_amount
+
+        booking.status = "confirmed"
+        booking.payment_id = payment_id
+        booking.save()
+
+        return Response({"message": "Payment verified"})

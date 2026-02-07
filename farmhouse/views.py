@@ -118,7 +118,7 @@ class FarmhouseListAPI(APIView):
         # 📍 Location filter
         location = request.GET.get("location")
         if location:
-            farmhouses = farmhouses.filter(location__name=location)
+            farmhouses = farmhouses.filter(location__slug=location)
 
         # 💰 Price sort
         sort = request.GET.get("sort")

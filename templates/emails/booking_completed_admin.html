@@ -132,9 +132,21 @@
           <!-- CTA Button -->
           <tr>
             <td style="padding: 0 50px 40px; text-align: center;">
-              <a href="http://127.0.0.1:8000/invoice/{{ booking.booking_id }}/" style="display: inline-block; background: linear-gradient(135deg, #d4a574 0%, #c28b5a 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 15px rgba(212,165,116,0.4);">
+              {% comment %} <a href="http://127.0.0.1:8000/invoice/{{ booking.booking_id }}/" style="display: inline-block; background: linear-gradient(135deg, #d4a574 0%, #c28b5a 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 15px rgba(212,165,116,0.4);">
                 📄 View Invoice Online
-              </a>
+              </a> {% endcomment %}
+
+
+{% if invoice_url %}
+<a href="{{ invoice_url }}"
+style="background:#c28b5a;color:white;padding:14px 30px;
+border-radius:8px;text-decoration:none;">
+View Invoice
+</a>
+{% endif %}
+
+
+
               {% comment %} <p style="margin: 15px 0 0 0; color: #9ca3af; font-size: 13px;">Your invoice is also attached to this email</p> {% endcomment %}
             </td>
           </tr>

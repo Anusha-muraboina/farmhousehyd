@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+{% block content %}
+{% csrf_token %}
+<div class="min-h-screen bg-gradient-to-br from-orange-50 via-white to-gray-100 py-16 px-4">
+
+<div class="max-w-7xl mx-auto">
+
+<!-- PAGE TITLE -->
+<div class="mb-12">
+<h1 class="text-4xl font-extrabold text-gray-800">
+My Account
+</h1>
+<p class="text-gray-500">
+Manage your profile and security
+</p>
+</div>
+
+
+<!-- TWO SECTION GRID -->
+<div class="grid lg:grid-cols-3 gap-10">
+
+
+<!-- ================= PROFILE ================= -->
+<div class="lg:col-span-2 bg-white rounded-3xl shadow-xl p-10">
+
+<div class="flex items-center gap-6 mb-10">
+
+<div class="w-20 h-20 rounded-full bg-orange-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+{{ request.user.username|first|upper }}
+</div>
+
+<div>
+<h3 class="text-2xl font-bold">
+Profile Information
+</h3>
+<p class="text-gray-500">
+Update your personal details
+</p>
+</div>
+
+</div>
+
+<div id="profileMsg" class="hidden mb-6 p-4 rounded-xl"></div>
+
+<form id="profileForm" class="grid md:grid-cols-2 gap-6">
+   {% csrf_token %}
+<div>
+<label class="label">Username</label>
+<input id="username" class="input-premium">
+</div>
+
+<div>
+<label class="label">Email</label>
+<input id="email" readonly class="input-disabled">
+</div>
+
+<div>
+<label class="label">Phone</label>
+<input id="phone" class="input-premium">
+</div>
+
+<button class="md:col-span-2 premium-btn" type="submit">
+Update Profile
+</button>
+
+</form>
+</div>
+
+
+
+<!-- ================= PASSWORD ================= -->
+<div class="bg-white rounded-3xl shadow-xl p-10 h-fit">
+
+<h2 class="text-2xl font-bold mb-2">
+Security
+</h2>
+
+<p class="text-gray-500 mb-8">
+Change your password regularly to keep your account safe.
+</p>
+
+<div id="passwordMsg" class="hidden mb-6 p-4 rounded-xl"></div>
+
+<form id="passwordForm" class="space-y-5">
+
+<div>
+<label class="label">New Password</label>
+<input type="password"
+id="new_password"
+class="input-premium">
+</div>
+
+<div>
+<label class="label">Confirm Password</label>
+<input type="password"
+id="confirm_password"
+class="input-premium">
+</div>
+
+<button class="black-btn w-full">
+Change Password
+</button>
+
+</form>
+
+</div>
+
+</div>
+</div>
+</div>
+
+
+
+<style>
+
+/* labels */
+.label{
+display:block;
+font-size:14px;
+color:#6b7280;
+margin-bottom:6px;
+}
+
+/* inputs */
+.input-premium{
+width:100%;
+padding:14px;
+border-radius:14px;
+border:1px solid #e5e7eb;
+transition:.25s;
+}
+
+.input-premium:focus{
+border-color:#f97316;
+box-shadow:0 0 0 3px rgba(249,115,22,.15);
+outline:none;
+}
+
+.input-disabled{
+width:100%;
+padding:14px;
+border-radius:14px;
+background:#f3f4f6;
+border:none;
+}
+
+/* orange button */
+.premium-btn{
+background:#f97316;
+color:white;
+padding:16px;
+border-radius:18px;
+font-weight:700;
+transition:.3s;
+}
+
+.premium-btn:hover{
+background:#ea580c;
+transform:translateY(-2px);
+box-shadow:0 10px 20px rgba(249,115,22,.3);
+}
+
+/* black button */
+.black-btn{
+background:#111827;
+color:white;
+padding:14px;
+border-radius:16px;
+font-weight:600;
+transition:.3s;
+}
+
+.black-btn:hover{
+background:#000;
+transform:translateY(-2px);
+box-shadow:0 10px 20px rgba(0,0,0,.25);
+}
+
+</style>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+
+// ✅ Read CSRF cookie safely
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie) {
+        document.cookie.split(';').forEach(cookie => {
+            const c = cookie.trim();
+            if (c.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(c.substring(name.length + 1));
+            }
+        });
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+// ⭐⭐⭐ THE FIX — FORCE HEADER
+axios.defaults.headers.common['X-CSRFToken'] = csrftoken;
+axios.defaults.withCredentials = true;
+
+</script>
+
+
+<script>
+
+axios.defaults.withCredentials = true;
+{% comment %} axios.defaults.xsrfCookieName = "csrftoken";
+axios.defaults.xsrfHeaderName = "X-CSRFToken"; {% endcomment %}
+
+//////////////////////////////////////////////////
+// LOAD PROFILE
+//////////////////////////////////////////////////
+
+async function loadProfile(){
+
+try{
+
+const res = await axios.get("/user/profile/" , {
+    headers: {
+        "X-CSRFToken": csrftoken
+    }
+});
+
+username.value = res.data.username;
+email.value = res.data.email;
+phone.value = res.data.phone;
+
+}catch{
+console.log("User not logged in");
+}
+
+}
+
+loadProfile();
+
+
+
+//////////////////////////////////////////////////
+// UPDATE PROFILE
+//////////////////////////////////////////////////
+
+profileForm.addEventListener("submit", async e=>{
+
+e.preventDefault();
+
+try{
+
+await axios.put("/user/profile/",{
+
+username: username.value,
+phone: phone.value,
+
+});
+
+showMsg("profileMsg","✅ Profile updated!","green");
+
+}catch{
+
+showMsg("profileMsg","❌ Update failed!","red");
+
+}
+
+});
+
+
+
+//////////////////////////////////////////////////
+// CHANGE PASSWORD
+//////////////////////////////////////////////////
+
+passwordForm.addEventListener("submit", async e=>{
+
+e.preventDefault();
+
+try{
+
+await axios.put("/user/change-password/",{
+
+new_password: new_password.value,
+confirm_new_password: confirm_password.value
+
+});
+
+showMsg("passwordMsg","✅ Password changed!","green");
+
+passwordForm.reset();
+
+}catch(err){
+
+showMsg(
+"passwordMsg",
+err.response?.data?.detail || "Error changing password",
+"red"
+);
+
+}
+
+});
+
+
+
+//////////////////////////////////////////////////
+// MESSAGE FUNCTION
+//////////////////////////////////////////////////
+
+function showMsg(id,text,color){
+
+const box=document.getElementById(id);
+
+box.innerText=text;
+
+box.className=
+`mb-4 p-4 rounded-xl ${
+color==="green"
+? "bg-green-100 text-green-700"
+: "bg-red-100 text-red-700"
+}`;
+
+box.classList.remove("hidden");
+
+}
+
+</script>
+
+{% endblock %}

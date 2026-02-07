@@ -2,6 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import User
 
+from rest_framework import serializers
+from booking.models import Booking
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -61,22 +63,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 
-# serializers.py
-from rest_framework import serializers
-from django.contrib.auth.password_validation import validate_password
-
-
-class ChangePasswordSerializer(serializers.Serializer):
-    new_password = serializers.CharField(
-        write_only=True,
-        validators=[validate_password]
-    )
-    confirm_new_password = serializers.CharField(write_only=True)
-
-    def validate(self, data):
-        if data['new_password'] != data['confirm_new_password']:
-            raise serializers.ValidationError("Passwords do not match")
-        return data
 
 
 
@@ -100,4 +86,74 @@ class ResetPasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("Passwords do not match")
         return data
 
+
+
+
+
+
+from rest_framework import serializers
+from .models import User
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "email",
+            "username",
+            "phone",
+          
+        ]
+
+        read_only_fields = ["email"]  
+        # 🔥 NEVER allow email change easily
+
+
+# serializers.py
+from rest_framework import serializers
+from django.contrib.auth.password_validation import validate_password
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(
+        write_only=True,
+        validators=[validate_password]
+    )
+    confirm_new_password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_new_password']:
+            raise serializers.ValidationError("Passwords do not match")
+        return data
+
+
+
+
+class UserBookingSerializer(serializers.ModelSerializer):
+
+    farmhouse_name = serializers.CharField(
+        source="farmhouse.title",
+        read_only=True
+    )
+
+    class Meta:
+        model = Booking
+        fields = [
+            "booking_id",
+            "farmhouse_name",
+            "check_in",
+            "check_out",
+            "guest_count",
+            "extra_guest_count",
+            "total_amount",
+            "remaining_amount",
+            "disc_price",
+            "status",
+            "payment_status",
+            "payment_method",
+            "created_at",
+            
+        ]
 

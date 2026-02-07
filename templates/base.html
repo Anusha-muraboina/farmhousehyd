@@ -233,7 +233,13 @@
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+axios.defaults.withCredentials = true;
 
+// Axios automatically reads csrftoken cookie
+axios.defaults.xsrfCookieName = "csrftoken";
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
+</script>
     <!-- Global JS -->
     {% comment %} <script>
         lucide.createIcons();
