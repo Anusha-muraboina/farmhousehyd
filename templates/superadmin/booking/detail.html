@@ -1,0 +1,254 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2 class="fw-bold">
+            Booking #{{ booking.booking_id }}
+        </h2>
+
+        <a href="{% url 'admin-bookings' %}"
+           class="btn btn-outline-dark">
+            ← Back
+        </a>
+
+    </div>
+
+
+    {% for message in messages %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+
+    <div class="row g-4">
+
+        <!-- BOOKING INFO -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <h4 class="mb-3">
+                        Booking Info
+                    </h4>
+
+                    <hr>
+
+                    <p><b>Status:</b>
+
+                        {% if booking.status == "confirmed" %}
+                            <span class="badge bg-success">
+                                Confirmed
+                            </span>
+
+                        {% elif booking.status == "pending" %}
+                            <span class="badge bg-warning text-dark">
+                                Pending
+                            </span>
+
+                        {% elif booking.status == "cancelled" %}
+                            <span class="badge bg-danger">
+                                Cancelled
+                            </span>
+
+                        {% else %}
+                            <span class="badge bg-secondary">
+                                {{ booking.status }}
+                            </span>
+                        {% endif %}
+
+                    </p>
+
+                    <p><b>Check-in:</b> {{ booking.check_in }}</p>
+                    <p><b>Check-out:</b> {{ booking.check_out }}</p>
+
+                    <p><b>Guests:</b>
+                        {{ booking.guest_count }}
+                        (+ {{ booking.extra_guest_count }} extra)
+                    </p>
+
+                    <p><b>Total Amount:</b>
+                        <span class="fw-bold">
+                            ₹{{ booking.total_amount }}
+                        </span>
+                    </p>
+
+                    <p><b>Advance Paid:</b>
+                        ₹{{ booking.advance_paid }}
+                    </p>
+
+                    <p><b>Remaining:</b>
+                        ₹{{ booking.remaining_amount }}
+                    </p>
+
+                    <p><b>Payment Method:</b>
+                        {{ booking.payment_method }}
+                    </p>
+
+                    <p><b>Payment Status:</b>
+                        {{ booking.payment_status }}
+                    </p>
+
+                    <p><b>Booked On:</b>
+                        {{ booking.created_at }}
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- GUEST + USER -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <h4 class="mb-3">
+                        Guest Details
+                    </h4>
+
+                    <hr>
+
+                    <p><b>Name:</b> {{ booking.guest_name }}</p>
+                    <p><b>Email:</b> {{ booking.guest_email }}</p>
+                    <p><b>Phone:</b> {{ booking.guest_phone }}</p>
+
+                    <hr>
+
+                    <h5>User Account</h5>
+
+                    {% if booking.user %}
+                        <p><b>Username:</b> {{ booking.user.username }}</p>
+                        <p><b>Email:</b> {{ booking.user.email }}</p>
+                    {% else %}
+                        <p class="text-muted">
+                            Guest booking (No account)
+                        </p>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- FARMHOUSE -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <h4 class="mb-3">
+                        Farmhouse
+                    </h4>
+
+                    <hr>
+
+                    <p class="fw-semibold text-primary">
+                        {{ booking.farmhouse.title }}
+                    </p>
+
+                    <p>
+                        {{ booking.farmhouse.address }}
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- STATUS UPDATE -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-warning">
+                <div class="card-body">
+
+                    <h4 class="mb-3">
+                        Update Status
+                    </h4>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <select name="status"
+                                class="form-select mb-3">
+
+                            <option value="pending"
+                            {% if booking.status == "pending" %}selected{% endif %}>
+                                Pending
+                            </option>
+
+                            <option value="confirmed"
+                            {% if booking.status == "confirmed" %}selected{% endif %}>
+                                Confirmed
+                            </option>
+
+                            <option value="cancelled"
+                            {% if booking.status == "cancelled" %}selected{% endif %}>
+                                Cancelled
+                            </option>
+
+                            <option value="completed"
+                            {% if booking.status == "completed" %}selected{% endif %}>
+                                Completed
+                            </option>
+
+                        </select>
+
+                <!-- PAYMENT STATUS -->
+                <label class="fw-semibold mb-1">
+                    Payment Status
+                </label>
+
+                <select name="payment_status"
+                        class="form-select mb-4">
+
+                    <option value="pending"
+                    {% if booking.payment_status == "pending" %}selected{% endif %}>
+                        Pending
+                    </option>
+
+                    <option value="partial"
+                    {% if booking.payment_status == "partial" %}selected{% endif %}>
+                        Partial Paid
+                    </option>
+
+                    <option value="paid"
+                    {% if booking.payment_status == "paid" %}selected{% endif %}>
+                        Paid
+                    </option>
+
+                    <option value="failed"
+                    {% if booking.payment_status == "failed" %}selected{% endif %}>
+                        Failed
+                    </option>
+
+                </select>
+
+
+                        
+                        <button class="btn btn-warning w-100">
+                            Update Status
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- EDIT BUTTON -->
+    <div class="mt-4">
+        <a href="{% url 'admin-booking-update' booking.id %}"
+           class="btn btn-primary">
+            Edit Booking
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -8,7 +8,7 @@ from .models import (
     FarmhousePricing,
 )
 from blogs.models import *
-
+from booking.models import FarmhousePaymentPolicy
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,6 +37,22 @@ class AmenitySerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = FarmhouseImage
 #         fields = ["image", "is_primary"]
+
+
+
+
+
+
+class FarmhousePaymentPolicySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FarmhousePaymentPolicy
+        fields = [
+            "allow_pay_at_farmhouse",
+            "allow_partial_payment",
+            "allow_full_payment",
+        ]
+
+
 class FarmhouseImageSerializer(serializers.ModelSerializer):
 
     image = serializers.SerializerMethodField()
@@ -63,6 +79,10 @@ class FarmhouseSerializer(serializers.ModelSerializer):
     amenities = AmenitySerializer(many=True, read_only=True)
     primary_image = serializers.SerializerMethodField()
     images = FarmhouseImageSerializer(many=True, read_only=True)
+    
+    # payment_policy = FarmhousePaymentPolicySerializer(read_only=True)
+    payment_policy = serializers.SerializerMethodField()
+
     class Meta:
         model = Farmhouse
         fields = [
@@ -84,6 +104,7 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             "amenities",
             "images",
             "pricing",
+            "payment_policy",
             
         ]
 
@@ -103,6 +124,25 @@ class FarmhouseSerializer(serializers.ModelSerializer):
 
         return None
 
+    def get_payment_policy(self, obj):
+
+        policy = getattr(obj, "payment_policy", None)
+
+        # ✅ DEFAULT POLICY
+        default_policy = {
+            "allow_pay_at_farmhouse": True,
+            "allow_partial_payment": True,
+            "allow_full_payment": True,  # ALWAYS TRUE
+        }
+
+        if not policy:
+            return default_policy
+
+        return {
+            "allow_pay_at_farmhouse": policy.allow_pay_at_farmhouse,
+            "allow_partial_payment": policy.allow_partial_payment,
+            "allow_full_payment": True,  # FORCE TRUE
+        }
 
 class BlogSerializer(serializers.ModelSerializer):
     class Meta:

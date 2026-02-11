@@ -1,0 +1,263 @@
+{% extends "farmhouse_admin/base.html" %}
+{% block content %}
+
+<div class="container-fluid px-4 py-4">
+
+<!-- ⭐ HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold mb-1">
+            {% if form.instance.pk %}
+                Edit Coupon
+            {% else %}
+                Create Coupon
+            {% endif %}
+        </h2>
+
+        <small class="text-muted">
+            Offer discounts to attract more bookings.
+        </small>
+    </div>
+
+    <a href="{% url 'owner_coupon_list' %}"
+       class="btn btn-light shadow-sm back-btn">
+        ← Back
+    </a>
+
+</div>
+
+
+
+<form method="post">
+{% csrf_token %}
+
+<div class="row g-4">
+
+    <!-- LEFT -->
+    <div class="col-lg-8">
+
+        <div class="custom-card">
+
+            <h5 class="section-title">
+                Coupon Information
+            </h5>
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                Please fix the errors below.
+            </div>
+            {% endif %}
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="label">Coupon Title</label>
+                    {{form.title}}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="label">Coupon Code</label>
+                    {{form.code}}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="label">Discount Type</label>
+                    {{form.discount_type}}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="label">Discount Value</label>
+                    {{form.discount_value}}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOOKING RULES -->
+        <div class="custom-card mt-4">
+
+            <h5 class="section-title">
+                Booking Rules
+            </h5>
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="label">
+                        Minimum Booking Amount
+                    </label>
+                    {{form.min_booking_amount}}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="label">
+                        Maximum Discount
+                    </label>
+                    {{form.max_discount_amount}}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="label">
+                        Start Date
+                    </label>
+                    {{form.start_date}}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="label">
+                        End Date
+                    </label>
+                    {{form.end_date}}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- RIGHT -->
+    <div class="col-lg-4">
+
+        <!-- STATUS -->
+        <div class="custom-card">
+
+            <h5 class="section-title">
+                Coupon Status
+            </h5>
+
+            <label class="label">
+                Usage Limit
+            </label>
+
+            {{form.usage_limit}}
+
+            <div class="form-check modern-check mt-3">
+                {{form.is_active}}
+                <label class="form-check-label">
+                    Active Coupon
+                </label>
+            </div>
+
+        </div>
+
+
+        <!-- TIP BOX -->
+        <div class="tip-card mt-4">
+
+            💡 <b>Pro Tip:</b><br>
+            Percentage coupons convert better than flat discounts.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ⭐ SAVE BAR -->
+<div class="save-bar">
+
+    <span class="text-muted">
+        Double-check details before saving.
+    </span>
+
+    <button class="btn btn-warning save-btn">
+        Save Coupon
+    </button>
+
+</div>
+
+</form>
+
+</div>
+
+
+
+<!-- ⭐⭐⭐ MODERN CSS -->
+<style>
+
+.back-btn{
+    border-radius:10px;
+    padding:8px 18px;
+}
+
+/* CARD */
+.custom-card{
+    background:#fff;
+    border-radius:16px;
+    padding:26px;
+    box-shadow:0 6px 20px rgba(0,0,0,.05);
+}
+
+/* TITLES */
+.section-title{
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+/* LABEL */
+.label{
+    font-weight:600;
+    margin-bottom:6px;
+    display:block;
+}
+
+/* INPUTS */
+input, textarea, select{
+    border-radius:10px !important;
+    padding:10px !important;
+}
+
+/* ORANGE FOCUS */
+input:focus,
+textarea:focus,
+select:focus{
+    border-color:#ff7a00 !important;
+    box-shadow:0 0 0 3px rgba(255,122,0,.15) !important;
+}
+
+/* CHECKBOX */
+.modern-check{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    font-weight:500;
+}
+
+/* TIP */
+.tip-card{
+    background:#fff4e5;
+    border-left:5px solid #ff7a00;
+    padding:18px;
+    border-radius:12px;
+    font-size:14px;
+}
+
+/* SAVE BAR */
+.save-bar{
+    margin-top:30px;
+    background:#fff;
+    padding:18px 24px;
+    border-radius:16px;
+    box-shadow:0 -4px 16px rgba(0,0,0,.05);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.save-btn{
+    padding:12px 34px;
+    border-radius:12px;
+    font-weight:600;
+}
+
+</style>
+
+{% endblock %}

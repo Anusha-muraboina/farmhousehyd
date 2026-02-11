@@ -1,0 +1,269 @@
+{% extends "farmhouse_admin/base.html" %}
+{% block content %}
+
+<div class="container-fluid bg-white px-4 py-4" style="max-width:1500px;margin:auto;">
+
+    <!-- ⭐ HEADER -->
+    <div class="page-header mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1 text-dark">
+                {% if form.instance.pk %}
+                    Edit Farmhouse
+                {% else %}
+                    Add Farmhouse
+                {% endif %}
+            </h2>
+
+            <p class="text-muted mb-0">
+                Provide accurate details to attract more bookings.
+            </p>
+        </div>
+
+        <a href="{% url 'owner_farmhouses' %}" class="back-btn">
+            ← Back
+        </a>
+
+    </div>
+
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="row g-4">
+
+            <!-- LEFT -->
+            <div class="col-lg-8">
+
+                <div class="custom-card">
+
+                    <h5 class="section-title">
+                        Basic Information
+                    </h5>
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            Please correct the highlighted fields.
+                        </div>
+                    {% endif %}
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="label">Farmhouse Title</label>
+                            {{ form.title }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="label">Location</label>
+                            {{ form.location }}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="label">Address</label>
+                            {{ form.address }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="label">Distance (KM)</label>
+                            {{ form.distance_km }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="label">Bedrooms</label>
+                            {{ form.bedrooms }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="label">Guest Capacity</label>
+                            {{ form.guest_count }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+                <div class="custom-card mt-4">
+
+                    <h5 class="section-title">
+                        Description
+                    </h5>
+
+                    <label class="label">
+                        Short Description
+                    </label>
+                    {{ form.short_description }}
+
+                    <label class="label mt-3">
+                        Full Description
+                    </label>
+                    {{ form.description }}
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RIGHT -->
+            <div class="col-lg-4">
+
+                <!-- PRICE -->
+                <div class="custom-card">
+
+                    <h5 class="section-title">
+                        Pricing
+                    </h5>
+
+                    <label class="label">
+                        Price Per Day (₹)
+                    </label>
+                    {{ form.price_per_day }}
+
+                    <div class="modern-check mt-3">
+                        {{ form.free_cancellation }}
+                        <span>Free Cancellation</span>
+                    </div>
+
+                </div>
+
+
+                <!-- AMENITIES -->
+                <div class="custom-card mt-4">
+
+                    <h5 class="section-title">
+                        Amenities
+                    </h5>
+
+                    {{ form.amenities }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ⭐ SAVE BAR -->
+        <div class="save-bar">
+
+            <span class="text-muted">
+                Make sure everything looks good before saving.
+            </span>
+
+            <button class="save-btn">
+                Save Farmhouse
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+
+<!-- ⭐⭐⭐ PREMIUM ORANGE CSS -->
+<style>
+
+/* HEADER */
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+/* BACK BUTTON */
+.back-btn{
+    background:#fff;
+    border:1px solid #eee;
+    padding:8px 18px;
+    border-radius:10px;
+    text-decoration:none;
+    color:#333;
+    font-weight:500;
+    transition:.2s;
+}
+
+.back-btn:hover{
+    border-color:#ff7a00;
+    color:#ff7a00;
+}
+
+/* CARD */
+.custom-card{
+    {% comment %} background:#fff; {% endcomment %}
+    border-radius:16px;
+    padding:28px;
+    box-shadow:0 8px 24px rgba(0,0,0,.04);
+}
+
+/* TITLES */
+.section-title{
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+/* LABEL */
+.label{
+    font-weight:600;
+    margin-bottom:6px;
+    display:block;
+}
+
+/* INPUTS */
+input, textarea, select{
+    border-radius:10px !important;
+    padding:11px !important;
+    border:1px solid #e5e7eb;
+}
+
+/* ORANGE FOCUS 🔥 */
+input:focus,
+textarea:focus,
+select:focus{
+    border-color:#ff7a00 !important;
+    box-shadow:0 0 0 3px rgba(255,122,0,.15) !important;
+}
+
+/* CHECKBOX */
+.modern-check{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    font-weight:500;
+}
+
+/* SAVE BAR */
+.save-bar{
+    margin-top:34px;
+    background:#fff;
+    padding:18px 26px;
+    border-radius:16px;
+    box-shadow:0 -6px 18px rgba(0,0,0,.05);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+/* SAVE BUTTON */
+.save-btn{
+    background:#ff7a00;
+    border:none;
+    color:#fff;
+    padding:12px 32px;
+    border-radius:10px;
+    font-weight:600;
+    transition:.25s;
+}
+
+.save-btn:hover{
+    background:#e66a00;
+    transform:translateY(-1px);
+}
+
+</style>
+
+{% endblock %}

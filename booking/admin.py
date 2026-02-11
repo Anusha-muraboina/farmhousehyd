@@ -25,4 +25,4 @@ class BlockedDateAdmin(admin.ModelAdmin):
     list_filter = ("farmhouse",)
 
     search_fields = ("farmhouse__title",)
-
+admin.site.register(FarmhousePaymentPolicy)

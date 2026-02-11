@@ -1,0 +1,45 @@
+{% extends "farmhouse_admin/base.html" %}
+{% block content %}
+
+<div class="container-fluid px-4 py-4">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h2 class="fw-bold">Message Details</h2>
+
+<a href="{% url 'owner_contact_list' %}"
+class="btn btn-outline-dark">
+← Back
+</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+<div class="card-body">
+
+<h5 class="fw-bold text-warning mb-3">
+{{message.farmhouse.title}}
+</h5>
+
+<hr>
+
+<p><b>Name:</b> {{message.name}}</p>
+<p><b>Phone:</b> {{message.phone}}</p>
+<p><b>Email:</b> {{message.email}}</p>
+
+<p><b>Date:</b>
+{{message.created_at|date:"M d, Y H:i"}}
+</p>
+
+<hr>
+
+<h5 class="fw-semibold">Message</h5>
+
+<div class="bg-light p-3 rounded">
+{{message.message|linebreaks}}
+</div>
+
+</div>
+</div>
+
+</div>
+
+{% endblock %}

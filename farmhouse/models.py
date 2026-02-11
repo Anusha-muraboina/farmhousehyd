@@ -96,6 +96,12 @@ class Farmhouse(models.Model):
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    commission_percentage = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=10
+    )
+
     class Meta:
         ordering = ['-created_at']
     def get_price_by_date(self, date):

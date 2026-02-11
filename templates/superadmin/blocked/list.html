@@ -1,0 +1,58 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+<h2 class="fw-bold mb-4">Blocked Dates</h2>
+
+<a href="{% url 'blocked-dates-create' %}"
+class="btn btn-danger mb-3">
++ Block Dates
+</a>
+
+<table class="table table-bordered">
+
+<thead>
+<tr>
+<th>Farmhouse</th>
+<th>Start</th>
+<th>End</th>
+<th>Reason</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for b in blocked %}
+
+<tr>
+<td>{{ b.farmhouse.title }}</td>
+<td>{{ b.start_date }}</td>
+<td>{{ b.end_date }}</td>
+<td>{{ b.reason }}</td>
+
+<td>
+
+<a href="{% url 'blocked-dates-update' b.id %}"
+class="btn btn-sm btn-warning">
+Edit
+</a>
+
+<a href="{% url 'blocked-dates-delete' b.id %}"
+class="btn btn-sm btn-danger">
+Delete
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+
+</div>
+
+{% endblock %}

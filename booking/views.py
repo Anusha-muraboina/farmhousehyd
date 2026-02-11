@@ -63,25 +63,65 @@ client = razorpay.Client(
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import AllowAny
 
+# @api_view(["GET"])
+# @authentication_classes([])   
+# @permission_classes([AllowAny])
+# def blocked_dates_api(request, farmhouse_id):
+
+#     blocked_ranges = []
+
+#     blocked = BlockedDate.objects.filter(
+#         farmhouse_id=farmhouse_id
+#     )
+
+#     for b in blocked:
+#         blocked_ranges.append({
+#             "from": b.start_date,
+#             "to": b.end_date
+#             # "to": b.end_date - timedelta(days=1)
+#         })
+
+#     return Response(blocked_ranges)
+
 @api_view(["GET"])
-@authentication_classes([])   
+@authentication_classes([])
 @permission_classes([AllowAny])
 def blocked_dates_api(request, farmhouse_id):
 
     blocked_ranges = []
 
-    blocked = BlockedDate.objects.filter(
+    ###################################
+    # ✅ ADMIN BLOCKED DATES
+    ###################################
+
+    admin_blocks = BlockedDate.objects.filter(
         farmhouse_id=farmhouse_id
     )
 
-    for b in blocked:
+    for b in admin_blocks:
         blocked_ranges.append({
             "from": b.start_date,
-            "to": b.end_date
-            # "to": b.end_date - timedelta(days=1)
+            "to": b.end_date - timedelta(days=1)  # allow checkout
+        })
+
+    ###################################
+    # ✅ CONFIRMED BOOKINGS
+    ###################################
+
+    bookings = Booking.objects.filter(
+        farmhouse_id=farmhouse_id,
+        status="confirmed"
+    )
+
+    for booking in bookings:
+        blocked_ranges.append({
+            "from": booking.check_in,
+            "to": booking.check_out - timedelta(days=1)  # allow checkout
         })
 
     return Response(blocked_ranges)
+
+
 
 # booking/views.py
 # @api_view(["GET"])

@@ -77,10 +77,9 @@
   <div class="relative h-full flex items-center justify-center text-center text-white">
     <div class="space-y-6 w-full">
 
-      <h1 class="text-4xl font-bold text-orange-400">
+      <h1 class="text-4xl font-bold text-white">
         Find the Best Farmhouses in Hyderabad
       </h1>
-
       <!-- SEARCH -->
       <form action="/farmhouses/" method="GET"
         class="bg-white rounded-full shadow-xl px-4 py-2 max-w-xl mx-auto">
@@ -575,14 +574,14 @@ axios.get("/api/home/", {
 
   /* ================= BANNERS ================= */
   const slider = document.getElementById("slider");
-  slider.innerHTML = `<div class="absolute inset-0 bg-black/40"></div>`;
+  slider.innerHTML = `<div class="absolute inset-0 bg-black"></div>`;
 
   data.banners.forEach((banner, index) => {
     slider.innerHTML += `
-      <div class="slide absolute inset-0 transition-opacity duration-1000
+      <div class="slide absolute inset-0 transition-opacity duration-1000 
         ${index === 0 ? 'opacity-100' : 'opacity-0'}">
-        <img src="${banner.image}"
-             class="w-full h-full object-cover">
+        {% comment %} <img src="${banner.image}"
+             class="w-full h-full object-cover"> {% endcomment %}
       </div>`;
   });
 
@@ -746,7 +745,7 @@ blogGrid.innerHTML += `
          class="w-full h-96 object-cover">
 
     <div class="p-8">
-      <p class="text-3xl font-bold mb-4">${featured.title}</p>
+      <p class="text-lg font-bold mb-4">${featured.title}</p>
 
       <p class="text-gray-600 mb-6 truncate-text">
         ${featured.short_description}
@@ -774,9 +773,9 @@ if (blogs.length > 1) {
              class="w-full h-44 object-cover">
 
         <div class="p-6">
-          <h4 class="font-bold text-lg mb-3 truncate-text">
+          <p class="font-bold text-lg mb-3 truncate-text">
             ${blog.title}
-          </h4>
+          </p>
 
           <a href="/blog/${blog.slug}/"
              class="text-primary text-sm font-medium">

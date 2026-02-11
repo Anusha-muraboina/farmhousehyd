@@ -2,7 +2,8 @@ from django.db import models
 
 # Create your models here.
 from django.db import models
-from ckeditor.fields import RichTextField
+# from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 
 class Choos_Services(models.Model):
     title = models.CharField(max_length=200)
@@ -15,7 +16,6 @@ class Choos_Services(models.Model):
     def __str__(self):
         return self.title
 
-from django.db import models
 
 class Facilities(models.Model):
     name =  models.CharField(max_length=200)
@@ -59,10 +59,13 @@ class AboutSection(models.Model):
         help_text="Big heading text"
     )
 
-    description = RichTextField(
-        help_text="You can add HTML tags, lists, bold, etc."
+    # description = RichTextField(
+    #     help_text="You can add HTML tags, lists, bold, etc."
+    # )
+    description = CKEditor5Field(
+        "Content",
+        config_name="default"
     )
-
     image = models.ImageField(
         upload_to="about/images/",
         blank=True,

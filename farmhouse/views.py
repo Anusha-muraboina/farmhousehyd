@@ -99,9 +99,10 @@ class FarmhouseListAPI(APIView):
         # ).select_related("location").prefetch_related(
         #     "images", "amenities"
         # )
+        
         farmhouses = Farmhouse.objects.filter(
             is_active=True
-        ).select_related("location").prefetch_related(
+        ).select_related("location","payment_policy").prefetch_related(
             "images", "amenities"
         )
 

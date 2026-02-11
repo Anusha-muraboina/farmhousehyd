@@ -123,4 +123,97 @@ urlpatterns = [
 
     path("messages/", views.contact_message_list, name="contact_message_list"),
     path("messages/delete/<int:id>/", views.contact_message_delete, name="contact_message_delete"),
+    
+    
+    
+    path("payment-policies/", views.payment_policy_list, name="payment_policy_list"),
+    path("payment-policies/add/", views.payment_policy_create, name="payment_policy_create"),
+    path("payment-policies/<int:pk>/edit/", views.payment_policy_update, name="payment_policy_update"),
+    path( "payment-policy/<int:pk>/delete/",views.payment_policy_delete,  name="payment_policy_delete" ),
+
+    
+    path(
+        "admin/bookings/",
+        views.admin_booking_list,
+        name="admin-bookings"
+    ),
+
+    path(
+        "admin/bookings/create/",
+        views.admin_booking_create,
+        name="admin-booking-create"
+    ),
+
+    path(
+        "admin/bookings/<int:pk>/",
+        views.admin_booking_detail,
+        name="admin-booking-detail"
+    ),
+
+    path(
+        "admin/bookings/<int:pk>/edit/",
+        views.admin_booking_update,
+        name="admin-booking-update"
+    ),
+
+    path(
+        "admin/bookings/<int:pk>/cancel/",
+        views.admin_booking_cancel,
+        name="admin-booking-cancel"
+    ),
+    
+    
+    
+    
+    path(
+    "admin/blocked-dates/",
+    views.blocked_dates_list,
+    name="blocked-dates"
+    ),
+
+    path(
+        "admin/blocked-dates/create/",
+        views.blocked_dates_create,
+        name="blocked-dates-create"
+    ),
+
+    path(
+        "admin/blocked-dates/<int:pk>/edit/",
+        views.blocked_dates_update,
+        name="blocked-dates-update"
+    ),
+
+    path(
+        "admin/blocked-dates/<int:pk>/delete/",
+        views.blocked_dates_delete,
+        name="blocked-dates-delete"
+    ),
+    
+    
+    
+    path(
+    "admin/blocked-dates/",
+    views.blocked_dates_list,
+    name="blocked-dates"
+    ),
+
+    path(
+        "admin/blocked-dates/create/",
+        views.blocked_dates_create,
+        name="blocked-dates-create"
+    ),
+
+    path(
+        "admin/blocked-dates/<int:pk>/edit/",
+        views.blocked_dates_update,
+        name="blocked-dates-update"
+    ),
+
+    path(
+        "admin/blocked-dates/<int:pk>/delete/",
+        views.blocked_dates_delete,
+        name="blocked-dates-delete"
+    ),
+
+
 ]

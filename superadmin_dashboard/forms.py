@@ -2,6 +2,25 @@ from django import forms
 from farmhouse.models import *
 
 
+from django import forms
+from booking.models import FarmhousePaymentPolicy
+
+class FarmhousePaymentPolicyForm(forms.ModelForm):
+    class Meta:
+        model = FarmhousePaymentPolicy
+        fields = "__all__"
+
+        widgets = {
+            "farmhouse": forms.Select(attrs={"class": "form-select"}),
+            "allow_pay_at_farmhouse": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "allow_partial_payment": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "allow_full_payment": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
+
+
+
+
+
 # class FarmhouseForm(forms.ModelForm):
 #     class Meta:
 #         model = Farmhouse
@@ -46,9 +65,9 @@ TEXTAREA_CLASS = (
     "focus:outline-none focus:ring-2 focus:ring-orange-400 "
     "focus:border-orange-400 transition"
 )
-
-INPUT_CLASS = "form-control form-control-lg"
-TEXTAREA_CLASS = "form-control form-control-lg"
+# form-control-lg
+INPUT_CLASS = "form-control "
+TEXTAREA_CLASS = "form-control "
 class FarmhouseForm(forms.ModelForm):
     class Meta:
         model = Farmhouse
@@ -521,3 +540,174 @@ class ContactInfoForm(forms.ModelForm):
             }),
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
+
+
+
+
+
+# from django import forms
+# from booking.models import Booking
+
+
+# class AdminBookingForm(forms.ModelForm):
+
+#     class Meta:
+#         model = Booking
+
+#         exclude = [
+#             "booking_id",
+#             "transaction_id",
+#             "payment_id",
+#             "confirmation_email_sent_at",
+#             "cancelled_at",
+#             "created_at",
+#         ]
+
+#         widgets = {
+#             "check_in": forms.DateInput(attrs={"type": "date"}),
+#             "check_out": forms.DateInput(attrs={"type": "date"}),
+#         }
+
+# from django import forms
+# from booking.models import Booking
+
+
+# class AdminBookingForm(forms.ModelForm):
+
+#     class Meta:
+#         model = Booking
+
+#         exclude = [
+#             "booking_id",
+#             "transaction_id",
+#             "payment_id",
+#             "confirmation_email_sent_at",
+#             "cancelled_at",
+#             "created_at",
+#         ]
+#         widgets = {
+#             "check_in": forms.DateInput(
+#                 attrs={"class": "form-control"}
+#             ),
+#             "check_out": forms.DateInput(
+#                 attrs={"class": "form-control"}
+#             ),
+#         }
+
+#         # widgets = {
+#         #     "check_in": forms.DateInput(
+#         #         attrs={"type": "date", "class": "form-control"}
+#         #     ),
+#         #     "check_out": forms.DateInput(
+#         #         attrs={"type": "date", "class": "form-control"}
+#         #     ),
+#         # }
+
+#     ###################################
+#     # AUTO APPLY BOOTSTRAP
+#     ###################################
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+
+#         for field_name, field in self.fields.items():
+
+#             if not isinstance(field.widget, forms.CheckboxInput):
+#                 field.widget.attrs["class"] = "form-control"
+
+#             else:
+#                 field.widget.attrs["class"] = "form-check-input"
+
+
+
+from django import forms
+from booking.models import Booking
+
+
+class AdminBookingForm(forms.ModelForm):
+
+    class Meta:
+        model = Booking
+
+        exclude = [
+            "booking_id",
+            "transaction_id",
+            "payment_id",
+            "confirmation_email_sent_at",
+            "cancelled_at",
+            "created_at",
+        ]
+
+        widgets = {
+            # ⭐ NO type="date"
+            "check_in": forms.TextInput(),
+            "check_out": forms.TextInput(),
+        }
+
+    ###################################
+    # AUTO APPLY BOOTSTRAP
+    ###################################
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field_name, field in self.fields.items():
+
+            if isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs["class"] = "form-check-input"
+
+            elif isinstance(field.widget, forms.Select):
+                field.widget.attrs["class"] = "form-select"
+
+            else:
+                field.widget.attrs["class"] = "form-control"
+
+        ##################################################
+        # ⭐ MAKE DATE FIELDS READONLY (BEST PRACTICE)
+        ##################################################
+
+        self.fields["check_in"].widget.attrs.update({
+            "readonly": "readonly",
+            "placeholder": "Select check-in"
+        })
+
+        self.fields["check_out"].widget.attrs.update({
+            "readonly": "readonly",
+            "placeholder": "Select check-out"
+        })
+
+
+
+from django import forms
+from booking.models import BlockedDate
+
+
+class BlockedDateForm(forms.ModelForm):
+
+    class Meta:
+        model = BlockedDate
+        fields = "__all__"
+
+        widgets = {
+            "start_date": forms.TextInput(attrs={"class":"form-control"}),
+            "end_date": forms.TextInput(attrs={"class":"form-control"}),
+            "reason": forms.TextInput(attrs={"class":"form-control"}),
+        }
+
+    ##################################
+    # BOOTSTRAP AUTO
+    ##################################
+
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+
+        for field in self.fields.values():
+            field.widget.attrs["class"] = "form-control"
+
+
+
+from django import forms
+from blogs.models import Blog
+
+class BlogForm(forms.ModelForm):
+    class Meta:
+        model = Blog
+        fields = "__all__"

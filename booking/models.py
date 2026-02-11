@@ -281,27 +281,28 @@ class Booking(models.Model):
         # ✅ AUTO BLOCK DATES WHEN CONFIRMED
         ########################################
 
-        if (
-            self.status == "confirmed"
-            and old_status != "confirmed"
-        ):
-            # BlockedDate.objects.get_or_create(
-            #     farmhouse=self.farmhouse,
-            #     start_date=self.check_in,
-            #     end_date=self.check_out,
-            #     defaults={
-            #         "reason": f"Booking {self.booking_id}"
-            #     }
-            # )
-            BlockedDate.objects.get_or_create(
-                farmhouse=self.farmhouse,
-                start_date=self.check_in,
-                # ⭐ block only nights, NOT checkout day
-                end_date=self.check_out - timedelta(days=1),
-                defaults={
-                    "reason": f"Booking {self.booking_id}"
-                }
-            )
+        # if (
+        #     self.status == "confirmed"
+        #     and old_status != "confirmed"
+        # ):
+        #     # BlockedDate.objects.get_or_create(
+        #     #     farmhouse=self.farmhouse,
+        #     #     start_date=self.check_in,
+        #     #     end_date=self.check_out,
+        #     #     defaults={
+        #     #         "reason": f"Booking {self.booking_id}"
+        #     #     }
+        #     # )
+            
+        #     BlockedDate.objects.get_or_create(
+        #         farmhouse=self.farmhouse,
+        #         start_date=self.check_in,
+        #         # ⭐ block only nights, NOT checkout day
+        #         end_date=self.check_out - timedelta(days=1),
+        #         defaults={
+        #             "reason": f"Booking {self.booking_id}"
+        #         }
+        #     )
         # ✅ SEND EMAIL ONLY ONCE
         # if (
         #     self.status == "confirmed"
@@ -412,7 +413,19 @@ class BlockedDate(models.Model):
     def __str__(self):
         return f"Blocked: {self.start_date} → {self.end_date}"
 
+class FarmhousePaymentPolicy(models.Model):
 
+    farmhouse = models.OneToOneField(
+        Farmhouse,
+        on_delete=models.CASCADE,
+        related_name="payment_policy"
+    )
+
+    allow_pay_at_farmhouse = models.BooleanField(default=False)
+    allow_partial_payment = models.BooleanField(default=True)
+    allow_full_payment = models.BooleanField(default=True)
+    def __str__(self):
+        return f"Blocked: {self.farmhouse} "
 class Invoice(models.Model):
     invoice_id = models.CharField(max_length=50, unique=True)
     invoice_date = models.DateField(auto_now_add=True)

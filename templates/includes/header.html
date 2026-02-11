@@ -6,7 +6,9 @@
         <span>info@farmhouseshyderabad.com</span>
         <div class="flex gap-4">
             <a href="tel:+917013413092" class=" flex items-center gap-4 bg-primary px-4 py-1 rounded-xl"><i data-lucide="phone" class="w-4 h-4"></i> 7013 413 092</a>
-            <a href="#" class="bg-primary px-4 py-1 rounded-xl">Add Farmhouse</a>
+            <a href="/farmhouse_admin/login/" class="bg-primary px-4 py-1 rounded-xl">Add Farmhouse</a>
+       
+       
         </div>
     </div>
 </div>
@@ -16,7 +18,8 @@
                 
                 <a href="{% url 'home' %}" class="flex items-center gap-2">
                     <div class=" flex items-center justify-center">
-                    <img   src="{% static 'images/farmhouse_logo.webp' %}"  alt="Farmhouses Hyderabad"   class=" md:h-auto md:w-auto  h-[200px] w-[400px]">  </div>
+                    <img   src="{% static 'images/farmhouse_logo.webp' %}"  alt="Farmhouses Hyderabad"   class="md:w-100 md:h-100  object-contain" >                 
+                </div>
                 </a>
                 
                
@@ -95,9 +98,12 @@
       {{ user.username|first|upper }}
     </div>
 
-    <span class="font-medium text-gray-700">
+    {% comment %} <span class="font-medium text-gray-700">
       {{ user.username }}
-    </span>
+    </span> {% endcomment %}
+<span class="hidden lg:inline font-medium text-gray-700">
+    {{ user.username }}
+</span>
 
     <i data-lucide="chevron-down" class="w-4 h-4"></i>
   </button>

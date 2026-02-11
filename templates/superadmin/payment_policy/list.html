@@ -1,0 +1,136 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">Payment Policies</h4>
+            <small class="text-muted">Manage farmhouse payment settings</small>
+        </div>
+        <a href="{% url 'payment_policy_create' %}"
+           class="btn btn-warning text-white px-4 shadow-sm">
+            <i class="fa-solid fa-plus me-2"></i> Add Policy
+        </a>
+    </div>
+
+    <!-- CARD -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-0">
+
+            {% if policies %}
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Farmhouse</th>
+                            <th>Pay at Farmhouse</th>
+                            <th>Partial Payment</th>
+                            <th>Full Payment</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for policy in policies %}
+                        <tr class="hover-row">
+
+                            <td class="ps-4 fw-semibold">
+                                {% comment %} <i class="fa-solid fa-house text-orange me-2"></i> {% endcomment %}
+                                {{ policy.farmhouse }}
+                            </td>
+
+                            <!-- PAY AT FARMHOUSE -->
+                            <td>
+                                {% if policy.allow_pay_at_farmhouse %}
+                                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">
+                                        Enabled
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">
+                                        Disabled
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- PARTIAL -->
+                            <td>
+                                {% if policy.allow_partial_payment %}
+                                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">
+                                        Enabled
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">
+                                        Disabled
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- FULL -->
+                            <td>
+                                {% if policy.allow_full_payment %}
+                                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">
+                                        Enabled
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">
+                                        Disabled
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- ACTIONS -->
+                            <td class="text-end pe-4">
+
+                                <a href="{% url 'payment_policy_update' policy.id %}"
+                                   class="btn btn-sm btn-outline-warning me-2">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+
+                                <a href="{% url 'payment_policy_delete' policy.id %}"
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Are you sure you want to delete this policy?');">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+            {% else %}
+
+            <!-- EMPTY STATE -->
+            <div class="text-center py-5">
+                <i class="fa-solid fa-file-circle-xmark fa-3x text-muted mb-3"></i>
+                <h6 class="fw-semibold">No Payment Policies Found</h6>
+                <p class="text-muted small">Create a policy to manage payment options.</p>
+                <a href="{% url 'payment_policy_create' %}"
+                   class="btn btn-warning text-white px-4 mt-2">
+                   Add First Policy
+                </a>
+            </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+<style>
+.hover-row:hover{
+    background:#fff8ef;
+    transition:.2s;
+}
+.badge{
+    font-size:13px;
+}
+</style>
+
+{% endblock %}

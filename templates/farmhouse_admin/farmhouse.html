@@ -1,41 +1,68 @@
 {% extends "farmhouse_admin/base.html" %}
-{% block title %}My Farmhouses{% endblock %}
-
 {% block content %}
 
-<div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold">My Farmhouses</h1>
+<div class="container mt-4">
 
-    <a href="#"
-       class="bg-orange-500 text-white px-5 py-2 rounded">
-        + Add Farmhouse
-    </a>
-</div>
+    <div class="d-flex justify-content-between mb-3">
+        <h4 class="fw-bold">My Farmhouses</h4>
 
-<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% comment %} <a href="{% url 'owner_farmhouse_add' %}"
+           class="btn btn-success">
+           + Add Farmhouse
+        </a> {% endcomment %}
+    </div>
 
-    <!-- CARD -->
-    <div class="bg-white rounded-xl shadow overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9"
-             class="h-48 w-full object-cover">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
 
-        <div class="p-5">
-            <h3 class="font-bold text-lg mb-1">
-                Luxury Farmhouse
-            </h3>
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Location</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
 
-            <p class="text-sm text-gray-500 mb-2">
-                Hyderabad • 3 Bedrooms
-            </p>
+                <tbody>
+                    {% for farmhouse in farmhouses %}
+                    <tr>
+                        <td>{{ farmhouse.title }}</td>
+                        <td>{{ farmhouse.location }}</td>
+                        <td>₹ {{ farmhouse.price_per_day }}</td>
 
-            <p class="font-semibold text-orange-600 mb-3">
-                ₹12,000 / day
-            </p>
+                        <td>
+                            {% if farmhouse.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactive</span>
+                            {% endif %}
+                        </td>
 
-            <div class="flex justify-between text-sm">
-                <a href="#" class="text-blue-600">Edit</a>
-                <a href="#" class="text-red-600">Delete</a>
-            </div>
+                        <td>
+                            <a href="{% url 'owner_farmhouse_edit' farmhouse.id %}"
+                               class="btn btn-sm btn-warning">
+                               Edit
+                            </a>
+
+                            <a href="{% url 'owner_farmhouse_delete' farmhouse.id %}"
+                               class="btn btn-sm btn-danger">
+                               Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            No farmhouses added yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
         </div>
     </div>
 

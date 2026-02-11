@@ -31,7 +31,7 @@
     <div class="col-md-12">
       <label class="form-label fw-semibold">Blog Title</label>
       <input type="text" name="title" value="{{ blog.title }}"
-             class="form-control form-control-lg" required>
+             class="form-control " required>
     </div>
 
     <div class="col-md-6">
@@ -73,14 +73,20 @@
     <div class="col-md-12">
       <label class="form-label fw-semibold">Short Description</label>
       <textarea name="short_description" rows="3"
-        class="form-control form-control-lg">{{ blog.short_description }}</textarea>
+        class="form-control ">{{ blog.short_description }}</textarea>
     </div>
 
-    <div class="col-md-12">
+    {% comment %} <div class="col-md-12">
       <label class="form-label fw-semibold">Blog Content</label>
       <textarea name="content" rows="8"
-        class="form-control form-control-lg">{{ blog.content }}</textarea>
-    </div>
+        class="form-control ">{{ blog.content }}</textarea>
+    </div> {% endcomment %}
+<div class="col-md-12">
+  <label class="form-label fw-semibold">Blog Content</label>
+{{ form.media }}
+{{ form.content }}
+
+</div>
 
   </div>
 </div>
@@ -101,7 +107,7 @@
       <label class="form-label fw-semibold">Read Time (minutes)</label>
       <input type="number" name="read_time"
              value="{{ blog.read_time|default:3 }}"
-             class="form-control form-control-lg">
+             class="form-control ">
     </div>
 
     <div class="form-check form-switch mb-2">

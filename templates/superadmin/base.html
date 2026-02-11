@@ -1,345 +1,542 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Super Admin</title>
+<title>Super Admin</title>
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-  body {
-    {% comment %} font-family:  sans-serif; {% endcomment %}
-        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
-                 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f5f7fb;
-  }
+
+body{
+    font-family:'Inter',sans-serif;
+    background:#f5f7fb;
+    margin:0;
+}
+
+/* HEADER */
+.header{
+    background:#fff;
+    border-bottom:1px solid #eee;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:260px;
+    background:#fff;
+    min-height:100vh;
+    border-right:1px solid #eee;
+    transition:.3s;
+}
+
+.sidebar.collapsed{
+    width:80px;
+}
+
+/* MENU */
+.sidebar a{
+    width:100%;
+    color:#333;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 16px;
+    border-radius:10px;
+    text-decoration:none;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.sidebar a:hover{
+    background:#fff4e5;
+    color:#ff7a00;
+}
+
+/* ACTIVE MAIN */
+.sidebar a.active-parent{
+    background:#fff4e5;
+    color:#ff7a00;
+    font-weight:600;
+}
+
+/* LEFT */
+.menu-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.sidebar i{
+    width:20px;
+}
+
+/* TEXT */
+.menu-text{
+    white-space:nowrap;
+}
+
+.sidebar.collapsed .menu-text{
+    display:none;
+}
+
+/* SUBMENU */
+.submenu{
+    {% comment %} margin-left:34px; {% endcomment %}
+    margin-top:6px;
+    padding:4px;
+    background:#f5f7fb;
+}
+
+.submenu a{
+    font-size:14px;
+    padding:9px 14px;
+}
+
+/* ACTIVE SUBMENU */
+.submenu a.active{
+    background:#fff4e5;
+    color:#ff7a00;
+    font-weight:600;
+}
+
+/* ROTATING ARROW */
+.rotate{
+    transform:rotate(180deg);
+    transition:.25s;
+}
+
+/* CONTENT */
+.content{
+    width:100%;
+    padding:25px;
+}
+
+.brand{
+    color:#fa7a03;
+    font-weight:700;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+.sidebar{ width:80px!important; }
+.menu-text{ display:none!important; }
+.submenu{ display:none!important; }
+}
+{% comment %} .sidebar.collapsed .arrow{
+    display:none;
+} {% endcomment %}
+.sidebar.collapsed .menu-text{
+    display:none;
+}
+
+.sidebar.collapsed .menu-left{
+    justify-content:center;
+}
+
 </style>
-
-    <style>
-        body {
-            background: #f5f6fa;
-            margin: 0;
-        }
-        .form-control,
-        .form-control-lg {
-            font-size: 14px !important;
-            padding: 10px 14px;
-                font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
-                 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        }
-
-        /* ================= HEADER ================= */
-        .header {
-            background: #fff;
-            border-bottom: 1px solid #eee;
-        }
-
-        /* ================= SIDEBAR ================= */
-        .sidebar {
-            width: 260px;
-            background: #fff;
-            min-height: 100vh;
-            border-right: 1px solid #eee;
-            transition: 0.3s ease;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .sidebar a {
-            width: 100%;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 14px;
-            border-radius: 6px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .sidebar a:hover {
-            background: #fff4e5;
-            color: #ff7a00;
-        }
-
-        .sidebar i {
-            width: 22px;
-            text-align: center;
-            font-size: 18px;
-        }
-
-        .menu-text {
-            white-space: nowrap;
-        }
-
-        .sidebar.collapsed .menu-text {
-            display: none;
-        }
-
-        .submenu {
-            margin-left: 10px;
-        }
-
-        .sidebar.collapsed .submenu {
-            display: none !important;
-        }
-
-        /* ================= MOBILE ICON ONLY ================= */
-        @media (max-width: 768px) {
-
-            .sidebar {
-                width: 80px !important;
-            }
-
-            /* FORCE hide text */
-            .sidebar .menu-text {
-                display: none !important;
-            }
-
-            /* FORCE hide submenu */
-            .sidebar .submenu {
-                display: none !important;
-            }
-
-            /* prevent expanding */
-            .sidebar.collapsed {
-                width: 80px !important;
-            }
-        }
-
-        .content {
-            width: 100%;
-            padding: 25px;
-        }
-
-        .brand {
-            color: #fa7a03;
-            font-weight: 700;
-        }
-    </style>
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
+<!-- HEADER -->
 <nav class="navbar header px-4 py-3 d-flex justify-content-between">
 
-    <div class="d-flex align-items-center gap-3">
-        <button class="btn btn-light" onclick="toggleSidebar()">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-        <h5 class="mb-0 brand">Super Admin</h5>
-    </div>
+<div class="d-flex align-items-center gap-3">
+<button class="btn btn-light" onclick="toggleSidebar()">
+<i class="fa-solid fa-bars"></i>
+</button>
+<h5 class="mb-0 brand">Super Admin</h5>
+</div>
 
-    <div class="dropdown">
-        <button class="btn d-flex align-items-center gap-2"
-                data-bs-toggle="dropdown">
-            <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center"
-                 style="width:36px;height:36px;">
-                {{ request.user.username|first|upper }}
-            </div>
-            {{ request.user.username }}
-        </button>
+<div class="dropdown">
+<button class="btn d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+<div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center"
+style="width:36px;height:36px;">
+{{ request.user.username|first|upper }}
+</div>
+{{ request.user.username }}
+</button>
 
-        <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li>
-                <a class="dropdown-item text-danger"
-                   href="{% url 'superadmin-logout' %}">
-                    Logout
-                </a>
-            </li>
-        </ul>
-    </div>
+<ul class="dropdown-menu dropdown-menu-end">
+<li><a class="dropdown-item" href="#">Profile</a></li>
+<li><a class="dropdown-item text-danger" href="{% url 'superadmin-logout' %}">Logout</a></li>
+</ul>
+</div>
+
 </nav>
 
-<!-- ================= BODY ================= -->
+
 <div class="d-flex">
 
-    <!-- ================= SIDEBAR ================= -->
-    <aside class="sidebar p-3" id="sidebar">
+<!-- SIDEBAR -->
+<aside class="sidebar p-3" id="sidebar">
 
-        <a href="{% url 'superadmin-dashboard' %}">
-            <i class="fa-solid fa-gauge"></i>
-            <span class="menu-text">Dashboard</span>
-        </a>
+<!-- DASHBOARD -->
+<a href="{% url 'superadmin-dashboard' %}"
+class="{% if request.resolver_match.url_name == 'superadmin-dashboard' %}active-parent{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-gauge"></i>
+<span class="menu-text">Dashboard</span>
+</div>
+</a>
 
-        <a href="{% url 'superadmin-farmhouses' %}">
-            <i class="fa-solid fa-house"></i>
-            <span class="menu-text">Farmhouses</span>
-        </a>
 
-        <a onclick="toggleMenu('blogMenu')">
-            <i class="fa-solid fa-file-lines"></i>
-            <span class="menu-text">Blogs</span>
-        </a>
 
-       <div id="blogMenu" class="submenu d-none">
 
-    <a href="{% url 'blog_lists' %}">
-        <i class="fa-solid fa-list"></i>
+
+<!-- PAYMENT POLICY -->
+<a onclick="toggleMenu('paymentMenu',this)"
+class="{% if request.resolver_match.url_name in 'payment_policy_list payment_policy_create payment_policy_update' %}active-parent{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-money-check-dollar"></i>
+<span class="menu-text">Payment Policy</span>
+</div>
+<i class="fa-solid fa-chevron-down arrow"></i>
+</a>
+
+{% comment %} <div id="paymentMenu"
+class="submenu {% if request.resolver_match.url_name in 'payment_policy_list payment_policy_create payment_policy_update' %}{% else %}d-none{% endif %}">
+
+<a href="{% url 'payment_policy_list' %}"
+class="{% if request.resolver_match.url_name == 'payment_policy_list' %}active{% endif %}">
+All Policies
+</a>
+
+<a href="{% url 'payment_policy_create' %}"
+class="{% if request.resolver_match.url_name == 'payment_policy_create' %}active{% endif %}">
+Add Policy
+</a>
+
+</div> {% endcomment %}
+
+<div id="paymentMenu"
+class="submenu {% if request.resolver_match.url_name in 'payment_policy_list payment_policy_create payment_policy_update' %}{% else %}d-none{% endif %}">
+
+<a href="{% url 'payment_policy_list' %}"
+class="{% if request.resolver_match.url_name == 'payment_policy_list' %}active{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-list"></i>
+<span class="menu-text">All Policies</span>
+</div>
+</a>
+
+<a href="{% url 'payment_policy_create' %}"
+class="{% if request.resolver_match.url_name == 'payment_policy_create' %}active{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-plus"></i>
+<span class="menu-text">Add Policy</span>
+</div>
+</a>
+
+</div>
+
+
+
+
+<!-- FARMHOUSES -->
+<a href="{% url 'superadmin-farmhouses' %}"
+class="{% if request.resolver_match.url_name == 'superadmin-farmhouses' %}active-parent{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-house"></i>
+<span class="menu-text">Farmhouses</span>
+</div>
+</a>
+
+
+
+<!-- BOOKINGS -->
+<a onclick="toggleMenu('bookingMenu',this)"
+class="{% if request.resolver_match.url_name in 'admin-bookings admin-booking-create' %}active-parent{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-book"></i>
+<span class="menu-text">Bookings</span>
+</div>
+<i class="fa-solid fa-chevron-down arrow"></i>
+</a>
+
+<div id="bookingMenu" class="submenu ...">
+
+<a href="{% url 'admin-bookings' %}">
+<div class="menu-left">
+<i class="fa-solid fa-list-check"></i>
+<span class="menu-text">All Bookings</span>
+</div>
+</a>
+
+<a href="{% url 'admin-booking-create' %}">
+<div class="menu-left">
+<i class="fa-solid fa-calendar-plus"></i>
+<span class="menu-text">Add Booking</span>
+</div>
+</a>
+
+</div>
+
+
+<!-- AVAILABILITY -->
+<a onclick="toggleMenu('blockedMenu',this)"
+class="{% if request.resolver_match.url_name in 'blocked-dates blocked-dates-create' %}active-parent{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-calendar-xmark"></i>
+<span class="menu-text">Availability</span>
+</div>
+<i class="fa-solid fa-chevron-down arrow"></i>
+</a>
+<div id="blockedMenu"
+class="submenu {% if request.resolver_match.url_name in 'blocked-dates blocked-dates-create' %}{% else %}d-none{% endif %}">
+
+<a href="{% url 'blocked-dates' %}"
+class="{% if request.resolver_match.url_name == 'blocked-dates' %}active{% endif %}">
+    
+    <div class="menu-left">
+        <i class="fa-solid fa-calendar-days"></i>
+        <span class="menu-text">All Blocked Dates</span>
+    </div>
+
+</a>
+
+
+<a href="{% url 'blocked-dates-create' %}"
+class="{% if request.resolver_match.url_name == 'blocked-dates-create' %}active{% endif %}">
+
+    <div class="menu-left">
+        <i class="fa-solid fa-ban"></i>
+        <span class="menu-text">Block Dates</span>
+    </div>
+
+</a>
+
+</div>
+
+<!-- BLOGS -->
+<a onclick="toggleMenu('blogMenu',this)"
+class="{% if request.resolver_match.url_name in 'blog_lists category_list tag_list comment_list' %}active-parent{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-file-lines"></i>
+<span class="menu-text">Blogs</span>
+</div>
+<i class="fa-solid fa-chevron-down arrow"></i>
+</a>
+<div id="blogMenu"
+class="submenu {% if request.resolver_match.url_name in 'blog_lists category_list tag_list comment_list' %}{% else %}d-none{% endif %}">
+
+<!-- ALL BLOGS -->
+<a href="{% url 'blog_lists' %}"
+class="{% if request.resolver_match.url_name == 'blog_lists' %}active{% endif %}">
+    <div class="menu-left">
+        <i class="fa-solid fa-blog"></i>
         <span class="menu-text">All Blogs</span>
-    </a>
+    </div>
+</a>
 
-    <a href="{% url 'category_list' %}">
-        <i class="fa-solid fa-folder"></i>
+<!-- CATEGORIES -->
+<a href="{% url 'category_list' %}"
+class="{% if request.resolver_match.url_name == 'category_list' %}active{% endif %}">
+    <div class="menu-left">
+        <i class="fa-solid fa-folder-tree"></i>
         <span class="menu-text">Categories</span>
-    </a>
+    </div>
+</a>
 
-    <a href="{% url 'tag_list' %}">
-        <i class="fa-solid fa-tag"></i>
+<!-- TAGS -->
+<a href="{% url 'tag_list' %}"
+class="{% if request.resolver_match.url_name == 'tag_list' %}active{% endif %}">
+    <div class="menu-left">
+        <i class="fa-solid fa-tags"></i>
         <span class="menu-text">Tags</span>
-    </a>
+    </div>
+</a>
 
-    <a href="{% url 'comment_list' %}">
+<!-- COMMENTS -->
+<a href="{% url 'comment_list' %}"
+class="{% if request.resolver_match.url_name == 'comment_list' %}active{% endif %}">
+    <div class="menu-left">
         <i class="fa-solid fa-comments"></i>
         <span class="menu-text">Comments</span>
-    </a>
+    </div>
+</a>
 
 </div>
 
 
-        <a onclick="toggleMenu('cmsMenu')">
-            <i class="fa-solid fa-layer-group"></i>
-            <span class="menu-text">CMS</span>
-        </a>
+<!-- CMS -->
+<a onclick="toggleMenu('cmsMenu',this)"
+class="{% if request.resolver_match.url_name in 'choose_services_list our_facility_list who_we_are_list about_section_list about_feature_list about_who_we_are_list facilities_list' %}active-parent{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-layer-group"></i>
+<span class="menu-text">CMS</span>
+</div>
+<i class="fa-solid fa-chevron-down arrow"></i>
+</a>
 
-<div id="cmsMenu" class="submenu d-none">
+<div id="cmsMenu"
+class="submenu {% if request.resolver_match.url_name in 'choose_services_list our_facility_list who_we_are_list about_section_list about_feature_list about_who_we_are_list facilities_list' %}{% else %}d-none{% endif %}">
 
-    <a href="{% url 'choose_services_list' %}">
-        <i class="fa-solid fa-briefcase"></i>
+<!-- CHOOSE SERVICES -->
+<a href="{% url 'choose_services_list' %}"
+class="{% if request.resolver_match.url_name == 'choose_services_list' %}active{% endif %}">
+    <div class="menu-left">
+        <i class="fa-solid fa-handshake"></i>
         <span class="menu-text">Choose Services</span>
-    </a>
+    </div>
+</a>
 
-    <a href="{% url 'our_facility_list' %}">
+<!-- OUR FACILITY -->
+<a href="{% url 'our_facility_list' %}"
+class="{% if request.resolver_match.url_name == 'our_facility_list' %}active{% endif %}">
+    <div class="menu-left">
         <i class="fa-solid fa-building"></i>
         <span class="menu-text">Our Facility</span>
-    </a>
+    </div>
+</a>
 
-    <a href="{% url 'who_we_are_list' %}">
-        <i class="fa-solid fa-users"></i>
+<!-- WHO WE ARE -->
+<a href="{% url 'who_we_are_list' %}"
+class="{% if request.resolver_match.url_name == 'who_we_are_list' %}active{% endif %}">
+    <div class="menu-left">
+        <i class="fa-solid fa-user-group"></i>
         <span class="menu-text">Who We Are</span>
-    </a>
+    </div>
+</a>
 
-    <a href="{% url 'about_section_list' %}">
+<!-- ABOUT SECTION -->
+<a href="{% url 'about_section_list' %}"
+class="{% if request.resolver_match.url_name == 'about_section_list' %}active{% endif %}">
+    <div class="menu-left">
         <i class="fa-solid fa-circle-info"></i>
         <span class="menu-text">About Section</span>
-    </a>
+    </div>
+</a>
 
-    <a href="{% url 'about_feature_list' %}">
+<!-- ABOUT FEATURE -->
+<a href="{% url 'about_feature_list' %}"
+class="{% if request.resolver_match.url_name == 'about_feature_list' %}active{% endif %}">
+    <div class="menu-left">
         <i class="fa-solid fa-star"></i>
         <span class="menu-text">About Feature</span>
-    </a>
+    </div>
+</a>
 
-    <a href="{% url 'about_who_we_are_list' %}">
-        <i class="fa-solid fa-id-card"></i>
+<!-- KNOW WHO WE ARE -->
+<a href="{% url 'about_who_we_are_list' %}"
+class="{% if request.resolver_match.url_name == 'about_who_we_are_list' %}active{% endif %}">
+    <div class="menu-left">
+        <i class="fa-solid fa-address-card"></i>
         <span class="menu-text">Know Who We Are</span>
-    </a>
+    </div>
+</a>
 
-    <a href="{% url 'facilities_list' %}">
+<!-- FACILITIES -->
+<a href="{% url 'facilities_list' %}"
+class="{% if request.resolver_match.url_name == 'facilities_list' %}active{% endif %}">
+    <div class="menu-left">
         <i class="fa-solid fa-hotel"></i>
         <span class="menu-text">Facilities</span>
-    </a>
-
-</div>
-
-
-        <a onclick="toggleMenu('couponMenu')">
-            <i class="fa-solid fa-ticket"></i>
-            <span class="menu-text">Coupons</span>
-        </a>
-
-        <div id="couponMenu" class="submenu d-none">
-
-    <a href="{% url 'coupon_list' %}">
-        <i class="fa-solid fa-ticket"></i>
-        <span class="menu-text">All Coupons</span>
-    </a>
-
-    <a href="{% url 'coupon_usage_list' %}">
-        <i class="fa-solid fa-chart-line"></i>
-        <span class="menu-text">Coupon Usage</span>
-    </a>
-
-</div>
-
-<!-- USERS MENU -->
-<a onclick="toggleMenu('userMenu')">
-    <i class="fa-solid fa-users"></i>
-    <span class="menu-text">Users</span>
+    </div>
 </a>
 
-<div id="userMenu" class="submenu d-none">
+</div>
 
-    <a href="{% url 'admin_user_list' %}">
-        <i class="fa-solid fa-user"></i>
+
+<!-- USERS -->
+<a onclick="toggleMenu('userMenu',this)"
+class="{% if request.resolver_match.url_name in 'admin_user_list admin_user_add' %}active-parent{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-users"></i>
+<span class="menu-text">Users</span>
+</div>
+<i class="fa-solid fa-chevron-down arrow"></i>
+</a>
+
+<div id="userMenu"
+class="submenu {% if request.resolver_match.url_name in 'admin_user_list admin_user_add' %}{% else %}d-none{% endif %}">
+
+<!-- ALL USERS -->
+<a href="{% url 'admin_user_list' %}"
+class="{% if request.resolver_match.url_name == 'admin_user_list' %}active{% endif %}">
+    <div class="menu-left">
+        <i class="fa-solid fa-users"></i>
         <span class="menu-text">All Users</span>
-    </a>
+    </div>
+</a>
 
-    <a href="{% url 'admin_user_add' %}">
+<!-- ADD USER -->
+<a href="{% url 'admin_user_add' %}"
+class="{% if request.resolver_match.url_name == 'admin_user_add' %}active{% endif %}">
+    <div class="menu-left">
         <i class="fa-solid fa-user-plus"></i>
         <span class="menu-text">Add User</span>
-    </a>
-
-</div>
-
-
-
-
-
-<!-- CONTACT MENU -->
-<a onclick="toggleMenu('contactMenu')">
-    <i class="fa-solid fa-address-book"></i>
-    <span class="menu-text">Contact</span>
+    </div>
 </a>
 
-<div id="contactMenu" class="submenu d-none">
-
-    <a href="{% url 'contact_info_list' %}">
-        <i class="fa-solid fa-phone"></i>
-        <span class="menu-text">Contact Info</span>
-    </a>
-
-    <a href="{% url 'contact_message_list' %}">
-        <i class="fa-solid fa-envelope"></i>
-        <span class="menu-text">Messages</span>
-    </a>
-
 </div>
 
 
+</aside>
 
-
-
-    </aside>
-
-    <!-- ================= CONTENT ================= -->
-    <main class="content">
-        {% block content %}{% endblock %}
-    </main>
+<!-- CONTENT -->
+<main class="content">
+{% block content %}{% endblock %}
+</main>
 
 </div>
 
-<!-- ================= JS ================= -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("collapsed");
+
+function toggleSidebar(){
+document.getElementById("sidebar").classList.toggle("collapsed");
 }
 
-function toggleMenu(id) {
-    document.getElementById(id).classList.toggle("d-none");
+function toggleMenu(menuId,el){
+
+const menu=document.getElementById(menuId);
+const arrow=el.querySelector(".arrow");
+
+const isOpen=!menu.classList.contains("d-none");
+
+document.querySelectorAll(".submenu").forEach(m=>m.classList.add("d-none"));
+document.querySelectorAll(".arrow").forEach(a=>a.classList.remove("rotate"));
+
+if(!isOpen){
+menu.classList.remove("d-none");
+arrow.classList.add("rotate");
+sessionStorage.setItem("openMenu",menuId);
+}else{
+sessionStorage.removeItem("openMenu");
 }
+
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+const openMenu=sessionStorage.getItem("openMenu");
+
+if(openMenu){
+
+const el=document.getElementById(openMenu);
+if(el){
+el.classList.remove("d-none");
+
+const parent=el.previousElementSibling;
+const arrow=parent.querySelector(".arrow");
+if(arrow) arrow.classList.add("rotate");
+}
+
+}
+
+});
+
 </script>
-<script>
+
+</body>
+</html>
+
+
+
+{% comment %} <script>
 const sidebar = document.getElementById("sidebar");
 
 function handleSidebar() {
@@ -358,10 +555,8 @@ function toggleSidebar() {
         sidebar.classList.toggle("collapsed");
     }
 }
-</script>
+</script> {% endcomment %}
 
-</body>
-</html>
 
 
 
@@ -420,430 +615,3 @@ function toggleSidebar() {
 
 
 
-
-
-
-{% comment %} <!DOCTYPE html>
-<html>
-<head>
-  <title>Super Admin</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-
-<body class="bg-gray-100">
-
-<!-- HEADER -->
-<header class="bg-white shadow px-6 py-4 flex justify-between items-center">
-
-  <!-- LEFT -->
-  <div class="flex items-center gap-4">
-    <button onclick="toggleSidebar()"
-            class="p-2 rounded hover:bg-gray-100">
-      <i data-lucide="menu"></i>
-    </button>
-
-    <h2 class="text-xl font-bold text-orange-600">
-      Super Admin
-    </h2>
-  </div>
-
-  <!-- RIGHT USER -->
-  <div class="relative">
-    <button onclick="toggleUserMenu()"
-            class="flex items-center gap-2">
-      <div class="w-9 h-9 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold">
-        {{ request.user.username|first|upper }}
-      </div>
-      <span class="font-medium">{{ request.user.username }}</span>
-      <i data-lucide="chevron-down" class="w-4 h-4"></i>
-    </button>
-
-    <!-- DROPDOWN -->
-    <div id="userMenu"
-         class="hidden absolute right-0 mt-3 bg-white w-40 rounded shadow z-50">
-
-      <a href="#"
-         class="block px-4 py-2 hover:bg-gray-100">
-         Profile
-      </a>
-
-      <a href="{% url 'superadmin-logout' %}"
-         class="block px-4 py-2 text-red-600 hover:bg-gray-100">
-         Logout
-      </a>
-
-    </div>
-  </div>
-
-</header>
-
-<!-- BODY -->
-<div class="flex">
-
-  <!-- SIDEBAR -->
-  <aside id="sidebar"
-         class="w-64 bg-white min-h-screen shadow transition-all duration-300">
-
-    <nav class="p-5 space-y-2">
-
-      <a href="{% url 'superadmin-dashboard' %}"
-         class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-        <i data-lucide="layout-dashboard"></i>
-        <span class="sidebar-text">Dashboard</span>
-      </a>
-
-      <a href="{% url 'superadmin-farmhouses' %}"
-         class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-        <i data-lucide="home"></i>
-        <span class="sidebar-text">Farmhouses</span>
-      </a>
-
-
-
-
-            <a href="{% url 'banner-list' %}"
-                class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-                <i data-lucide="home"></i>
-                <span class="sidebar-text">Banners</span>
-            </a>
-
-            <a href="{% url 'location-list' %}"
-         class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-        <i data-lucide="home"></i>
-        <span class="sidebar-text">Locations</span>
-      </a>
-
-
-            <a href="{% url 'amenity-list' %}"
-         class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-        <i data-lucide="home"></i>
-        <span class="sidebar-text">Amenities</span>
-      </a>
-
-<!-- BLOG DROPDOWN -->
-<div class="w-full">
-
-    <button
-        type="button"
-        id="blogToggle"
-        class="w-full flex items-center justify-between px-3 py-2 rounded hover:bg-orange-50">
-
-        <span class="flex items-center gap-3">
-            <i data-lucide="file-text"></i>
-            Blogs
-        </span>
-
-        <i id="blogArrow"
-           data-lucide="chevron-down"
-           class="transition-transform duration-200"></i>
-    </button>
-
-    <div id="blogMenu" class="hidden ml-6 mt-1 space-y-1">
-
-        <a href="{% url 'blog_lists' %}" data-blog-link
-           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-            <i data-lucide="list"></i>
-            All Blogs
-        </a>
-
-        <a href="{% url 'category_list' %}" data-blog-link
-           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-            <i data-lucide="folder"></i>
-            Categories
-        </a>
-
-        <a href="{% url 'tag_list' %}" data-blog-link
-           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-            <i data-lucide="tag"></i>
-            Tags
-        </a>
-
-        <a href="{% url 'comment_list' %}" data-blog-link
-           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-            <i data-lucide="message-circle"></i>
-            Comments
-        </a>
-
-    </div>
-</div>
-
-
-
-
-
-     
-         <div class="w-full">
-
-    <button
-        type="button"
-        id="cmsToggle"
-        class="w-full flex items-center justify-between px-3 py-2 rounded hover:bg-orange-50">
-
-        <span class="flex items-center gap-3">
-            <i data-lucide="layout-dashboard"></i>
-            CMS
-        </span>
-
-        <i id="cmsArrow"
-           data-lucide="chevron-down"
-           class="transition-transform duration-200"></i>
-    </button>
-
-    <div id="cmsMenu" class="hidden ml-6 mt-1 space-y-1">
-
-        <a href="{% url 'choose_services_list' %}" data-cms-link
-           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-            Choose Services
-        </a>
-
-        <a href="{% url 'our_facility_list' %}" data-cms-link
-           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-            Our Facility
-        </a>
-
-        <a href="{% url 'who_we_are_list' %}" data-cms-link
-           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-            Who We Are
-        </a>
-
-        <a href="{% url 'about_section_list' %}" data-cms-link
-           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-            About Section
-        </a>
-
-        <a href="{% url 'about_feature_list' %}" data-cms-link
-           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-            About Feature
-        </a>
-
-        <a href="{% url 'about_who_we_are_list' %}" data-cms-link
-           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-            Know Who We Are
-        </a>
-
-        <a href="{% url 'facilities_list' %}" data-cms-link
-           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-            Facilities
-        </a>
-
-    </div>
-</div>
-
-
-<!-- COUPON DROPDOWN -->
-<div class="w-full">
-
-    <!-- BUTTON -->
-    <button
-        type="button"
-        id="couponToggle"
-        class="w-full flex items-center justify-between px-3 py-2 rounded hover:bg-orange-50">
-
-        <span class="flex items-center gap-3">
-            <i data-lucide="ticket-percent"></i>
-            Coupons
-        </span>
-
-        <i id="couponArrow"
-           data-lucide="chevron-down"
-           class="transition-transform duration-200"></i>
-    </button>
-
-    <!-- DROPDOWN MENU -->
-    <div id="couponMenu" class="hidden ml-6 mt-1 space-y-1">
-
-        <a href="{% url 'coupon_list' %}" data-coupon-link
-           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-            <i data-lucide="list"></i>
-            All Coupons
-        </a>
-
-        <a href="{% url 'coupon_usage_list' %}" data-coupon-link
-           class="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-50">
-            <i data-lucide="activity"></i>
-            Coupon Usage
-        </a>
-
-    </div>
-</div>
-
-
-
-    </nav>
-  </aside>
-
-  <!-- CONTENT -->
-  <main class="flex-1 p-8">
-    {% block content %}{% endblock %}
-  </main>
-
-</div>
-
-<script>
-lucide.createIcons();
-
-/* SIDEBAR COLLAPSE */
-function toggleSidebar() {
-  const sidebar = document.getElementById("sidebar");
-  const texts = document.querySelectorAll(".sidebar-text");
-
-  if (sidebar.classList.contains("w-64")) {
-    sidebar.classList.remove("w-64");
-    sidebar.classList.add("w-20");
-
-    texts.forEach(t => t.style.display = "none");
-  } else {
-    sidebar.classList.remove("w-20");
-    sidebar.classList.add("w-64");
-
-    texts.forEach(t => t.style.display = "inline");
-  }
-}
-
-/* USER DROPDOWN */
-function toggleUserMenu() {
-  document.getElementById("userMenu").classList.toggle("hidden");
-}
-
-/* CLOSE ON OUTSIDE CLICK */
-document.addEventListener("click", function (e) {
-  const menu = document.getElementById("userMenu");
-  if (!e.target.closest(".relative")) {
-    menu.classList.add("hidden");
-  }
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const toggle = document.getElementById("cmsToggle");
-    const menu = document.getElementById("cmsMenu");
-    const arrow = document.getElementById("cmsArrow");
-
-    // restore state
-    if (sessionStorage.getItem("cmsOpen") === "true") {
-        menu.classList.remove("hidden");
-        arrow.classList.add("rotate-180");
-    }
-
-    // toggle click
-    toggle.addEventListener("click", function () {
-        const isOpen = !menu.classList.contains("hidden");
-
-        if (isOpen) {
-            menu.classList.add("hidden");
-            arrow.classList.remove("rotate-180");
-            sessionStorage.setItem("cmsOpen", "false");
-        } else {
-            menu.classList.remove("hidden");
-            arrow.classList.add("rotate-180");
-            sessionStorage.setItem("cmsOpen", "true");
-        }
-    });
-
-    // when submenu clicked → KEEP OPEN
-    document.querySelectorAll("[data-cms-link]").forEach(link => {
-        link.addEventListener("click", () => {
-            sessionStorage.setItem("cmsOpen", "true");
-        });
-    });
-
-});
-
-
-
-
-
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const couponToggle = document.getElementById("couponToggle");
-    const couponMenu = document.getElementById("couponMenu");
-    const couponArrow = document.getElementById("couponArrow");
-
-    // restore open state
-    if (sessionStorage.getItem("couponOpen") === "true") {
-        couponMenu.classList.remove("hidden");
-        couponArrow.classList.add("rotate-180");
-    }
-
-    // toggle dropdown
-    couponToggle.addEventListener("click", function () {
-        const isOpen = !couponMenu.classList.contains("hidden");
-
-        if (isOpen) {
-            couponMenu.classList.add("hidden");
-            couponArrow.classList.remove("rotate-180");
-            sessionStorage.setItem("couponOpen", "false");
-        } else {
-            couponMenu.classList.remove("hidden");
-            couponArrow.classList.add("rotate-180");
-            sessionStorage.setItem("couponOpen", "true");
-        }
-    });
-
-    // keep open when clicking submenu
-    document.querySelectorAll("[data-coupon-link]").forEach(link => {
-        link.addEventListener("click", () => {
-            sessionStorage.setItem("couponOpen", "true");
-        });
-    });
-
-});
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const blogToggle = document.getElementById("blogToggle");
-    const blogMenu = document.getElementById("blogMenu");
-    const blogArrow = document.getElementById("blogArrow");
-
-    // restore state
-    if (sessionStorage.getItem("blogOpen") === "true") {
-        blogMenu.classList.remove("hidden");
-        blogArrow.classList.add("rotate-180");
-    }
-
-    // toggle dropdown
-    blogToggle.addEventListener("click", function () {
-        const isOpen = !blogMenu.classList.contains("hidden");
-
-        if (isOpen) {
-            blogMenu.classList.add("hidden");
-            blogArrow.classList.remove("rotate-180");
-            sessionStorage.setItem("blogOpen", "false");
-        } else {
-            blogMenu.classList.remove("hidden");
-            blogArrow.classList.add("rotate-180");
-            sessionStorage.setItem("blogOpen", "true");
-        }
-    });
-
-    // keep open when submenu clicked
-    document.querySelectorAll("[data-blog-link]").forEach(link => {
-        link.addEventListener("click", () => {
-            sessionStorage.setItem("blogOpen", "true");
-        });
-    });
-
-});
-</script>
-
-</body>
-</html> {% endcomment %}

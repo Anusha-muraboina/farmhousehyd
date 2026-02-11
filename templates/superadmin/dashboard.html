@@ -3,158 +3,328 @@
 
 <div class="container-fluid">
 
-    <!-- PAGE TITLE -->
-    <div class="mb-4">
-        <h3 class="fw-bold mb-1">Dashboard</h3>
-        <p class="text-muted mb-0">Welcome back, {{ request.user.username }}</p>
+<!-- ================================================= -->
+<!-- HEADER -->
+<!-- ================================================= -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Revenue Dashboard</h3>
+        <small class="text-muted">Complete analytics overview</small>
     </div>
 
-    <!-- STAT CARDS -->
-    <div class="row g-4 mb-4">
+    <form method="get">
+        <select name="farmhouse"
+                onchange="this.form.submit()"
+                class="form-select shadow-sm"
+                style="width:250px;">
+            <option value="">All Farmhouses</option>
+            {% for f in farmhouses %}
+            <option value="{{ f.id }}"
+                {% if selected_farmhouse and selected_farmhouse.id == f.id %}
+                    selected
+                {% endif %}>
+                {{ f.title }}
+            </option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
 
-        <!-- USERS -->
-        <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-body d-flex align-items-center">
-                    <div class="me-3 text-primary fs-3">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">Users</h6>
-                        <h4 class="fw-bold mb-0">{{ total_users }}</h4>
-                    </div>
-                </div>
-            </div>
+
+<!-- ================================================= -->
+<!-- TOP FINANCE CARDS -->
+<!-- ================================================= -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-lg-3">
+        <div class="card stat-card">
+            <small>Gross Sales</small>
+            <h3 class="fw-bold text-success mt-2">₹ {{ gross_sales }}</h3>
         </div>
-
-        <!-- FARMHOUSES -->
-        <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-body d-flex align-items-center">
-                    <div class="me-3 text-success fs-3">
-                        <i class="fa-solid fa-house"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">Farmhouses</h6>
-                        <h4 class="fw-bold mb-0">{{ total_farmhouses }}</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- BOOKINGS -->
-        <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-body d-flex align-items-center">
-                    <div class="me-3 text-warning fs-3">
-                        <i class="fa-solid fa-calendar-check"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">Bookings</h6>
-                        <h4 class="fw-bold mb-0">{{ total_bookings }}</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- CONTACT MESSAGES -->
-        <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-body d-flex align-items-center">
-                    <div class="me-3 text-danger fs-3">
-                        <i class="fa-solid fa-envelope"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">Messages</h6>
-                        <h4 class="fw-bold mb-0">{{ total_messages }}</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <!-- RECENT ACTIVITY -->
-    <div class="row g-4">
-
-        <!-- RECENT USERS -->
-        <div class="col-lg-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white fw-bold">
-                    Recent Users
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-3">Name</th>
-                                <th>Email</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for u in recent_users %}
-                            <tr>
-                                <td class="ps-3">{{ u.username }}</td>
-                                <td>{{ u.email }}</td>
-                                <td>
-                                    {% if u.is_active %}
-                                        <span class="badge bg-success">Active</span>
-                                    {% else %}
-                                        <span class="badge bg-danger">Inactive</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="3" class="text-center text-muted py-3">
-                                    No users found
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <div class="col-lg-3">
+        <div class="card stat-card">
+            <small>Net Revenue</small>
+            <h3 class="fw-bold text-primary mt-2">₹ {{ net_revenue }}</h3>
         </div>
+    </div>
 
-        <!-- RECENT MESSAGES -->
-        <div class="col-lg-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white fw-bold">
-                    Recent Contact Messages
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-3">Name</th>
-                                <th>Phone</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for m in recent_messages %}
-                            <tr>
-                                <td class="ps-3">{{ m.name }}</td>
-                                <td>{{ m.phone }}</td>
-                                <td>{{ m.created_at|date:"d M Y" }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="3" class="text-center text-muted py-3">
-                                    No messages found
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <div class="col-lg-3">
+        <div class="card stat-card">
+            <small>Pending Revenue</small>
+            <h3 class="fw-bold text-danger mt-2">₹ {{ overall_pending }}</h3>
         </div>
+    </div>
 
+    <div class="col-lg-3">
+        <div class="card stat-card">
+            <small>Total Bookings</small>
+            <h3 class="fw-bold mt-2">{{ booking_count }}</h3>
+        </div>
     </div>
 
 </div>
+
+
+<!-- ================================================= -->
+<!-- FARMHOUSE METRICS -->
+<!-- ================================================= -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-lg-3">
+        <div class="card metric-card">
+            <small>Total Revenue</small>
+            <h4 class="fw-bold mt-2">₹ {{ fh_total }}</h4>
+        </div>
+    </div>
+
+    <div class="col-lg-3">
+        <div class="card metric-card">
+            <small>Paid</small>
+            <h4 class="fw-bold text-success mt-2">₹ {{ fh_paid }}</h4>
+        </div>
+    </div>
+
+    <div class="col-lg-3">
+        <div class="card metric-card">
+            <small>Pending</small>
+            <h4 class="fw-bold text-danger mt-2">₹ {{ fh_pending }}</h4>
+        </div>
+    </div>
+
+    <div class="col-lg-3">
+        <div class="card metric-card">
+            <small>Monthly</small>
+            <h4 class="fw-bold mt-2">₹ {{ fh_month }}</h4>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- GRAPHS SECTION -->
+<!-- ================================================= -->
+
+<div class="row g-4">
+
+    <!-- Monthly Revenue -->
+    <div class="col-lg-8">
+        <div class="card p-4 shadow-sm border-0 rounded-4">
+            <h5 class="fw-bold mb-3">Monthly Revenue Trend</h5>
+            <canvas id="revenueChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Booking Status -->
+    <div class="col-lg-4">
+        <div class="card p-4 shadow-sm border-0 rounded-4">
+            <h5 class="fw-bold mb-3">Booking Status</h5>
+            <canvas id="bookingStatusChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Top Farmhouses -->
+<div class="card p-4 shadow-sm border-0 rounded-4 mt-4">
+    <h5 class="fw-bold mb-3">Top Performing Farmhouses</h5>
+    <canvas id="farmhouseChart" height="90"></canvas>
+</div>
+
+
+<!-- ================================================= -->
+<!-- RECENT BOOKINGS -->
+<!-- ================================================= -->
+
+<div class="card border-0 shadow-sm rounded-4 p-4 mt-4">
+
+    <h5 class="fw-bold mb-3">Recent Bookings</h5>
+
+    <div class="table-responsive">
+        <table class="table align-middle">
+
+            <thead class="table-light">
+                <tr>
+                    <th>Guest</th>
+                    <th>Farmhouse</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Paymnet status</th>
+                    <th>Paymnet Method</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for b in recent_bookings %}
+                <tr>
+                    <td>{{ b.guest_name }}</td>
+                    <td>{{ b.farmhouse.title }}</td>
+                    <td class="fw-bold text-success">₹ {{ b.total_amount }}</td>
+                    {% comment %} <td>
+                        <span class="badge bg-success">
+                            {{ b.status }}
+                        </span>
+                    </td> {% endcomment %}
+                    <!-- ORDER STATUS -->
+                    <td>
+                        {% if b.status == "confirmed" %}
+                            <span class="badge bg-success">Confirmed</span>
+
+                        {% elif b.status == "pending" %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+
+                        {% elif b.status == "cancelled" %}
+                            <span class="badge bg-danger">Cancelled</span>
+
+                        {% else %}
+                            <span class="badge bg-secondary">
+                                {{ b.status }}
+                            </span>
+                        {% endif %}
+                    </td>
+                      <!-- PAYMENT STATUS -->
+                    <td>
+                        {% if b.payment_status == "paid" %}
+                            <span class="badge bg-success">Paid</span>
+
+                        {% elif b.payment_status == "partial" %}
+                            <span class="badge bg-info text-dark">
+                                Partial
+                            </span>
+
+                        {% else %}
+                            <span class="badge bg-danger">
+                                Pending
+                            </span>
+                        {% endif %}
+                    </td>
+
+
+                    <!-- PAYMENT METHOD -->
+                    <td>
+                        {% if b.payment_method %}
+                            <span class="badge bg-light text-dark border">
+                                {{ b.payment_method|title }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">
+                                —
+                            </span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted">
+                        No bookings yet
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- CHART JS -->
+<!-- ================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+// Monthly Revenue
+new Chart(document.getElementById('revenueChart'), {
+    type: 'line',
+    data: {
+        labels: {{ months|safe }},
+        datasets: [{
+            data: {{ revenues|safe }},
+            borderColor: "#ff7a00",
+            backgroundColor: "rgba(255,122,0,.15)",
+            fill: true,
+            tension: .4
+        }]
+    },
+    options: {
+        plugins:{legend:{display:false}},
+        scales:{y:{beginAtZero:true}}
+    }
+});
+
+
+// Booking Status
+new Chart(document.getElementById('bookingStatusChart'), {
+    type: 'doughnut',
+    data: {
+        labels: {{ booking_status_labels|safe }},
+        datasets: [{
+            data: {{ booking_status_counts|safe }},
+            backgroundColor: ["#22c55e","#f59e0b","#ef4444","#3b82f6"]
+        }]
+    },
+    options:{
+        cutout:"65%",
+        plugins:{legend:{position:"bottom"}}
+    }
+});
+
+
+// Top Farmhouses
+new Chart(document.getElementById('farmhouseChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ fh_names|safe }},
+        datasets: [{
+            data: {{ fh_totals|safe }},
+            backgroundColor:"#3b82f6",
+            borderRadius:6
+        }]
+    },
+    options:{
+        plugins:{legend:{display:false}},
+        scales:{y:{beginAtZero:true}}
+    }
+});
+
+</script>
+
+
+<!-- ================================================= -->
+<!-- STYLES -->
+<!-- ================================================= -->
+
+<style>
+
+.stat-card{
+    padding:22px;
+    border-radius:18px;
+    box-shadow:0 6px 20px rgba(0,0,0,.05);
+}
+
+.metric-card{
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 6px 18px rgba(0,0,0,.04);
+}
+
+.card{
+    border-radius:18px;
+}
+
+</style>
 
 {% endblock %}

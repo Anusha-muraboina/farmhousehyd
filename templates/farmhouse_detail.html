@@ -139,6 +139,7 @@ await axios.get(`/api/farmhouses/${slug}/`);
 farmhouse=res.data.farmhouse;
 
 buildUI();
+initPaymentSelection();
 if(window.lucide){
     lucide.createIcons();
 }
@@ -152,7 +153,19 @@ app.style.display="block";
 
 //////////////////////////////////////////////////
 
+
+
+
+
 function buildUI(){
+    
+const policy = farmhouse.payment_policy;
+
+// default behaviour if policy not created
+const allowPayAtFarmhouse = policy ? policy.allow_pay_at_farmhouse : true;
+const allowPartialPayment = policy ? policy.allow_partial_payment : true;
+const allowFullPayment = true; // ALWAYS TRUE
+
 
 app.innerHTML=`
 
@@ -436,7 +449,7 @@ Next →
 class="acc-body hidden">
 
     <!-- PAY AT FARMHOUSE -->
-    <label class="flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-400 transition">
+    {% comment %} <label class="flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-400 transition">
 
         <div class="flex items-center gap-3">
             <input type="radio"
@@ -458,7 +471,7 @@ class="acc-body hidden">
 
         <i data-lucide="home" class="w-6 h-6 text-orange-500"></i>
 
-    </label>
+    </label> {% endcomment %}
 
 <!-- <label>
 <input type="radio"
@@ -468,10 +481,10 @@ checked onchange="updatePayment()">
 Pay at Farmhouse
 </label> -->
 
-<br><br>
+{% comment %} <br><br> {% endcomment %}
 
     <!-- PARTIAL -->
-    <label class="flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-400 transition">
+    {% comment %} <label class="flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-400 transition">
 
         <div class="flex items-center gap-3">
             <input type="radio"
@@ -492,7 +505,197 @@ Pay at Farmhouse
 
         <i data-lucide="credit-card" class="w-6 h-6 text-orange-500"></i>
 
-    </label>
+    </label> {% endcomment %}
+
+
+
+
+
+
+
+
+
+${allowPayAtFarmhouse ? `
+<label class="payment-option flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-400 transition">
+
+    <!-- LEFT SIDE -->
+    <div class="flex items-center gap-3">
+        <input type="radio" name="payment" value="farmhouse"
+               class="accent-orange-500 w-5 h-5 payment-radio">
+
+        <div>
+            <p class="font-semibold">Pay at Farmhouse</p>
+
+            <p class="text-sm text-gray-500">
+                Reserve now, pay during check-in
+            </p>
+        </div>
+    </div>
+
+
+    <!-- RIGHT SIDE TOOLTIP -->
+    <div class="relative group cursor-pointer">
+
+        <!-- Warning Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             class="w-5 h-5 text-orange-500"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke="currentColor">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01M10.29 3.86l-7.1 12.28A2 2 0 005 19h14a2 2 0 001.81-2.86l-7.1-12.28a2 2 0 00-3.42 0z"/>
+        </svg>
+
+        <!-- Tooltip -->
+        <div class="absolute right-0 bottom-8
+                    opacity-0 group-hover:opacity-100
+                    transition duration-200
+                    pointer-events-none
+                    bg-black text-white text-xs
+                    px-3 py-2 rounded-lg
+                    shadow-lg w-64 z-50">
+
+             Choosing <b>Pay at Farmhouse</b> does not guarantee instant confirmation.  
+            If another guest completes payment for the same dates, availability may change.
+
+            <!-- Arrow -->
+            <div class="absolute top-full right-3
+                        border-4 border-transparent
+                        border-t-black"></div>
+        </div>
+
+    </div>
+
+</label>
+
+<br>
+` : ``}
+
+
+
+
+    {% comment %} ${allowPayAtFarmhouse ? `
+<label class="payment-option flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-400 transition">
+    <div class="flex items-center gap-3">
+        <input type="radio" name="payment" value="farmhouse"
+               class="accent-orange-500 w-5 h-5 payment-radio">
+        <div>
+            <p class="font-semibold">Pay at Farmhouse</p>
+            <p class="text-sm text-gray-500">
+                Reserve now, pay during check-in
+            </p>
+
+        </div>
+    </div>
+</label>
+            <p class="text-md  text-red-500">
+               Choosing Pay at Farmhouse does not guarantee instant confirmation.
+If another guest completes payment for the same dates, availability may change.
+            </p>
+<br>
+` : ``} {% endcomment %}
+
+
+
+
+
+${allowPartialPayment ? `
+<label class="payment-option flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-400 transition">
+
+    <!-- LEFT CONTENT -->
+    <div class="flex items-center gap-3">
+        <input type="radio" name="payment" value="partial"
+               class="accent-orange-500 w-5 h-5 payment-radio">
+
+        <div>
+            <p class="font-semibold">Pay 30% Now</p>
+
+            <p class="text-sm text-gray-500">
+                Confirm instantly with partial payment
+            </p>
+        </div>
+    </div>
+
+
+    <!-- RIGHT SIDE ICON + TOOLTIP -->
+    <div class="relative group cursor-pointer">
+
+        <!-- Info Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             class="w-5 h-5 text-green-600"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke="currentColor">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"/>
+        </svg>
+
+        <!-- Tooltip -->
+        <div class="absolute right-0 bottom-8
+                    opacity-0 group-hover:opacity-100
+                    transition duration-200
+                    pointer-events-none
+                    bg-black text-white text-xs
+                    px-3 py-2 rounded-lg
+                    shadow-lg w-64 z-50">
+
+             Pay 30% now and receive cashback upto 3000Rs/- 
+            {% comment %} <span class="font-semibold">Lakshminarayana Pearls</span>. {% endcomment %}
+
+            <!-- Arrow -->
+            <div class="absolute top-full right-3
+                        border-4 border-transparent
+                        border-t-black"></div>
+        </div>
+
+    </div>
+
+</label>
+
+<br>
+` : ``}
+
+
+
+{% comment %} 
+${allowPartialPayment ? `
+<label class="payment-option flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-400 transition">
+    <div class="flex items-center gap-3">
+        <input type="radio" name="payment" value="partial"
+               class="accent-orange-500 w-5 h-5 payment-radio">
+        <div>
+            <p class="font-semibold">Pay 30% Now</p>
+            <p class="text-sm text-gray-500">
+                Confirm instantly with partial payment
+            </p>
+        </div>
+    </div>
+</label>
+
+
+         <p class="text-md text-green-500">
+        Choose <b>Pay 30% Now</b> and receive cashback from 
+        <a href="https://laxminarayanpearls.com" class="underline font-semibold hover:text-orange-900">Lakshminarayana Pearls</a>.
+        </p>
+
+<br>
+` : ``} {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -504,11 +707,10 @@ onchange="updatePayment()">
 Pay 30%
 </label> -->
 
-<br><br>
-
+{% comment %} <br><br> {% endcomment %}
 
     <!-- FULL -->
-    <label class="flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-300 transition">
+    {% comment %} <label class="flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-300 transition">
 
         <div class="flex items-center gap-3">
             <input type="radio"
@@ -530,17 +732,66 @@ Pay 30%
         <i data-lucide="badge-check" class="w-6 h-6 text-orange-500"></i>
 
     </label>
+         <p class="text-md text-green-500">
+         Choose <b>Pay Full</b> and receive cashback from 
+        <a href="https://laxminarayanpearls.com" class="underline font-semibold hover:text-orange-900">Lakshminarayana Pearls</a>.
+        </p> {% endcomment %}
 
-<!-- <label>
-<input type="radio"
-name="payment"
-value="full"
-onchange="updatePayment()">
-Pay Full
-</label> -->
+<label class="flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-300 transition">
+
+    <!-- LEFT SIDE -->
+    <div class="flex items-center gap-3">
+        <input type="radio"
+               name="payment"
+               value="full"
+               onchange="updatePayment()"
+               class="accent-orange-500 w-5 h-5">
+
+        <div>
+            <p class="font-semibold">
+                Pay Full Amount
+            </p>
+
+            <p class="text-sm text-gray-500">
+                No pending payments at check-in
+            </p>
+        </div>
+    </div>
+
+
+    <!-- RIGHT ICON + TOOLTIP -->
+    <div class="relative group cursor-pointer">
+
+        <!-- Icon -->
+        <i data-lucide="badge-check"
+           class="w-6 h-6 text-green-600"></i>
+
+        <!-- Tooltip -->
+        <div class="absolute right-0 bottom-9
+                    opacity-0 group-hover:opacity-100
+                    transition duration-200
+                    pointer-events-none
+                    bg-black text-white text-xs
+                    px-3 py-2 rounded-lg
+                    shadow-xl w-64 z-50">
+
+            Choose <b>Pay Full</b> and receive cashback upto 3000Rs/-  
+            {% comment %} <span class="font-semibold">Lakshminarayana Pearls</span>. {% endcomment %}
+
+            <!-- Arrow -->
+            <div class="absolute top-full right-4
+                        border-4 border-transparent
+                        border-t-black"></div>
+        </div>
+
+    </div>
+
+</label>
+
 
 <div id="paymentBox"
 class="price-box"></div>
+
 
 
 
@@ -763,6 +1014,22 @@ ${farmhouse.amenities.map(a => `
 
 
 
+function initPaymentSelection(){
+
+const radios = document.querySelectorAll(".payment-radio");
+
+if(!radios.length) return;
+
+// auto select first available
+radios[0].checked = true;
+
+// attach listeners
+radios.forEach(radio=>{
+radio.addEventListener("change", updatePayment);
+});
+
+updatePayment();
+}
 
 
 
@@ -1125,13 +1392,55 @@ console.log("Subtotal:", subTotal);
 console.log("Final:", finalTotal);
 
 // ⭐ ADD THIS (you forgot earlier)
-<!-- fillReview(); -->
+fillReview();
 updatePayment();
 }
 
 //////////////////////////////////////////////////
 
+
+
 function fillReview(){
+
+const reviewBox = document.getElementById("reviewBox");
+if(!reviewBox) return;
+
+reviewBox.innerHTML = `
+<div class="space-y-2 text-sm">
+
+<p><b>Stay Details</b></p>
+
+<p><b>Check-in:</b> ${check_in.value}</p>
+<p><b>Check-out:</b> ${check_out.value}</p>
+
+<hr>
+
+<p><b>Guests:</b> ${guest_count.value}</p>
+<p><b>Extra Guests:</b> ${extra_guest_count.value}</p>
+
+<hr>
+
+<p><b>Guest Info</b></p>
+<p>${guest_name.value}</p>
+<p>${guest_phone.value}</p>
+<p>${guest_email.value}</p>
+
+<hr>
+
+<p>Subtotal: ₹${Number(subTotal).toLocaleString()}</p>
+<p>Coupon: -₹${Number(couponDiscount).toLocaleString()}</p>
+
+<p class="text-lg font-bold mt-2">
+Total: ₹${Number(finalTotal).toLocaleString()}
+</p>
+
+</div>
+`;
+}
+
+
+
+{% comment %} function fillReview(){
 
 calculateTotal();
 
@@ -1155,7 +1464,7 @@ Coupon: -₹${couponDiscount}<br>
 
 <h3>Total: ₹${finalTotal}</h3>
 `;
-}
+} {% endcomment %}
 
 //////////////////////////////////////////////////
 

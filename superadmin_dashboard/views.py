@@ -56,19 +56,223 @@ from user.models import User
 from farmhouse.models import Farmhouse
 from contact.models import ContactMessage
 
+# @login_required
+# def superadmin_dashboard(request):
+#     context = {
+#         "total_users": User.objects.count(),
+#         "total_farmhouses": Farmhouse.objects.count(),
+#         "total_bookings": 0,  # add later
+#         "total_messages": ContactMessage.objects.count(),
+
+#         "recent_users": User.objects.order_by("-date_joined")[:5],
+#         "recent_messages": ContactMessage.objects.order_by("-created_at")[:5],
+#     }
+
+#     return render(request, "superadmin/dashboard.html", context)
+
+
+
+
+from django.db.models import Sum
+from django.utils import timezone
+from datetime import timedelta
+from booking.models import Booking
+from farmhouse.models import Farmhouse
+
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, Count, F, DecimalField, ExpressionWrapper
+from django.db.models.functions import TruncMonth
+from django.utils import timezone
+from datetime import timedelta
+import json
+
+from booking.models import Booking
+from farmhouse.models import Farmhouse
+
+
 @login_required
 def superadmin_dashboard(request):
-    context = {
-        "total_users": User.objects.count(),
-        "total_farmhouses": Farmhouse.objects.count(),
-        "total_bookings": 0,  # add later
-        "total_messages": ContactMessage.objects.count(),
 
-        "recent_users": User.objects.order_by("-date_joined")[:5],
-        "recent_messages": ContactMessage.objects.order_by("-created_at")[:5],
+    #########################################
+    # DATE SETUP
+    #########################################
+
+    today = timezone.now().date()
+    week_ago = today - timedelta(days=7)
+    month_ago = today - timedelta(days=30)
+
+    #########################################
+    # BASE QUERYSETS (OPTIMIZED)
+    #########################################
+
+    bookings = Booking.objects.select_related("farmhouse")
+
+    paid_bookings = bookings.filter(payment_status="paid")
+    pending_bookings = bookings.filter(payment_status="pending")
+
+    #########################################
+    # PLATFORM METRICS
+    #########################################
+
+    gross_sales = paid_bookings.aggregate(
+        total=Sum("total_amount")
+    )["total"] or 0
+
+
+    commission_expr = ExpressionWrapper(
+        F("total_amount") *
+        F("farmhouse__commission_percentage") / 100,
+        output_field=DecimalField(max_digits=12, decimal_places=2)
+    )
+
+    net_revenue = paid_bookings.annotate(
+        commission=commission_expr
+    ).aggregate(
+        total=Sum("commission")
+    )["total"] or 0
+
+
+    overall_pending = pending_bookings.aggregate(
+        total=Sum("total_amount")
+    )["total"] or 0
+
+
+    #########################################
+    # FARMHOUSE FILTER
+    #########################################
+
+    farmhouse_id = request.GET.get("farmhouse")
+    farmhouses = Farmhouse.objects.all()
+
+    selected_farmhouse = None
+
+    if farmhouse_id:
+        bookings = bookings.filter(farmhouse_id=farmhouse_id)
+        paid_bookings = paid_bookings.filter(farmhouse_id=farmhouse_id)
+        pending_bookings = pending_bookings.filter(farmhouse_id=farmhouse_id)
+
+        selected_farmhouse = Farmhouse.objects.filter(
+            id=farmhouse_id
+        ).first()
+
+
+    #########################################
+    # FARMHOUSE METRICS
+    #########################################
+
+    fh_total = bookings.aggregate(
+        total=Sum("total_amount")
+    )["total"] or 0
+
+    fh_paid = paid_bookings.aggregate(
+        total=Sum("total_amount")
+    )["total"] or 0
+
+    fh_pending = pending_bookings.aggregate(
+        total=Sum("total_amount")
+    )["total"] or 0
+
+
+    fh_today = paid_bookings.filter(
+        created_at__date=today
+    ).aggregate(total=Sum("total_amount"))["total"] or 0
+
+    fh_week = paid_bookings.filter(
+        created_at__date__gte=week_ago
+    ).aggregate(total=Sum("total_amount"))["total"] or 0
+
+    fh_month = paid_bookings.filter(
+        created_at__date__gte=month_ago
+    ).aggregate(total=Sum("total_amount"))["total"] or 0
+
+
+    booking_count = bookings.count()
+
+
+    #########################################
+    # RECENT BOOKINGS
+    #########################################
+
+    recent_bookings = bookings.order_by("-created_at")[:5]
+
+
+    #########################################
+    # ⭐⭐⭐ GRAPH SECTION ⭐⭐⭐
+    #########################################
+
+    # Monthly Revenue
+    monthly_data = (
+        paid_bookings
+        .annotate(month=TruncMonth("created_at"))
+        .values("month")
+        .annotate(total=Sum("total_amount"))
+        .order_by("month")
+    )
+
+    months = [m["month"].strftime("%b") for m in monthly_data]
+    revenues = [float(m["total"]) for m in monthly_data]
+
+
+    # Booking Status
+    booking_status = (
+        bookings
+        .values("status")
+        .annotate(count=Count("id"))
+    )
+
+    booking_status_labels = [b["status"].title() for b in booking_status]
+    booking_status_counts = [b["count"] for b in booking_status]
+
+
+    # Top Farmhouses
+    farmhouse_data = (
+        paid_bookings
+        .values("farmhouse__title")
+        .annotate(total=Sum("total_amount"))
+        .order_by("-total")[:5]
+    )
+
+    fh_names = [f["farmhouse__title"] for f in farmhouse_data]
+    fh_totals = [float(f["total"]) for f in farmhouse_data]
+
+
+    #########################################
+    # CONTEXT
+    #########################################
+
+    context = {
+
+        "farmhouses": farmhouses,
+        "selected_farmhouse": selected_farmhouse,
+
+        # MONEY
+        "gross_sales": gross_sales,
+        "net_revenue": net_revenue,
+        "overall_pending": overall_pending,
+
+        # FARMHOUSE
+        "fh_total": fh_total,
+        "fh_paid": fh_paid,
+        "fh_pending": fh_pending,
+        "fh_today": fh_today,
+        "fh_week": fh_week,
+        "fh_month": fh_month,
+        "booking_count": booking_count,
+        "recent_bookings": recent_bookings,
+
+        # GRAPHS
+        "months": json.dumps(months),
+        "revenues": json.dumps(revenues),
+
+        "booking_status_labels": json.dumps(booking_status_labels),
+        "booking_status_counts": json.dumps(booking_status_counts),
+
+        "fh_names": json.dumps(fh_names),
+        "fh_totals": json.dumps(fh_totals),
     }
 
     return render(request, "superadmin/dashboard.html", context)
+
 
 # @superadmin_required
 # def all_farmhouses(request):
@@ -94,7 +298,7 @@ def superadmin_required(user):
 # LIST
 # ===============================
 @login_required
-@user_passes_test(superadmin_required)
+# @user_passes_test(superadmin_required)
 def farmhouse_list(request):
         # ✅ permission check
     if not is_farmhouse_staff(request.user) and not request.user.is_superuser:
@@ -151,7 +355,7 @@ def farmhouse_add(request):
         "pricing_form": pricing_form
     })
 @login_required
-@user_passes_test(superadmin_required)
+# @user_passes_test(superadmin_required)
 def farmhouse_edit(request, id):
 
     farmhouse = get_object_or_404(Farmhouse, id=id)
@@ -191,7 +395,7 @@ def farmhouse_edit(request, id):
 # DELETE
 # ===============================
 @login_required
-@user_passes_test(superadmin_required)
+# @user_passes_test(superadmin_required)
 def farmhouse_delete(request, id):
     farmhouse = get_object_or_404(Farmhouse, id=id)
     farmhouse.delete()
@@ -444,67 +648,110 @@ def blog_list(request):
     })
 
 
-@login_required
-@user_passes_test(superadmin_required)
+# @login_required
+# @user_passes_test(superadmin_required)
+# def blog_add(request):
+#     categories = BlogCategory.objects.filter(is_active=True)
+#     tags = BlogTag.objects.all()
+
+#     if request.method == "POST":
+#         blog = Blog.objects.create(
+#             title=request.POST.get("title"),
+#             category_id=request.POST.get("category"),
+#             short_description=request.POST.get("short_description"),
+#             content=request.POST.get("content"),
+#             read_time=request.POST.get("read_time"),
+#             is_published=True if request.POST.get("is_published") else False,
+#         )
+
+#         if request.FILES.get("image"):
+#             blog.image = request.FILES.get("image")
+#             blog.save()
+
+#         tag_ids = request.POST.getlist("tags")
+#         blog.tags.set(tag_ids)
+
+#         messages.success(request, "Blog created successfully")
+#         return redirect("blog_list")
+
+#     return render(request, "superadmin/blog/blog_form.html", {
+#         "categories": categories,
+#         "tags": tags
+#     })
+
+
+# @login_required
+# @user_passes_test(superadmin_required)
+# def blog_edit(request, pk):
+#     blog = get_object_or_404(Blog, pk=pk)
+#     categories = BlogCategory.objects.filter(is_active=True)
+#     tags = BlogTag.objects.all()
+
+#     if request.method == "POST":
+#         blog.title = request.POST.get("title")
+#         blog.category_id = request.POST.get("category")
+#         blog.short_description = request.POST.get("short_description")
+#         blog.content = request.POST.get("content")
+#         blog.read_time = request.POST.get("read_time")
+#         blog.is_published = True if request.POST.get("is_published") else False
+
+#         if request.FILES.get("image"):
+#             blog.image = request.FILES.get("image")
+
+#         blog.save()
+#         blog.tags.set(request.POST.getlist("tags"))
+
+#         messages.success(request, "Blog updated successfully")
+#         return redirect("blog_list")
+
+#     return render(request, "superadmin/blog/blog_form.html", {
+#         "blog": blog,
+#         "categories": categories,
+#         "tags": tags
+#     })
+
 def blog_add(request):
+
     categories = BlogCategory.objects.filter(is_active=True)
     tags = BlogTag.objects.all()
 
     if request.method == "POST":
-        blog = Blog.objects.create(
-            title=request.POST.get("title"),
-            category_id=request.POST.get("category"),
-            short_description=request.POST.get("short_description"),
-            content=request.POST.get("content"),
-            read_time=request.POST.get("read_time"),
-            is_published=True if request.POST.get("is_published") else False,
-        )
+        form = BlogForm(request.POST, request.FILES)
 
-        if request.FILES.get("image"):
-            blog.image = request.FILES.get("image")
-            blog.save()
-
-        tag_ids = request.POST.getlist("tags")
-        blog.tags.set(tag_ids)
-
-        messages.success(request, "Blog created successfully")
-        return redirect("blog_list")
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Blog created successfully")
+            return redirect("blog_list")
+    else:
+        form = BlogForm()
 
     return render(request, "superadmin/blog/blog_form.html", {
+        "form": form,
         "categories": categories,
         "tags": tags
     })
-
-
-@login_required
-@user_passes_test(superadmin_required)
 def blog_edit(request, pk):
+
     blog = get_object_or_404(Blog, pk=pk)
     categories = BlogCategory.objects.filter(is_active=True)
     tags = BlogTag.objects.all()
 
     if request.method == "POST":
-        blog.title = request.POST.get("title")
-        blog.category_id = request.POST.get("category")
-        blog.short_description = request.POST.get("short_description")
-        blog.content = request.POST.get("content")
-        blog.read_time = request.POST.get("read_time")
-        blog.is_published = True if request.POST.get("is_published") else False
+        form = BlogForm(request.POST, request.FILES, instance=blog)
 
-        if request.FILES.get("image"):
-            blog.image = request.FILES.get("image")
-
-        blog.save()
-        blog.tags.set(request.POST.getlist("tags"))
-
-        messages.success(request, "Blog updated successfully")
-        return redirect("blog_list")
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Blog updated successfully")
+            return redirect("blog_list")
+    else:
+        form = BlogForm(instance=blog)
 
     return render(request, "superadmin/blog/blog_form.html", {
-        "blog": blog,
+        "form": form,
         "categories": categories,
         "tags": tags
     })
+
 
 
 @login_required
@@ -962,3 +1209,558 @@ def contact_message_delete(request, id):
     msg = get_object_or_404(ContactMessage, id=id)
     msg.delete()
     return redirect("contact_message_list")
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db import transaction
+from django.contrib import messages
+from django.core.paginator import Paginator
+
+from booking.models import Booking
+from superadmin_dashboard.forms import AdminBookingForm
+from booking.models import Booking
+from farmhouse.models import Farmhouse
+from django.core.paginator import Paginator
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render
+from django.db.models import Q
+
+
+@staff_member_required
+def admin_booking_list(request):
+
+    bookings = Booking.objects.select_related(
+        "farmhouse",
+        "user"
+    ).order_by("-created_at")
+
+    ###################################
+    # SEARCH
+    ###################################
+
+    search = request.GET.get("search")
+
+    if search:
+        bookings = bookings.filter(
+            Q(guest_name__icontains=search) |
+            Q(guest_email__icontains=search) |
+            Q(booking_id__icontains=search)
+        )
+
+    ###################################
+    # STATUS FILTER
+    ###################################
+
+    status = request.GET.get("status")
+
+    if status:
+        bookings = bookings.filter(status=status)
+
+    ###################################
+    # FARMHOUSE FILTER ⭐⭐⭐
+    ###################################
+
+    farmhouse_id = request.GET.get("farmhouse")
+
+    if farmhouse_id:
+        bookings = bookings.filter(farmhouse_id=farmhouse_id)
+
+    ###################################
+    # PAGINATION ⭐⭐⭐
+    ###################################
+
+    paginator = Paginator(bookings, 10)
+    page = request.GET.get("page")
+    bookings = paginator.get_page(page)
+
+    ###################################
+    # SEND FARMHOUSES TO TEMPLATE
+    ###################################
+
+    farmhouses = Farmhouse.objects.all()
+
+    return render(
+        request,
+        "superadmin/booking/list.html",
+        {
+            "bookings": bookings,
+            "farmhouses": farmhouses,
+        }
+    )
+
+    
+    
+@staff_member_required
+def admin_booking_create(request):
+
+    if request.method == "POST":
+
+        form = AdminBookingForm(request.POST)
+
+        if form.is_valid():
+
+            booking = form.save()
+
+            # send email
+            transaction.on_commit(
+                lambda: booking.send_booking_email(
+                    "pending",
+                    request
+                )
+            )
+
+            messages.success(
+                request,
+                "Booking created successfully!"
+            )
+
+            return redirect("admin-bookings")
+
+    else:
+        form = AdminBookingForm()
+
+    return render(
+        request,
+        "superadmin/booking/form.html",
+        {"form": form}
+    )
+    
+    
+    
+    
+# @staff_member_required
+# def admin_booking_detail(request, pk):
+
+#     booking = get_object_or_404(
+#         Booking.objects.select_related(
+#             "farmhouse",
+#             "user"
+#         ),
+#         pk=pk
+#     )
+
+#     return render(
+#         request,
+#         "superadmin/booking/detail.html",
+#         {"booking": booking}
+#     )
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.db import transaction
+
+
+# @staff_member_required
+# def admin_booking_detail(request, pk):
+
+#     booking = get_object_or_404(
+#         Booking.objects.select_related(
+#             "farmhouse",
+#             "user"
+#         ),
+#         pk=pk
+#     )
+
+#     ###################################
+#     # QUICK STATUS UPDATE
+#     ###################################
+
+#     if request.method == "POST":
+
+#         new_status = request.POST.get("status")
+
+#         if new_status and new_status != booking.status:
+
+#             booking.status = new_status
+#             booking.save()
+
+#             transaction.on_commit(
+#                 lambda: booking.send_booking_email(
+#                     booking.status,
+#                     request
+#                 )
+#             )
+
+#             messages.success(
+#                 request,
+#                 "Booking status updated successfully ✅"
+#             )
+
+#             return redirect(
+#                 "admin-booking-detail",
+#                 pk=booking.pk
+#             )
+
+#     return render(
+#         request,
+#         "superadmin/booking/detail.html",
+#         {"booking": booking}
+#     )
+from decimal import Decimal
+
+@staff_member_required
+def admin_booking_detail(request, pk):
+
+    booking = get_object_or_404(
+        Booking.objects.select_related(
+            "farmhouse",
+            "user"
+        ),
+        pk=pk
+    )
+
+    ###################################
+    # STATUS + PAYMENT UPDATE
+    ###################################
+
+    if request.method == "POST":
+
+        new_status = request.POST.get("status")
+        new_payment_status = request.POST.get("payment_status")
+
+        status_changed = False
+
+        # BOOKING STATUS
+        if new_status and new_status != booking.status:
+            booking.status = new_status
+            status_changed = True
+
+        # PAYMENT STATUS
+        if new_payment_status and new_payment_status != booking.payment_status:
+
+            booking.payment_status = new_payment_status
+
+            ###################################
+            # AUTO CALCULATE REMAINING 🔥
+            ###################################
+
+            if new_payment_status == "paid":
+                booking.remaining_amount = 0
+
+            elif new_payment_status == "partial":
+                paid_amount = booking.total_amount * Decimal("0.30")
+                booking.remaining_amount = booking.total_amount - paid_amount
+
+            else:
+                booking.remaining_amount = booking.total_amount
+
+        booking.save()
+
+        ###################################
+        # SEND EMAIL ONLY IF STATUS CHANGED
+        ###################################
+
+        if status_changed:
+            transaction.on_commit(
+                lambda: booking.send_booking_email(
+                    booking.status,
+                    request
+                )
+            )
+
+        messages.success(
+            request,
+            "Booking updated successfully ✅"
+        )
+
+        return redirect(
+            "admin-booking-detail",
+            pk=booking.pk
+        )
+
+    return render(
+        request,
+        "superadmin/booking/detail.html",
+        {"booking": booking}
+    )
+
+
+@staff_member_required
+def admin_booking_update(request, pk):
+
+    booking = get_object_or_404(Booking, pk=pk)
+
+    old_status = booking.status
+
+    if request.method == "POST":
+
+        form = AdminBookingForm(
+            request.POST,
+            instance=booking
+        )
+
+        if form.is_valid():
+
+            booking = form.save()
+
+            if old_status != booking.status:
+
+                transaction.on_commit(
+                    lambda: booking.send_booking_email(
+                        booking.status,
+                        request
+                    )
+                )
+
+            messages.success(
+                request,
+                "Booking updated!"
+            )
+
+            return redirect("admin-bookings")
+
+    else:
+        form = AdminBookingForm(instance=booking)
+
+    return render(
+        request,
+        "superadmin/booking/form.html",
+        {"form": form}
+    )
+
+
+@staff_member_required
+def admin_booking_cancel(request, pk):
+
+    booking = get_object_or_404(Booking, pk=pk)
+
+    try:
+        booking.cancel_booking(user=request.user)
+
+        messages.success(
+            request,
+            "Booking cancelled successfully!"
+        )
+
+    except Exception as e:
+
+        messages.error(request, str(e))
+
+    return redirect("admin-bookings")
+
+
+
+
+
+
+
+
+
+# 
+
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render
+from booking.models import BlockedDate
+
+
+@staff_member_required
+def blocked_dates_list(request):
+
+    blocked = BlockedDate.objects.select_related(
+        "farmhouse"
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "superadmin/blocked/list.html",
+        {"blocked": blocked}
+    )
+
+
+from django.shortcuts import redirect
+from django.contrib import messages
+from superadmin_dashboard.forms import BlockedDateForm
+
+
+@staff_member_required
+def blocked_dates_create(request):
+
+    if request.method == "POST":
+
+        form = BlockedDateForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "Dates blocked successfully!"
+            )
+
+            return redirect("blocked-dates")
+
+    else:
+        form = BlockedDateForm()
+
+    return render(
+        request,
+        "superadmin/blocked/form.html",
+        {"form": form}
+    )
+
+
+
+from django.shortcuts import get_object_or_404
+
+
+@staff_member_required
+def blocked_dates_update(request, pk):
+
+    blocked = get_object_or_404(
+        BlockedDate,
+        pk=pk
+    )
+
+    if request.method == "POST":
+
+        form = BlockedDateForm(
+            request.POST,
+            instance=blocked
+        )
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "Blocked dates updated!"
+            )
+
+            return redirect("blocked-dates")
+
+    else:
+        form = BlockedDateForm(instance=blocked)
+
+    return render(
+        request,
+        "superadmin/blocked/form.html",
+        {"form": form}
+    )
+
+
+from django.shortcuts import get_object_or_404
+
+
+@staff_member_required
+def blocked_dates_update(request, pk):
+
+    blocked = get_object_or_404(
+        BlockedDate,
+        pk=pk
+    )
+
+    if request.method == "POST":
+
+        form = BlockedDateForm(
+            request.POST,
+            instance=blocked
+        )
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "Blocked dates updated!"
+            )
+
+            return redirect("blocked-dates")
+
+    else:
+        form = BlockedDateForm(instance=blocked)
+
+    return render(
+        request,
+        "superadmin/blocked/form.html",
+        {"form": form}
+    )
+
+
+
+
+@staff_member_required
+def blocked_dates_delete(request, pk):
+
+    blocked = get_object_or_404(
+        BlockedDate,
+        pk=pk
+    )
+
+    blocked.delete()
+
+    messages.success(
+        request,
+        "Blocked dates removed!"
+    )
+
+    return redirect("blocked-dates")
+
+
+# ======================
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from booking.models import FarmhousePaymentPolicy
+from superadmin_dashboard.forms import FarmhousePaymentPolicyForm
+
+
+def payment_policy_create(request):
+    if request.method == "POST":
+        form = FarmhousePaymentPolicyForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Payment Policy Created Successfully")
+            return redirect("payment_policy_list")
+    else:
+        form = FarmhousePaymentPolicyForm()
+
+    return render(request, "superadmin/payment_policy/form.html", {
+        "form": form
+    })
+
+
+def payment_policy_list(request):
+    policies = FarmhousePaymentPolicy.objects.select_related("farmhouse")
+
+    return render(request, "superadmin/payment_policy/list.html", {
+        "policies": policies
+    })
+    
+def payment_policy_update(request, pk):
+    policy = get_object_or_404(FarmhousePaymentPolicy, pk=pk)
+
+    if request.method == "POST":
+        form = FarmhousePaymentPolicyForm(request.POST, instance=policy)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Payment Policy Updated Successfully")
+            return redirect("payment_policy_list")
+    else:
+        form = FarmhousePaymentPolicyForm(instance=policy)
+
+    return render(request, "superadmin/payment_policy/form.html", {
+        "form": form
+    })
+
+
+
+@staff_member_required
+def payment_policy_delete(request, pk):
+
+    policy = get_object_or_404(
+        FarmhousePaymentPolicy,
+        pk=pk
+    )
+
+    farmhouse_name = policy.farmhouse  # optional (for message)
+
+    policy.delete()
+
+    messages.success(
+        request,
+        f"Payment policy for '{farmhouse_name}' deleted successfully!"
+    )
+
+    return redirect("payment_policy_list")

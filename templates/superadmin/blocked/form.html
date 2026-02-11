@@ -1,0 +1,53 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<div class="container">
+
+<h2 class="mb-4">
+Block Dates
+</h2>
+
+<form method="post">
+{% csrf_token %}
+
+{{ form.farmhouse.label_tag }}
+{{ form.farmhouse }}
+
+{{ form.start_date.label_tag }}
+{{ form.start_date }}
+
+{{ form.end_date.label_tag }}
+{{ form.end_date }}
+
+{{ form.reason.label_tag }}
+{{ form.reason }}
+
+<button class="btn btn-danger mt-3">
+Save
+</button>
+
+</form>
+
+</div>
+
+
+<script>
+
+flatpickr("#id_start_date",{
+dateFormat:"Y-m-d",
+minDate:"today"
+});
+
+flatpickr("#id_end_date",{
+dateFormat:"Y-m-d",
+minDate:"today"
+});
+
+</script>
+
+{% endblock %}

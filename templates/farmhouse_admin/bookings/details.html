@@ -1,0 +1,275 @@
+{% extends "farmhouse_admin/base.html" %}
+{% block content %}
+
+<div class="container-fluid px-4 py-4">
+
+<!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2 class="fw-bold">
+        Booking #{{ booking.booking_id }}
+    </h2>
+
+    <a href="{% url 'owner_bookings' %}"
+       class="btn btn-outline-dark">
+        ← Back
+    </a>
+
+</div>
+
+
+{% for message in messages %}
+<div class="alert alert-success shadow-sm">
+    {{ message }}
+</div>
+{% endfor %}
+
+
+<div class="row g-4">
+
+<!-- BOOKING INFO -->
+<div class="col-lg-6">
+<div class="card border-0 shadow-sm h-100">
+<div class="card-body">
+
+<h4 class="mb-3 fw-bold">
+Booking Info
+</h4>
+
+<hr>
+
+<p>
+<b>Status:</b>
+
+<span class="badge
+{% if booking.status == "confirmed" %}
+bg-success
+{% elif booking.status == "pending" %}
+bg-warning text-dark
+{% elif booking.status == "cancelled" %}
+bg-danger
+{% else %}
+bg-info
+{% endif %}
+">
+{{ booking.status|title }}
+</span>
+
+</p>
+
+<p><b>Check-in:</b> {{ booking.check_in }}</p>
+<p><b>Check-out:</b> {{ booking.check_out }}</p>
+
+<p>
+<b>Guests:</b>
+{{ booking.guest_count }}
+(+ {{ booking.extra_guest_count }} extra)
+</p>
+
+<hr>
+
+<p>
+<b>Total Amount:</b>
+<span class="fw-bold text-success fs-5">
+₹{{ booking.total_amount }}
+</span>
+</p>
+
+<p>
+<b>Advance Paid:</b>
+₹{{ booking.advance_paid }}
+</p>
+
+<p>
+<b>Remaining:</b>
+<span class="text-danger fw-semibold">
+₹{{ booking.remaining_amount }}
+</span>
+</p>
+
+<p>
+<b>Payment Method:</b>
+{{ booking.get_payment_method_display }}
+</p>
+
+<p>
+<b>Payment Status:</b>
+
+<span class="badge
+{% if booking.payment_status == 'paid' %}
+bg-success
+{% elif booking.payment_status == 'partial' %}
+bg-warning text-dark
+{% elif booking.payment_status == 'failed' %}
+bg-danger
+{% else %}
+bg-secondary
+{% endif %}
+">
+{{ booking.payment_status|title }}
+</span>
+
+</p>
+
+<p>
+<b>Booked On:</b>
+{{ booking.created_at|date:"M d, Y H:i" }}
+</p>
+
+</div>
+</div>
+</div>
+
+
+<!-- GUEST DETAILS -->
+<div class="col-lg-6">
+<div class="card border-0 shadow-sm h-100">
+<div class="card-body">
+
+<h4 class="mb-3 fw-bold">
+Guest Details
+</h4>
+
+<hr>
+
+<p><b>Name:</b> {{ booking.guest_name }}</p>
+<p><b>Email:</b> {{ booking.guest_email }}</p>
+<p><b>Phone:</b> {{ booking.guest_phone }}</p>
+
+{% if booking.special_requests %}
+<hr>
+<p>
+<b>Special Requests:</b><br>
+<span class="text-muted">
+{{ booking.special_requests }}
+</span>
+</p>
+{% endif %}
+
+<hr>
+
+<h5 class="fw-semibold">User Account</h5>
+
+{% if booking.user %}
+<p><b>Username:</b> {{ booking.user.username }}</p>
+<p><b>Email:</b> {{ booking.user.email }}</p>
+{% else %}
+<p class="text-muted">
+Guest booking (No account)
+</p>
+{% endif %}
+
+</div>
+</div>
+</div>
+
+
+<!-- FARMHOUSE -->
+<div class="col-lg-6">
+<div class="card border-0 shadow-sm">
+<div class="card-body">
+
+<h4 class="mb-3 fw-bold">
+Farmhouse
+</h4>
+
+<hr>
+
+<p class="fw-semibold text-warning fs-5">
+{{ booking.farmhouse.title }}
+</p>
+
+<p class="text-muted">
+{{ booking.farmhouse.address }}
+</p>
+
+</div>
+</div>
+</div>
+
+
+<!-- QUICK STATUS (OWNER SAFE VERSION) -->
+<div class="col-lg-6">
+<div class="card border-0 shadow-sm border-warning">
+<div class="card-body">
+
+<h4 class="mb-3 fw-bold">
+Update Booking Status
+</h4>
+
+<form method="post">
+{% csrf_token %}
+
+<label class="fw-semibold mb-1">
+Booking Status
+</label>
+
+<select name="status" class="form-select mb-3">
+
+<option value="pending"
+{% if booking.status == "pending" %}selected{% endif %}>
+Pending
+</option>
+
+<option value="confirmed"
+{% if booking.status == "confirmed" %}selected{% endif %}>
+Confirmed
+</option>
+
+<option value="completed"
+{% if booking.status == "completed" %}selected{% endif %}>
+Completed
+</option>
+
+<option value="cancelled"
+{% if booking.status == "cancelled" %}selected{% endif %}>
+Cancelled
+</option>
+
+</select>
+
+
+<label class="fw-semibold mb-1">
+Payment Status
+</label>
+
+<select name="payment_status"
+class="form-select mb-4">
+
+<option value="pending"
+{% if booking.payment_status == "pending" %}selected{% endif %}>
+Pending
+</option>
+
+<option value="partial"
+{% if booking.payment_status == "partial" %}selected{% endif %}>
+Partial Paid
+</option>
+
+<option value="paid"
+{% if booking.payment_status == "paid" %}selected{% endif %}>
+Paid
+</option>
+
+<option value="failed"
+{% if booking.payment_status == "failed" %}selected{% endif %}>
+Failed
+</option>
+
+</select>
+
+<button class="btn btn-warning w-100 fw-semibold">
+Update Booking
+</button>
+
+</form>
+
+</div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

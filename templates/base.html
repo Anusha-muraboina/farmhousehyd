@@ -13,8 +13,8 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+    {% comment %} <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"> {% endcomment %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <!-- Lucide Icons -->
     {% comment %} <script src="https://unpkg.com/lucide@latest"></script> {% endcomment %}
@@ -24,7 +24,7 @@
             theme: {
                 extend: { 
                     fontFamily: {
-                        sans: ['Poppins', 'sans-serif'],
+                        sans: ['Roboto', 'sans-serif'],
                         display: ['Playfair Display', 'serif'], 
                     },
                     colors: {
@@ -53,7 +53,8 @@
     
     <style>
         body ,p {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Roboto', sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
         
         h1, h2, h3, h4, h5, h6 {
@@ -181,12 +182,12 @@
         .mobile-menu.active {
             transform: translateX(0);
         }
- body {
+ {% comment %} body {
       font-family: 'Poppins', sans-serif;
     }
     .font-serif {
       font-family: 'Playfair Display', serif;
-    }
+    } {% endcomment %}
     .section-subtitle {
       font-family: 'Playfair Display', serif;
       font-style: italic;

@@ -1,6 +1,413 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<title>Super Admin</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+    font-family:'Inter',sans-serif;
+    background:#f5f7fb;
+    margin:0;
+}
+
+/* HEADER */
+.header{
+    background:#fff;
+    border-bottom:1px solid #eee;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:260px;
+    background:#fff;
+    min-height:100vh;
+    border-right:1px solid #eee;
+    transition:.3s;
+}
+
+.sidebar.collapsed{
+    width:80px;
+}
+
+/* MENU */
+.sidebar a{
+    width:100%;
+    color:#333;
+    display:flex;
+    align-items:center;
+    {% comment %} justify-content:space-between; {% endcomment %}
+    padding:12px 16px;
+    border-radius:10px;
+    text-decoration:none;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.sidebar a:hover{
+    background:#fff4e5;
+    color:#ff7a00;
+}
+
+/* ACTIVE MAIN */
+.sidebar a.active-parent{
+    background:#fff4e5;
+    color:#ff7a00;
+    font-weight:600;
+}
+
+/* LEFT */
+.menu-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.sidebar i{
+    width:20px;
+}
+
+/* TEXT */
+.menu-text{
+    white-space:nowrap;
+}
+
+.sidebar.collapsed .menu-text{
+    display:none;
+}
+
+/* SUBMENU */
+.submenu{
+    {% comment %} margin-left:34px; {% endcomment %}
+    margin-top:6px;
+    padding:4px;
+    background:#f5f7fb;
+}
+
+.submenu a{
+    font-size:14px;
+    padding:9px 14px;
+}
+
+/* ACTIVE SUBMENU */
+.submenu a.active{
+    background:#fff4e5;
+    color:#ff7a00;
+    font-weight:600;
+}
+
+/* ROTATING ARROW */
+.rotate{
+    transform:rotate(180deg);
+    transition:.25s;
+}
+
+/* CONTENT */
+.content{
+    width:100%;
+    padding:25px;
+}
+
+.brand{
+    color:#fa7a03;
+    font-weight:700;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+.sidebar{ width:80px!important; }
+.menu-text{ display:none!important; }
+.submenu{ display:none!important; }
+}
+{% comment %} .sidebar.collapsed .arrow{
+    display:none;
+} {% endcomment %}
+.sidebar.collapsed .menu-text{
+    display:none;
+}
+
+.sidebar.collapsed .menu-left{
+    justify-content:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<nav class="navbar header px-4 py-3 d-flex justify-content-between">
+
+<div class="d-flex align-items-center gap-3">
+<button class="btn btn-light" onclick="toggleSidebar()">
+<i class="fa-solid fa-bars"></i>
+</button>
+<h5 class="mb-0 brand">Farmhouse Owner Admin</h5>
+</div>
+
+<div class="dropdown">
+<button class="btn d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+<div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center"
+style="width:36px;height:36px;">
+{{ request.user.username|first|upper }}
+</div>
+{{ request.user.username }}
+</button>
+
+<ul class="dropdown-menu dropdown-menu-end">
+<li><a class="dropdown-item" href="#">Profile</a></li>
+<li><a class="dropdown-item text-danger" href="{% url 'superadmin-logout' %}">Logout</a></li>
+</ul>
+</div>
+
+</nav>
+
+
+<div class="d-flex">
+
+<!-- SIDEBAR -->
+<aside class="sidebar p-3" id="sidebar">
+
+<!-- DASHBOARD -->
+<a href="{% url 'owner_dashboard' %}"
+class="{% if request.resolver_match.url_name == 'owner_dashboard' %}active-parent{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-gauge"></i>
+<span class="menu-text">Dashboard</span>
+</div>
+</a>
+
+
+<a href="{% url 'owner_farmhouses' %}"
+    class="flex items-center gap-3  rounded hover:bg-orange-100">
+    <i data-lucide="home"></i>
+    Farmhouses
+</a>
+
+<!-- BOOKINGS -->
+<a onclick="toggleMenu('bookingMenu',this)"
+class="{% if request.resolver_match.url_name in 'owner_bookings owner_booking_detail' %}active-parent{% endif %}">
+
+<div class="menu-left">
+<i class="fa-solid fa-calendar-check"></i>
+<span class="menu-text">Bookings</span>
+</div>
+
+<i class="fa-solid fa-chevron-down arrow"></i>
+
+</a>
+
+
+<div id="bookingMenu"
+class="submenu {% if request.resolver_match.url_name in 'owner_bookings owner_booking_detail' %}{% else %}d-none{% endif %}">
+
+<a href="{% url 'owner_bookings' %}">
+    <i class="fa-solid fa-calendar-check"></i>
+    <span class="menu-text">Bookings</span>
+</a>
+
+</div>
+
+
+<!-- CONTACT MENU -->
+<a onclick="toggleMenu('contactMenu',this)"
+class="{% if request.resolver_match.url_name in 'owner_contact_list owner_contact_detail' %}
+active-parent
+{% endif %}">
+
+<div class="menu-left">
+<i class="fa-solid fa-envelope"></i>
+<span class="menu-text">Messages</span>
+</div>
+
+<i class="fa-solid fa-chevron-down arrow"></i>
+
+</a>
+
+
+<div id="contactMenu"
+class="submenu {% if request.resolver_match.url_name in 'owner_contact_list owner_contact_detail' %}{% else %}d-none{% endif %}">
+
+<a href="{% url 'owner_contact_list' %}"
+class="{% if request.resolver_match.url_name == 'owner_contact_list' %}active{% endif %}">
+All Messages
+</a>
+
+</div>
+
+
+<!-- COUPONS -->
+<a href="{% url 'owner_coupon_list' %}"
+class="{% if request.resolver_match.url_name in 'owner_coupon_list owner_coupon_create owner_coupon_update' %}active-parent{% endif %}">
+
+<div class="menu-left">
+<i class="fa-solid fa-tags"></i>
+<span class="menu-text">Coupons</span>
+</div>
+
+</a>
+
+</aside>
+
+<!-- CONTENT -->
+<main class="content">
+{% block content %}{% endblock %}
+</main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+function toggleSidebar(){
+document.getElementById("sidebar").classList.toggle("collapsed");
+}
+
+function toggleMenu(menuId,el){
+
+const menu=document.getElementById(menuId);
+const arrow=el.querySelector(".arrow");
+
+const isOpen=!menu.classList.contains("d-none");
+
+document.querySelectorAll(".submenu").forEach(m=>m.classList.add("d-none"));
+document.querySelectorAll(".arrow").forEach(a=>a.classList.remove("rotate"));
+
+if(!isOpen){
+menu.classList.remove("d-none");
+arrow.classList.add("rotate");
+sessionStorage.setItem("openMenu",menuId);
+}else{
+sessionStorage.removeItem("openMenu");
+}
+
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+const openMenu=sessionStorage.getItem("openMenu");
+
+if(openMenu){
+
+const el=document.getElementById(openMenu);
+if(el){
+el.classList.remove("d-none");
+
+const parent=el.previousElementSibling;
+const arrow=parent.querySelector(".arrow");
+if(arrow) arrow.classList.add("rotate");
+}
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
+
+
+
+{% comment %} <script>
+const sidebar = document.getElementById("sidebar");
+
+function handleSidebar() {
+    if (window.innerWidth <= 768) {
+        sidebar.classList.add("collapsed");
+    } else {
+        sidebar.classList.remove("collapsed");
+    }
+}
+
+handleSidebar();
+window.addEventListener("resize", handleSidebar);
+
+function toggleSidebar() {
+    if (window.innerWidth > 768) {
+        sidebar.classList.toggle("collapsed");
+    }
+}
+</script> {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <title>{% block title %}Owner Dashboard{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -81,4 +488,4 @@
 </script>
 
 </body>
-</html>
+</html> {% endcomment %}

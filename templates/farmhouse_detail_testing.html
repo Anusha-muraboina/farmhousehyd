@@ -1,0 +1,1574 @@
+{% extends "base.html" %}
+{% block title %}Farmhouse Booking{% endblock %}
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- ✅ FORCE DJANGO TO CREATE CSRF COOKIE -->
+{% comment %} <form method="post" style="display:none;">
+    {% csrf_token %}
+</form> {% endcomment %}
+
+<div id="loader" class="text-center py-20 font-bold">
+Loading Farmhouse...
+</div>
+
+<div id="app" style="display:none;"></div>
+<input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+
+
+<style>
+.acc-header{
+border:2px solid #170239;
+padding:16px;
+border-radius:12px;
+cursor:pointer;
+font-weight:600;
+margin-top:12px;
+}
+.acc-body{
+border:1px solid #ffffff;
+padding:20px;
+border-radius:12px;
+margin-bottom:15px;
+    /* ⭐ ADD THIS */
+scroll-margin-top:120px; 
+}
+{% comment %} .hidden{display:none;} {% endcomment %}
+.input{
+width:100%;
+padding:12px;
+border:1px solid #cccccc;
+border-radius:8px;
+margin-top:10px;
+}
+.btn{
+background:#cd7c0a;
+color:#fff;
+padding:10px 20px;
+border-radius:8px;
+border:none;
+cursor:pointer;
+margin-top:10px;
+}
+.price-box{
+background:white;
+padding:15px;
+border-radius:10px;
+margin-top:10px;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+</style>
+<!-- GLOBAL LOADER -->
+<div id="bookingLoader"
+class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-xl px-10 py-8 flex flex-col items-center gap-4">
+        <!-- Spinner -->
+        <div class="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-lg font-semibold text-gray-700">
+            Processing your booking...
+        </p>
+    </div>
+</div>
+
+
+
+
+<script>
+//////////////////////////////////////////////////
+// CSRF FIX (100% WORKING)
+//////////////////////////////////////////////////
+
+//////////////////////////////////////////////////
+// ✅ FINAL CSRF FIX (PRODUCTION SAFE)
+//////////////////////////////////////////////////
+
+function getCookie(name) {
+
+let cookieValue = null;
+
+if (document.cookie && document.cookie !== '') {
+
+const cookies = document.cookie.split(';');
+
+for (let i = 0; i < cookies.length; i++) {
+
+const cookie = cookies[i].trim();
+
+if (cookie.substring(0, name.length + 1) === (name + '=')) {
+
+cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+break;
+
+}
+}
+}
+
+return cookieValue;
+}
+
+axios.defaults.headers.common["X-CSRFToken"] = getCookie("csrftoken");
+axios.defaults.withCredentials = true;
+
+
+
+let farmhouse;
+let couponId=null;
+let couponDiscount=0;
+let finalTotal=0;
+let subTotal=0;
+let checkoutPicker;
+
+//////////////////////////////////////////////////
+async function loadFarmhouse(){
+
+const slug="{{ slug }}";
+
+const res =
+await axios.get(`/api/farmhouses/${slug}/`);
+
+farmhouse=res.data.farmhouse;
+
+buildUI();
+if(window.lucide){
+    lucide.createIcons();
+}
+await initFlatpickr();
+initListeners();
+initSubmit();
+
+loader.style.display="none";
+app.style.display="block";
+}
+
+//////////////////////////////////////////////////
+
+function buildUI(){
+
+app.innerHTML=`
+
+<!-- IMAGE GALLERY -->
+
+
+<div class="md:mb-8 mb-2 px-2 md:px-16 mt-2  md:mt-16 ">
+
+    <div class="grid grid-cols-1 lg:grid-cols-6 gap-4">
+
+        <!-- ⭐ BIG IMAGE FIRST ON MOBILE -->
+        <div class="lg:col-span-5 order-1 lg:order-2">
+
+            <div class="relative w-full h-[260px] sm:h-[380px] lg:h-[520px] 
+            flex items-center justify-center 
+            bg-gray-100 rounded-2xl overflow-hidden">
+
+                <img id="mainImage"
+                    src="${farmhouse.primary_image}"
+                    class="w-full h-full object-cover transition duration-300">
+
+                <!-- ICONS -->
+                <div class="absolute top-3 right-3 flex gap-2">
+
+                    <button onclick="zoomIn()"
+                        class="bg-white shadow w-9 h-9 rounded-full flex items-center justify-center">
+                        <i data-lucide="zoom-in" class="w-4 h-4"></i>
+                    </button>
+
+                    <button onclick="zoomOut()"
+                        class="bg-white shadow w-9 h-9 rounded-full flex items-center justify-center">
+                        <i data-lucide="zoom-out" class="w-4 h-4"></i>
+                    </button>
+
+                    <button onclick="resetZoom()"
+                        class="bg-white shadow w-9 h-9 rounded-full flex items-center justify-center">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ⭐ THUMBNAILS -->
+        <div class="lg:col-span-1 order-2 lg:order-1">
+
+            <!-- Mobile → Horizontal scroll -->
+            <div class="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto">
+
+                ${farmhouse.images.slice(0,4).map(img => `
+
+                    <img 
+                        src="${img.image}"
+                        onclick="changeImage('${img.image}')"
+                        class="min-w-[90px] h-20 lg:w-full lg:h-24 
+                        object-cover rounded-xl cursor-pointer
+                        border-2 border-transparent 
+                        hover:border-orange-500 transition">
+
+                `).join("")}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class=" mx-auto py-4    md:py-10 px-2 md:px-16">
+
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+    <!-- ✅ LEFT SIDE (BOOKING) -->
+    <div class="w-full bg-white p-4 rounded">
+
+
+
+
+
+<h1 class="text-3xl font-bold mb-6">
+Complete Your Booking
+</h1>
+
+<form id="bookingForm">
+
+<div class="acc-header" >
+1. Stay Details
+</div>
+
+<div id="sec1" class="acc-body">
+
+{% comment %} <input id="check_in" class="input"
+placeholder="Check-in" readonly required> {% endcomment %}
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">
+            Check-in Date
+        </label>
+
+        <input 
+            id="check_in"
+            class="input bg-gray-50 cursor-pointer"
+            placeholder="Select check-in date"
+            readonly
+            required
+        >
+    </div>
+
+
+<div>
+        <label class="block text-sm font-semibold text-gray-700 mt-2">
+            Check-out Date
+        </label>
+
+
+<input id="check_out" class="input bg-gray-50 cursor-pointer"
+placeholder="Select Check-out" readonly required>
+</div>
+
+<div>
+            <label class="block text-sm font-semibold text-gray-700 mt-2">
+            Guests Allowed
+        </label>
+
+<input 
+    id="guest_count"
+    type="number"
+    value="${farmhouse.guest_count || 1}"
+    class="input" readonly 
+>
+
+    <p class="text-xs text-gray-500 mt-1">
+            Maximum capacity for this farmhouse
+        </p>
+</div>
+
+
+<div>
+
+       <label class="block text-sm font-semibold text-gray-700 mt-2">
+          Extra  Guests Allowed
+        </label>
+<input 
+    id="extra_guest_count"
+    type="number"
+    value="0"
+    placeholder="Enter Exra guest count"
+    class="input"
+>
+
+</div>
+
+
+{% comment %} <input id="guest_count" type="number"
+value="1" class="input">
+
+<input id="extra_guest_count"
+type="number" value="0"
+class="input"> {% endcomment %}
+
+
+<div>
+
+       <label class="block text-sm font-semibold text-gray-700 mt-2">
+          Coupon
+        </label>
+<input id="coupon"
+placeholder="Coupon Code"
+class="input">
+    </div>
+<button type="button"
+class="btn"
+onclick="next(1)">
+Next →
+</button>
+
+</div>
+
+<div class="acc-header" >
+2. Guest Info
+</div>
+
+<div id="sec2"
+class="acc-body hidden">
+
+
+
+<div>
+
+       <label class="block text-sm font-semibold text-gray-700 mt-2">
+          Guest Name
+        </label>
+<input id="guest_name"
+placeholder="Name"
+class="input" required>
+    </div>
+
+    <div>
+
+       <label class="block text-sm font-semibold text-gray-700 mt-2">
+         Guest Phone
+        </label>
+<input id="guest_phone"
+placeholder="Phone"
+class="input" required>
+    </div>
+
+
+
+    <div>
+
+       <label class="block text-sm font-semibold text-gray-700 mt-2">
+          Guest Email
+        </label>
+<input id="guest_email"
+placeholder="Email"
+class="input" required>
+    </div>
+
+    
+<button type="button"
+class="btn"
+onclick="prev(2)">
+← Prev
+</button>
+
+<button type="button"
+class="btn"
+onclick="next(2)">
+Next →
+</button>
+
+</div>
+
+<div class="acc-header" >
+3. Review Booking
+</div>
+
+<div id="sec3"
+class="acc-body hidden">
+
+<div id="reviewBox"
+class="price-box"></div>
+
+<button type="button"
+class="btn"
+onclick="prev(3)">
+← Prev
+</button>
+
+<button type="button"
+class="btn"
+onclick="next(3)">
+Next →
+</button>
+
+</div>
+
+<div class="acc-header" >
+4. Payment
+</div>
+
+<div id="sec4"
+class="acc-body hidden">
+
+    <!-- PAY AT FARMHOUSE -->
+    <label class="flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-400 transition">
+
+        <div class="flex items-center gap-3">
+            <input type="radio"
+                   name="payment"
+                   value="farmhouse"
+                   checked
+                   onchange="updatePayment()"
+                   class="accent-orange-500 w-5 h-5">
+
+            <div>
+                <p class="font-semibold">
+                    Pay at Farmhouse
+                </p>
+                <p class="text-sm text-gray-500">
+                    Reserve now, pay during check-in
+                </p>
+            </div>
+        </div>
+
+        <i data-lucide="home" class="w-6 h-6 text-orange-500"></i>
+
+    </label>
+
+<!-- <label>
+<input type="radio"
+name="payment"
+value="farmhouse"
+checked onchange="updatePayment()">
+Pay at Farmhouse
+</label> -->
+
+<br><br>
+
+    <!-- PARTIAL -->
+    <label class="flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-400 transition">
+
+        <div class="flex items-center gap-3">
+            <input type="radio"
+                   name="payment"
+                   value="partial"
+                   onchange="updatePayment()"
+                   class="accent-orange-500 w-5 h-5">
+
+            <div>
+                <p class="font-semibold">
+                    Pay 30% Now
+                </p>
+                <p class="text-sm text-gray-500">
+                    Confirm instantly with partial payment
+                </p>
+            </div>
+        </div>
+
+        <i data-lucide="credit-card" class="w-6 h-6 text-orange-500"></i>
+
+    </label>
+
+
+
+<!-- <label>
+<input type="radio"
+name="payment"
+value="partial"
+onchange="updatePayment()">
+Pay 30%
+</label> -->
+
+<br><br>
+
+
+    <!-- FULL -->
+    <label class="flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:border-orange-300 transition">
+
+        <div class="flex items-center gap-3">
+            <input type="radio"
+                   name="payment"
+                   value="full"
+                   onchange="updatePayment()"
+                   class="accent-orange-500 w-5 h-5">
+
+            <div>
+                <p class="font-semibold">
+                    Pay Full Amount
+                </p>
+                <p class="text-sm text-gray-500">
+                    No pending payments at check-in
+                </p>
+            </div>
+        </div>
+
+        <i data-lucide="badge-check" class="w-6 h-6 text-orange-500"></i>
+
+    </label>
+
+<!-- <label>
+<input type="radio"
+name="payment"
+value="full"
+onchange="updatePayment()">
+Pay Full
+</label> -->
+
+<div id="paymentBox"
+class="price-box"></div>
+
+
+
+<button
+type="button" 
+onclick="prev(4)"
+class="px-4 py-3 my-2 rounded-xl border border-gray-300 
+hover:bg-gray-100 transition font-semibold">
+← Prev
+</button>
+
+<button 
+type="submit"
+id="bookNowBtn"
+class="w-full mt-6 bg-orange-500 hover:bg-orange-600 
+disabled:bg-gray-400 disabled:cursor-not-allowed
+text-white font-bold py-4 rounded-xl transition duration-300">
+Book Now
+</button>
+
+{% comment %} <button class="btn">
+BOOK NOW
+</button> {% endcomment %}
+
+</div>
+
+</form>
+
+</div>
+
+
+
+
+        <!-- ✅ RIGHT SIDE (DESCRIPTION CARD) -->
+        <div class="w-full">
+
+            <div class="sticky top-10 bg-white shadow-xl rounded-2xl p-6 border">
+
+                <h2 class="text-2xl font-bold mb-3">
+                    ${farmhouse.title}
+                </h2>
+
+                <p class="text-gray-600 mb-4">
+                    ${farmhouse.description || "Enjoy a peaceful stay with premium amenities, beautiful surroundings, and a relaxing atmosphere perfect for families and friends."}
+                </p>
+
+                {% comment %} <div class="border-t pt-4 space-y-2">
+
+                    <p><b> Guests Allowed:</b> ${farmhouse.guest_count || 10}</p>
+                   <p><b> Guests Allowed:</b> ${farmhouse.extra_guest_count || 10}</p>
+                    <p><b> Weekday Price:</b> ₹${farmhouse.pricing.normal_day_price}</p>
+
+                    <p><b> Weekend Price:</b> ₹${farmhouse.pricing.weekend_price}</p>
+
+                    <p><b> Extra Guest:</b> ₹${farmhouse.pricing.extra_guest_price}</p>
+
+                </div> {% endcomment %}
+
+
+                <div class="border-t pt-6 mt-6">
+
+    <div class="grid grid-cols-2 gap-4">
+
+        <!-- Guests -->
+        <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+            <i data-lucide="users" class="w-6 h-6 text-orange-500"></i>
+            <div>
+                <p class="text-sm text-gray-500">Guests</p>
+                <p class="font-semibold text-lg">
+                    ${farmhouse.guest_count}
+                </p>
+            </div>
+        </div>
+
+        <!-- Extra Guests -->
+        <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+            <i data-lucide="user-plus" class="w-6 h-6 text-orange-500"></i>
+            <div>
+                <p class="text-sm text-gray-500">Extra Guests</p>
+                <p class="font-semibold text-lg">
+                    ${farmhouse.extra_guest_count}
+                </p>
+            </div>
+        </div>
+${
+farmhouse.pricing.sale_price > 0
+? `
+<div class="flex items-center gap-3 p-4 bg-green-50 rounded-xl border border-green-200 col-span-2">
+    <i data-lucide="badge-percent" class="w-6 h-6 text-green-600"></i>
+    <div>
+        <p class="text-sm text-gray-500">Sale Price</p>
+        <p class="font-bold text-2xl text-green-600">
+            ₹${Number(farmhouse.pricing.sale_price).toLocaleString()}
+        </p>
+    </div>
+</div>
+`
+: ""
+}
+
+        <!-- Weekday Price -->
+        <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+            <i data-lucide="calendar" class="w-6 h-6 text-orange-500"></i>
+            <div>
+                <p class="text-sm text-gray-500">Weekday</p>
+                <p class="font-semibold text-lg">
+                    ₹${Number(farmhouse.pricing.normal_day_price).toLocaleString()}
+                </p>
+            </div>
+        </div>
+
+        <!-- Weekend Price -->
+        <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+            <i data-lucide="calendar-days" class="w-6 h-6 text-orange-500"></i>
+            <div>
+                <p class="text-sm text-gray-500">Weekend</p>
+                <p class="font-semibold text-lg">
+                    ₹${Number(farmhouse.pricing.weekend_price).toLocaleString()}
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Extra Guest Price Highlight -->
+    <div class="mt-5 p-5 bg-orange-50 border border-orange-100 rounded-xl flex items-center justify-between">
+
+        <div class="flex items-center gap-3">
+            <i data-lucide="badge-plus" class="w-6 h-6 text-orange-500"></i>
+
+            <div>
+                <p class="text-sm text-gray-500">
+                    Extra Guest Price
+                </p>
+
+                <p class="font-bold text-xl text-orange-600">
+                    ₹${Number(farmhouse.pricing.extra_guest_price).toLocaleString()}
+                    
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+                <!-- AMENITIES -->
+<div class="mt-10">
+
+    <h3 class="text-3xl font-bold mb-6">
+        Amenities
+    </h3>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+${farmhouse.amenities.map(a => `
+
+    <div class="flex items-center gap-3 p-4 border rounded-xl bg-white">
+
+        <i data-lucide="${a.icon_class}" 
+           class="w-5 h-5 text-orange-500"></i>
+
+        <span class="font-medium">
+            ${a.name}
+        </span>
+
+    </div>
+
+`).join("")}
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+            </div>
+            
+
+
+
+
+
+
+
+
+
+
+
+            
+
+        </div>
+
+
+
+
+</div>
+
+</div>
+`;
+}
+
+
+
+
+
+
+
+function showLoader(){
+    document.getElementById("bookingLoader").classList.remove("hidden");
+}
+
+function hideLoader(){
+    document.getElementById("bookingLoader").classList.add("hidden");
+}
+
+
+function changeImage(src){
+
+    const img = document.getElementById("mainImage");
+
+    img.src = src;
+
+    zoomLevel = 1;
+    img.style.transform = "scale(1)";
+}
+
+
+let zoomLevel = 1;
+
+function zoomIn(){
+
+    zoomLevel += 0.2;
+
+    document.getElementById("mainImage")
+        .style.transform = `scale(${zoomLevel})`;
+}
+
+function zoomOut(){
+
+    if(zoomLevel > 1){
+
+        zoomLevel -= 0.2;
+
+        document.getElementById("mainImage")
+            .style.transform = `scale(${zoomLevel})`;
+    }
+}
+
+function resetZoom(){
+
+    zoomLevel = 1;
+
+    document.getElementById("mainImage")
+        .style.transform = "scale(1)";
+}
+
+
+
+
+
+//////////////////////////////////////////////////
+// DATE PICKER
+//////////////////////////////////////////////////
+
+{% comment %} async function initFlatpickr(){
+
+const res = await axios.get(
+`/bookings/blocked-dates/${farmhouse.id}/`
+);
+
+const disabledDates = res.data;
+
+flatpickr("#check_in",{
+
+minDate:"today",
+disable: disabledDates,
+
+onChange:function(selectedDates){
+
+if(selectedDates.length){
+
+let nextDay = new Date(selectedDates[0]);
+nextDay.setDate(nextDay.getDate()+1);
+
+checkoutPicker.set("minDate",nextDay);
+
+calculateTotal();
+}
+}
+
+});
+
+checkoutPicker = flatpickr("#check_out",{
+
+minDate:new Date().fp_incr(1),
+disable: disabledDates,
+onChange:calculateTotal
+
+});
+
+} {% endcomment %}
+async function initFlatpickr(){
+
+const res = await axios.get(
+`/bookings/blocked-dates/${farmhouse.id}/`
+);
+
+const blockedRanges = res.data;
+
+blockedCheckinDates = [];
+
+blockedRanges.forEach(range => {
+
+let start = new Date(range.from);
+let end = new Date(range.to);
+
+while(start <= end){
+
+blockedCheckinDates.push(
+start.toISOString().split("T")[0]
+);
+
+start.setDate(start.getDate()+1);
+}
+
+});
+
+//////////////////////////////////////////////////
+// CHECK-IN
+//////////////////////////////////////////////////
+
+flatpickr("#check_in",{
+
+minDate:"today",
+disable: blockedCheckinDates,
+dateFormat:"Y-m-d",
+
+onChange:function(selectedDates){
+
+if(!selectedDates.length) return;
+
+let nextDay = new Date(selectedDates[0]);
+nextDay.setDate(nextDay.getDate()+1);
+
+checkoutPicker.set("minDate",nextDay);
+
+// 🔥 CLEAR OLD VALUE
+document.getElementById("check_out").value="";
+
+}
+
+});
+
+//////////////////////////////////////////////////
+// CHECKOUT ⭐⭐⭐ MOST IMPORTANT
+//////////////////////////////////////////////////
+
+checkoutPicker = flatpickr("#check_out",{
+
+minDate:new Date().fp_incr(1),
+dateFormat:"Y-m-d",
+   disableMobile:true,   // ⭐ force flatpickr
+
+onChange:function(selectedDates){
+
+if(!selectedDates.length) return;
+
+const checkInDate = new Date(check_in.value);
+const checkOutDate = new Date(selectedDates[0]);
+
+let cursor = new Date(checkInDate);
+cursor.setDate(cursor.getDate()+1);
+
+while(cursor < checkOutDate){
+
+let formatted =
+cursor.toISOString().split("T")[0];
+
+if(blockedCheckinDates.includes(formatted)){
+
+// Convert to readable format (DD-MM-YYYY)
+{% comment %} const blockedNight =
+new Date(formatted).toLocaleDateString("en-GB",{
+day:"2-digit",
+month:"long",
+year:"numeric"
+}); {% endcomment %}
+
+const attemptedCheckout =
+new Date(checkOutDate).toLocaleDateString("en-GB",{
+day:"2-digit",
+month:"long",
+year:"numeric"
+});
+
+alert(
+`Checkout on ${attemptedCheckout} is not possible.
+Please select an earlier checkout date.`
+);
+// 🔥 CLEAR INVALID DATE
+checkoutPicker.clear();
+
+return;
+}
+
+cursor.setDate(cursor.getDate()+1);
+}
+
+calculateTotal();
+
+}
+
+});
+
+}
+
+
+//////////////////////////////////////////////////
+
+function initListeners(){
+
+check_in.addEventListener("change",calculateTotal);
+check_out.addEventListener("change",calculateTotal);
+extra_guest_count.addEventListener("input",calculateTotal);
+
+extra_guest_count.addEventListener("input", function(){
+
+    const maxExtra = farmhouse.extra_guest_count;
+    const entered = Number(this.value);
+
+    if(entered > maxExtra){
+
+        alert(`You can't select more than ${maxExtra} extra guests.`);
+
+        this.value = maxExtra; // reset to max
+    }
+
+});
+
+
+
+
+
+
+
+
+
+coupon.addEventListener("blur",applyCoupon);
+
+}
+
+//////////////////////////////////////////////////
+// COUPON
+//////////////////////////////////////////////////
+
+async function applyCoupon(){
+
+if(!coupon.value){
+couponId=null;
+couponDiscount=0;
+calculateTotal();
+return;
+}
+
+// ⭐ calculate first
+calculateTotal();
+
+try{
+
+const res = await axios.get(
+`/coupon/validate-coupon/?code=${coupon.value}&farmhouse=${farmhouse.id}&amount=${subTotal}`
+);
+
+if(res.data.valid){
+
+couponId = res.data.id;
+
+// ✅ USE discount (NOT value)
+couponDiscount = Number(res.data.discount);
+
+alert(res.data.message);
+
+}else{
+
+couponId=null;
+couponDiscount=0;
+alert(res.data.message);
+
+}
+
+}catch(err){
+
+couponId=null;
+couponDiscount=0;
+alert("Coupon validation failed");
+
+}
+
+calculateTotal(); // recalc after discount
+}
+
+//////////////////////////////////////////////////
+// PRICE CALCULATION
+//////////////////////////////////////////////////
+function calculateTotal(){
+
+if(!check_in.value || !check_out.value) return;
+let sale = Number(farmhouse.pricing.sale_price || 0);
+let normal = Number(farmhouse.pricing.normal_day_price || 0);
+let weekend = Number(farmhouse.pricing.weekend_price || 0);
+let extra = Number(farmhouse.pricing.extra_guest_price || 0);
+
+let start = new Date(check_in.value);
+let end = new Date(check_out.value);
+
+subTotal = 0;
+
+while(start < end){
+
+    let priceForDay = 0;
+
+    //////////////////////////////////////////////////
+    // ⭐ SALE PRICE OVERRIDES EVERYTHING
+    //////////////////////////////////////////////////
+    if(sale > 0){
+
+        priceForDay = sale;
+
+    }else{
+
+        const day = start.getDay();
+
+        priceForDay = (day === 0 || day === 6)
+            ? weekend
+            : normal;
+    }
+
+    subTotal += priceForDay;
+
+    start.setDate(start.getDate()+1);
+
+
+
+
+{% comment %} const day = start.getDay();
+
+// Sunday = 0, Saturday = 6
+subTotal += (day === 0 || day === 6)
+? weekend
+: normal;
+
+start.setDate(start.getDate()+1); {% endcomment %}
+}
+
+// extra guest price
+{% comment %} subTotal += Number(extra_guest_count.value || 0) * extra;
+
+finalTotal = Math.max(subTotal - couponDiscount, 0); {% endcomment %}
+// extra guests
+subTotal += Number(extra_guest_count.value || 0) * extra;
+
+finalTotal = Math.max(subTotal - couponDiscount, 0);
+console.log("Subtotal:", subTotal);
+console.log("Final:", finalTotal);
+
+// ⭐ ADD THIS (you forgot earlier)
+<!-- fillReview(); -->
+updatePayment();
+}
+
+//////////////////////////////////////////////////
+
+function fillReview(){
+
+calculateTotal();
+
+reviewBox.innerHTML=`
+
+<b>Stay</b><br>
+
+<b>check in :</b> ${check_in.value}<br>
+<b>Check out :</b> ${check_out.value}<br><br>
+
+<b>Guests:</b> ${guest_count.value}<br>
+<b>Extra Guests:</b> ${extra_guest_count.value}<br><br>
+
+<b>User</b><br>
+${guest_name.value}<br>
+${guest_phone.value}<br>
+${guest_email.value}<br><br>
+
+Subtotal: ₹${subTotal}<br>
+Coupon: -₹${couponDiscount}<br>
+
+<h3>Total: ₹${finalTotal}</h3>
+`;
+}
+
+//////////////////////////////////////////////////
+
+function updatePayment(){
+
+if(finalTotal === undefined) return;
+
+
+const method=
+document.querySelector(
+'input[name="payment"]:checked'
+).value;
+
+let html="";
+
+if(method==="farmhouse"){
+
+html=`<div class="border rounded-xl p-2 bg-gray-50">
+
+    <p class="text-gray-500 text-sm">
+        Amount to Pay at Check-in
+    </p>
+
+    <h2 class="text-2xl font-bold mt-1">
+        ₹${Number(finalTotal).toLocaleString()}
+    </h2>
+
+</div>`;
+}
+
+if(method==="partial"){
+
+const payNow=
+Math.round(finalTotal*0.30);
+const remaining = finalTotal - payNow;
+
+html=`
+<div class="border rounded-xl p-4 bg-gray-50 space-y-2">
+
+    <div class="flex justify-between">
+        <span class="text-gray-600">Pay Now</span>
+        <span class="font-semibold">
+            ₹${Number(payNow).toLocaleString()}
+        </span>
+    </div>
+
+    <div class="flex justify-between">
+        <span class="text-gray-600">Remaining</span>
+        <span class="font-semibold">
+            ₹${Number(remaining).toLocaleString()}
+        </span>
+    </div>
+
+</div>
+`;
+{% comment %} html=`
+Pay Now: ₹${payNow}<br>
+Remaining: ₹${finalTotal-payNow}
+`; {% endcomment %}
+}
+
+if(method==="full"){
+
+html=`<div class="border rounded-xl p-4 bg-gray-50">
+
+    <p class="text-gray-500 text-sm">
+        Total Amount
+    </p>
+
+    <h2 class="text-2xl font-bold mt-1">
+        ₹${Number(finalTotal).toLocaleString()}
+    </h2>
+
+</div>`;
+}
+
+paymentBox.innerHTML=html;
+}
+
+//////////////////////////////////////////////////
+
+{% comment %} function openSection(n){
+
+for(let i=1;i<=4;i++){
+document
+.getElementById("sec"+i)
+.classList.add("hidden");
+}
+
+document
+.getElementById("sec"+n)
+.classList.remove("hidden");
+
+if(n===3) fillReview();
+} {% endcomment %}
+function openSection(n){
+
+    // close only bodies
+    for(let i=1;i<=4;i++){
+        document
+        .getElementById("sec"+i)
+        .classList.add("hidden");
+    }
+
+    // open selected body
+    const section = document.getElementById("sec"+n);
+    section.classList.remove("hidden");
+
+    // ⭐ scroll nicely
+    const header = section.previousElementSibling;
+
+    const yOffset = -140;
+    const y = header.getBoundingClientRect().top 
+            + window.pageYOffset 
+            + yOffset;
+
+    window.scrollTo({
+        top:y,
+        behavior:"smooth"
+    });
+
+    if(n===3) fillReview();
+}
+
+
+{% comment %} function next(n){openSection(n+1);} {% endcomment %}
+function next(step){
+
+////////////////////////////////////////////////
+/// STEP 1 VALIDATION
+////////////////////////////////////////////////
+
+if(step === 1){
+
+if(!check_in.value){
+alert("Please select check-in date");
+return;
+}
+
+if(!check_out.value){
+alert("Please select check-out date");
+return;
+}
+
+if(new Date(check_out.value) <= new Date(check_in.value)){
+alert("Checkout must be after check-in");
+return;
+}
+
+}
+
+////////////////////////////////////////////////
+/// STEP 2 VALIDATION
+////////////////////////////////////////////////
+
+if(step === 2){
+
+if(!guest_name.value.trim()){
+alert("Enter guest name");
+return;
+}
+
+if(!guest_phone.value.trim()){
+alert("Enter phone number");
+return;
+}
+
+if(!guest_email.value.trim()){
+alert("Enter email");
+return;
+}
+
+// simple email validation
+if(!guest_email.value.includes("@")){
+alert("Enter valid email");
+return;
+}
+
+}
+
+////////////////////////////////////////////////
+/// STEP 3 VALIDATION
+////////////////////////////////////////////////
+
+if(step === 3){
+
+calculateTotal();
+
+if(finalTotal <= 0){
+alert("Invalid booking total");
+return;
+}
+
+}
+
+openSection(step+1);
+}
+
+function prev(n){openSection(n-1);}
+
+//////////////////////////////////////////////////
+// SUBMIT + RAZORPAY
+//////////////////////////////////////////////////
+
+function initSubmit(){
+
+bookingForm.addEventListener("submit", async e=>{
+
+e.preventDefault();
+
+calculateTotal();
+
+if(finalTotal<=0){
+alert("Invalid amount");
+return;
+}
+
+const btn = document.getElementById("bookNowBtn");
+
+////////////////////////////////////////////////
+//// PREVENT DOUBLE CLICK
+////////////////////////////////////////////////
+
+btn.disabled = true;
+btn.innerText = "Processing...";
+
+showLoader();
+
+try{
+
+const method=
+document.querySelector(
+'input[name="payment"]:checked'
+).value;
+
+const payload={
+
+farmhouse:farmhouse.id,
+
+guest_name:guest_name.value,
+guest_phone:guest_phone.value,
+guest_email:guest_email.value,
+
+guest_count:guest_count.value,
+extra_guest_count:extra_guest_count.value,
+
+check_in:check_in.value,
+check_out:check_out.value,
+
+coupon_applied: couponId || null,
+payment_method:
+method==="partial"
+?"partial_razorpay"
+:method==="full"
+?"full_razorpay"
+:"farmhouse"
+};
+
+const res = await axios.post(
+"/bookings/create/",
+payload
+);
+
+////////////////////////////////////////////////
+//// PAY AT FARMHOUSE
+////////////////////////////////////////////////
+
+if(res.data.redirect_url){
+
+window.location.href = res.data.redirect_url;
+return;
+}
+
+////////////////////////////////////////////////
+//// RAZORPAY
+////////////////////////////////////////////////
+
+hideLoader(); // 👈 IMPORTANT before popup
+
+const razor = new Razorpay({
+
+key:res.data.key,
+amount:res.data.amount,
+order_id:res.data.order_id,
+name:"Vivaan Farmhouse",
+
+handler: async function(response){
+
+await axios.post("/bookings/verify-payment/",{
+    order_id: response.razorpay_order_id,
+    payment_id: response.razorpay_payment_id
+});
+
+window.location.href =
+`/bookings/booking-success/${res.data.booking_id}/`;
+
+}
+
+
+
+{% comment %} handler:function(){
+
+window.location.href =
+`/bookings/booking-success/${res.data.booking_id}/`;
+
+} {% endcomment %}
+
+});
+
+razor.open();
+
+}catch(error){
+
+hideLoader();
+
+btn.disabled=false;
+btn.innerText="Book Now";
+
+alert(
+error?.response?.data?.error ||
+"Booking failed. Try again."
+);
+
+}
+
+});
+}
+
+{% comment %} 
+function initSubmit(){
+
+bookingForm.addEventListener(
+"submit",
+async e=>{
+
+e.preventDefault();
+
+calculateTotal();
+
+if(finalTotal<=0){
+alert("Invalid amount");
+return;
+}
+
+const method=
+document.querySelector(
+'input[name="payment"]:checked'
+).value;
+
+const payload={
+
+farmhouse:farmhouse.id,
+
+guest_name:guest_name.value,
+guest_phone:guest_phone.value,
+guest_email:guest_email.value,
+
+guest_count:guest_count.value,
+extra_guest_count:extra_guest_count.value,
+
+check_in:check_in.value,
+check_out:check_out.value,
+
+coupon_applied: couponId || null,
+payment_method:
+method==="partial"
+?"partial_razorpay"
+:method==="full"
+?"full_razorpay"
+:"farmhouse"
+};
+
+const res=
+await axios.post(
+"/bookings/create/",
+payload
+);
+
+// CASH
+if(res.data.redirect_url){
+window.location.href=
+res.data.redirect_url;
+return;
+}
+
+// RAZORPAY
+const razor=
+new Razorpay({
+
+key:res.data.key,
+amount:res.data.amount,
+order_id:res.data.order_id,
+name:"Farmhousehyd",
+
+handler:function(){
+
+window.location.href =
+`/bookings/booking-success/${res.data.booking_id}/`;
+
+}
+
+
+});
+
+razor.open();
+
+});
+} {% endcomment %}
+
+//////////////////////////////////////////////////
+
+loadFarmhouse();
+
+</script>
+
+{% endblock %}

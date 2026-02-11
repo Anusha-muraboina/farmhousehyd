@@ -4,6 +4,7 @@ from django.db import models
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
+from django_ckeditor_5.fields import CKEditor5Field
 
 
 class BlogCategory(models.Model):
@@ -70,10 +71,13 @@ class Blog(models.Model):
         help_text="Shown in blog listing page"
     )
 
-    content = models.TextField(
-        help_text="Full blog content"
+    # content = models.TextField(
+    #     help_text="Full blog content"
+    # )
+    content = CKEditor5Field(
+        "Content",
+        config_name="default"
     )
-
     views = models.PositiveIntegerField(default=0)
     read_time = models.PositiveIntegerField(
         help_text="Read time in minutes (e.g. 3)",

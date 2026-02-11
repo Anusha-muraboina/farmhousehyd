@@ -3,136 +3,309 @@
 
 <div class="container-fluid">
 
+<!-- PAGE HEADER -->
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h3 class="fw-bold">Add Farmhouse</h3>
-  <a href="{% url 'superadmin-farmhouses' %}" class="btn btn-outline-secondary">
-    Back
-  </a>
+
+    <div>
+        <h3 class="page-title">Add Farmhouse</h3>
+        <p class="page-subtitle">
+            Create and manage farmhouse listings with pricing, amenities, and images.
+        </p>
+    </div>
+    <a href="{% url 'superadmin-farmhouses' %}"
+       class="btn btn-light shadow-sm">
+        <i class="fa-solid fa-arrow-left me-2"></i>
+        Back
+    </a>
 </div>
+
 
 <form method="POST" enctype="multipart/form-data">
 {% csrf_token %}
 
 <div class="row g-4">
 
-<!-- LEFT -->
+<!-- LEFT COLUMN -->
 <div class="col-lg-8">
 
-<div class="card shadow-sm border-0 rounded-4">
-  <div class="card-header bg-white fw-bold fs-5">
-    Basic Information
-  </div>
+<div class="card border-0 shadow-lg rounded-4">
+<div class="card-body">
 
-  <div class="card-body">
+<h5 class="section-title">Basic Information</h5>
+<p class="section-sub">
+This information will be visible to customers on the listing page.
+</p>
 
-    <div class="mb-3">
-      <label class="form-label fw-semibold">Farmhouse Title</label>
-      {{ form.title }}
-    </div>
+<!-- TITLE -->
+<div class="mb-4">
+<label class="custom-label">
+Farmhouse Title
+<span class="label-hint">Example: Green Valley Luxury Farmhouse</span>
+</label>
+{{ form.title }}
+</div>
 
-    <div class="mb-3">
-      <label class="form-label fw-semibold">Location</label>
-      {{ form.location }}
-    </div>
+<!-- LOCATION -->
+<div class="mb-4">
+<label class="custom-label">
+Location
+<span class="label-hint">Area or locality where the farmhouse is located</span>
+</label>
+{{ form.location }}
+</div>
 
-    <div class="mb-3">
-      <label class="form-label fw-semibold">Full Address</label>
-      {{ form.address }}
-    </div>
+<!-- ADDRESS -->
+<div class="mb-4">
+<label class="custom-label">
+Full Address
+<span class="label-hint">Complete address including landmarks</span>
+</label>
+{{ form.address }}
+</div>
 
-    <div class="row">
-      <div class="col-md-4 mb-3">
-        <label class="form-label fw-semibold">Distance (KM)</label>
-        {{ form.distance_km }}
-      </div>
+<!-- GRID -->
+<div class="row">
 
-      <div class="col-md-4 mb-3">
-        <label class="form-label fw-semibold">Halls</label>
-        {{ form.halls }}
-      </div>
+<div class="col-md-4 mb-4">
+<label class="custom-label">
+Distance (KM)
+<span class="label-hint">Distance from city center</span>
+</label>
+{{ form.distance_km }}
+</div>
 
-      <div class="col-md-4 mb-3">
-        <label class="form-label fw-semibold">Bedrooms</label>
-        {{ form.bedrooms }}
-      </div>
-    </div>
+<div class="col-md-4 mb-4">
+<label class="custom-label">
+Halls
+<span class="label-hint">Number of halls</span>
+</label>
+{{ form.halls }}
+</div>
 
-    <div class="mb-3">
-      <label class="form-label fw-semibold">AC Bedrooms</label>
-      {{ form.ac_bedrooms }}
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label fw-semibold">Short Description</label>
-      {{ form.short_description }}
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label fw-semibold">Detailed Description</label>
-      {{ form.description }}
-    </div>
-
-  </div>
+<div class="col-md-4 mb-4">
+<label class="custom-label">
+Bedrooms
+<span class="label-hint">Total bedrooms available</span>
+</label>
+{{ form.bedrooms }}
 </div>
 
 </div>
 
-<!-- RIGHT -->
+<div class="mb-4">
+<label class="custom-label">
+AC Bedrooms
+<span class="label-hint">Bedrooms with air conditioning</span>
+</label>
+{{ form.ac_bedrooms }}
+</div>
+
+<div class="mb-4">
+<label class="custom-label">
+Short Description
+<span class="label-hint">A brief summary shown in search results</span>
+</label>
+{{ form.short_description }}
+</div>
+
+<div class="mb-4">
+<label class="custom-label">
+Detailed Description
+<span class="label-hint">Full description with amenities and rules</span>
+</label>
+{{ form.description }}
+</div>
+
+</div>
+</div>
+
+</div>
+
+
+<!-- RIGHT COLUMN -->
 <div class="col-lg-4">
 
-<div class="card shadow-sm border-0 rounded-4 mb-4">
-  <div class="card-header bg-white fw-bold fs-5">
-    Settings
-  </div>
+<!-- SETTINGS -->
+<div class="card border-0 shadow-lg rounded-4 mb-4">
+<div class="card-body">
 
-  <div class="card-body">
+<h5 class="section-title">Pricing & Settings</h5>
+<p class="section-sub">
+Control pricing and visibility of this farmhouse.
+</p>
 
-    <div class="mb-3">
-      <label class="form-label fw-semibold">Base Price / Day</label>
-      {{ form.price_per_day }}
-    </div>
-
-    <div class="form-check mb-2">
-      {{ form.free_cancellation }}
-      <label class="form-check-label ms-2">Free Cancellation</label>
-    </div>
-
-    <div class="form-check mb-2">
-      {{ form.is_active }}
-      <label class="form-check-label ms-2">Active</label>
-    </div>
-
-    <div class="form-check">
-      {{ form.is_featured }}
-      <label class="form-check-label ms-2">Featured Farmhouse</label>
-    </div>
-
-  </div>
+<div class="mb-4">
+<label class="custom-label">
+Base Price / Day
+<span class="label-hint">Price per day in INR</span>
+</label>
+{{ form.price_per_day }}
 </div>
 
-<div class="card shadow-sm border-0 rounded-4">
-  <div class="card-header bg-white fw-bold fs-5">
-    Gallery
-  </div>
+<div class="form-check form-switch mb-3">
+{{ form.free_cancellation }}
+<div class="ms-2">
+<div class="toggle-title">Free Cancellation</div>
+<div class="toggle-sub">Allow guests to cancel without charges</div>
+</div>
+</div>
 
-  <div class="card-body">
-    <label class="btn btn-warning w-100 text-white py-3">
-      Upload Images
-      <input type="file" name="gallery_images" multiple hidden>
-    </label>
-  </div>
+<div class="form-check form-switch mb-3">
+{{ form.is_active }}
+<div class="ms-2">
+<div class="toggle-title">Active Listing</div>
+<div class="toggle-sub">Visible to users on the website</div>
+</div>
+</div>
+
+<div class="form-check form-switch">
+{{ form.is_featured }}
+<div class="ms-2">
+<div class="toggle-title">Featured Farmhouse</div>
+<div class="toggle-sub">Highlighted on homepage and listings</div>
+</div>
 </div>
 
 </div>
 </div>
 
-<div class="mt-4 text-end">
-  <button class="btn btn-warning px-5 py-2 text-white fw-semibold">
-    Save Farmhouse
-  </button>
+<!-- GALLERY -->
+<div class="card border-0 shadow-lg rounded-4">
+<div class="card-body">
+
+<h5 class="section-title">Gallery</h5>
+<p class="section-sub">
+Upload high-quality images to attract more bookings.
+</p>
+
+<label class="upload-box w-100 text-center p-4">
+<i class="fa-solid fa-cloud-arrow-up fa-2x mb-2"></i>
+<p class="upload-title">Upload Farmhouse Images</p>
+<span class="upload-sub">
+Drag & drop or click to browse (Recommended: 1600×900)
+</span>
+<input type="file" name="gallery_images" multiple hidden>
+</label>
+
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- SAVE BUTTON -->
+<div class="d-flex justify-content-end mt-4">
+<button class="btn save-btn px-5">
+<i class="fa-solid fa-floppy-disk me-2"></i>
+Save Farmhouse
+</button>
 </div>
 
 </form>
 </div>
+
+
+<!-- STYLES -->
+<style>
+
+/* PAGE TEXT */
+.page-title{
+    font-size:28px;
+    font-weight:700;
+    letter-spacing:-0.4px;
+}
+.page-subtitle{
+    color:#6b7280;
+    font-size:15px;
+}
+
+/* SECTION TEXT */
+.section-title{
+    font-weight:650;
+    font-size:18px;
+}
+.section-sub{
+    font-size:13px;
+    color:#8b8b8b;
+    margin-bottom:22px;
+}
+
+/* LABELS */
+.custom-label{
+    font-weight:600;
+    font-size:14px;
+    color:#374151;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+}
+.label-hint{
+    font-weight:400;
+    font-size:12px;
+    color:#9ca3af;
+}
+
+/* INPUTS */
+input, textarea, select{
+    border-radius:10px!important;
+    padding:10px!important;
+    border:1px solid #e6e6e6!important;
+}
+input:focus, textarea:focus, select:focus{
+    border-color:#ff7a00!important;
+    box-shadow:0 0 0 2px rgba(255,122,0,.1)!important;
+}
+textarea{
+    min-height:120px;
+}
+::placeholder{
+    color:#b0b0b0!important;
+    font-size:13px;
+}
+
+/* TOGGLES */
+.toggle-title{
+    font-size:14px;
+    font-weight:600;
+}
+.toggle-sub{
+    font-size:12px;
+    color:#9ca3af;
+}
+
+/* UPLOAD */
+.upload-box{
+    border:2px dashed #ffd2a8;
+    border-radius:14px;
+    cursor:pointer;
+    background:#fff7ef;
+    transition:.25s;
+}
+.upload-box:hover{
+    background:#ffe8d2;
+}
+.upload-title{
+    font-weight:600;
+}
+.upload-sub{
+    font-size:12px;
+    color:#9ca3af;
+}
+
+/* SAVE BUTTON */
+.save-btn{
+    background:linear-gradient(135deg,#ff7a00,#ffb347);
+    border:none;
+    color:#fff;
+    font-weight:600;
+    padding:12px 26px;
+    border-radius:12px;
+    box-shadow:0 6px 18px rgba(255,122,0,.25);
+}
+.save-btn:hover{
+    transform:translateY(-2px);
+}
+
+</style>
 
 {% endblock %}

@@ -31,6 +31,9 @@ urlpatterns = [
     path('rating/',include('rating.urls')),
     path('cms/',include('cms.urls')),
     path("ckeditor/", include("ckeditor_uploader.urls")),
+    
+        # ✅ ADD THIS LINE
+    path("ckeditor5/", include("django_ckeditor_5.urls")),
     path('api-auth/', include('rest_framework.urls')),
 
 ]

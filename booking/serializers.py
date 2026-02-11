@@ -179,4 +179,3 @@ class CancelReasonSerializer(serializers.ModelSerializer):
         model = CancelReason
         fields = ["id", "reason"]
 
-

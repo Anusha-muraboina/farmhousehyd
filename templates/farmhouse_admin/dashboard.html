@@ -1,27 +1,241 @@
 {% extends "farmhouse_admin/base.html" %}
-{% block title %}Dashboard{% endblock %}
-
 {% block content %}
 
-<h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class="grid md:grid-cols-3 gap-6">
+<div class="container-fluid px-4 py-4">
 
-    <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="text-gray-500 text-sm">Total Farmhouses</h3>
-        <p class="text-3xl font-bold mt-2">3</p>
-    </div>
+<h2 class="fw-bold mb-4">
+Owner Dashboard
+</h2>
 
-    <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="text-gray-500 text-sm">Total Bookings</h3>
-        <p class="text-3xl font-bold mt-2">28</p>
-    </div>
+<!-- ===================== TOP CARDS ===================== -->
 
-    <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="text-gray-500 text-sm">Monthly Earnings</h3>
-        <p class="text-3xl font-bold mt-2">₹82,000</p>
-    </div>
+<div class="row g-4 mb-4">
+
+<div class="col-md-3">
+<div class="card stat bg-orange">
+<h3>{{stats.today_bookings}}</h3>
+<p>Today's Check-ins</p>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card stat bg-blue">
+<h3>{{stats.tomorrow_bookings}}</h3>
+<p>Tomorrow</p>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card stat bg-green">
+<h3>{{stats.monthly_bookings}}</h3>
+<p>Monthly Bookings</p>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card stat bg-purple">
+<h3>{{stats.yearly_bookings}}</h3>
+<p>Yearly Bookings</p>
+</div>
+</div>
 
 </div>
+
+<!-- ===================== REVENUE ===================== -->
+
+<div class="row g-4 mb-4">
+
+<div class="col-md-3">
+<div class="revenue">
+₹{{revenue.weekly}}
+<span>Weekly Revenue</span>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="revenue">
+₹{{revenue.monthly}}
+<span>Monthly Revenue</span>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="revenue">
+₹{{revenue.six_months}}
+<span>6 Months Revenue</span>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="revenue highlight">
+₹{{yearly_net}}
+<span>Your Net Earnings</span>
+</div>
+</div>
+
+</div>
+
+<!-- ===================== CHART ===================== -->
+
+<div class="card shadow border-0 mb-4">
+<div class="card-body">
+
+<h5 class="fw-bold mb-3">
+Bookings Trend
+</h5>
+
+<canvas id="bookingChart"></canvas>
+
+</div>
+</div>
+
+<!-- ===================== TABLES ===================== -->
+
+<div class="row g-4">
+
+<!-- BOOKINGS -->
+
+<div class="col-lg-7">
+<div class="card shadow border-0">
+<div class="card-body">
+
+<h5 class="fw-bold mb-3">
+Recent Bookings
+</h5>
+
+{% for b in recent_bookings %}
+
+<div class="list">
+
+<div>
+<b>{{b.booking_id}}</b>
+<br>
+<small>{{b.farmhouse.title}}</small>
+</div>
+
+<div>
+<span class="badge bg-success">
+₹{{b.total_amount}}
+</span>
+</div>
+
+</div>
+
+{% empty %}
+
+<p>No bookings yet.</p>
+{% endfor %}
+
+</div>
+</div>
+</div>
+
+<!-- MESSAGES -->
+
+<div class="col-lg-5">
+<div class="card shadow border-0">
+<div class="card-body">
+
+<h5 class="fw-bold mb-3">
+Recent Messages
+</h5>
+
+{% for m in recent_messages %}
+
+<div class="list">
+
+<div>
+<b>{{m.name}}</b>
+<br>
+<small>{{m.phone}}</small>
+</div>
+
+<small class="text-muted">
+{{m.created_at|date:"d M"}}
+</small>
+
+</div>
+
+{% empty %}
+
+<p>No messages.</p>
+{% endfor %}
+
+</div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+<style>
+
+.stat{
+color:white;
+padding:25px;
+border-radius:18px;
+text-align:center;
+border:none;
+}
+
+.bg-orange{background:linear-gradient(135deg,#ff7a00,#ffb347);}
+.bg-blue{background:linear-gradient(135deg,#36d1dc,#5b86e5);}
+.bg-green{background:linear-gradient(135deg,#11998e,#38ef7d);}
+.bg-purple{background:linear-gradient(135deg,#6a11cb,#2575fc);}
+
+.revenue{
+background:#fff;
+padding:20px;
+border-radius:16px;
+text-align:center;
+font-size:22px;
+font-weight:700;
+box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+.revenue span{
+display:block;
+font-size:13px;
+color:#777;
+}
+
+.highlight{
+background:linear-gradient(135deg,#ff7a00,#ff512f);
+color:white;
+}
+
+.list{
+display:flex;
+justify-content:space-between;
+padding:12px 0;
+border-bottom:1px solid #eee;
+}
+
+</style>
+
+<script>
+
+new Chart(
+document.getElementById('bookingChart'),
+{
+type:'line',
+data:{
+labels:{{chart_labels|safe}},
+datasets:[{
+label:'Bookings',
+data:{{chart_data|safe}},
+borderColor:'#ff7a00',
+backgroundColor:'rgba(255,122,0,.2)',
+fill:true,
+tension:.4
+}]
+}
+}
+);
+
+</script>
 
 {% endblock %}

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "superadmin_dashboard",
     
     'corsheaders',
+    "django_ckeditor_5",
     
     # ✅ ADD THIS
     'django.contrib.humanize',
@@ -196,6 +197,16 @@ CKEDITOR_CONFIGS = {
 
 
 
+CKEDITOR_5_CONFIGS = {
+    "default": {
+        "toolbar": [
+            "heading", "|",
+            "bold", "italic", "link", "bulletedList", "numberedList", "|",
+            "blockQuote", "insertTable", "imageUpload", "|",
+            "undo", "redo"
+        ],
+    }
+}
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 

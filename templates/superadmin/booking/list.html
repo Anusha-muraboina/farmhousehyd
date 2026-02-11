@@ -1,0 +1,255 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Booking Dashboard</h2>
+
+        <a href="{% url 'admin-booking-create' %}"
+           class="btn btn-primary shadow-sm">
+            + Create Booking
+        </a>
+    </div>
+
+    <!-- FILTER CARD -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <form method="get" class="row g-3">
+
+                <!-- SEARCH -->
+                <div class="col-md-3">
+                    <input name="search"
+                           value="{{ request.GET.search }}"
+                           class="form-control"
+                           placeholder="Search booking">
+                </div>
+
+                <!-- STATUS -->
+                <div class="col-md-3">
+                    <select name="status" class="form-select">
+
+                        <option value="">All Status</option>
+
+                        <option value="pending"
+                        {% if request.GET.status == "pending" %}selected{% endif %}>
+                            Pending
+                        </option>
+
+                        <option value="confirmed"
+                        {% if request.GET.status == "confirmed" %}selected{% endif %}>
+                            Confirmed
+                        </option>
+
+                        <option value="cancelled"
+                        {% if request.GET.status == "cancelled" %}selected{% endif %}>
+                            Cancelled
+                        </option>
+
+                    </select>
+                </div>
+
+                <!-- FARMHOUSE -->
+                <div class="col-md-4">
+                    <select name="farmhouse" class="form-select">
+
+                        <option value="">
+                            All Farmhouses
+                        </option>
+
+                        {% for house in farmhouses %}
+                            <option value="{{ house.id }}"
+                            {% if request.GET.farmhouse == house.id|stringformat:"s" %}
+                                selected
+                            {% endif %}>
+                                {{ house.title }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn btn-dark w-100">
+                        Filter
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- SUCCESS MESSAGE -->
+    {% for message in messages %}
+        <div class="alert alert-success shadow-sm">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+
+    <!-- TABLE -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Farmhouse</th>
+                        <th>Guest</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th width="260">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for booking in bookings %}
+                <tr>
+
+                    <td class="fw-semibold">
+                        {{ booking.booking_id }}
+                    </td>
+
+                    <!-- FARMHOUSE -->
+                    <td class="text-primary fw-semibold">
+                        {{ booking.farmhouse.title }}
+                    </td>
+
+                    <td>
+                        <div class="fw-semibold">
+                            {{ booking.guest_name }}
+                        </div>
+                        <small class="text-muted">
+                            {{ booking.guest_email }}
+                        </small>
+                    </td>
+
+                    <!-- STATUS BADGE -->
+                    <td>
+                        {% if booking.status == "confirmed" %}
+                            <span class="badge bg-success">
+                                Confirmed
+                            </span>
+
+                        {% elif booking.status == "pending" %}
+                            <span class="badge bg-warning text-dark">
+                                Pending
+                            </span>
+
+                        {% elif booking.status == "cancelled" %}
+                            <span class="badge bg-danger">
+                                Cancelled
+                            </span>
+
+                        {% else %}
+                            <span class="badge bg-secondary">
+                                {{ booking.status }}
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td class="fw-bold">
+                        ₹{{ booking.total_amount }}
+                    </td>
+
+                    <!-- 🔥 QUICK STATUS UPDATE -->
+                    <td>
+
+                        <div class="d-flex gap-2 flex-wrap">
+
+                            <a href="{% url 'admin-booking-detail' booking.id %}"
+                               class="btn btn-sm btn-outline-info">
+                                View
+                            </a>
+
+                            <a href="{% url 'admin-booking-update' booking.id %}"
+                               class="btn btn-sm btn-outline-warning">
+                                Edit
+                            </a>
+
+                            <!-- QUICK STATUS -->
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden"
+                                       name="booking_id"
+                                       value="{{ booking.id }}">
+
+                                <select name="status"
+                                        onchange="this.form.submit()"
+                                        class="form-select form-select-sm">
+
+                                    <option disabled selected>
+                                        Change
+                                    </option>
+
+                                    <option value="confirmed">
+                                        Confirm
+                                    </option>
+
+                                    <option value="cancelled">
+                                        Cancel
+                                    </option>
+
+                                    <option value="completed">
+                                        Complete
+                                    </option>
+
+                                </select>
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+                <tr>
+                    <td colspan="6"
+                        class="text-center p-4">
+                        No bookings found.
+                    </td>
+                </tr>
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+
+    <!-- PAGINATION WITH FILTER MEMORY -->
+    <div class="mt-4 d-flex justify-content-center">
+
+        {% if bookings.has_previous %}
+            <a class="btn btn-outline-dark me-2"
+               href="?page={{ bookings.previous_page_number }}&search={{request.GET.search}}&status={{request.GET.status}}&farmhouse={{request.GET.farmhouse}}">
+               Prev
+            </a>
+        {% endif %}
+
+        <span class="align-self-center">
+            Page {{ bookings.number }}
+        </span>
+
+        {% if bookings.has_next %}
+            <a class="btn btn-outline-dark ms-2"
+               href="?page={{ bookings.next_page_number }}&search={{request.GET.search}}&status={{request.GET.status}}&farmhouse={{request.GET.farmhouse}}">
+               Next
+            </a>
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

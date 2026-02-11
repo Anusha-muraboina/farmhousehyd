@@ -1,0 +1,113 @@
+{% extends "farmhouse_admin/base.html" %}
+{% block content %}
+
+<div class="container-fluid px-4 py-4">
+
+<h2 class="fw-bold mb-4">Contact Messages</h2>
+
+<!-- FILTER -->
+<div class="card border-0 shadow-sm mb-4">
+<div class="card-body">
+
+<form method="get" class="row g-3">
+
+<div class="col-md-10">
+<input name="search"
+value="{{request.GET.search}}"
+class="form-control"
+placeholder="Search by name, phone or email">
+</div>
+
+<div class="col-md-2">
+<button class="btn btn-warning w-100 fw-semibold">
+Search
+</button>
+</div>
+
+</form>
+
+</div>
+</div>
+
+<!-- TABLE -->
+<div class="card border-0 shadow-sm">
+<div class="table-responsive">
+
+<table class="table align-middle mb-0">
+
+<thead class="table-light">
+<tr>
+<th>Name</th>
+<th>Farmhouse</th>
+<th>Phone</th>
+<th>Email</th>
+<th>Date</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for msg in messages %}
+<tr>
+
+<td class="fw-semibold">{{msg.name}}</td>
+
+<td class="text-warning fw-semibold">
+{{msg.farmhouse.title}}
+</td>
+
+<td>{{msg.phone}}</td>
+<td>{{msg.email}}</td>
+
+<td>{{msg.created_at|date:"M d, Y H:i"}}</td>
+
+<td>
+<a href="{% url 'owner_contact_detail' msg.id %}"
+class="btn btn-sm btn-outline-dark">
+View
+</a>
+</td>
+
+</tr>
+
+{% empty %}
+<tr>
+<td colspan="6" class="text-center p-4">
+No messages yet.
+</td>
+</tr>
+{% endfor %}
+
+</tbody>
+</table>
+
+</div>
+</div>
+
+<!-- PAGINATION -->
+<div class="mt-4 d-flex justify-content-center">
+
+{% if messages.has_previous %}
+<a class="btn btn-outline-dark me-2"
+href="?page={{messages.previous_page_number}}&search={{request.GET.search}}">
+Prev
+</a>
+{% endif %}
+
+<span class="align-self-center mx-2">
+Page {{messages.number}}
+</span>
+
+{% if messages.has_next %}
+<a class="btn btn-outline-dark ms-2"
+href="?page={{messages.next_page_number}}&search={{request.GET.search}}">
+Next
+</a>
+{% endif %}
+
+</div>
+
+</div>
+
+{% endblock %}
