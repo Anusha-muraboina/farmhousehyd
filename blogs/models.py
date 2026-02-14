@@ -52,14 +52,12 @@ class BlogTag(models.Model):
 class Blog(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True,max_length=255,)
-
     category = models.ForeignKey(
         BlogCategory,
         on_delete=models.SET_NULL,
         null=True,
         related_name='blogs'
     )
-
     tags = models.ManyToManyField(
         BlogTag,
         blank=True,

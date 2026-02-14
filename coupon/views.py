@@ -203,3 +203,4 @@ def apply_coupon(request):
         "discount": float(discount),
         "total": float(booking.total_amount)
     })
+

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'farmhouse',
     'contact',
     'user',
+    "accounts",
     'blogs',
     'coupon',
     'booking',

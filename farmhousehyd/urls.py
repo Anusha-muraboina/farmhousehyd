@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('farmhouse_admin/' , include("farmhouse_owner.urls")),
     path('farmhouse_superadmin/' , include("superadmin_dashboard.urls")),
+    path('accounts/' , include("accounts.urls")),
     path('', include('farmhouse.urls')),
     path('contact/',include('contact.urls')),
     path('user/',include('user.urls')),

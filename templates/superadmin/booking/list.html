@@ -1,17 +1,18 @@
 {% extends "superadmin/base.html" %}
 {% block content %}
 
-<div class="container-fluid">
+<div class="container-fluid booking-wrapper">
 
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold">Booking Dashboard</h2>
 
         <a href="{% url 'admin-booking-create' %}"
-           class="btn btn-primary shadow-sm">
+           class="btn btn-warning shadow-sm text-white">
             + Create Booking
         </a>
     </div>
+
 
     <!-- FILTER CARD -->
     <div class="card shadow-sm mb-4">
@@ -19,7 +20,6 @@
 
             <form method="get" class="row g-3">
 
-                <!-- SEARCH -->
                 <div class="col-md-3">
                     <input name="search"
                            value="{{ request.GET.search }}"
@@ -27,10 +27,8 @@
                            placeholder="Search booking">
                 </div>
 
-                <!-- STATUS -->
                 <div class="col-md-3">
                     <select name="status" class="form-select">
-
                         <option value="">All Status</option>
 
                         <option value="pending"
@@ -47,27 +45,21 @@
                         {% if request.GET.status == "cancelled" %}selected{% endif %}>
                             Cancelled
                         </option>
-
                     </select>
                 </div>
 
-                <!-- FARMHOUSE -->
                 <div class="col-md-4">
                     <select name="farmhouse" class="form-select">
-
-                        <option value="">
-                            All Farmhouses
-                        </option>
+                        <option value="">All Farmhouses</option>
 
                         {% for house in farmhouses %}
-                            <option value="{{ house.id }}"
-                            {% if request.GET.farmhouse == house.id|stringformat:"s" %}
-                                selected
-                            {% endif %}>
-                                {{ house.title }}
-                            </option>
+                        <option value="{{ house.id }}"
+                        {% if request.GET.farmhouse == house.id|stringformat:"s" %}
+                            selected
+                        {% endif %}>
+                            {{ house.title }}
+                        </option>
                         {% endfor %}
-
                     </select>
                 </div>
 
@@ -83,19 +75,14 @@
     </div>
 
 
-    <!-- SUCCESS MESSAGE -->
-    {% for message in messages %}
-        <div class="alert alert-success shadow-sm">
-            {{ message }}
-        </div>
-    {% endfor %}
 
+    <!-- ✅ TABLE CARD -->
+    <div class="card shadow-sm table-card">
 
-    <!-- TABLE -->
-    <div class="card shadow-sm">
-        <div class="card-body p-0">
+        <!-- ⭐⭐⭐ CRITICAL SCROLL WRAPPER -->
+        <div class="table-scroll">
 
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 booking-table">
 
                 <thead class="table-light">
                     <tr>
@@ -104,25 +91,25 @@
                         <th>Guest</th>
                         <th>Status</th>
                         <th>Total</th>
-                        <th width="260">Actions</th>
+                        <th style="min-width:260px;">Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
 
                 {% for booking in bookings %}
+
                 <tr>
 
                     <td class="fw-semibold">
                         {{ booking.booking_id }}
                     </td>
 
-                    <!-- FARMHOUSE -->
-                    <td class="text-primary fw-semibold">
+                    <td class="text-warning fw-semibold" style="min-width:180px;">
                         {{ booking.farmhouse.title }}
                     </td>
 
-                    <td>
+                    <td style="min-width:240px;">
                         <div class="fw-semibold">
                             {{ booking.guest_name }}
                         </div>
@@ -131,23 +118,13 @@
                         </small>
                     </td>
 
-                    <!-- STATUS BADGE -->
-                    <td>
+                    <td style="min-width:140px;">
                         {% if booking.status == "confirmed" %}
-                            <span class="badge bg-success">
-                                Confirmed
-                            </span>
-
+                            <span class="badge bg-success">Confirmed</span>
                         {% elif booking.status == "pending" %}
-                            <span class="badge bg-warning text-dark">
-                                Pending
-                            </span>
-
+                            <span class="badge bg-warning text-dark">Pending</span>
                         {% elif booking.status == "cancelled" %}
-                            <span class="badge bg-danger">
-                                Cancelled
-                            </span>
-
+                            <span class="badge bg-danger">Cancelled</span>
                         {% else %}
                             <span class="badge bg-secondary">
                                 {{ booking.status }}
@@ -155,14 +132,12 @@
                         {% endif %}
                     </td>
 
-                    <td class="fw-bold">
+                    <td class="fw-bold" style="min-width:120px;">
                         ₹{{ booking.total_amount }}
                     </td>
 
-                    <!-- 🔥 QUICK STATUS UPDATE -->
                     <td>
-
-                        <div class="d-flex gap-2 flex-wrap">
+                        <div class="d-flex gap-2">
 
                             <a href="{% url 'admin-booking-detail' booking.id %}"
                                class="btn btn-sm btn-outline-info">
@@ -174,46 +149,14 @@
                                 Edit
                             </a>
 
-                            <!-- QUICK STATUS -->
-                            <form method="post">
-                                {% csrf_token %}
-                                <input type="hidden"
-                                       name="booking_id"
-                                       value="{{ booking.id }}">
-
-                                <select name="status"
-                                        onchange="this.form.submit()"
-                                        class="form-select form-select-sm">
-
-                                    <option disabled selected>
-                                        Change
-                                    </option>
-
-                                    <option value="confirmed">
-                                        Confirm
-                                    </option>
-
-                                    <option value="cancelled">
-                                        Cancel
-                                    </option>
-
-                                    <option value="completed">
-                                        Complete
-                                    </option>
-
-                                </select>
-                            </form>
-
                         </div>
-
                     </td>
 
                 </tr>
 
                 {% empty %}
                 <tr>
-                    <td colspan="6"
-                        class="text-center p-4">
+                    <td colspan="6" class="text-center p-4">
                         No bookings found.
                     </td>
                 </tr>
@@ -226,30 +169,71 @@
         </div>
     </div>
 
-
-    <!-- PAGINATION WITH FILTER MEMORY -->
-    <div class="mt-4 d-flex justify-content-center">
-
-        {% if bookings.has_previous %}
-            <a class="btn btn-outline-dark me-2"
-               href="?page={{ bookings.previous_page_number }}&search={{request.GET.search}}&status={{request.GET.status}}&farmhouse={{request.GET.farmhouse}}">
-               Prev
-            </a>
-        {% endif %}
-
-        <span class="align-self-center">
-            Page {{ bookings.number }}
-        </span>
-
-        {% if bookings.has_next %}
-            <a class="btn btn-outline-dark ms-2"
-               href="?page={{ bookings.next_page_number }}&search={{request.GET.search}}&status={{request.GET.status}}&farmhouse={{request.GET.farmhouse}}">
-               Next
-            </a>
-        {% endif %}
-
-    </div>
-
 </div>
+
+
+
+<!-- ✅✅✅ ULTRA STRONG CSS -->
+<style>
+
+/* ===============================
+🔥 STOP ADMIN FROM BLOCKING SCROLL
+=============================== */
+
+.booking-wrapper,
+.table-card{
+    overflow: visible !important;
+}
+
+
+/* ===============================
+⭐ SCROLL CONTAINER
+=============================== */
+
+.table-scroll{
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+}
+
+
+/* ⭐ THIS LINE CREATES THE SCROLL */
+.booking-table{
+    min-width:1100px;
+}
+
+
+/* Prevent column compression */
+.booking-table th,
+.booking-table td{
+    white-space:nowrap;
+}
+
+
+/* Smooth scrollbar */
+.table-scroll::-webkit-scrollbar{
+    height:8px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb{
+    background:#cfcfcf;
+    border-radius:20px;
+}
+
+
+
+/* ===============================
+DESKTOP → NORMAL TABLE
+=============================== */
+
+@media(min-width:992px){
+
+.booking-table{
+    min-width:100%;
+}
+
+}
+
+</style>
 
 {% endblock %}

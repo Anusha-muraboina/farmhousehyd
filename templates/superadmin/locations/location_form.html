@@ -1,14 +1,40 @@
 {% extends "superadmin/base.html" %}
 {% block content %}
 
-<form method="POST" enctype="multipart/form-data"
-      class="bg-white p-10 rounded-xl shadow space-y-6 max-w-3xl">
-  {% csrf_token %}
-  {{ form.as_p }}
+<div class="container-fluid">
 
-  <button class="bg-orange-500 text-white px-8 py-3 rounded-xl">
-    Save
-  </button>
+<div class="card shadow-sm border-0 mx-auto" style="max-width:650px;">
+<div class="card-body p-5">
+
+<h4 class="fw-bold mb-4">
+    {{ title }}
+</h4>
+
+<form method="POST">
+{% csrf_token %}
+
+<div class="mb-4">
+<label class="form-label fw-semibold">
+Location Name
+</label>
+{{ form.name }}
+</div>
+
+<button class="btn btn-warning px-4">
+<i class="fa fa-save me-2"></i>
+Save Location
+</button>
+
+<a href="{% url 'location-list' %}"
+   class="btn btn-light ms-2">
+Cancel
+</a>
+
 </form>
+
+</div>
+</div>
+
+</div>
 
 {% endblock %}

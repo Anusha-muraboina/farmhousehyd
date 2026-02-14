@@ -160,7 +160,7 @@ style="width:36px;height:36px;">
 
 <ul class="dropdown-menu dropdown-menu-end">
 <li><a class="dropdown-item" href="#">Profile</a></li>
-<li><a class="dropdown-item text-danger" href="{% url 'superadmin-logout' %}">Logout</a></li>
+<li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">Logout</a></li>
 </ul>
 </div>
 
@@ -184,10 +184,35 @@ class="{% if request.resolver_match.url_name == 'superadmin-dashboard' %}active-
 
 
 
+<a href="{% url 'banner-list' %}"
+class="{% if request.resolver_match.url_name == 'banner-list' %}active-parent{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-gauge"></i>
+<span class="menu-text">Banner List</span>
+</div>
+</a>
+
+
+<a href="{% url 'amenity-list' %}"
+class="{% if request.resolver_match.url_name == 'amenity-list' %}active-parent{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-gauge"></i>
+<span class="menu-text">Amenities</span>
+</div>
+</a>
+
+<a href="{% url 'location-list' %}"
+class="{% if request.resolver_match.url_name == 'location-list' %}active-parent{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-gauge"></i>
+<span class="menu-text">Locations</span>
+</div>
+</a>
+
 
 <!-- PAYMENT POLICY -->
 <a onclick="toggleMenu('paymentMenu',this)"
-class="{% if request.resolver_match.url_name in 'payment_policy_list payment_policy_create payment_policy_update' %}active-parent{% endif %}">
+class="{% if request.resolver_match.url_name|slice:':14' == 'payment_policy' %}active-parent{% endif %}">
 <div class="menu-left">
 <i class="fa-solid fa-money-check-dollar"></i>
 <span class="menu-text">Payment Policy</span>
@@ -195,23 +220,8 @@ class="{% if request.resolver_match.url_name in 'payment_policy_list payment_pol
 <i class="fa-solid fa-chevron-down arrow"></i>
 </a>
 
-{% comment %} <div id="paymentMenu"
-class="submenu {% if request.resolver_match.url_name in 'payment_policy_list payment_policy_create payment_policy_update' %}{% else %}d-none{% endif %}">
-
-<a href="{% url 'payment_policy_list' %}"
-class="{% if request.resolver_match.url_name == 'payment_policy_list' %}active{% endif %}">
-All Policies
-</a>
-
-<a href="{% url 'payment_policy_create' %}"
-class="{% if request.resolver_match.url_name == 'payment_policy_create' %}active{% endif %}">
-Add Policy
-</a>
-
-</div> {% endcomment %}
-
 <div id="paymentMenu"
-class="submenu {% if request.resolver_match.url_name in 'payment_policy_list payment_policy_create payment_policy_update' %}{% else %}d-none{% endif %}">
+class="submenu {% if request.resolver_match.url_name|slice:':14' != 'payment_policy' %}d-none{% endif %}">
 
 <a href="{% url 'payment_policy_list' %}"
 class="{% if request.resolver_match.url_name == 'payment_policy_list' %}active{% endif %}">
@@ -246,8 +256,9 @@ class="{% if request.resolver_match.url_name == 'superadmin-farmhouses' %}active
 
 
 <!-- BOOKINGS -->
+<!-- BOOKINGS -->
 <a onclick="toggleMenu('bookingMenu',this)"
-class="{% if request.resolver_match.url_name in 'admin-bookings admin-booking-create' %}active-parent{% endif %}">
+class="{% if request.resolver_match.url_name|slice:':13' == 'admin-booking' %}active-parent{% endif %}">
 <div class="menu-left">
 <i class="fa-solid fa-book"></i>
 <span class="menu-text">Bookings</span>
@@ -255,7 +266,8 @@ class="{% if request.resolver_match.url_name in 'admin-bookings admin-booking-cr
 <i class="fa-solid fa-chevron-down arrow"></i>
 </a>
 
-<div id="bookingMenu" class="submenu ...">
+<div id="bookingMenu"
+class="submenu {% if request.resolver_match.url_name|slice:':13' != 'admin-booking' %}d-none{% endif %}">
 
 <a href="{% url 'admin-bookings' %}">
 <div class="menu-left">
@@ -272,6 +284,7 @@ class="{% if request.resolver_match.url_name in 'admin-bookings admin-booking-cr
 </a>
 
 </div>
+
 
 
 <!-- AVAILABILITY -->

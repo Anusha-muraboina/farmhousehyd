@@ -77,9 +77,13 @@
         </a>.
     </p>
                     <div class="flex gap-6 text-gray-400 text-sm">
-                        <a href="#" class="hover:text-primary transition-colors">Privacy Policy</a>
-                        <a href="#" class="hover:text-primary transition-colors">Terms & Conditions</a>
-                        <a href="#" class="hover:text-primary transition-colors">Refund Policy</a>
+                        {% comment %} <a href="#" class="hover:text-primary transition-colors">Privacy Policy</a> {% endcomment %}
+                       <a href="{% url 'privacy_policy' %}" class="hover:text-green-600">
+    Privacy Policy
+</a>
+
+                        <a href="{% url 'terms_conditions' %}" class="hover:text-primary transition-colors">Terms & Conditions</a>
+                        <a href="{% url 'refund_policy' %}" class="hover:text-primary transition-colors">Refund Policy</a>
                     </div>
                   
                     <a href="https://wa.me/917013413092" class="fixed bottom-6 right-6 bg-green-500 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-colors z-50">
@@ -89,3 +93,5 @@
             </div>
         </div>
     </footer>
+
+    

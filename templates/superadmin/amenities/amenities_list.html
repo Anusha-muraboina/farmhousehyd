@@ -1,63 +1,115 @@
 {% extends "superadmin/base.html" %}
 {% block content %}
 
-<div class="flex justify-between items-center mb-6">
-  <h2 class="text-2xl font-bold text-gray-800">
-    {{ title }}
-  </h2>
+<div class="container-fluid">
 
-  <a href="{% url 'amenity-add' %}"
-     class="bg-orange-500 text-white px-5 py-2 rounded-xl">
-    + Add
-  </a>
+<!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold">{{ title }}</h3>
+
+    <a href="{% url 'amenity-add' %}" class="btn btn-warning shadow-sm">
+        <i class="fa fa-plus me-2"></i>
+        Add Amenity
+    </a>
 </div>
 
-<table class="w-full bg-white rounded-xl shadow">
-  <thead class="bg-gray-100">
-    <tr>
-      <th class="p-3 text-left">Name</th>
-      <th class="p-3 text-left">Actions</th>
-    </tr>
-  </thead>
 
-  <tbody>
-    {% for obj in items %}
-    <tr class="border-t">
-      <td class="p-3 font-medium">
-        {{ obj }}
-      </td>
-      <td class="p-3 flex gap-4">
-        <a href="{{ obj.id }}/edit/"
-           class="text-blue-600 hover:underline">
-           Edit
-        </a>
+<!-- CARD -->
+<div class="card border-0 shadow-sm">
+<div class="card-body p-0">
 
-                <!-- DELETE -->
-        <form method="POST"
-              action="{% url 'amenity-delete' obj.id %}"
-              onsubmit="return confirmDelete()">
-          {% csrf_token %}
-          <button type="submit"
-                  class="text-red-600 hover:underline">
-            Delete
-          </button>
-        </form>
+<table class="table table-hover align-middle mb-0">
 
+<thead class="table-light">
+<tr>
+    <th class="ps-4">Amenity</th>
+    <th>Icon Preview</th>
+    <th class="text-end pe-4">Actions</th>
+</tr>
+</thead>
 
-        {% comment %} <a href="{{ obj.id }}/delete/"
-           class="text-red-600 hover:underline">
-           Delete
-        </a> {% endcomment %}
-      </td>
-    </tr>
-    {% empty %}
-    <tr>
-      <td colspan="2" class="p-6 text-center text-gray-500">
-        No records found
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
+<tbody>
+
+{% for obj in items %}
+<tr>
+
+<td class="ps-4 fw-semibold">
+    {{ obj.name }}
+</td>
+
+<td>
+    <i class="{{ obj.icon_class }} fs-5 text-warning"></i>
+    <span class="ms-2 text-muted">{{ obj.icon_class }}</span>
+</td>
+
+<td class="text-end pe-4">
+
+    <a href="{% url 'amenity-edit' obj.id %}"
+       class="btn btn-sm btn-outline-primary">
+        Edit
+    </a>
+
+    <!-- DELETE BUTTON -->
+    <button class="btn btn-sm btn-outline-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteModal{{obj.id}}">
+        Delete
+    </button>
+
+    <!-- DELETE MODAL -->
+    <div class="modal fade" id="deleteModal{{obj.id}}">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <h5 class="modal-title">Delete Amenity</h5>
+            <button class="btn-close"
+                    data-bs-dismiss="modal"></button>
+          </div>
+
+          <div class="modal-body">
+            Are you sure you want to delete
+            <strong>{{ obj.name }}</strong>?
+          </div>
+
+          <div class="modal-footer">
+
+            <button class="btn btn-light"
+                    data-bs-dismiss="modal">
+                Cancel
+            </button>
+
+            <form method="POST"
+                  action="{% url 'amenity-delete' obj.id %}">
+                {% csrf_token %}
+                <button class="btn btn-danger">
+                    Yes Delete
+                </button>
+            </form>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+</td>
+</tr>
+
+{% empty %}
+<tr>
+<td colspan="3" class="text-center p-5 text-muted">
+No amenities found
+</td>
+</tr>
+{% endfor %}
+
+</tbody>
 </table>
+
+</div>
+</div>
+
+</div>
 
 {% endblock %}

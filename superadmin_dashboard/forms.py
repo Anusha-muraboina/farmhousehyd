@@ -174,40 +174,63 @@ class FarmhouseImageForm(forms.ModelForm):
 from django import forms
 from superadmin_dashboard.models import *
 
-INPUT = "w-full border px-4 py-3 rounded-xl focus:ring-2 focus:ring-orange-400"
+# INPUT = "w-full border px-4 py-3 rounded-xl focus:ring-2 focus:ring-orange-400"
+
+
+INPUT = "form-control"
 
 class BannerForm(forms.ModelForm):
     class Meta:
         model = Banner
         fields = "__all__"
+
         widgets = {
             "title": forms.TextInput(attrs={"class": INPUT}),
             "link": forms.URLInput(attrs={"class": INPUT}),
             "Slot_position": forms.NumberInput(attrs={"class": INPUT}),
-            "is_active": forms.CheckboxInput(attrs={"class": "w-5 h-5"}),
+            "image": forms.FileInput(attrs={"class": "form-control"}),
+            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
+
+
+# class LocationForm(forms.ModelForm):
+#     class Meta:
+#         model = Location
+#         fields = "__all__"
+#         widgets = {
+#             "name": forms.TextInput(attrs={"class": INPUT}),
+#             "slug": forms.TextInput(attrs={"class": INPUT}),
+#             "is_active": forms.CheckboxInput(attrs={"class": "w-5 h-5"}),
+#         }
+
 
 
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
         fields = "__all__"
+
         widgets = {
-            "name": forms.TextInput(attrs={"class": INPUT}),
-            "slug": forms.TextInput(attrs={"class": INPUT}),
-            "is_active": forms.CheckboxInput(attrs={"class": "w-5 h-5"}),
+            "name": forms.TextInput(attrs={
+                "class": INPUT,
+                "placeholder":"Enter location name"
+            }),
         }
+
 
 
 class AmenityForm(forms.ModelForm):
     class Meta:
         model = Amenity
         fields = "__all__"
+
         widgets = {
             "name": forms.TextInput(attrs={"class": INPUT}),
-            "icon_class": forms.TextInput(attrs={"class": INPUT}),
+            "icon_class": forms.TextInput(attrs={
+                "class": INPUT,
+                "placeholder":"Example: fa-solid fa-wifi"
+            }),
         }
-
 
 
 # cms
@@ -635,6 +658,11 @@ class AdminBookingForm(forms.ModelForm):
             "confirmation_email_sent_at",
             "cancelled_at",
             "created_at",
+            "sub_total",
+            "tax_price",
+            "disc_price",
+            "total_amount",
+            "remaining_amount",
         ]
 
         widgets = {
@@ -680,6 +708,43 @@ from django import forms
 from booking.models import BlockedDate
 
 
+# class BlockedDateForm(forms.ModelForm):
+
+#     class Meta:
+#         model = BlockedDate
+#         fields = "__all__"
+
+#         widgets = {
+#             "start_date": forms.TextInput(attrs={"class":"form-control"}),
+#             "end_date": forms.TextInput(attrs={"class":"form-control"}),
+#             "reason": forms.TextInput(attrs={"class":"form-control"}),
+#         }
+
+#     ##################################
+#     # BOOTSTRAP AUTO
+#     ##################################
+
+#     def __init__(self,*args,**kwargs):
+#         super().__init__(*args,**kwargs)
+
+#         for field in self.fields.values():
+#             field.widget.attrs["class"] = "form-control"
+
+
+
+from django import forms
+from booking.models import BlockedDate
+from booking.models import Booking
+from datetime import date
+from django import forms
+from datetime import date
+from django.core.exceptions import ValidationError
+from booking.models import BlockedDate, Booking
+
+from datetime import date, timedelta
+from django.core.exceptions import ValidationError
+
+
 class BlockedDateForm(forms.ModelForm):
 
     class Meta:
@@ -687,20 +752,75 @@ class BlockedDateForm(forms.ModelForm):
         fields = "__all__"
 
         widgets = {
-            "start_date": forms.TextInput(attrs={"class":"form-control"}),
-            "end_date": forms.TextInput(attrs={"class":"form-control"}),
-            "reason": forms.TextInput(attrs={"class":"form-control"}),
+            "farmhouse": forms.Select(attrs={"class": "form-select"}),
+            "start_date": forms.TextInput(attrs={"class": "form-control", "readonly": "readonly"}),
+            "end_date": forms.TextInput(attrs={"class": "form-control", "readonly": "readonly"}),
+            "reason": forms.TextInput(attrs={"class": "form-control"}),
         }
 
-    ##################################
-    # BOOTSTRAP AUTO
-    ##################################
 
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
+    def clean(self):
+        cleaned_data = super().clean()
 
-        for field in self.fields.values():
-            field.widget.attrs["class"] = "form-control"
+        farmhouse = cleaned_data.get("farmhouse")
+        start_date = cleaned_data.get("start_date")
+        end_date = cleaned_data.get("end_date")
+
+        if not farmhouse or not start_date or not end_date:
+            return cleaned_data
+
+        ##################################
+        # 1️⃣ End must be AFTER start
+        ##################################
+        if end_date <= start_date:
+            raise ValidationError("End date must be greater than start date.")
+
+        ##################################
+        # 2️⃣ Prevent past blocking
+        ##################################
+        if start_date < date.today():
+            raise ValidationError("You cannot block past dates.")
+
+        ##################################
+        # ⭐ Convert to NIGHT RANGE
+        ##################################
+        new_start = start_date
+        new_end = end_date - timedelta(days=1)
+
+        ##################################
+        # 3️⃣ BLOCKED DATE OVERLAP (NIGHT BASED)
+        ##################################
+        blocked_qs = BlockedDate.objects.filter(farmhouse=farmhouse)
+
+        if self.instance.pk:
+            blocked_qs = blocked_qs.exclude(pk=self.instance.pk)
+
+        for block in blocked_qs:
+            block_start = block.start_date
+            block_end = block.end_date - timedelta(days=1)
+
+            # overlap if night ranges intersect
+            if not (new_end < block_start or new_start > block_end):
+                raise ValidationError("These dates overlap with an existing blocked range.")
+
+        ##################################
+        # 4️⃣ BOOKING OVERLAP (NIGHT BASED)
+        ##################################
+        booking_qs = Booking.objects.filter(
+            farmhouse=farmhouse,
+            status__in=["pending", "confirmed"]
+        )
+
+        for booking in booking_qs:
+            book_start = booking.check_in
+            book_end = booking.check_out - timedelta(days=1)
+
+            if not (new_end < book_start or new_start > book_end):
+                raise ValidationError("These dates overlap with a booking.")
+
+        return cleaned_data
+
+
 
 
 
@@ -711,3 +831,27 @@ class BlogForm(forms.ModelForm):
     class Meta:
         model = Blog
         fields = "__all__"
+
+
+
+# locations
+
+
+
+from farmhouse.models import Location
+
+class LocationForm(forms.ModelForm):
+
+    class Meta:
+        model = Location
+        fields = ['name', 'is_active']
+
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter Location Name'
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+        }

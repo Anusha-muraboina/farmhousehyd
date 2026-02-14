@@ -4,7 +4,7 @@ from farmhouse.models import *
 
 
 from django import forms
-
+from booking.models import BlockedDate
 from django import forms
 from farmhouse.models import Farmhouse
 
@@ -90,4 +90,19 @@ class OwnerCouponForm(forms.ModelForm):
             "end_date": forms.DateInput(
                 attrs={"type": "date", "class": "form-control"}
             ),
+        }
+
+
+
+
+class BlockedDateForm(forms.ModelForm):
+
+    class Meta:
+        model = BlockedDate
+        fields = "__all__"
+
+        widgets = {
+            "start_date": forms.TextInput(attrs={"class":"form-control"}),
+            "end_date": forms.TextInput(attrs={"class":"form-control"}),
+            "reason": forms.TextInput(attrs={"class":"form-control"}),
         }

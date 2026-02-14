@@ -2,8 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("login/", views.superadmin_login, name="superadmin-login"),
-    path("logout/", views.superadmin_logout, name="superadmin-logout"),
 
     path("dashboard/", views.superadmin_dashboard, name="superadmin-dashboard"),
     # path("farmhouses/", views.all_farmhouses, name="superadmin-farmhouses"),
@@ -131,6 +129,13 @@ urlpatterns = [
     path("payment-policies/<int:pk>/edit/", views.payment_policy_update, name="payment_policy_update"),
     path( "payment-policy/<int:pk>/delete/",views.payment_policy_delete,  name="payment_policy_delete" ),
 
+
+    path(
+        "admin/calc-booking-price/",
+        views.admin_calculate_booking_price,
+        name="admin_calc_booking_price"
+    ),
+    
     
     path(
         "admin/bookings/",

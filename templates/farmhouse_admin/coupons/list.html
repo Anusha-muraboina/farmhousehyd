@@ -138,9 +138,59 @@ Create Coupon
 </div>
 
 
-
-<!-- ⭐⭐⭐ PREMIUM CSS -->
 <style>
+
+/* ===============================
+🔥 MOST IMPORTANT FIX
+Allow scroll inside admin layouts
+=============================== */
+
+.container-fluid,
+.container,
+.row,
+.custom-card{
+    overflow:visible !important;
+}
+
+
+/* ===============================
+TABLE SCROLL SYSTEM
+=============================== */
+
+.table-responsive{
+    width:100%;
+    overflow-x:auto;
+    display:block;
+    -webkit-overflow-scrolling:touch;
+}
+
+/* 🔥 THIS CREATES THE SCROLL */
+.modern-table{
+    min-width:1000px;   /* MUST be bigger than phone */
+}
+
+/* Prevent column squeezing */
+.modern-table th,
+.modern-table td{
+    white-space:nowrap;
+}
+
+
+/* Smooth scrollbar */
+.table-responsive::-webkit-scrollbar{
+    height:6px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb{
+    background:#d1d5db;
+    border-radius:20px;
+}
+
+
+
+/* ===============================
+YOUR PREMIUM UI (UNCHANGED)
+=============================== */
 
 /* HEADER */
 .header-box{
@@ -250,5 +300,6 @@ Create Coupon
 }
 
 </style>
+
 
 {% endblock %}

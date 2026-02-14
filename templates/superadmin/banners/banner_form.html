@@ -1,14 +1,64 @@
 {% extends "superadmin/base.html" %}
 {% block content %}
 
-<form method="POST" enctype="multipart/form-data"  
-      class="bg-white p-10 rounded-xl shadow space-y-6 max-w-3xl">
-  {% csrf_token %}
-  {{ form.as_p }}
+<div class="container-fluid">
 
-  <button class="bg-orange-500 text-white px-8 py-3 rounded-xl">
-    Save
-  </button>
+<div class="card shadow-sm border-0 mx-auto" style="max-width:700px;">
+<div class="card-body p-5">
+
+<h4 class="fw-bold mb-4">
+    {{ title }}
+</h4>
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<!-- TITLE -->
+<div class="mb-3">
+<label class="form-label fw-semibold">Title</label>
+{{ form.title }}
+</div>
+
+<!-- LINK -->
+<div class="mb-3">
+<label class="form-label fw-semibold">Link</label>
+{{ form.link }}
+</div>
+
+<!-- POSITION -->
+<div class="mb-3">
+<label class="form-label fw-semibold">Slot Position</label>
+{{ form.Slot_position }}
+</div>
+
+<!-- IMAGE -->
+<div class="mb-3">
+<label class="form-label fw-semibold">Banner Image</label>
+{{ form.image }}
+</div>
+
+<!-- ACTIVE -->
+<div class="form-check mb-4">
+{{ form.is_active }}
+<label class="form-check-label ms-2">
+Active Banner
+</label>
+</div>
+
+<button class="btn btn-warning text-white px-4">
+<i class="fa fa-save me-2"></i>
+Save Banner
+</button>
+
+<a href="{% url 'banner-list' %}" class="btn btn-light ms-2">
+Cancel
+</a>
+
 </form>
+
+</div>
+</div>
+
+</div>
 
 {% endblock %}

@@ -269,14 +269,14 @@ class Booking(models.Model):
 
         is_new = self.pk is None
         old_status = None
-
+        
         if not is_new:
             old_status = Booking.objects.get(pk=self.pk).status
-
+            
         if not self.booking_id:
-            self.booking_id = "VFH" + ''.join(random.choices(string.digits, k=8))
-
+            self.booking_id = "FHH" + ''.join(random.choices(string.digits, k=8))
         super().save(*args, **kwargs)
+
         ########################################
         # ✅ AUTO BLOCK DATES WHEN CONFIRMED
         ########################################
@@ -382,7 +382,7 @@ class Booking(models.Model):
         return (self.check_out - self.check_in).days
 
     def __str__(self):
-        return f"{self.booking_id} - {self.guest_name}-{self.check_in} - {self.check_out}"
+        return f"{self.booking_id} - {self.guest_name}-{self.check_in} - {self.check_out} -{self.farmhouse}"
 
 
 

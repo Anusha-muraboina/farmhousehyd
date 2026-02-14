@@ -14,34 +14,83 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 
 from django.contrib.auth import get_user_model
-
+from accounts.views import *
 User = get_user_model()
 
-def owner_login(request):
-    if request.method == "POST":
-        email = request.POST.get("email")
-        password = request.POST.get("password")
+def owner_required(view_func):
 
-        # authenticate using EMAIL
-        user = authenticate(
-            request,
-            email=email,
-            password=password
-        )
+    def wrapper(request, *args, **kwargs):
 
-        if user is None:
-            messages.error(request, "Invalid email or password")
-            return redirect("owner_login")
+        if not request.user.is_authenticated:
+            return redirect("accounts:login")
 
-        # ✅ ONLY FARMHOUSE OWNER
-        if not user.farmhouse_user:
-            messages.error(request, "You are not authorized as a farmhouse owner")
-            return redirect("owner_login")
+        if not getattr(request.user, "farmhouse_user", False):
+            return redirect_user(request.user)
 
-        login(request, user)
-        return redirect("owner_dashboard")
+        return view_func(request, *args, **kwargs)
 
-    return render(request, "farmhouse_admin/login.html")
+    return wrapper
+
+
+# def redirect_user(user):
+
+#     if user.is_superuser:
+#         return redirect("superadmin-dashboard")
+
+#     elif user.farmhouse_user:
+#         return redirect("owner_dashboard")
+
+#     else:
+#         return redirect("home")   # fallback
+
+# def login_view(request):
+
+#     if request.user.is_authenticated:
+#         return redirect_user(request.user)
+
+#     if request.method == "POST":
+
+#         email = request.POST.get("email")
+#         password = request.POST.get("password")
+
+#         user = authenticate(request, email=email, password=password)
+
+#         if not user:
+#             messages.error(request, "Invalid email or password")
+#             return redirect("login")
+
+#         login(request, user)
+
+#         # ⭐ AUTO REDIRECT
+#         return redirect_user(user)
+
+#     return render(request, "superadmin/login.html")
+
+# def owner_login(request):
+#     if request.method == "POST":
+#         email = request.POST.get("email")
+#         password = request.POST.get("password")
+
+#         # authenticate using EMAIL
+#         user = authenticate(
+#             request,
+#             email=email,
+#             password=password
+#         )
+
+#         if user is None:
+#             messages.error(request, "Invalid email or password")
+#             return redirect("owner_login")
+
+#         # ✅ ONLY FARMHOUSE OWNER
+#         if not user.farmhouse_user:
+#             messages.error(request, "You are not authorized as a farmhouse owner")
+#             return redirect("owner_login")
+
+#         login(request, user)
+#         return redirect("owner_dashboard")
+
+#     return render(request, "farmhouse_admin/login.html")
 
 
 def owner_logout(request):
@@ -52,16 +101,17 @@ def owner_logout(request):
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-
+from django.http import HttpResponseForbidden
+from functools import wraps
 def owner_required(view_func):
+
     def wrapper(request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect("owner_login")
 
         if not request.user.farmhouse_user:
-            return redirect("owner_login")
+            return HttpResponseForbidden("Owner only.")
 
         return view_func(request, *args, **kwargs)
+
     return wrapper
 
 
@@ -71,7 +121,7 @@ from django.utils import timezone
 from datetime import timedelta
 import json
 
-@login_required(login_url="owner_login")
+@owner_required
 def owner_dashboard(request):
 
     today = timezone.now().date()
@@ -213,7 +263,7 @@ from django.contrib.auth.decorators import login_required
 from farmhouse.models import Farmhouse
 
 
-@login_required(login_url="owner_login")
+@owner_required
 def owner_farmhouses(request):
 
     farmhouses = Farmhouse.objects.filter(
@@ -226,7 +276,7 @@ def owner_farmhouses(request):
         {"farmhouses": farmhouses}
     )
     
-@login_required(login_url="owner_login")
+@owner_required
 def add_farmhouse(request):
 
     if request.method == "POST":
@@ -251,7 +301,7 @@ def add_farmhouse(request):
         "form": form
     })
 
-@login_required(login_url="owner_login")
+@owner_required
 def edit_farmhouse(request, id):
 
     farmhouse = get_object_or_404(
@@ -273,7 +323,7 @@ def edit_farmhouse(request, id):
         "form": form
     })
 
-@login_required(login_url="owner_login")
+@owner_required
 def delete_farmhouse(request, id):
 
     farmhouse = get_object_or_404(
@@ -297,7 +347,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 
 
-# @login_required
+# @owner_required
 # def owner_booking_list(request, farmhouse_id):
 
 #     #########################################
@@ -373,7 +423,7 @@ from farmhouse.models import Farmhouse
 from booking.models import Booking
 
 
-@login_required
+@owner_required
 def owner_booking_list(request):
 
     ###################################
@@ -431,7 +481,7 @@ def owner_booking_list(request):
         }
     )
 
-@login_required
+@owner_required
 def owner_booking_detail(request, pk):
 
     booking = get_object_or_404(
@@ -466,7 +516,7 @@ from farmhouse.models import Farmhouse
 from contact.models import ContactMessage
 
 
-@login_required
+@owner_required
 def owner_contact_list(request):
 
     # Owner farmhouses
@@ -501,13 +551,13 @@ def owner_contact_list(request):
 
 
 
-@login_required
+@owner_required
 def owner_contact_detail(request, pk):
 
     message = get_object_or_404(
         ContactMessage.objects.select_related("farmhouse"),
         pk=pk,
-        farmhouse__user=request.user   # 🔥 SECURITY
+        farmhouse__user=request.user   #  SECURITY
     )
 
     return render(
@@ -521,7 +571,7 @@ def owner_contact_detail(request, pk):
 # coupon
 
 
-@login_required
+@owner_required
 def owner_coupon_list(request):
 
     farmhouses = Farmhouse.objects.filter(user=request.user)
@@ -553,7 +603,7 @@ def owner_coupon_list(request):
     )
 
 
-@login_required
+@owner_required
 def owner_coupon_create(request):
 
     farmhouse = Farmhouse.objects.filter(
@@ -591,7 +641,7 @@ def owner_coupon_create(request):
     )
 
 
-@login_required
+@owner_required
 def owner_coupon_update(request, pk):
 
     coupon = get_object_or_404(
@@ -627,7 +677,7 @@ def owner_coupon_update(request, pk):
     )
 
 
-@login_required
+@owner_required
 def owner_coupon_delete(request, pk):
 
     coupon = get_object_or_404(
@@ -644,3 +694,121 @@ def owner_coupon_delete(request, pk):
     )
 
     return redirect("owner_coupon_list")
+
+
+# blocked
+
+
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render
+from booking.models import BlockedDate
+from django.shortcuts import redirect
+from django.contrib import messages
+from farmhouse_owner.forms import BlockedDateForm
+
+@owner_required
+def owner_blocked_dates_list(request):
+
+    blocked = BlockedDate.objects.select_related("farmhouse")\
+        .filter(farmhouse__user=request.user)\
+        .order_by("-created_at")
+    return render(
+        request,
+        "farmhouse_admin/blocked/list.html",
+        {"blocked": blocked}
+    )
+    
+    
+@owner_required
+def owner_blocked_dates_create(request):
+
+    if request.method == "POST":
+
+        form = BlockedDateForm(request.POST)
+
+        # restrict farmhouse queryset
+        form.fields["farmhouse"].queryset = \
+            request.user.farmhouses.all()
+
+        if form.is_valid():
+
+            blocked = form.save(commit=False)
+
+            # extra safety check
+            if blocked.farmhouse.user != request.user:
+                messages.error(request, "Unauthorized action.")
+                return redirect("blocked-dates")
+
+            blocked.save()
+
+            messages.success(
+                request,
+                "Dates blocked successfully!"
+            )
+
+            return redirect("blocked-dates")
+
+    else:
+        form = BlockedDateForm()
+        form.fields["farmhouse"].queryset = \
+            request.user.farmhouses.all()
+
+    return render(
+        request,
+        "farmhouse_admin/blocked/form.html",
+        {"form": form}
+    )
+@owner_required
+def owner_blocked_dates_update(request, pk):
+
+    blocked = get_object_or_404(
+        BlockedDate,
+        pk=pk,
+        farmhouse__user=request.user
+    )
+
+    if request.method == "POST":
+        form = BlockedDateForm(request.POST, instance=blocked)
+        form.fields["farmhouse"].queryset = \
+            request.user.farmhouses.all()
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "Blocked dates updated!"
+            )
+
+            return redirect("blocked-dates")
+
+    else:
+        form = BlockedDateForm(instance=blocked)
+        form.fields["farmhouse"].queryset = \
+            request.user.farmhouses.all()
+
+    return render(
+        request,
+        "farmhouse_admin/blocked/form.html",
+        {"form": form}
+    )
+
+
+
+@owner_required
+def owner_blocked_dates_delete(request, pk):
+
+    blocked = get_object_or_404(
+        BlockedDate,
+        pk=pk,
+        farmhouse__user=request.user
+    )
+
+    blocked.delete()
+
+    messages.success(
+        request,
+        "Blocked dates removed!"
+    )
+
+    return redirect("blocked-dates")

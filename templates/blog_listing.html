@@ -11,9 +11,9 @@
 Our Blog
 </h1>
 
-<p class="text-gray-500 text-lg">
+<h2 class="text-gray-500 text-lg">
 Travel tips, farmhouse guides, and getaway inspiration
-</p>
+</h2>
 </div>
 
 
@@ -113,9 +113,9 @@ if(res.data.length===0){
 box.innerHTML=`
 <div class="col-span-2 text-center py-20">
 
-<h2 class="text-2xl font-bold mb-3">
+<p class="text-2xl font-bold mb-3">
 No blogs found 😔
-</h2>
+</p>
 
 <a href="/blogs/"
 class="bg-orange-500 text-white px-6 py-3 rounded-xl">
@@ -152,11 +152,11 @@ class="h-60 w-full object-cover group-hover:scale-110 transition duration-500">
 ${blog.category?.name ?? ""}
 </p>
 
-<h2 class="text-xl font-bold mb-2 group-hover:text-orange-600 transition">
+<p class="text-xl font-bold mb-2 group-hover:text-orange-600 transition">
 <a href="/blogs/blogs/${blog.slug}/">
 ${blog.title}
 </a>
-</h2>
+</p>
 
 <p class="text-gray-500 text-sm mb-4 line-clamp-3">
 ${blog.short_description}

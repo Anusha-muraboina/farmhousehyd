@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Refund Policy | Farmhouses Hyderabad{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="relative h-[420px] flex items-center justify-center text-center">
+
+    <div class="absolute inset-0">
+        <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=2070"
+             class="w-full h-full object-cover">
+    </div>
+
+    <div class="absolute inset-0 bg-black/65"></div>
+
+    <div class="relative text-white px-6 max-w-3xl">
+        <h1 class="text-5xl md:text-6xl font-bold mb-4">
+            Refund Policy
+        </h1>
+
+        <p class="text-lg opacity-90">
+            Please review the terms that govern your bookings and use of our platform.
+        </p>
+
+        {% comment %} <div class="mt-4 text-sm bg-white/20 backdrop-blur-md
+                    inline-block px-4 py-2 rounded-full">
+            Last Updated: {{ now|date:"F Y" }}
+        </div> {% endcomment %}
+    </div>
+
+</section>
+
+
+
+<!-- MAIN -->
+<section class="bg-[#F6F8FB] py-20">
+
+    <div class=" mx-auto px-6">
+
+        <div class="bg-white rounded-[30px] shadow-xl p-8 md:p-14">
+              <h3>Refund Policy for Farmhouse Bookings</h3>
+            <!-- Intro -->
+            <p class="text-gray-700 text-lg leading-8 mb-10">
+                At Maa Upvan Holidays, we strive to provide a seamless and enjoyable experience for all our guests. We understand that sometimes plans change, and we are here to assist you with your booking amendments or cancellations. Please read our refund policy carefully.
+            </p>
+
+
+
+            <!-- SECTION -->
+            <div class="policy-section">
+                <h3>1. Cancellation and Refund Timeline</h3>
+
+                <h4>Cancellation 14 Days or More Before Check-In:</h4>
+                <p>Full refund of the booking amount, minus any processing fees.</p>
+
+                <h4>Cancellation Between 7 to 13 Days Before Check-In:</h4>
+                <p>50% refund of the booking amount, minus any processing fees.</p>
+
+                <h4>Cancellation Less Than 7 Days Before Check-In:</h4>
+                <p>No refund. However, you may reschedule your booking for a future date, subject to availability and applicable rescheduling fees.</p>
+               
+                {% comment %} <ul>
+                    <li>Check-in: <b>10:00 AM</b></li>
+                    <li>Check-out: <b>9:00 AM</b></li>
+                    <li>Early or late requests may incur charges.</li>
+                </ul> {% endcomment %}
+            </div>
+
+
+
+            <!-- SECTION -->
+            <div class="policy-section">
+                <h3>Rescheduling Policy</h3>
+                <h4>Rescheduling Requests:</h4>
+                <p>Must be made at least 7 days before the original check-in date.</p>
+                
+
+                <h4>Availability:</h4>
+                <p>Rescheduling is subject to availability. If the new dates are not available, the standard cancellation policy will apply.</p>
+
+                <h4>Rescheduling Fee:</h4>
+                <p>A nominal fee of 5% of the booking amount may be charged for rescheduling, depending on the circumstances.</p>
+               
+                {% comment %} <ul>
+                    <li>We accept credit/debit cards, UPI, and net banking.</li>
+                    <li>Full payment is required unless stated otherwise.</li>
+                    <li>A refundable security deposit may apply.</li>
+                    <li>Prices are listed in INR and may change before confirmation.</li>
+                </ul> {% endcomment %}
+            </div>
+
+
+
+            <!-- SECTION -->
+            <div class="policy-section">
+                <h3>No-Show:</h3>
+
+<h4>Availability:</h4>
+
+                <p>
+                  If you do not arrive on the scheduled check-in date and time, no refund will be provided. The entire booking amount will be forfeited.
+                </p>
+
+              
+            </div>
+
+
+
+            <!-- SECTION -->
+            <div class="policy-section">
+                <h3>4. Early Check-Out</h3>
+              <h4>Early Departure:</h4>
+               <p>
+                 If you choose to check out before your scheduled departure date, no refund will be provided for the unused portion of your stay.
+                </p>
+
+            </div>
+
+
+
+            <!-- SECTION -->
+            <div class="policy-section">
+                <h3>5. Refund Process</h3>
+
+                <h4>Refund Initiation:</h4>
+                <p>Refunds will be credited within 7-10 business days from the date of the approved cancellation request.</p>
+
+                <h4>Refund Method:</h4>
+
+                <p>Refunds will be made to the original payment method used at the time of booking.</p>
+            </div>
+
+
+
+            <!-- CONTACT -->
+            <div class="mt-14 bg-orange-50 border border-orange-200
+                        rounded-2xl p-8">
+
+                <h3 class="text-2xl font-bold text-orange-900 mb-3">
+                    Contact Us
+                </h3>
+
+                <p class="mb-4">
+                    Questions about these Terms? We're here to help.
+                </p>
+
+                <div class="space-y-2 font-medium">
+                    <p> info@farmhouseshyderabad.com</p>
+                    <p> +91 91468 42302</p>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+<style>
+
+.policy-section{
+    margin-bottom:42px;
+}
+
+.policy-section h3{
+    font-size:26px;
+    font-weight:700;
+    margin-bottom:12px;
+    border-left:5px solid #F97316;
+    padding-left:14px;
+}
+
+.policy-section h4{
+    font-size:18px;
+    font-weight:600;
+    margin-top:14px;
+    margin-bottom:6px;
+}
+
+.policy-section ul{
+    padding-left:20px;
+    list-style:disc;
+    display:grid;
+    gap:6px;
+    color:#374151;
+}
+
+.policy-section p{
+    color:#4B5563;
+    line-height:1.7;
+}
+
+</style>
+
+{% endblock %}

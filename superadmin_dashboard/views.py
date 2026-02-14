@@ -11,29 +11,58 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+# def superadmin_required(view_func):
+#     return user_passes_test(
+#         lambda u: u.is_authenticated and u.is_superuser
+#     )(view_func)
+from django.http import HttpResponseForbidden
+from functools import wraps
+from django.http import HttpResponseForbidden
+
+# def superadmin_required(view_func):
+
+#     def wrapper(request, *args, **kwargs):
+
+#         if not request.user.is_superuser:
+#             return HttpResponseForbidden("Superadmin only.")
+
+#         return view_func(request, *args, **kwargs)
+
+#     return wrapper
+
+
+from django.shortcuts import redirect
+
+from accounts.views import *
 def superadmin_required(view_func):
-    return user_passes_test(
-        lambda u: u.is_authenticated and u.is_superuser
-    )(view_func)
 
-def superadmin_login(request):
-    if request.method == "POST":
-        email = request.POST.get("email")
-        password = request.POST.get("password")
+    def wrapper(request, *args, **kwargs):
 
-        user = authenticate(request, email=email, password=password)
+        if not request.user.is_authenticated:
+            return redirect("accounts:login")
 
-        if user and user.is_superuser:
-            login(request, user)
-            return redirect("superadmin-dashboard")
+        if not request.user.is_superuser:
+            return redirect_user(request.user)
 
-        messages.error(request, "Invalid credentials or not Super Admin")
+        return view_func(request, *args, **kwargs)
 
-    return render(request, "superadmin/login.html")
-def superadmin_logout(request):
-    logout(request)
-    return redirect("superadmin-login")
+    return wrapper
 
+
+# def superadmin_login(request):
+#     if request.method == "POST":
+#         email = request.POST.get("email")
+#         password = request.POST.get("password")
+
+#         user = authenticate(request, email=email, password=password)
+
+#         if user and user.is_superuser:
+#             login(request, user)
+#             return redirect("superadmin-dashboard")
+
+#         messages.error(request, "Invalid credentials or not Super Admin")
+
+#     return render(request, "superadmin/login.html")
 
 
 from farmhouse.models import Farmhouse
@@ -90,7 +119,7 @@ from booking.models import Booking
 from farmhouse.models import Farmhouse
 
 
-@login_required
+@superadmin_required
 def superadmin_dashboard(request):
 
     #########################################
@@ -290,14 +319,14 @@ from farmhouse.models import Farmhouse, FarmhousePricing
 from superadmin_dashboard.forms import FarmhouseForm, FarmhousePricingForm,FarmhouseImageForm
 
 
-def superadmin_required(user):
-    return user.is_superuser
+# def superadmin_required(user):
+#     return user.is_superuser
 
 
 # ===============================
 # LIST
 # ===============================
-@login_required
+@superadmin_required
 # @user_passes_test(superadmin_required)
 def farmhouse_list(request):
         # ✅ permission check
@@ -315,8 +344,7 @@ def farmhouse_list(request):
 # ===============================
 # ADD
 # ===============================
-@login_required
-@user_passes_test(superadmin_required)
+@superadmin_required
 def farmhouse_add(request):
 
     if request.method == "POST":
@@ -354,7 +382,7 @@ def farmhouse_add(request):
         "form": form,
         "pricing_form": pricing_form
     })
-@login_required
+@superadmin_required
 # @user_passes_test(superadmin_required)
 def farmhouse_edit(request, id):
 
@@ -394,7 +422,7 @@ def farmhouse_edit(request, id):
 # ===============================
 # DELETE
 # ===============================
-@login_required
+@superadmin_required
 # @user_passes_test(superadmin_required)
 def farmhouse_delete(request, id):
     farmhouse = get_object_or_404(Farmhouse, id=id)
@@ -416,6 +444,7 @@ from .forms import BannerForm, LocationForm, AmenityForm
 # def banner_list(request):
 #     banners = Banner.objects.all()
 #     return render(request, "superadmin/banners/banner_list.html", {"banners": banners})
+@superadmin_required
 def banner_list(request):
     items = Banner.objects.all()
 
@@ -425,7 +454,7 @@ def banner_list(request):
         "add_url": "banner_add",   # ✅ URL name
     })
 
-
+@superadmin_required
 def banner_create(request):
     form = BannerForm(request.POST or None, request.FILES or None)
     if form.is_valid():
@@ -433,7 +462,7 @@ def banner_create(request):
         return redirect("banner-list")
     return render(request, "superadmin/banners/banner_form.html", {"form": form})
 
-
+@superadmin_required
 def banner_update(request, pk):
     banner = get_object_or_404(Banner, pk=pk)
     form = BannerForm(request.POST or None, request.FILES or None, instance=banner)
@@ -442,7 +471,7 @@ def banner_update(request, pk):
         return redirect("banner-list")
     return render(request, "superadmin/banners/banner_form.html", {"form": form})
 
-
+@superadmin_required
 def banner_delete(request, pk):
     banner = get_object_or_404(Banner, pk=pk)
 
@@ -464,6 +493,7 @@ def banner_delete(request, pk):
 # def location_list(request):
 #     locations = Location.objects.all()
 #     return render(request, "superadmin/locations/locations_list.html", {"locations": locations})
+@superadmin_required
 def location_list(request):
     items = Location.objects.all()
     return render(request, "superadmin/locations/location_list.html", {
@@ -472,7 +502,7 @@ def location_list(request):
         "add_url": "location-add",
     })
 
-
+@superadmin_required
 def location_create(request):
     form = LocationForm(request.POST or None)
     if form.is_valid():
@@ -480,7 +510,7 @@ def location_create(request):
         return redirect("location-list")
     return render(request, "superadmin/locations/location_form.html", {"form": form})
 
-
+@superadmin_required
 def location_update(request, pk):
     obj = get_object_or_404(Location, pk=pk)
     form = LocationForm(request.POST or None, instance=obj)
@@ -489,7 +519,7 @@ def location_update(request, pk):
         return redirect("location-list")
     return render(request, "superadmin/locations/location_form.html", {"form": form})
 
-
+@superadmin_required
 def location_delete(request, pk):
     obj = get_object_or_404(Location, pk=pk)
     if request.method == "POST":
@@ -504,7 +534,7 @@ def location_delete(request, pk):
 #     amenities = Amenity.objects.all()
 #     return render(request, "superadmin/amenities/amenities_list.html", {"amenities": amenities})
 
-
+@superadmin_required
 def amenity_list(request):
     items = Amenity.objects.all()
     return render(request, "superadmin/amenities/amenities_list.html", {
@@ -513,7 +543,7 @@ def amenity_list(request):
         "add_url": "amenity-add",
     })
 
-
+@superadmin_required
 def amenity_create(request):
     form = AmenityForm(request.POST or None)
     if form.is_valid():
@@ -521,7 +551,7 @@ def amenity_create(request):
         return redirect("amenity-list")
     return render(request, "superadmin/amenities/amenities_form.html", {"form": form})
 
-
+@superadmin_required
 def amenity_update(request, pk):
     obj = get_object_or_404(Amenity, pk=pk)
     form = AmenityForm(request.POST or None, instance=obj)
@@ -530,18 +560,18 @@ def amenity_update(request, pk):
         return redirect("amenity-list")
     return render(request, "superadmin/amenities/amenities_form.html", {"form": form})
 
-
+@superadmin_required
 def amenity_delete(request, pk):
     obj = get_object_or_404(Amenity, pk=pk)
+
     if request.method == "POST":
         obj.delete()
-        return redirect("amenity-list")
-    # return render(request, "superadmin/amenities/amenities_delete.html", {"obj": obj})
+
+    return redirect("amenity-list")
 
 
 
-@login_required
-@user_passes_test(superadmin_required)
+@superadmin_required
 def category_list(request):
     categories = BlogCategory.objects.all()
     return render(request, "superadmin/blog/category_list.html", {
@@ -549,8 +579,7 @@ def category_list(request):
     })
 
 
-@login_required
-@user_passes_test(superadmin_required)
+@superadmin_required
 def category_add(request):
     if request.method == "POST":
         BlogCategory.objects.create(
@@ -563,8 +592,7 @@ def category_add(request):
     return render(request, "superadmin/blog/category_form.html")
 
 
-@login_required
-@user_passes_test(superadmin_required)
+@superadmin_required
 def category_edit(request, pk):
     category = get_object_or_404(BlogCategory, pk=pk)
 
@@ -581,8 +609,7 @@ def category_edit(request, pk):
     })
 
 
-@login_required
-@user_passes_test(superadmin_required)
+@superadmin_required
 def category_delete(request, pk):
     BlogCategory.objects.filter(pk=pk).delete()
     messages.success(request, "Category deleted")
@@ -593,15 +620,13 @@ def category_delete(request, pk):
 # TAG CRUD
 # ===============================
 
-@login_required
-@user_passes_test(superadmin_required)
+@superadmin_required
 def tag_list(request):
     tags = BlogTag.objects.all()
     return render(request, "superadmin/blog/tag_list.html", {"tags": tags})
 
 
-@login_required
-@user_passes_test(superadmin_required)
+@superadmin_required
 def tag_add(request):
     if request.method == "POST":
         BlogTag.objects.create(
@@ -613,8 +638,7 @@ def tag_add(request):
     return render(request, "superadmin/blog/tag_form.html")
 
 
-@login_required
-@user_passes_test(superadmin_required)
+@superadmin_required
 def tag_edit(request, pk):
     tag = get_object_or_404(BlogTag, pk=pk)
 
@@ -627,8 +651,7 @@ def tag_edit(request, pk):
     return render(request, "superadmin/blog/tag_form.html", {"tag": tag})
 
 
-@login_required
-@user_passes_test(superadmin_required)
+@superadmin_required
 def tag_delete(request, pk):
     BlogTag.objects.filter(pk=pk).delete()
     messages.success(request, "Tag deleted")
@@ -639,8 +662,7 @@ def tag_delete(request, pk):
 # BLOG CRUD
 # ===============================
 
-@login_required
-@user_passes_test(superadmin_required)
+@superadmin_required
 def blog_list(request):
     blogs = Blog.objects.all()
     return render(request, "superadmin/blog/blog_list.html", {
@@ -709,7 +731,7 @@ def blog_list(request):
 #         "categories": categories,
 #         "tags": tags
 #     })
-
+@superadmin_required
 def blog_add(request):
 
     categories = BlogCategory.objects.filter(is_active=True)
@@ -730,6 +752,7 @@ def blog_add(request):
         "categories": categories,
         "tags": tags
     })
+@superadmin_required
 def blog_edit(request, pk):
 
     blog = get_object_or_404(Blog, pk=pk)
@@ -754,8 +777,7 @@ def blog_edit(request, pk):
 
 
 
-@login_required
-@user_passes_test(superadmin_required)
+@superadmin_required
 def blog_delete(request, pk):
     Blog.objects.filter(pk=pk).delete()
     messages.success(request, "Blog deleted")
@@ -766,8 +788,7 @@ def blog_delete(request, pk):
 # COMMENTS MODERATION
 # ===============================
 
-@login_required
-@user_passes_test(superadmin_required)
+@superadmin_required
 def comment_list(request):
     comments = BlogComment.objects.select_related("blog").order_by("-created_at")
     return render(request, "superadmin/blog/comment_list.html", {
@@ -775,8 +796,7 @@ def comment_list(request):
     })
 
 
-@login_required
-@user_passes_test(superadmin_required)
+@superadmin_required
 def comment_toggle(request, pk):
     comment = get_object_or_404(BlogComment, pk=pk)
     comment.is_active = not comment.is_active
@@ -800,12 +820,12 @@ def paginate(request, queryset):
 
 
 # ================= CHOOSE SERVICES =================
-
+@superadmin_required
 def choose_services_list(request):
     services = paginate(request, Choos_Services.objects.all())
     return render(request, "superadmin/cms/choose_services_list.html", {"services": services})
 
-
+@superadmin_required
 def choose_services_add(request):
     form = ChooseServiceForm(request.POST or None, request.FILES or None)
     if form.is_valid():
@@ -814,7 +834,7 @@ def choose_services_add(request):
         return redirect("choose_services_list")
     return render(request, "superadmin/cms/choose_services_form.html", {"form": form})
 
-
+@superadmin_required
 def choose_services_edit(request, id):
     obj = get_object_or_404(Choos_Services, id=id)
     form = ChooseServiceForm(request.POST or None, request.FILES or None, instance=obj)
@@ -824,7 +844,7 @@ def choose_services_edit(request, id):
         return redirect("choose_services_list")
     return render(request, "superadmin/cms/choose_services_form.html", {"form": form})
 
-
+@superadmin_required
 def choose_services_delete(request, id):
     get_object_or_404(Choos_Services, id=id).delete()
     messages.success(request, "Deleted successfully")
@@ -832,12 +852,12 @@ def choose_services_delete(request, id):
 
 
 # ================= FACILITIES =====================================
-
+@superadmin_required
 def facilities_list(request):
     facilities = paginate(request, Facilities.objects.all())
     return render(request, "superadmin/cms/facility_list.html", {"facilities": facilities})
 
-
+@superadmin_required
 def facilities_add(request):
     form = FacilityForm(request.POST or None)
     if form.is_valid():
@@ -846,7 +866,7 @@ def facilities_add(request):
         return redirect("facilities_list")
     return render(request, "superadmin/cms/facility_form.html", {"form": form})
 
-
+@superadmin_required
 def facilities_edit(request, id):
     obj = get_object_or_404(Facilities, id=id)
     form = FacilityForm(request.POST or None, instance=obj)
@@ -856,7 +876,7 @@ def facilities_edit(request, id):
         return redirect("facilities_list")
     return render(request, "superadmin/cms/facility_form.html", {"form": form})
 
-
+@superadmin_required
 def facilities_delete(request, id):
     get_object_or_404(Facilities, id=id).delete()
     messages.success(request, "Deleted successfully")
@@ -864,11 +884,12 @@ def facilities_delete(request, id):
 
 
 # ================= OUR FACILITY =================
+@superadmin_required
 def our_facility_list(request):
     items = paginate(request, OurFacility.objects.all())
     return render(request, "superadmin/cms/our_facility_list.html", {"items": items})
 
-
+@superadmin_required
 def our_facility_add(request):
     form = OurFacilityForm(request.POST or None, request.FILES or None)
     if form.is_valid():
@@ -877,7 +898,7 @@ def our_facility_add(request):
         return redirect("our_facility_list")
     return render(request, "superadmin/cms/our_facility_form.html", {"form": form})
 
-
+@superadmin_required
 def our_facility_edit(request, id):
     obj = get_object_or_404(OurFacility, id=id)
     form = OurFacilityForm(request.POST or None, request.FILES or None, instance=obj)
@@ -887,7 +908,7 @@ def our_facility_edit(request, id):
         return redirect("our_facility_list")
     return render(request, "superadmin/cms/our_facility_form.html", {"form": form})
 
-
+@superadmin_required
 def our_facility_delete(request, id):
     get_object_or_404(OurFacility, id=id).delete()
     messages.success(request, "Deleted")
@@ -895,11 +916,12 @@ def our_facility_delete(request, id):
 
 
 # ================= WHO WE ARE =================
+@superadmin_required
 def who_we_are_list(request):
     items = paginate(request, WhoWeAre.objects.all())
     return render(request, "superadmin/cms/who_we_are_list.html", {"items": items})
 
-
+@superadmin_required
 def who_we_are_add(request):
     form = WhoWeAreForm(request.POST or None, request.FILES or None)
     if form.is_valid():
@@ -908,7 +930,7 @@ def who_we_are_add(request):
         return redirect("who_we_are_list")
     return render(request, "superadmin/cms/who_we_are_form.html", {"form": form})
 
-
+@superadmin_required
 def who_we_are_edit(request, id):
     obj = get_object_or_404(WhoWeAre, id=id)
     form = WhoWeAreForm(request.POST or None, request.FILES or None, instance=obj)
@@ -918,7 +940,7 @@ def who_we_are_edit(request, id):
         return redirect("who_we_are_list")
     return render(request, "superadmin/cms/who_we_are_form.html", {"form": form})
 
-
+@superadmin_required
 def who_we_are_delete(request, id):
     get_object_or_404(WhoWeAre, id=id).delete()
     messages.success(request, "Deleted")
@@ -926,11 +948,12 @@ def who_we_are_delete(request, id):
 
 
 # ================= ABOUT SECTION =================
+@superadmin_required
 def about_section_list(request):
     items = paginate(request, AboutSection.objects.all())
     return render(request, "superadmin/cms/about_section_list.html", {"items": items})
 
-
+@superadmin_required
 def about_section_add(request):
     form = AboutSectionForm(request.POST or None, request.FILES or None)
     if form.is_valid():
@@ -939,7 +962,7 @@ def about_section_add(request):
         return redirect("about_section_list")
     return render(request, "superadmin/cms/about_section_form.html", {"form": form})
 
-
+@superadmin_required
 def about_section_edit(request, id):
     obj = get_object_or_404(AboutSection, id=id)
     form = AboutSectionForm(request.POST or None, request.FILES or None, instance=obj)
@@ -949,7 +972,7 @@ def about_section_edit(request, id):
         return redirect("about_section_list")
     return render(request, "superadmin/cms/about_section_form.html", {"form": form})
 
-
+@superadmin_required
 def about_section_delete(request, id):
     get_object_or_404(AboutSection, id=id).delete()
     messages.success(request, "Deleted")
@@ -957,11 +980,12 @@ def about_section_delete(request, id):
 
 
 # ================= ABOUT FEATURE =================
+@superadmin_required
 def about_feature_list(request):
     items = paginate(request, AboutFeature.objects.all())
     return render(request, "superadmin/cms/about_feature_list.html", {"items": items})
 
-
+@superadmin_required
 def about_feature_add(request):
     form = AboutFeatureForm(request.POST or None)
     if form.is_valid():
@@ -970,7 +994,7 @@ def about_feature_add(request):
         return redirect("about_feature_list")
     return render(request, "superadmin/cms/about_feature_form.html", {"form": form})
 
-
+@superadmin_required
 def about_feature_edit(request, id):
     obj = get_object_or_404(AboutFeature, id=id)
     form = AboutFeatureForm(request.POST or None, instance=obj)
@@ -980,7 +1004,7 @@ def about_feature_edit(request, id):
         return redirect("about_feature_list")
     return render(request, "superadmin/cms/about_feature_form.html", {"form": form})
 
-
+@superadmin_required
 def about_feature_delete(request, id):
     get_object_or_404(AboutFeature, id=id).delete()
     messages.success(request, "Deleted")
@@ -988,11 +1012,12 @@ def about_feature_delete(request, id):
 
 
 # ================= ABOUT WHO WE ARE =================
+@superadmin_required
 def about_who_we_are_list(request):
     items = paginate(request, AboutWhoWeAre.objects.all())
     return render(request, "superadmin/cms/about_who_we_are_list.html", {"items": items})
 
-
+@superadmin_required
 def about_who_we_are_add(request):
     form = AboutWhoWeAreForm(request.POST or None, request.FILES or None)
     if form.is_valid():
@@ -1001,7 +1026,7 @@ def about_who_we_are_add(request):
         return redirect("about_who_we_are_list")
     return render(request, "superadmin/cms/about_who_we_are_form.html", {"form": form})
 
-
+@superadmin_required
 def about_who_we_are_edit(request, id):
     obj = get_object_or_404(AboutWhoWeAre, id=id)
     form = AboutWhoWeAreForm(request.POST or None, request.FILES or None, instance=obj)
@@ -1011,7 +1036,7 @@ def about_who_we_are_edit(request, id):
         return redirect("about_who_we_are_list")
     return render(request, "superadmin/cms/about_who_we_are_form.html", {"form": form})
 
-
+@superadmin_required
 def about_who_we_are_delete(request, id):
     get_object_or_404(AboutWhoWeAre, id=id).delete()
     messages.success(request, "Deleted")
@@ -1028,14 +1053,14 @@ from .forms import CouponForm
 
 
 # ================= COUPON =================
-
+@superadmin_required
 def coupon_list(request):
     coupons = paginate(request, Coupon.objects.all())
     return render(request, "superadmin/coupons/coupon_list.html", {
         "coupons": coupons
     })
 
-
+@superadmin_required
 def coupon_add(request):
     form = CouponForm(request.POST or None)
     if form.is_valid():
@@ -1047,7 +1072,7 @@ def coupon_add(request):
         "title": "Add Coupon"
     })
 
-
+@superadmin_required
 def coupon_edit(request, id):
     coupon = get_object_or_404(Coupon, id=id)
     form = CouponForm(request.POST or None, instance=coupon)
@@ -1060,7 +1085,7 @@ def coupon_edit(request, id):
         "title": "Edit Coupon"
     })
 
-
+@superadmin_required
 def coupon_delete(request, id):
     get_object_or_404(Coupon, id=id).delete()
     messages.success(request, "Coupon deleted")
@@ -1068,7 +1093,7 @@ def coupon_delete(request, id):
 
 
 # ================= COUPON USAGE =================
-
+@superadmin_required
 def coupon_usage_list(request):
     usages = paginate(request, CouponUsage.objects.select_related("coupon", "user"))
     return render(request, "superadmin/coupons/coupon_usage_list.html", {
@@ -1090,8 +1115,7 @@ def is_farmhouse_staff(user):
     )
 
 
-
-@login_required
+@superadmin_required
 def admin_user_list(request):
     users = User.objects.all().order_by("-id")
 
@@ -1100,7 +1124,7 @@ def admin_user_list(request):
     })
 
 
-@login_required
+@superadmin_required
 def admin_user_add(request):
     form = AdminUserForm(request.POST or None)
 
@@ -1115,7 +1139,7 @@ def admin_user_add(request):
 from django.contrib.auth import update_session_auth_hash
 
 
-@login_required
+@superadmin_required
 def admin_user_edit(request, id):
     user = get_object_or_404(User, id=id)
     form = AdminUserForm(request.POST or None, instance=user)
@@ -1129,8 +1153,7 @@ def admin_user_edit(request, id):
         "title": "Edit User"
     })
 
-
-@login_required
+@superadmin_required
 def admin_user_delete(request, id):
     user = get_object_or_404(User, id=id)
     user.delete()
@@ -1141,7 +1164,7 @@ def admin_user_delete(request, id):
 from contact.models import ContactInfo, ContactMessage
 from superadmin_dashboard.forms import ContactInfoForm
 
-@login_required
+@superadmin_required
 def contact_info_list(request):
     items = ContactInfo.objects.all().order_by("-id")
     paginator = Paginator(items, 10)
@@ -1151,8 +1174,7 @@ def contact_info_list(request):
         "items": page
     })
 
-
-@login_required
+@superadmin_required
 def contact_info_add(request):
     form = ContactInfoForm(request.POST or None)
 
@@ -1166,7 +1188,7 @@ def contact_info_add(request):
     })
 
 
-@login_required
+@superadmin_required
 def contact_info_edit(request, id):
     obj = get_object_or_404(ContactInfo, id=id)
     form = ContactInfoForm(request.POST or None, instance=obj)
@@ -1181,7 +1203,7 @@ def contact_info_edit(request, id):
     })
 
 
-@login_required
+@superadmin_required
 def contact_info_delete(request, id):
     obj = get_object_or_404(ContactInfo, id=id)
     obj.delete()
@@ -1193,7 +1215,7 @@ def contact_info_delete(request, id):
 
 
 
-@login_required
+@superadmin_required
 def contact_message_list(request):
     messages = ContactMessage.objects.all().order_by("-created_at")
     paginator = Paginator(messages, 10)
@@ -1204,7 +1226,7 @@ def contact_message_list(request):
     })
 
 
-@login_required
+@superadmin_required
 def contact_message_delete(request, id):
     msg = get_object_or_404(ContactMessage, id=id)
     msg.delete()
@@ -1223,12 +1245,11 @@ from superadmin_dashboard.forms import AdminBookingForm
 from booking.models import Booking
 from farmhouse.models import Farmhouse
 from django.core.paginator import Paginator
-from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
 from django.db.models import Q
 
 
-@staff_member_required
+@superadmin_required
 def admin_booking_list(request):
 
     bookings = Booking.objects.select_related(
@@ -1290,9 +1311,90 @@ def admin_booking_list(request):
         }
     )
 
-    
-    
-@staff_member_required
+
+from django.http import JsonResponse
+from decimal import Decimal
+from datetime import datetime, timedelta
+from django.views.decorators.http import require_POST
+import json
+
+
+@superadmin_required
+@require_POST
+def admin_calculate_booking_price(request):
+    data = json.loads(request.body)
+    farmhouse_id = data.get("farmhouse")
+    check_in = data.get("check_in")
+    check_out = data.get("check_out")
+    extra_guest_count = int(data.get("extra_guest_count", 0))
+    coupon_id = data.get("coupon")
+
+    if not farmhouse_id or not check_in or not check_out:
+        return JsonResponse({"total": 0})
+
+    try:
+        farmhouse = Farmhouse.objects.select_related("pricing").get(id=farmhouse_id)
+        pricing = farmhouse.pricing
+    except:
+        return JsonResponse({"total": 0})
+
+    start = datetime.strptime(check_in, "%Y-%m-%d")
+    end = datetime.strptime(check_out, "%Y-%m-%d")
+
+    subtotal = Decimal("0.00")
+
+    while start < end:
+
+        # ⭐ SALE FIRST
+        if pricing.sale_price and pricing.sale_price > 0:
+            subtotal += pricing.sale_price
+
+        elif start.weekday() in [5, 6]:
+            subtotal += pricing.weekend_price
+
+        else:
+            subtotal += pricing.normal_day_price
+
+        start += timedelta(days=1)
+
+    ###################################
+    # EXTRA GUEST
+    ###################################
+
+    subtotal += extra_guest_count * pricing.extra_guest_price
+
+    ###################################
+    # COUPON
+    ###################################
+
+    discount = Decimal("0.00")
+
+    if coupon_id:
+
+        coupon = Coupon.objects.filter(
+            id=coupon_id,
+            is_active=True
+        ).first()
+
+        if coupon and subtotal >= coupon.min_booking_amount:
+            discount = coupon.calculate_discount(subtotal)
+
+    total = subtotal - discount
+
+    return JsonResponse({
+        "subtotal": float(subtotal),
+        "discount": float(discount),
+        "total": float(total)
+    })
+
+from decimal import Decimal
+from datetime import datetime, timedelta
+from django.db import transaction
+from django.shortcuts import redirect, render
+from django.contrib import messages
+from django.db.models import Q
+
+@superadmin_required
 def admin_booking_create(request):
 
     if request.method == "POST":
@@ -1301,21 +1403,89 @@ def admin_booking_create(request):
 
         if form.is_valid():
 
-            booking = form.save()
+            ########################################
+            # DO NOT SAVE YET
+            ########################################
+            booking = form.save(commit=False)
 
-            # send email
-            transaction.on_commit(
-                lambda: booking.send_booking_email(
-                    "pending",
-                    request
+            ########################################
+            # GET PRICING
+            ########################################
+            farmhouse = booking.farmhouse
+            pricing = farmhouse.pricing
+
+            start = booking.check_in
+            end = booking.check_out
+
+            subtotal = Decimal("0.00")
+
+            while start < end:
+
+                if pricing.sale_price and pricing.sale_price > 0:
+                    subtotal += pricing.sale_price
+
+                elif start.weekday() in [5, 6]:
+                    subtotal += pricing.weekend_price
+
+                else:
+                    subtotal += pricing.normal_day_price
+
+                start += timedelta(days=1)
+
+            ########################################
+            # EXTRA GUEST
+            ########################################
+            subtotal += booking.extra_guest_count * pricing.extra_guest_price
+
+            ########################################
+            # COUPON
+            ########################################
+            discount = Decimal("0.00")
+
+            if booking.coupon_applied:
+                coupon = booking.coupon_applied
+
+                if coupon.is_active and subtotal >= coupon.min_booking_amount:
+                    discount = coupon.calculate_discount(subtotal)
+
+            ########################################
+            # FINAL AMOUNTS
+            ########################################
+            booking.sub_total = subtotal
+            booking.disc_price = discount
+            booking.tax_price = Decimal("0.00")   # add GST if needed
+            booking.total_amount = subtotal - discount
+            booking.remaining_amount = booking.total_amount
+
+            ########################################
+            # PREVENT DOUBLE BOOKING
+            ########################################
+            overlap = Booking.objects.filter(
+                farmhouse=farmhouse,
+                status="confirmed",
+                check_in__lt=booking.check_out,
+                check_out__gt=booking.check_in
+            ).exists()
+
+            if overlap:
+                messages.error(request, "Selected dates already booked.")
+                return render(
+                    request,
+                    "superadmin/booking/form.html",
+                    {"form": form}
                 )
-            )
 
-            messages.success(
-                request,
-                "Booking created successfully!"
-            )
+            ########################################
+            # SAVE
+            ########################################
+            with transaction.atomic():
+                booking.save()
 
+                transaction.on_commit(
+                    lambda: booking.send_booking_email("pending", request)
+                )
+
+            messages.success(request, "Booking created successfully!")
             return redirect("admin-bookings")
 
     else:
@@ -1326,10 +1496,11 @@ def admin_booking_create(request):
         "superadmin/booking/form.html",
         {"form": form}
     )
+
     
     
     
-    
+
 # @staff_member_required
 # def admin_booking_detail(request, pk):
 
@@ -1399,7 +1570,7 @@ from django.db import transaction
 #     )
 from decimal import Decimal
 
-@staff_member_required
+@superadmin_required
 def admin_booking_detail(request, pk):
 
     booking = get_object_or_404(
@@ -1476,7 +1647,7 @@ def admin_booking_detail(request, pk):
     )
 
 
-@staff_member_required
+@superadmin_required
 def admin_booking_update(request, pk):
 
     booking = get_object_or_404(Booking, pk=pk)
@@ -1520,7 +1691,7 @@ def admin_booking_update(request, pk):
     )
 
 
-@staff_member_required
+@superadmin_required
 def admin_booking_cancel(request, pk):
 
     booking = get_object_or_404(Booking, pk=pk)
@@ -1554,7 +1725,7 @@ from django.shortcuts import render
 from booking.models import BlockedDate
 
 
-@staff_member_required
+@superadmin_required
 def blocked_dates_list(request):
 
     blocked = BlockedDate.objects.select_related(
@@ -1572,114 +1743,281 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from superadmin_dashboard.forms import BlockedDateForm
 
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .forms import BlockedDateForm
+from django.contrib.admin.views.decorators import staff_member_required
 
-@staff_member_required
+import json
+from booking.models import BlockedDate, Booking
+from datetime import timedelta
+
+import json
+from datetime import timedelta
+from django.http import JsonResponse
+
+
+# @superadmin_required
+# def blocked_dates_create(request):
+
+#     ###################################
+#     # AJAX CALL (farmhouse selected)
+#     ###################################
+#     if request.GET.get("farmhouse"):
+
+#         farmhouse_id = request.GET.get("farmhouse")
+
+#         blocked_ranges = []
+
+#         # ADMIN BLOCKS
+#         blocks = BlockedDate.objects.filter(
+#             farmhouse_id=farmhouse_id
+#         )
+
+#         for b in blocks:
+#             blocked_ranges.append({
+#                 "from": b.start_date.strftime("%Y-%m-%d"),
+#                 "to": (b.end_date - timedelta(days=1)).strftime("%Y-%m-%d")
+#             })
+
+#         # BOOKINGS
+#         bookings = Booking.objects.filter(
+#             farmhouse_id=farmhouse_id,
+#             status__in=["pending","confirmed"]
+#         )
+
+#         for booking in bookings:
+#             blocked_ranges.append({
+#                 "from": booking.check_in.strftime("%Y-%m-%d"),
+#                 "to": (booking.check_out - timedelta(days=1)).strftime("%Y-%m-%d")
+#             })
+
+#         return JsonResponse(blocked_ranges, safe=False)
+
+#     ###################################
+#     # NORMAL FORM
+#     ###################################
+
+#     if request.method == "POST":
+
+#         form = BlockedDateForm(request.POST)
+
+#         if form.is_valid():
+#             form.save()
+
+#             messages.success(
+#                 request,
+#                 "Dates blocked successfully!"
+#             )
+
+#             return redirect("blocked-dates")
+
+#     else:
+#         form = BlockedDateForm()
+
+#     return render(
+#         request,
+#         "superadmin/blocked/form.html",
+#         {"form": form}
+#     )
+
+
+
+
+from datetime import timedelta
+from django.http import JsonResponse
+from datetime import timedelta
+from django.http import JsonResponse
+from datetime import timedelta
+from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .forms import BlockedDateForm
+from booking.models import BlockedDate, Booking
+
+
+
+from datetime import timedelta
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
+@superadmin_required
 def blocked_dates_create(request):
 
+    # 🔹 AJAX
+    if request.GET.get("farmhouse"):
+
+        farmhouse_id = request.GET.get("farmhouse")
+        blocked_ranges = []
+
+        # ADMIN BLOCKS
+        blocks = BlockedDate.objects.filter(farmhouse_id=farmhouse_id)
+
+        for b in blocks:
+            blocked_ranges.append({
+                "from": b.start_date.strftime("%Y-%m-%d"),
+                "to": (b.end_date - timedelta(days=1)).strftime("%Y-%m-%d")
+            })
+
+        # BOOKINGS
+        bookings = Booking.objects.filter(
+            farmhouse_id=farmhouse_id,
+            status__in=["pending", "confirmed"]
+        )
+
+        for booking in bookings:
+            blocked_ranges.append({
+                "from": booking.check_in.strftime("%Y-%m-%d"),
+                "to": (booking.check_out - timedelta(days=1)).strftime("%Y-%m-%d")
+            })
+
+        return JsonResponse(blocked_ranges, safe=False)
+
+    # 🔹 FORM
     if request.method == "POST":
-
         form = BlockedDateForm(request.POST)
-
         if form.is_valid():
             form.save()
-
-            messages.success(
-                request,
-                "Dates blocked successfully!"
-            )
-
+            messages.success(request, "Dates blocked successfully!")
             return redirect("blocked-dates")
-
     else:
         form = BlockedDateForm()
 
-    return render(
-        request,
-        "superadmin/blocked/form.html",
-        {"form": form}
-    )
+    return render(request, "superadmin/blocked/form.html", {"form": form})
 
 
-
-from django.shortcuts import get_object_or_404
-
-
-@staff_member_required
+###############################################
+# UPDATE
+###############################################
+@superadmin_required
 def blocked_dates_update(request, pk):
 
-    blocked = get_object_or_404(
-        BlockedDate,
-        pk=pk
-    )
+    blocked = get_object_or_404(BlockedDate, pk=pk)
 
-    if request.method == "POST":
+    # AJAX
+    if request.GET.get("farmhouse"):
+        farmhouse_id = request.GET.get("farmhouse")
 
-        form = BlockedDateForm(
-            request.POST,
-            instance=blocked
+        blocked_ranges = []
+
+        blocks = BlockedDate.objects.filter(
+            farmhouse_id=farmhouse_id
+        ).exclude(pk=blocked.pk)
+
+        for b in blocks:
+            blocked_ranges.append({
+                "from": b.start_date.strftime("%Y-%m-%d"),
+                "to": (b.end_date - timedelta(days=1)).strftime("%Y-%m-%d")
+            })
+
+        bookings = Booking.objects.filter(
+            farmhouse_id=farmhouse_id,
+            status__in=["pending", "confirmed"]
         )
 
+        for booking in bookings:
+            blocked_ranges.append({
+                "from": booking.check_in.strftime("%Y-%m-%d"),
+                "to": (booking.check_out - timedelta(days=1)).strftime("%Y-%m-%d")
+            })
+
+        return JsonResponse(blocked_ranges, safe=False)
+
+    # NORMAL UPDATE
+    if request.method == "POST":
+        form = BlockedDateForm(request.POST, instance=blocked)
         if form.is_valid():
             form.save()
-
-            messages.success(
-                request,
-                "Blocked dates updated!"
-            )
-
+            messages.success(request, "Blocked dates updated!")
             return redirect("blocked-dates")
-
     else:
         form = BlockedDateForm(instance=blocked)
 
-    return render(
-        request,
-        "superadmin/blocked/form.html",
-        {"form": form}
-    )
+    return render(request, "superadmin/blocked/form.html", {"form": form})
+
+# @superadmin_required
+# def blocked_dates_update(request, pk):
+
+#     blocked = get_object_or_404(
+#         BlockedDate,
+#         pk=pk
+#     )
+
+#     ###################################
+#     # ✅ AJAX FOR CALENDAR
+#     ###################################
+#     if request.GET.get("farmhouse"):
+
+#         farmhouse_id = request.GET.get("farmhouse")
+
+#         blocked_ranges = []
+
+#         ###################################
+#         # BLOCKED DATES
+#         ###################################
+
+#         blocks = BlockedDate.objects.filter(
+#             farmhouse_id=farmhouse_id
+#         ).exclude(id=blocked.id)   # ⭐ VERY IMPORTANT
+
+#         for b in blocks:
+#             blocked_ranges.append({
+#                 "from": b.start_date.strftime("%Y-%m-%d"),
+#                 # "to": (b.end_date - timedelta(days=1)).strftime("%Y-%m-%d")
+#                 "to": b.end_date.strftime("%Y-%m-%d") 
+
+#             })
+
+#         ###################################
+#         # BOOKINGS
+#         ###################################
+#         bookings = Booking.objects.filter(
+#             farmhouse_id=farmhouse_id,
+#             status__in=["pending","confirmed"]
+#         )
+
+#         for booking in bookings:
+#             blocked_ranges.append({
+#                 "from": booking.check_in.strftime("%Y-%m-%d"),
+#                 "to": (booking.check_out - timedelta(days=1)).strftime("%Y-%m-%d")
+#             })
+
+#         return JsonResponse(blocked_ranges, safe=False)
+
+#     ###################################
+#     # NORMAL UPDATE
+#     ###################################
+
+#     if request.method == "POST":
+
+#         form = BlockedDateForm(
+#             request.POST,
+#             instance=blocked
+#         )
+
+#         if form.is_valid():
+#             form.save()
+
+#             messages.success(
+#                 request,
+#                 "Blocked dates updated!"
+#             )
+
+#             return redirect("blocked-dates")
+
+#     else:
+#         form = BlockedDateForm(instance=blocked)
+
+#     return render(
+#         request,
+#         "superadmin/blocked/form.html",
+#         {"form": form}
+#     )
 
 
-from django.shortcuts import get_object_or_404
 
-
-@staff_member_required
-def blocked_dates_update(request, pk):
-
-    blocked = get_object_or_404(
-        BlockedDate,
-        pk=pk
-    )
-
-    if request.method == "POST":
-
-        form = BlockedDateForm(
-            request.POST,
-            instance=blocked
-        )
-
-        if form.is_valid():
-            form.save()
-
-            messages.success(
-                request,
-                "Blocked dates updated!"
-            )
-
-            return redirect("blocked-dates")
-
-    else:
-        form = BlockedDateForm(instance=blocked)
-
-    return render(
-        request,
-        "superadmin/blocked/form.html",
-        {"form": form}
-    )
-
-
-
-
-@staff_member_required
+@superadmin_required
 def blocked_dates_delete(request, pk):
 
     blocked = get_object_or_404(
@@ -1746,7 +2084,7 @@ def payment_policy_update(request, pk):
 
 
 
-@staff_member_required
+@superadmin_required
 def payment_policy_delete(request, pk):
 
     policy = get_object_or_404(
@@ -1764,3 +2102,8 @@ def payment_policy_delete(request, pk):
     )
 
     return redirect("payment_policy_list")
+
+
+
+
+
