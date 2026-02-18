@@ -67,7 +67,77 @@ html{
 scroll-behavior:smooth;
 }
 
+
+.collapsed {
+    display: none;
+}
+
+
+{% comment %} ============ {% endcomment %}
+
+
+/* 🌿 MAIN CONTENT STYLE */
+.farmhouse-content {
+    font-family: "Inter", sans-serif;
+    line-height: 1.8;
+    font-size: 16px;
+    color: #4B5563; /* Gray 600 */
+}
+
+/* 📝 PARAGRAPHS */
+.farmhouse-content p {
+    margin-bottom: 16px;
+    color: #374151; /* Gray 700 */
+}
+
+/* 🟣 MAIN TITLE (if any h2) */
+.farmhouse-content h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #1F2937; /* Dark Slate */
+}
+
+/* 🌼 SECTION HEADINGS */
+.farmhouse-content h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 28px;
+    margin-bottom: 10px;
+    color: #F97316; /* Elegant Purple */
+}
+
+/* ✨ STRONG TEXT */
+.farmhouse-content strong {
+    color: #111827; /* Almost Black */
+    font-weight: 600;
+}
+
+/* 🔗 LINKS */
+.farmhouse-content a {
+    color: #F97316; /* Orange 500 */
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.farmhouse-content a:hover {
+    text-decoration: underline;
+    color: #EA580C; /* Orange 600 */
+}
+
+/* 📋 LISTS (if any) */
+.farmhouse-content ul {
+    padding-left: 20px;
+    margin-bottom: 16px;
+}
+
+.farmhouse-content li {
+    margin-bottom: 6px;
+}
+
 </style>
+
+
 <!-- GLOBAL LOADER -->
 <div id="bookingLoader"
 class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -84,6 +154,14 @@ class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center 
 
 
 <script>
+
+function safeImage(url){
+    if(!url || url === "null"){
+        return "https://via.placeholder.com/900x600?text=No+Image";
+    }
+    return url;
+}
+
 //////////////////////////////////////////////////
 // CSRF FIX (100% WORKING)
 //////////////////////////////////////////////////
@@ -139,6 +217,7 @@ await axios.get(`/api/farmhouses/${slug}/`);
 farmhouse=res.data.farmhouse;
 
 buildUI();
+initDescriptionToggle(); 
 initPaymentSelection();
 if(window.lucide){
     lucide.createIcons();
@@ -184,7 +263,8 @@ app.innerHTML=`
             bg-gray-100 rounded-2xl overflow-hidden">
 
                 <img id="mainImage"
-                    src="${farmhouse.primary_image}"
+                    {% comment %} src="${farmhouse.primary_image}" {% endcomment %}
+                    src="${safeImage(farmhouse.primary_image)}"
                     class="w-full h-full object-cover transition duration-300">
 
                 <!-- ICONS -->
@@ -830,13 +910,108 @@ BOOK NOW
 
             <div class="sticky top-10 bg-white shadow-xl rounded-2xl p-6 border">
 
-                <h2 class="text-2xl font-bold mb-3">
+
+
+
+{% comment %} 
+<div class="max-w-5xl mx-auto leading-relaxed text-gray-700">
+
+    <!-- TITLE -->
+    <h2 class="text-3xl font-bold mb-4">
+        Keesara Farmhouse: A Serene Escape Near Hyderabad
+    </h2>
+
+    <!-- SHORT INTRO -->
+    <p id="shortContent">
+        Nestled in the tranquil countryside near Hyderabad, Keesara Farmhouse offers a perfect blend of modern luxury and rustic charm. This beautifully designed retreat is an ideal destination for families, friends, or couples looking to escape the hustle and bustle of city life and immerse themselves in nature’s tranquility.
+    </p>
+
+    <!-- FULL CONTENT -->
+    <div id="fullContent" class="collapsed space-y-6 mt-4">
+
+        <div>
+            <h3 class="text-xl font-semibold mb-2">Location and Surroundings</h3>
+            <p>
+                Keesara Farmhouse is located just a short drive from Hyderabad, making it a convenient yet secluded getaway. Surrounded by lush greenery and a meticulously maintained lawn, it provides a peaceful environment perfect for relaxation, outdoor games, and enjoying fresh air.
+            </p>
+        </div>
+
+        <div>
+            <h3 class="text-xl font-semibold mb-2">Architectural Design</h3>
+            <p>
+                The farmhouse blends contemporary style with traditional elements. Clean lines, large windows, and open spaces fill the interiors with natural light, creating a bright and airy atmosphere. The white exterior with earthy tones complements the surrounding landscape beautifully.
+            </p>
+        </div>
+
+        <div>
+            <h3 class="text-xl font-semibold mb-2">Outdoor Spaces</h3>
+            <p>
+                The expansive lawn is perfect for yoga, cricket, picnics, or simply relaxing. Guests can also enjoy a spacious patio with seating for morning coffee or evening barbecues. The landscaped garden adds charm with vibrant plants and flowers.
+            </p>
+        </div>
+
+        <div>
+            <h3 class="text-xl font-semibold mb-2">Interior Design</h3>
+            <p>
+                Inside, the farmhouse offers elegant furnishings and a warm ambiance. The living area is spacious for gatherings, while the dining area comfortably hosts group meals. Bedrooms are designed for comfort, featuring large windows, stylish décor, and modern amenities.
+            </p>
+        </div>
+
+        <div>
+            <h3 class="text-xl font-semibold mb-2">Amenities</h3>
+            <p>
+                Guests can enjoy a fully equipped kitchen, modern bathrooms, and plenty of outdoor space for activities. A covered terrace provides the perfect spot for sunsets and stargazing, making every moment memorable.
+            </p>
+        </div>
+
+        <div>
+            <h3 class="text-xl font-semibold mb-2">Ideal for Events</h3>
+            <p>
+                Keesara Farmhouse is perfect for family reunions, birthday parties, and corporate retreats. The spacious outdoor area accommodates both intimate and larger gatherings, offering a serene setting for any occasion.
+            </p>
+        </div>
+
+        <div>
+            <h3 class="text-xl font-semibold mb-2">Conclusion</h3>
+            <p>
+                More than just a stay, Keesara Farmhouse is a destination to relax, rejuvenate, and create lasting memories. With its serene surroundings, modern comforts, and elegant design, it stands out as the perfect getaway near Hyderabad.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- TOGGLE BUTTON -->
+    <button id="toggleBtn"
+        class="mt-4 text-orange-600 font-semibold hover:underline">
+        Read More
+    </button>
+
+</div> {% endcomment %}
+
+                 {% comment %} <h2 class="text-2xl font-bold mb-3">
                     ${farmhouse.title}
                 </h2>
 
                 <p class="text-gray-600 mb-4">
                     ${farmhouse.description || "Enjoy a peaceful stay with premium amenities, beautiful surroundings, and a relaxing atmosphere perfect for families and friends."}
-                </p>
+                </p>  {% endcomment %}
+
+
+
+<h2 class="text-2xl font-bold mb-3">
+    ${farmhouse.title}
+</h2>
+
+<p id="descShort" class="text-gray-600 mb-2"></p>
+
+{% comment %} <p id="descFull" class="text-gray-600 mb-2 hidden"></p> {% endcomment %}
+<div class="farmhouse-content  text-gray-600 mb-2 hidden" id="descFull"></div>
+
+
+<button id="descToggle"
+    class="text-orange-600 font-semibold hover:underline">
+    Read More
+</button>
 
                 {% comment %} <div class="border-t pt-4 space-y-2">
 
@@ -851,6 +1026,8 @@ BOOK NOW
                 </div> {% endcomment %}
 
 
+
+                
                 <div class="border-t pt-6 mt-6">
 
     <div class="grid grid-cols-2 gap-4">
@@ -1878,6 +2055,120 @@ razor.open();
 
 loadFarmhouse();
 
+
+
+
+
+
+
+function initDescriptionToggle() {
+
+    const fullText = farmhouse.description || "";
+    const shortText = fullText.substring(0, 380);
+
+    const descShort = document.getElementById("descShort");
+    const descFull = document.getElementById("descFull");
+    const toggleBtn = document.getElementById("descToggle");
+
+    if (!descShort || !descFull || !toggleBtn) return;
+
+    if (fullText.length <= 380) {
+        descShort.innerHTML = fullText;   // ⭐ CHANGE HERE
+        toggleBtn.style.display = "none";
+    } else {
+        descShort.innerHTML = shortText + "...";  // ⭐ CHANGE HERE
+        descFull.innerHTML = fullText;            // ⭐ CHANGE HERE
+    }
+
+    toggleBtn.addEventListener("click", () => {
+
+        const isHidden = descFull.classList.contains("hidden");
+
+        if (isHidden) {
+            descFull.classList.remove("hidden");
+            descShort.classList.add("hidden");
+            toggleBtn.innerText = "Read Less";
+        } else {
+            descFull.classList.add("hidden");
+            descShort.classList.remove("hidden");
+            toggleBtn.innerText = "Read More";
+        }
+
+    });
+
+}
+
+
+
+
+</script>
+
+<script>
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} 
+// ⭐ DESCRIPTION TOGGLE LOGIC
+const fullText = farmhouse.description || "";
+const shortText = fullText.substring(0, 180); // length you want
+
+const descShort = document.getElementById("descShort");
+const descFull = document.getElementById("descFull");
+const toggleBtn = document.getElementById("descToggle");
+
+if (fullText.length <= 180) {
+    descShort.innerText = fullText;
+    toggleBtn.style.display = "none";
+} else {
+    descShort.innerText = shortText + "...";
+    descFull.innerText = fullText;
+}
+
+toggleBtn.addEventListener("click", () => {
+    const isHidden = descFull.classList.contains("hidden");
+
+    if (isHidden) {
+        descFull.classList.remove("hidden");
+        descShort.classList.add("hidden");
+        toggleBtn.innerText = "Read Less";
+    } else {
+        descFull.classList.add("hidden");
+        descShort.classList.remove("hidden");
+        toggleBtn.innerText = "Read More";
+    }
+}); {% endcomment %}
+
+{% comment %} document.addEventListener("DOMContentLoaded", function(){
+
+    const btn = document.getElementById("toggleBtn");
+    const shortText = document.getElementById("shortContent");
+    const fullText = document.getElementById("fullContent");
+
+    if(!btn || !shortText || !fullText) return;
+
+    btn.addEventListener("click", () => {
+
+        if (fullText.classList.contains("collapsed")) {
+            fullText.classList.remove("collapsed");
+            shortText.style.display = "none";
+            btn.innerText = "Read Less";
+        } else {
+            fullText.classList.add("collapsed");
+            shortText.style.display = "block";
+            btn.innerText = "Read More";
+        }
+
+    });
+
+}); {% endcomment %}
 </script>
 
 {% endblock %}

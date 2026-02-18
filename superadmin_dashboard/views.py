@@ -1723,22 +1723,6 @@ def admin_booking_cancel(request, pk):
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
 from booking.models import BlockedDate
-
-
-@superadmin_required
-def blocked_dates_list(request):
-
-    blocked = BlockedDate.objects.select_related(
-        "farmhouse"
-    ).order_by("-created_at")
-
-    return render(
-        request,
-        "superadmin/blocked/list.html",
-        {"blocked": blocked}
-    )
-
-
 from django.shortcuts import redirect
 from django.contrib import messages
 from superadmin_dashboard.forms import BlockedDateForm
@@ -1755,6 +1739,22 @@ from datetime import timedelta
 import json
 from datetime import timedelta
 from django.http import JsonResponse
+
+
+
+@superadmin_required
+def blocked_dates_list(request):
+
+    blocked = BlockedDate.objects.select_related(
+        "farmhouse"
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "superadmin/blocked/list.html",
+        {"blocked": blocked}
+    )
+
 
 
 # @superadmin_required
@@ -1841,40 +1841,47 @@ from datetime import timedelta
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from datetime import timedelta
+from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+# from .models import BlockedDate, Booking
+# from .forms import BlockedDateForm
 
+
+###############################################
+# CREATE
+###############################################
 @superadmin_required
 def blocked_dates_create(request):
 
-    # 🔹 AJAX
+    # AJAX
     if request.GET.get("farmhouse"):
-
         farmhouse_id = request.GET.get("farmhouse")
         blocked_ranges = []
 
-        # ADMIN BLOCKS
+        # ADMIN BLOCKS (exclusive end)
         blocks = BlockedDate.objects.filter(farmhouse_id=farmhouse_id)
-
         for b in blocks:
             blocked_ranges.append({
                 "from": b.start_date.strftime("%Y-%m-%d"),
-                "to": (b.end_date - timedelta(days=1)).strftime("%Y-%m-%d")
+                "to": b.end_date.strftime("%Y-%m-%d")
             })
 
-        # BOOKINGS
+        # BOOKINGS (exclusive end)
         bookings = Booking.objects.filter(
             farmhouse_id=farmhouse_id,
             status__in=["pending", "confirmed"]
         )
-
         for booking in bookings:
             blocked_ranges.append({
                 "from": booking.check_in.strftime("%Y-%m-%d"),
-                "to": (booking.check_out - timedelta(days=1)).strftime("%Y-%m-%d")
+                "to": booking.check_out.strftime("%Y-%m-%d")
             })
 
         return JsonResponse(blocked_ranges, safe=False)
 
-    # 🔹 FORM
+    # FORM
     if request.method == "POST":
         form = BlockedDateForm(request.POST)
         if form.is_valid():
@@ -1898,7 +1905,6 @@ def blocked_dates_update(request, pk):
     # AJAX
     if request.GET.get("farmhouse"):
         farmhouse_id = request.GET.get("farmhouse")
-
         blocked_ranges = []
 
         blocks = BlockedDate.objects.filter(
@@ -1908,23 +1914,22 @@ def blocked_dates_update(request, pk):
         for b in blocks:
             blocked_ranges.append({
                 "from": b.start_date.strftime("%Y-%m-%d"),
-                "to": (b.end_date - timedelta(days=1)).strftime("%Y-%m-%d")
+                "to": b.end_date.strftime("%Y-%m-%d")
             })
 
         bookings = Booking.objects.filter(
             farmhouse_id=farmhouse_id,
             status__in=["pending", "confirmed"]
         )
-
         for booking in bookings:
             blocked_ranges.append({
                 "from": booking.check_in.strftime("%Y-%m-%d"),
-                "to": (booking.check_out - timedelta(days=1)).strftime("%Y-%m-%d")
+                "to": booking.check_out.strftime("%Y-%m-%d")
             })
 
         return JsonResponse(blocked_ranges, safe=False)
 
-    # NORMAL UPDATE
+    # FORM UPDATE
     if request.method == "POST":
         form = BlockedDateForm(request.POST, instance=blocked)
         if form.is_valid():

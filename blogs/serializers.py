@@ -73,3 +73,5 @@ class BlogDetailSerializer(serializers.ModelSerializer):
         if obj.image and request:
             return request.build_absolute_uri(obj.image.url)
         return ""
+    def get_content(self, obj):
+        return str(obj.content) 

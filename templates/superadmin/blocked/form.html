@@ -75,99 +75,6 @@ Cancel
 
 </div>
 
-
-
-
-
-{% comment %} <script> {% endcomment %}
-
-{% comment %} document.addEventListener("DOMContentLoaded", function(){
-
-    const farmhouse = document.getElementById("id_farmhouse");
-    const startInput = document.getElementById("id_start_date");
-    const endInput = document.getElementById("id_end_date");
-
-    let startPicker;
-    let endPicker;
-
-    //////////////////////////////////////
-    // INIT CALENDAR
-    //////////////////////////////////////
-
-    function initCalendar(blocked=[]){
-
-        if(startPicker) startPicker.destroy();
-        if(endPicker) endPicker.destroy();
-
-        startPicker = flatpickr(startInput,{
-            minDate:"today",
-            dateFormat:"Y-m-d",
-            disable: blocked,
-
-            onChange:function(selectedDates){
-
-                if(!selectedDates.length) return;
-
-                let nextDay = new Date(selectedDates[0]);
-                nextDay.setDate(nextDay.getDate()+1);
-
-                endPicker.set("minDate", nextDay);
-                endInput.value="";
-            }
-        });
-
-        endPicker = flatpickr(endInput,{
-            minDate:new Date().fp_incr(1),
-            dateFormat:"Y-m-d",
-            disable: blocked
-        });
-    }
-
-    //////////////////////////////////////
-    // LOAD BLOCKED
-    //////////////////////////////////////
-
-    function loadBlockedDates(farmhouseId){
-
-        if(!farmhouseId){
-            initCalendar([]);
-            return;
-        }
-
-        fetch(`?farmhouse=${farmhouseId}`)
-        .then(res => res.json())
-        .then(data => {
-
-            const blocked = data.map(d => ({
-                from: d.from,
-                to: d.to
-            }));
-
-            initCalendar(blocked);
-        });
-    }
-
-    //////////////////////////////////////
-    // FARMHOUSE CHANGE
-    //////////////////////////////////////
-
-    farmhouse?.addEventListener("change", function(){
-        loadBlockedDates(this.value);
-    });
-
-    //////////////////////////////////////
-    // ⭐⭐⭐ VERY IMPORTANT ⭐⭐⭐
-    // AUTO LOAD FOR UPDATE PAGE
-    //////////////////////////////////////
-
-    if(farmhouse?.value){
-        loadBlockedDates(farmhouse.value);
-    }else{
-        initCalendar([]);
-    }
-
-});
-</script> {% endcomment %}
 <link rel="stylesheet"
 href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
@@ -179,18 +86,28 @@ document.addEventListener("DOMContentLoaded", function(){
     const startInput = document.getElementById("id_start_date");
     const endInput = document.getElementById("id_end_date");
 
-    let startPicker;
-    let endPicker;
+    let blockedRanges = [];
 
-    function initCalendar(blocked=[]){
+    function isNightBlocked(date){
 
-        if(startPicker) startPicker.destroy();
-        if(endPicker) endPicker.destroy();
+        return blockedRanges.some(r => {
 
-        startPicker = flatpickr(startInput,{
+            const start = new Date(r.from);
+            const end = new Date(r.to);
+
+            // ⭐ block nights only (end exclusive)
+            end.setDate(end.getDate() - 1);
+
+            return date >= start && date <= end;
+        });
+    }
+
+    function initCalendar(){
+
+        flatpickr(startInput,{
             minDate:"today",
             dateFormat:"Y-m-d",
-            disable: blocked,
+            disable:[date => isNightBlocked(date)],
             onChange:function(selectedDates){
 
                 if(!selectedDates.length) return;
@@ -206,25 +123,23 @@ document.addEventListener("DOMContentLoaded", function(){
         endPicker = flatpickr(endInput,{
             minDate:new Date().fp_incr(1),
             dateFormat:"Y-m-d",
-            disable: blocked
+            disable:[date => isNightBlocked(date)]
         });
     }
 
     function loadBlockedDates(farmhouseId){
 
         if(!farmhouseId){
-            initCalendar([]);
+            blockedRanges = [];
+            initCalendar();
             return;
         }
 
         fetch(`?farmhouse=${farmhouseId}`)
         .then(res => res.json())
         .then(data => {
-            const blocked = data.map(d => ({
-                from: d.from,
-                to: d.to
-            }));
-            initCalendar(blocked);
+            blockedRanges = data;
+            initCalendar();
         });
     }
 
@@ -235,11 +150,13 @@ document.addEventListener("DOMContentLoaded", function(){
     if(farmhouse?.value){
         loadBlockedDates(farmhouse.value);
     } else {
-        initCalendar([]);
+        initCalendar();
     }
 
 });
+
 </script>
+
 
 
 

@@ -64,7 +64,7 @@ class Blog(models.Model):
         related_name='blogs'
     )
 
-    image = models.ImageField(upload_to='blogs/')
+    image = models.ImageField(upload_to='blogs/' ,null=True ,blank=True)
     short_description = models.TextField(
         help_text="Shown in blog listing page"
     )

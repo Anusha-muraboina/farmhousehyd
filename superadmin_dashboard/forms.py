@@ -745,19 +745,107 @@ from datetime import date, timedelta
 from django.core.exceptions import ValidationError
 
 
+# class BlockedDateForm(forms.ModelForm):
+
+#     class Meta:
+#         model = BlockedDate
+#         fields = "__all__"
+
+#         widgets = {
+#             "farmhouse": forms.Select(attrs={"class": "form-select"}),
+#             "start_date": forms.TextInput(attrs={"class": "form-control", "readonly": "readonly"}),
+#             "end_date": forms.TextInput(attrs={"class": "form-control", "readonly": "readonly"}),
+#             "reason": forms.TextInput(attrs={"class": "form-control"}),
+#         }
+
+
+#     def clean(self):
+#         cleaned_data = super().clean()
+
+#         farmhouse = cleaned_data.get("farmhouse")
+#         start_date = cleaned_data.get("start_date")
+#         end_date = cleaned_data.get("end_date")
+
+#         if not farmhouse or not start_date or not end_date:
+#             return cleaned_data
+
+#         ##################################
+#         # 1️⃣ End must be AFTER start
+#         ##################################
+#         if end_date <= start_date:
+#             raise ValidationError("End date must be greater than start date.")
+
+#         ##################################
+#         # 2️⃣ Prevent past blocking
+#         ##################################
+#         if start_date < date.today():
+#             raise ValidationError("You cannot block past dates.")
+
+#         ##################################
+#         # ⭐ Convert to NIGHT RANGE
+#         ##################################
+#         new_start = start_date
+#         new_end = end_date - timedelta(days=1)
+
+#         ##################################
+#         # 3️⃣ BLOCKED DATE OVERLAP (NIGHT BASED)
+#         ##################################
+#         # blocked_qs = BlockedDate.objects.filter(farmhouse=farmhouse)
+
+#         # if self.instance.pk:
+#         #     blocked_qs = blocked_qs.exclude(pk=self.instance.pk)
+
+#         # for block in blocked_qs:
+#         #     block_start = block.start_date
+#         #     block_end = block.end_date - timedelta(days=1)
+
+#         #     # overlap if night ranges intersect
+#         #     if not (new_end < block_start or new_start > block_end):
+#         #         raise ValidationError("These dates overlap with an existing blocked range.")
+#         blocked_qs = BlockedDate.objects.filter(farmhouse=farmhouse)
+
+#         if self.instance.pk:
+#             blocked_qs = blocked_qs.exclude(pk=self.instance.pk)
+
+#         for block in blocked_qs:
+#             if start_date < block.end_date and end_date > block.start_date:
+#                 raise ValidationError("These dates overlap with an existing blocked range.")
+
+#         ##################################
+#         # 4️⃣ BOOKING OVERLAP (NIGHT BASED)
+#         ##################################
+#         booking_qs = Booking.objects.filter(
+#             farmhouse=farmhouse,
+#             status__in=["pending", "confirmed"]
+#         )
+
+#         for booking in booking_qs:
+#             book_start = booking.check_in
+#             book_end = booking.check_out - timedelta(days=1)
+
+#             if not (new_end < book_start or new_start > book_end):
+#                 raise ValidationError("These dates overlap with a booking.")
+
+#         return cleaned_data
+
+
+from django import forms
+from django.core.exceptions import ValidationError
+from datetime import date
+# from .models import BlockedDate, Booking
+
+
 class BlockedDateForm(forms.ModelForm):
 
     class Meta:
         model = BlockedDate
         fields = "__all__"
-
         widgets = {
             "farmhouse": forms.Select(attrs={"class": "form-select"}),
             "start_date": forms.TextInput(attrs={"class": "form-control", "readonly": "readonly"}),
             "end_date": forms.TextInput(attrs={"class": "form-control", "readonly": "readonly"}),
             "reason": forms.TextInput(attrs={"class": "form-control"}),
         }
-
 
     def clean(self):
         cleaned_data = super().clean()
@@ -769,58 +857,48 @@ class BlockedDateForm(forms.ModelForm):
         if not farmhouse or not start_date or not end_date:
             return cleaned_data
 
-        ##################################
-        # 1️⃣ End must be AFTER start
-        ##################################
         if end_date <= start_date:
             raise ValidationError("End date must be greater than start date.")
 
-        ##################################
-        # 2️⃣ Prevent past blocking
-        ##################################
         if start_date < date.today():
             raise ValidationError("You cannot block past dates.")
 
-        ##################################
-        # ⭐ Convert to NIGHT RANGE
-        ##################################
-        new_start = start_date
-        new_end = end_date - timedelta(days=1)
-
-        ##################################
-        # 3️⃣ BLOCKED DATE OVERLAP (NIGHT BASED)
-        ##################################
+        ##########################################
+        # BLOCKED OVERLAP CHECK
+        ##########################################
         blocked_qs = BlockedDate.objects.filter(farmhouse=farmhouse)
 
         if self.instance.pk:
             blocked_qs = blocked_qs.exclude(pk=self.instance.pk)
 
         for block in blocked_qs:
-            block_start = block.start_date
-            block_end = block.end_date - timedelta(days=1)
+            overlap = start_date < block.end_date and end_date > block.start_date
 
-            # overlap if night ranges intersect
-            if not (new_end < block_start or new_start > block_end):
-                raise ValidationError("These dates overlap with an existing blocked range.")
+            if overlap:
+                raise ValidationError(
+                    f"❌ You selected {start_date} → {end_date} "
+                    f"but it overlaps with existing block "
+                    f"{block.start_date} → {block.end_date}"
+                )
 
-        ##################################
-        # 4️⃣ BOOKING OVERLAP (NIGHT BASED)
-        ##################################
+        ##########################################
+        # BOOKING OVERLAP CHECK
+        ##########################################
         booking_qs = Booking.objects.filter(
             farmhouse=farmhouse,
             status__in=["pending", "confirmed"]
         )
 
         for booking in booking_qs:
-            book_start = booking.check_in
-            book_end = booking.check_out - timedelta(days=1)
+            overlap = start_date < booking.check_out and end_date > booking.check_in
 
-            if not (new_end < book_start or new_start > book_end):
-                raise ValidationError("These dates overlap with a booking.")
+            if overlap:
+                raise ValidationError(
+                    f"❌ Conflicts with booking "
+                    f"{booking.check_in} → {booking.check_out}"
+                )
 
         return cleaned_data
-
-
 
 
 

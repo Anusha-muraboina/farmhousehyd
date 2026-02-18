@@ -717,47 +717,78 @@ def owner_blocked_dates_list(request):
         "farmhouse_admin/blocked/list.html",
         {"blocked": blocked}
     )
-    
-    
+
+
+
+from django.http import JsonResponse
+
+
+from django.http import JsonResponse
+from booking.models import BlockedDate, Booking
+from datetime import timedelta
+
+from django.http import JsonResponse
+from booking.models import BlockedDate, Booking
+def owner_blocked_ranges(request):
+    farmhouse_id = request.GET.get("farmhouse")
+
+    if not farmhouse_id:
+        return JsonResponse([], safe=False)
+
+    blocked_ranges = []
+
+    blocks = BlockedDate.objects.filter(
+        farmhouse_id=farmhouse_id,
+        farmhouse__user=request.user
+    )
+
+    for b in blocks:
+        blocked_ranges.append({
+            "from": b.start_date.strftime("%Y-%m-%d"),
+            "to": b.end_date.strftime("%Y-%m-%d")   # checkout date
+        })
+
+    bookings = Booking.objects.filter(
+        farmhouse_id=farmhouse_id,
+        status__in=["pending","confirmed"]
+    )
+
+    for booking in bookings:
+        blocked_ranges.append({
+            "from": booking.check_in.strftime("%Y-%m-%d"),
+            "to": booking.check_out.strftime("%Y-%m-%d")
+        })
+
+    return JsonResponse(blocked_ranges, safe=False)
+
 @owner_required
 def owner_blocked_dates_create(request):
 
     if request.method == "POST":
-
-        form = BlockedDateForm(request.POST)
-
-        # restrict farmhouse queryset
-        form.fields["farmhouse"].queryset = \
-            request.user.farmhouses.all()
+        form = BlockedDateForm(request.POST, user=request.user)
 
         if form.is_valid():
-
             blocked = form.save(commit=False)
 
-            # extra safety check
             if blocked.farmhouse.user != request.user:
-                messages.error(request, "Unauthorized action.")
+                messages.error(request, "Unauthorized")
                 return redirect("blocked-dates")
 
             blocked.save()
-
-            messages.success(
-                request,
-                "Dates blocked successfully!"
-            )
-
+            messages.success(request, "Dates blocked successfully!")
             return redirect("blocked-dates")
 
     else:
-        form = BlockedDateForm()
-        form.fields["farmhouse"].queryset = \
-            request.user.farmhouses.all()
+        form = BlockedDateForm(user=request.user)
 
     return render(
         request,
         "farmhouse_admin/blocked/form.html",
         {"form": form}
     )
+
+
+
 @owner_required
 def owner_blocked_dates_update(request, pk):
 
@@ -768,30 +799,107 @@ def owner_blocked_dates_update(request, pk):
     )
 
     if request.method == "POST":
-        form = BlockedDateForm(request.POST, instance=blocked)
-        form.fields["farmhouse"].queryset = \
-            request.user.farmhouses.all()
+        form = BlockedDateForm(
+            request.POST,
+            instance=blocked,
+            user=request.user
+        )
 
         if form.is_valid():
             form.save()
-
-            messages.success(
-                request,
-                "Blocked dates updated!"
-            )
-
+            messages.success(request, "Blocked dates updated!")
             return redirect("blocked-dates")
 
     else:
-        form = BlockedDateForm(instance=blocked)
-        form.fields["farmhouse"].queryset = \
-            request.user.farmhouses.all()
+        form = BlockedDateForm(
+            instance=blocked,
+            user=request.user
+        )
 
     return render(
         request,
         "farmhouse_admin/blocked/form.html",
         {"form": form}
     )
+
+
+
+
+
+    
+# @owner_required
+# def owner_blocked_dates_create(request):
+
+#     if request.method == "POST":
+
+#         form = BlockedDateForm(request.POST)
+
+#         # restrict farmhouse queryset
+#         form.fields["farmhouse"].queryset = \
+#             request.user.farmhouses.all()
+
+#         if form.is_valid():
+
+#             blocked = form.save(commit=False)
+
+#             # extra safety check
+#             if blocked.farmhouse.user != request.user:
+#                 messages.error(request, "Unauthorized action.")
+#                 return redirect("blocked-dates")
+
+#             blocked.save()
+
+#             messages.success(
+#                 request,
+#                 "Dates blocked successfully!"
+#             )
+
+#             return redirect("blocked-dates")
+
+#     else:
+#         form = BlockedDateForm()
+#         form.fields["farmhouse"].queryset = \
+#             request.user.farmhouses.all()
+
+#     return render(
+#         request,
+#         "farmhouse_admin/blocked/form.html",
+#         {"form": form}
+#     )
+# @owner_required
+# def owner_blocked_dates_update(request, pk):
+
+#     blocked = get_object_or_404(
+#         BlockedDate,
+#         pk=pk,
+#         farmhouse__user=request.user
+#     )
+
+#     if request.method == "POST":
+#         form = BlockedDateForm(request.POST, instance=blocked)
+#         form.fields["farmhouse"].queryset = \
+#             request.user.farmhouses.all()
+
+#         if form.is_valid():
+#             form.save()
+
+#             messages.success(
+#                 request,
+#                 "Blocked dates updated!"
+#             )
+
+#             return redirect("blocked-dates")
+
+#     else:
+#         form = BlockedDateForm(instance=blocked)
+#         form.fields["farmhouse"].queryset = \
+#             request.user.farmhouses.all()
+
+#     return render(
+#         request,
+#         "farmhouse_admin/blocked/form.html",
+#         {"form": form}
+#     )
 
 
 

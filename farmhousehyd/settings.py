@@ -126,13 +126,35 @@ WSGI_APPLICATION = 'farmhousehyd.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
+# settings.py
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+
+        "NAME": "farmhouse_hyd",        # DB NAME
+        "USER": "farmhouse_user",       # DB USER
+        "PASSWORD": "Farmhouse@2026!",  # DB PASSWORD
+        "HOST": "127.0.0.1",            # or localhost
+        "PORT": "3306",
+
+        "OPTIONS": {
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+            "charset": "utf8mb4",
+        },
     }
 }
 
+TIME_ZONE = "Asia/Kolkata"
+USE_TZ = True
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -165,7 +187,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = "anushamuraboina9@gmail.com"
-EMAIL_HOST_PASSWORD = "zdhpxjpgdbyydxyw"
+EMAIL_HOST_PASSWORD = "mpywwnwfrubgkxoe"
 
 DEFAULT_FROM_EMAIL = "Farmhouses Hyderabad <anushamuraboina9@gmail.com>"
 

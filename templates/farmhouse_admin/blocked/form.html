@@ -68,8 +68,123 @@ Cancel
 </div>
 </div>
 
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    const farmhouse = document.getElementById("id_farmhouse");
+    const startInput = document.getElementById("id_start_date");
+    const endInput = document.getElementById("id_end_date");
+
+    let startPicker;
+    let endPicker;
+    let blockedRanges = [];
+
+    ////////////////////////////////////////////
+    // 🔥 Convert string to YYYY-MM-DD
+    ////////////////////////////////////////////
+
+    function formatDate(date){
+        return date.toISOString().split("T")[0];
+    }
+
+    ////////////////////////////////////////////
+    // 🔥 Flatpickr disable logic
+    ////////////////////////////////////////////
+
+    function disableDates(date){
+
+        const d = formatDate(date);
+
+        return blockedRanges.some(range => {
+
+            // ⭐ inclusive blocking
+            return d >= range.from && d < range.to;
+        });
+    }
+
+    ////////////////////////////////////////////
+    // 🔥 Init calendar
+    ////////////////////////////////////////////
+
+    function initCalendar(){
+
+        if(startPicker) startPicker.destroy();
+        if(endPicker) endPicker.destroy();
+
+        startPicker = flatpickr(startInput,{
+            dateFormat:"Y-m-d",
+            minDate:"today",
+            disable:[disableDates],
+            onChange:function(selectedDates){
+
+                if(!selectedDates.length) return;
+
+                let nextDay = new Date(selectedDates[0]);
+                nextDay.setDate(nextDay.getDate()+1);
+
+                endPicker.set("minDate", nextDay);
+                endInput.value="";
+            }
+        });
+
+        endPicker = flatpickr(endInput,{
+            dateFormat:"Y-m-d",
+            minDate:new Date().fp_incr(1),
+            disable:[disableDates]
+        });
+    }
+
+    ////////////////////////////////////////////
+    // 🔥 Load blocked ranges from API
+    ////////////////////////////////////////////
+
+    function loadBlockedDates(farmhouseId){
+
+        if(!farmhouseId){
+            blockedRanges = [];
+            initCalendar();
+            return;
+        }
+
+        fetch(`/farmhouse_admin/blocked-ranges/?farmhouse=${farmhouseId}`)
+        .then(res => res.json())
+        .then(data => {
+
+            console.log("Blocked:", data); // debug
+
+            blockedRanges = data.map(r => ({
+                from: r.from,
+                to: r.to
+            }));
+
+            initCalendar();
+        });
+    }
+
+    ////////////////////////////////////////////
+    // 🔥 Events
+    ////////////////////////////////////////////
+
+    farmhouse?.addEventListener("change", function(){
+        loadBlockedDates(this.value);
+    });
+
+    if(farmhouse?.value){
+        loadBlockedDates(farmhouse.value);
+    } else {
+        initCalendar();
+    }
+
+});
+</script>
+
+
+
+
+{% comment %} <script>
 
 flatpickr("#id_start_date",{
 dateFormat:"Y-m-d",
@@ -81,6 +196,6 @@ dateFormat:"Y-m-d",
 minDate:"today"
 });
 
-</script>
+</script> {% endcomment %}
 
 {% endblock %}

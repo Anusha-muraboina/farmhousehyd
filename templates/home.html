@@ -69,12 +69,12 @@
   <!-- SLIDER -->
   <div class="absolute inset-0">
     <div id="slider" class="relative w-full h-full">
-      <div class="absolute inset-0 bg-white/40"></div>
+      <div class="absolute inset-0 bg-black/40"></div>
     </div>
   </div>
 
   <!-- CONTENT -->
-  <div class="relative h-full flex items-center justify-center text-center text-white">
+  <div class="relative h-full flex items-center justify-center text-center text-white bg-black">
     <div class="space-y-6 w-full">
 
       <h1 class="text-4xl font-bold text-orange-600">
@@ -574,7 +574,7 @@ axios.get("/api/home/", {
 
   /* ================= BANNERS ================= */
   const slider = document.getElementById("slider");
-  slider.innerHTML = `<div class="absolute inset-0 bg-white border-t"></div>`;
+  slider.innerHTML = `<div class="absolute inset-0 bg-bloack border-t"></div>`;
 
   data.banners.forEach((banner, index) => {
     slider.innerHTML += `
@@ -747,8 +747,9 @@ blogGrid.innerHTML += `
     <div class="p-8">
       <p class="text-lg font-bold mb-4">${featured.title}</p>
 
-      <p class="text-gray-600 mb-6 truncate-text">
-        ${featured.short_description}
+      <p class="text-gray-600 mb-3 truncate-text">
+        
+         ${(featured.short_description || "").substring(0,90)}...
       </p>
 
       <a href="/blog/${featured.slug}/"
@@ -769,9 +770,12 @@ if (blogs.length > 1) {
     rightColumn += `
       <div class="bg-gray-50 rounded-3xl overflow-hidden shadow-lg">
 
-        <img src="${blog.image}"
-             class="w-full h-44 object-cover">
-
+        {% comment %} <img src="${blog.image}"
+             class="w-full h-44 object-cover"> {% endcomment %}
+        ${blog.image ? `
+          <img src="${blog.image}"
+              class="w-full h-44 object-cover">
+        ` : ``}
         <div class="p-6">
           <p class="font-bold text-lg mb-3 truncate-text">
             ${blog.title}

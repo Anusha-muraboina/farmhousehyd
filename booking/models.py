@@ -385,7 +385,8 @@ class Booking(models.Model):
         return f"{self.booking_id} - {self.guest_name}-{self.check_in} - {self.check_out} -{self.farmhouse}"
 
 
-
+from django.core.exceptions import ValidationError
+from datetime import date
 # models.py
 class BlockedDate(models.Model):
     farmhouse = models.ForeignKey(
@@ -397,18 +398,56 @@ class BlockedDate(models.Model):
     end_date = models.DateField()
     reason = models.CharField(max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    # def clean(self):
+    #     if self.start_date > self.end_date:
+    #         raise ValidationError("End date must be after start date.")
+    
+    
     def clean(self):
-        if self.start_date > self.end_date:
-            raise ValidationError("End date must be after start date.")
 
-        overlaps = BlockedDate.objects.filter(
-            farmhouse=self.farmhouse,
-            start_date__lte=self.end_date,
-            end_date__gte=self.start_date
+        if not self.start_date or not self.end_date or not self.farmhouse:
+            return
+
+        # End must be after start
+        if self.end_date <= self.start_date:
+            raise ValidationError("End date must be greater than start date.")
+
+        if self.start_date < date.today():
+            raise ValidationError("Cannot block past dates.")
+
+        # ⭐ Exclusive overlap logic
+        existing_blocks = BlockedDate.objects.filter(
+            farmhouse=self.farmhouse
         ).exclude(pk=self.pk)
 
-        if overlaps.exists():
-            raise ValidationError("These dates overlap with an existing blocked range.")
+        for block in existing_blocks:
+            if self.start_date < block.end_date and self.end_date > block.start_date:
+                raise ValidationError(
+                    f"Overlap with blocked range {block.start_date} → {block.end_date}"
+                )
+
+    # def clean(self):
+
+    #     # ⭐ SAFETY CHECK FIRST
+    #     if not self.start_date or not self.end_date:
+    #         return
+
+    #     # End must be after start
+    #     if self.end_date <= self.start_date:
+    #         raise ValidationError("End date must be greater than start date.")
+
+    #     # Prevent past
+    #     if self.start_date < date.today():
+    #         raise ValidationError("Cannot block past dates.")
+        
+    #     overlaps = BlockedDate.objects.filter(
+    #         farmhouse=self.farmhouse,
+    #         start_date__lte=self.end_date,
+    #         end_date__gte=self.start_date
+    #     ).exclude(pk=self.pk)
+
+    #     if overlaps.exists():
+    #         raise ValidationError("These dates overlap with an existing blocked range.")
 
     def __str__(self):
         return f"Blocked: {self.start_date} → {self.end_date}"

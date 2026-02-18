@@ -95,4 +95,11 @@ urlpatterns = [
         owner_blocked_dates_delete,
         name="owner_blocked-dates-delete"
     ),
+    
+    path(
+        "blocked-ranges/",
+        owner_blocked_ranges,
+        name="owner-blocked-ranges"
+    ),
+
 ]

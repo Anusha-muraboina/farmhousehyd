@@ -95,6 +95,21 @@ class OwnerCouponForm(forms.ModelForm):
 
 
 
+# class BlockedDateForm(forms.ModelForm):
+
+#     class Meta:
+#         model = BlockedDate
+#         fields = "__all__"
+
+#         widgets = {
+#             "start_date": forms.TextInput(attrs={"class":"form-control"}),
+#             "end_date": forms.TextInput(attrs={"class":"form-control"}),
+#             "reason": forms.TextInput(attrs={"class":"form-control"}),
+#         }
+
+from django import forms
+from booking.models import BlockedDate
+
 class BlockedDateForm(forms.ModelForm):
 
     class Meta:
@@ -102,7 +117,15 @@ class BlockedDateForm(forms.ModelForm):
         fields = "__all__"
 
         widgets = {
+            "farmhouse": forms.Select(attrs={"class": "form-select"}),
             "start_date": forms.TextInput(attrs={"class":"form-control"}),
             "end_date": forms.TextInput(attrs={"class":"form-control"}),
             "reason": forms.TextInput(attrs={"class":"form-control"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+        if user:
+            self.fields["farmhouse"].queryset = user.farmhouses.all()
