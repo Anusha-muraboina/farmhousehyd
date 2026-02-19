@@ -18,7 +18,27 @@ from django.contrib import admin
 from django.urls import path ,include
 from django.conf import settings
 from django.conf.urls.static import static
+
+
+
+
+from django.contrib.sitemaps.views import sitemap
+from farmhousehyd.sitemap import BlogListSitemap, BlogDetailSitemap
+
+sitemaps = {
+    "blogs": BlogListSitemap,
+    "blog_detail": BlogDetailSitemap,
+}
+
+
+
+
+
+
 urlpatterns = [
+    
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}),
+    
     path('admin/', admin.site.urls),
     path('farmhouse_admin/' , include("farmhouse_owner.urls")),
     path('farmhouse_superadmin/' , include("superadmin_dashboard.urls")),

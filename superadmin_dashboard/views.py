@@ -1834,7 +1834,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .forms import BlockedDateForm
 from booking.models import BlockedDate, Booking
-
+from farmhouse.models import FarmhouseFacilities
 
 
 from datetime import timedelta
@@ -2111,4 +2111,64 @@ def payment_policy_delete(request, pk):
 
 
 
+from django.core.paginator import Paginator
+# def facility_list(request):
+#     facilities = FarmhouseFacilities.objects.all().order_by("-id")
 
+#     return render(request, "superadmin/facilities/list.html", {
+#         "facilities": facilities
+#     })
+
+
+
+
+def facility_list(request):
+    facility_qs = FarmhouseFacilities.objects.all().order_by("-id")
+
+    paginator = Paginator(facility_qs, 10)  # 🔹 10 per page
+    page_number = request.GET.get("page")
+    facilities = paginator.get_page(page_number)
+
+    return render(request, "superadmin/facilities/list.html", {
+        "facilities": facilities
+    })
+
+
+
+def facility_create(request):
+    form = FacilityForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Facility created successfully ✅")
+        return redirect("facility-list")
+
+    return render(request, "superadmin/facilities/form.html", {
+        "form": form,
+        "title": "Add Facility"
+    })
+
+
+def facility_update(request, pk):
+    facility = get_object_or_404(FarmhouseFacilities, pk=pk)
+
+    form = FacilityForm(request.POST or None, instance=facility)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Facility updated successfully ✏️")
+        return redirect("facility-list")
+
+    return render(request, "superadmin/facilities/form.html", {
+        "form": form,
+        "title": "Edit Facility"
+    })
+
+
+def facility_delete(request, pk):
+    facility = get_object_or_404(FarmhouseFacilities, pk=pk)
+
+    facility.delete()
+    messages.success(request, "Facility deleted successfully 🗑️")
+
+    return redirect("facility-list")

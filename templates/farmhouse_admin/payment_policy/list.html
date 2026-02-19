@@ -1,0 +1,202 @@
+{% extends "farmhouse_admin/base.html" %}
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h4 class="fw-bold mb-1">Payment Policies</h4>
+            <small class="text-muted">Manage farmhouse payment settings</small>
+        </div>
+
+        <a href="{% url 'owner_payment_policy_create' %}"
+           class="btn btn-warning text-white px-4 shadow-sm">
+            <i class="fa-solid fa-plus me-2"></i> Add Policy
+        </a>
+    </div>
+
+
+    <!-- CARD -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-0">
+
+            {% if policies %}
+
+            <!-- ✅ MOBILE SCROLL WRAPPER -->
+            <div class="policy-scroll">
+                <table class="table align-middle mb-0 policy-table">
+
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Farmhouse</th>
+                            <th>Pay at Farmhouse</th>
+                            <th>Partial Payment</th>
+                            <th>Full Payment</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for policy in policies %}
+                        <tr class="hover-row">
+
+                            <td class="ps-4 fw-semibold">
+                                {{ policy.farmhouse }}
+                            </td>
+
+                            <td>
+                                {% if policy.allow_pay_at_farmhouse %}
+                                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">
+                                        Enabled
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">
+                                        Disabled
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if policy.allow_partial_payment %}
+                                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">
+                                        Enabled
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">
+                                        Disabled
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if policy.allow_full_payment %}
+                                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">
+                                        Enabled
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">
+                                        Disabled
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-end pe-4">
+                                <a href="{% url 'payment_policy_update' policy.id %}"
+                                   class="btn btn-sm btn-outline-warning me-2">
+                                    <i class="fa-solid fa-pen"></i> Edit 
+                                </a>
+
+                                <a href="{% url 'payment_policy_delete' policy.id %}"
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Are you sure you want to delete this policy?');">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </a>
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+            {% else %}
+
+            <!-- EMPTY STATE -->
+            <div class="text-center py-5">
+                <i class="fa-solid fa-file-circle-xmark fa-3x text-muted mb-3"></i>
+                <h6 class="fw-semibold">No Payment Policies Found</h6>
+                <p class="text-muted small">Create a policy to manage payment options.</p>
+                <a href="{% url 'payment_policy_create' %}"
+                   class="btn btn-warning text-white px-4 mt-2">
+                   Add First Policy
+                </a>
+            </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+
+
+<style>
+
+/* =====================================
+DESKTOP — NORMAL TABLE
+(No Scroll)
+===================================== */
+
+.policy-scroll{
+    width:100%;
+    overflow-x:visible;
+}
+
+.policy-table{
+    width:100%;
+}
+
+/* Keep text in one line */
+.policy-table th,
+.policy-table td{
+    white-space:nowrap;
+}
+
+
+/* =====================================
+🔥 MOBILE — HORIZONTAL SCROLL
+===================================== */
+
+@media (max-width:768px){
+
+.policy-scroll{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+}
+
+/* 🔥 THIS FORCES SCROLL */
+.policy-table{
+    min-width:850px;
+}
+
+}
+
+
+/* =====================================
+IMPORTANT FIX
+(Admin layouts often block scroll)
+===================================== */
+
+.card,
+.container-fluid{
+    overflow:visible !important;
+}
+
+
+/* Hover Effect */
+.hover-row:hover{
+    background:#fff8ef;
+    transition:.2s;
+}
+
+.badge{
+    font-size:13px;
+}
+
+
+/* Smooth Scrollbar */
+.policy-scroll::-webkit-scrollbar{
+    height:6px;
+}
+
+.policy-scroll::-webkit-scrollbar-thumb{
+    background:#d1d5db;
+    border-radius:20px;
+}
+
+</style>
+
+{% endblock %}

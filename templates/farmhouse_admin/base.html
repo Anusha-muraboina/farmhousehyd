@@ -227,6 +227,36 @@ All Bookings
 </a>
 </div>
 
+
+
+
+
+<a onclick="toggleMenu('paymentPolicyMenu',this)" 
+   class="{% if request.resolver_match.url_name in 'owner_payment_policy_list owner_payment_policy_create owner_payment_policy_update' %}active-parent{% endif %}">
+    
+    <i class="fa-solid fa-credit-card"></i>
+    <span class="menu-text">Payment</span>
+    <i class="fa-solid fa-chevron-down arrow ms-auto"></i>
+</a>
+
+<div id="paymentPolicyMenu" 
+     class="submenu {% if request.resolver_match.url_name in 'owner_payment_policy_list owner_payment_policy_create owner_payment_policy_update' %}{% else %}d-none{% endif %}">
+    
+    <a href="{% url 'owner_payment_policy_list' %}">
+        <i class="fa-solid fa-list"></i>
+        All Policies
+    </a>
+
+    <a href="{% url 'owner_payment_policy_create' %}">
+        <i class="fa-solid fa-plus"></i>
+        Add Policy
+    </a>
+
+</div>
+
+
+
+
 <a onclick="toggleMenu('contactMenu',this)" class="{% if request.resolver_match.url_name in 'owner_contact_list owner_contact_detail' %}active-parent{% endif %}">
 <i class="fa-solid fa-envelope"></i>
 <span class="menu-text">Messages</span>

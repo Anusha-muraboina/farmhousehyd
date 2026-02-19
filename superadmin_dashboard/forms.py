@@ -933,3 +933,20 @@ class LocationForm(forms.ModelForm):
                 'class': 'form-check-input'
             }),
         }
+
+
+
+
+# forms.py
+
+from django import forms
+from farmhouse.models import FarmhouseFacilities
+
+class FacilityForm(forms.ModelForm):
+    class Meta:
+        model = FarmhouseFacilities
+        fields = "__all__"
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "active": forms.CheckboxInput(attrs={"class": "form-check-input"})
+        }

@@ -344,8 +344,9 @@ app.innerHTML=`
 
 
 <h1 class="text-3xl font-bold mb-6">
-Complete Your Booking
+Entire Farmhouse Booking
 </h1>
+
 
 <form id="bookingForm">
 
@@ -998,7 +999,7 @@ BOOK NOW
 
 
 
-<h2 class="text-2xl font-bold mb-3">
+<h2 class="text-2xl font-bold mb-3 ">
     ${farmhouse.title}
 </h2>
 
@@ -1117,13 +1118,6 @@ farmhouse.pricing.sale_price > 0
 
 
 
-
-
-
-
-
-
-
                 <!-- AMENITIES -->
 <div class="mt-10">
 
@@ -1157,6 +1151,35 @@ ${farmhouse.amenities.map(a => `
 
 
 
+<!-- FACILITIES -->
+<div class="mt-10">
+
+    <h3 class="text-3xl font-bold mb-6">
+        Facilities
+    </h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        ${farmhouse.facilities.map(f => `
+
+            <div class="flex items-center gap-3 p-4 border rounded-xl bg-white
+                        transition duration-300 ease-in-out
+                        hover:shadow-lg hover:-translate-y-1 hover:border-orange-400">
+
+                {% comment %} <i data-lucide="check-circle" 
+                   class="w-5 h-5 text-green-500"></i> {% endcomment %}
+
+                <span class="font-medium text-gray-800">
+                    ${f.name}
+                </span>
+
+            </div>
+
+        `).join("")}
+
+    </div>
+
+</div>
 
 
 
@@ -1339,7 +1362,7 @@ flatpickr("#check_in",{
 minDate:"today",
 disable: blockedCheckinDates,
 dateFormat:"Y-m-d",
-
+disableMobile: true, 
 onChange:function(selectedDates){
 
 if(!selectedDates.length) return;
@@ -1364,7 +1387,7 @@ checkoutPicker = flatpickr("#check_out",{
 
 minDate:new Date().fp_incr(1),
 dateFormat:"Y-m-d",
-   disableMobile:true,   // ⭐ force flatpickr
+disableMobile:true,   // ⭐ force flatpickr
 
 onChange:function(selectedDates){
 
@@ -1665,9 +1688,9 @@ html=`<div class="border rounded-xl p-2 bg-gray-50">
         Amount to Pay at Check-in
     </p>
 
-    <h2 class="text-2xl font-bold mt-1">
+    <p class="text-2xl font-bold mt-1">
         ₹${Number(finalTotal).toLocaleString()}
-    </h2>
+    </p>
 
 </div>`;
 }

@@ -101,5 +101,13 @@ urlpatterns = [
         owner_blocked_ranges,
         name="owner-blocked-ranges"
     ),
+    
+    # urls.py
+
+    path("owner_payment-policies/", owner_payment_policy_list, name="owner_payment_policy_list"),
+    path("owner_payment-policies/add/", owner_payment_policy_create, name="owner_payment_policy_create"),
+    path("owner_payment-policies/<int:pk>/edit/", owner_payment_policy_update, name="owner_payment_policy_update"),
+    path("owner_payment-policies/<int:pk>/delete/", owner_payment_policy_delete, name="owner_payment_policy_delete"),
+
 
 ]

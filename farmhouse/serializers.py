@@ -6,6 +6,7 @@ from .models import (
     Farmhouse,
     FarmhouseImage,
     FarmhousePricing,
+    FarmhouseFacilities,
 )
 from blogs.models import *
 from booking.models import FarmhousePaymentPolicy
@@ -31,6 +32,14 @@ class AmenitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Amenity
         fields = ["id", "name", "icon_class"]
+
+
+# serializers.py
+
+class FacilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FarmhouseFacilities
+        fields = ["id", "name","active"]   # add fields you have
 
 
 # class FarmhouseImageSerializer(serializers.ModelSerializer):
@@ -79,6 +88,7 @@ class FarmhouseSerializer(serializers.ModelSerializer):
     amenities = AmenitySerializer(many=True, read_only=True)
     primary_image = serializers.SerializerMethodField()
     images = FarmhouseImageSerializer(many=True, read_only=True)
+    facilities = FacilitySerializer(many=True, read_only=True)
     
     # payment_policy = FarmhousePaymentPolicySerializer(read_only=True)
     payment_policy = serializers.SerializerMethodField()
@@ -102,6 +112,7 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             "ac_bedrooms",
             "halls",
             "amenities",
+            "facilities",
             "images",
             "pricing",
             "payment_policy",

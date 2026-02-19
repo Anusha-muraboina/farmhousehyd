@@ -144,23 +144,39 @@ class FarmhouseListAPI(APIView):
 
 
 # ------------------ FARMHOUSE DETAIL API ------------------
+
+
 class FarmhouseDetailAPI(APIView):
     authentication_classes = [BasicAuthentication]
     permission_classes = [AllowAny]
 
     def get(self, request, slug):
+        # 🔹 Get farmhouse with all relations optimized
         farmhouse = get_object_or_404(
-            Farmhouse.objects.prefetch_related(
-                "images", "amenities"
+            Farmhouse.objects.select_related(
+                "location", "payment_policy"
+            ).prefetch_related(
+                "images",
+                "amenities",
+                "facilities"
             ),
             slug=slug,
             is_active=True
         )
 
+        # 🔹 Similar farmhouses (same location)
         similar = Farmhouse.objects.filter(
             location=farmhouse.location,
             is_active=True
-        ).exclude(id=farmhouse.id)[:3]
+        ).exclude(
+            id=farmhouse.id
+        ).select_related(
+            "location"
+        ).prefetch_related(
+            "images",
+            "amenities",
+            "facilities"
+        )[:3]
 
         return Response({
             "farmhouse": FarmhouseSerializer(
@@ -170,6 +186,50 @@ class FarmhouseDetailAPI(APIView):
                 similar, many=True, context={"request": request}
             ).data
         })
+
+# class FarmhouseDetailAPI(APIView):
+#     authentication_classes = [BasicAuthentication]
+#     permission_classes = [AllowAny]
+
+#     def get(self, request, slug):
+#         farmhouse = get_object_or_404(
+#             Farmhouse.objects.prefetch_related(
+#                 "images", "amenities","facilities" 
+#             ),
+#             slug=slug,
+#             is_active=True
+#         )
+
+#         similar = Farmhouse.objects.filter(
+#             location=farmhouse.location,
+#             is_active=True
+#         ).exclude(id=farmhouse.id)[:3]
+
+#         return Response({
+#             "farmhouse": FarmhouseSerializer(
+#                 farmhouse, context={"request": request}
+#             ).data,
+#             "similar_farmhouses": FarmhouseSerializer(
+#                 similar, many=True, context={"request": request}
+#             ).data
+#         })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # def Farmhouses(request):

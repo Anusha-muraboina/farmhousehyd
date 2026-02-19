@@ -130,24 +130,21 @@ urlpatterns = [
     path( "payment-policy/<int:pk>/delete/",views.payment_policy_delete,  name="payment_policy_delete" ),
 
 
-    path(
-        "admin/calc-booking-price/",
-        views.admin_calculate_booking_price,
-        name="admin_calc_booking_price"
-    ),
+# urls.py
+
+    path("farmhouse-facilities/", views.facility_list, name="farmhouse-facility-list"),
+    path("farmhouse-facilities/add/", views.facility_create, name="farmhouse-facility-create"),
+    path("farmhouse-facilities/<int:pk>/edit/", views.facility_update, name="farmhouse-facility-update"),
+    path("farmhouse-facilities/<int:pk>/delete/", views.facility_delete, name="farmhouse-facility-delete"),
+
+
+    path("admin/calc-booking-price/", views.admin_calculate_booking_price,  name="admin_calc_booking_price" ),
     
     
-    path(
-        "admin/bookings/",
-        views.admin_booking_list,
-        name="admin-bookings"
+    path( "admin/bookings/",  views.admin_booking_list, name="admin-bookings"
     ),
 
-    path(
-        "admin/bookings/create/",
-        views.admin_booking_create,
-        name="admin-booking-create"
-    ),
+    path(  "admin/bookings/create/", views.admin_booking_create,  name="admin-booking-create"),
 
     path(
         "admin/bookings/<int:pk>/",

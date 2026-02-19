@@ -1,0 +1,214 @@
+{% extends "farmhouse_admin/base.html" %}
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">Payment Policy</h3>
+            <small class="text-muted">
+                Configure how customers can pay for this farmhouse
+            </small>
+        </div>
+
+        <a href="{% url 'payment_policy_list' %}"
+           class="btn btn-light shadow-sm">
+            ← Back
+        </a>
+    </div>
+
+    <!-- CARD -->
+    <div class="card border-0 shadow-lg rounded-4">
+        <div class="card-body p-4">
+
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- FARMHOUSE -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold mb-2">
+                        <i class="fa-solid fa-house text-warning me-2"></i>
+                        Select Farmhouse
+                    </label>
+
+                    {{ form.farmhouse }}
+                </div>
+
+
+                <hr class="my-4">
+
+
+                <!-- PAYMENT OPTIONS -->
+                <h5 class="fw-bold mb-3">
+                    <i class="fa-solid fa-credit-card me-2 text-warning"></i>
+                    Payment Options
+                </h5>
+
+
+                <!-- TOGGLE -->
+                <div class="payment-toggle">
+
+                    <div class="toggle-row">
+                        <div>
+                            <span class="toggle-title">
+                                Pay at Farmhouse
+                            </span>
+                            <div class="toggle-desc">
+                                Allow guests to pay after arrival.
+                            </div>
+                        </div>
+
+                        <label class="switch">
+                            {{ form.allow_pay_at_farmhouse }}
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+
+                    <div class="toggle-row">
+                        <div>
+                            <span class="toggle-title">
+                                Partial Payment
+                            </span>
+                            <div class="toggle-desc">
+                                Guests can pay a portion to confirm booking.
+                            </div>
+                        </div>
+
+                        <label class="switch">
+                            {{ form.allow_partial_payment }}
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+
+                    <div class="toggle-row">
+                        <div>
+                            <span class="toggle-title">
+                                Full Payment
+                            </span>
+                            <div class="toggle-desc">
+                                Require full payment during booking.
+                            </div>
+                        </div>
+
+                        <label class="switch">
+                            {{ form.allow_full_payment }}
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                </div>
+
+
+                <!-- SAVE BUTTON -->
+                <div class="text-end mt-4">
+                    <button class="btn btn-warning px-5 py-2 text-white shadow-sm">
+                        <i class="fa-solid fa-floppy-disk me-2"></i>
+                        Save Policy
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+<!-- ⭐ SWITCH CSS -->
+<style>
+
+/* FARMHOUSE SELECT */
+select{
+    height:48px !important;
+    border-radius:10px !important;
+}
+
+/* TOGGLE LAYOUT */
+.payment-toggle{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+}
+
+.toggle-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px;
+    border-radius:14px;
+    background:#fafafa;
+    transition:.2s;
+}
+
+.toggle-row:hover{
+    background:#fff6ec;
+}
+
+/* TEXT */
+.toggle-title{
+    font-weight:600;
+    display:block;
+}
+
+.toggle-desc{
+    font-size:13px;
+    color:#777;
+}
+
+/* SWITCH */
+.switch{
+    position:relative;
+    display:inline-block;
+    width:52px;
+    height:28px;
+}
+
+.switch input{
+    opacity:0;
+    width:0;
+    height:0;
+}
+
+.slider{
+    position:absolute;
+    cursor:pointer;
+    inset:0;
+    background:#ddd;
+    transition:.3s;
+    border-radius:34px;
+}
+
+.slider:before{
+    position:absolute;
+    content:"";
+    height:22px;
+    width:22px;
+    left:3px;
+    bottom:3px;
+    background:white;
+    transition:.3s;
+    border-radius:50%;
+}
+
+input:checked + .slider{
+    background:#ff7a00;
+}
+
+input:checked + .slider:before{
+    transform:translateX(24px);
+}
+
+/* CARD LOOK */
+.card{
+    max-width:900px;
+    margin:auto;
+}
+
+</style>
+
+{% endblock %}

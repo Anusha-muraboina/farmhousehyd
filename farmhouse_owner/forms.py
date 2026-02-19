@@ -6,7 +6,8 @@ from farmhouse.models import *
 from django import forms
 from booking.models import BlockedDate
 from django import forms
-from farmhouse.models import Farmhouse
+from farmhouse.models import Farmhouse 
+from booking.models import FarmhousePaymentPolicy
 
 class FarmhouseForm(forms.ModelForm):
 
@@ -129,3 +130,12 @@ class BlockedDateForm(forms.ModelForm):
 
         if user:
             self.fields["farmhouse"].queryset = user.farmhouses.all()
+
+
+
+# forms.py
+
+class FarmhousePaymentPolicyForm(forms.ModelForm):
+    class Meta:
+        model = FarmhousePaymentPolicy
+        fields = "__all__"

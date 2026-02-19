@@ -1,0 +1,95 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+<style>
+.pagination .page-link{
+    color:#ff7a00;
+    border-color:#ff7a00;
+}
+
+.pagination .page-item.active .page-link{
+    background:#ff7a00;
+    border-color:#ff7a00;
+    color:#fff;
+}
+
+.pagination .page-link:hover{
+    background:#fff4e5;
+    color:#ff7a00;
+}
+</style>
+
+
+<div class="d-flex justify-content-between">
+
+<h4 class="mb-4">Facilities</h4>
+
+<a href="{% url 'farmhouse-facility-create' %}" class="btn btn-warning mb-3">Add Facility</a>
+</div>
+<table class="table table-bordered ">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th width="180">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for f in facilities %}
+        <tr>
+            <td>{{ f.name }}</td>
+            <td>
+                {% if f.active %}
+                    <span class="badge bg-success">Active</span>
+                {% else %}
+                    <span class="badge bg-danger">Inactive</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'farmhouse-facility-update' f.id %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'farmhouse-facility-delete' f.id %}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if facilities.has_other_pages %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+
+        <!-- Previous -->
+        {% if facilities.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ facilities.previous_page_number }}">Previous</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+        {% endif %}
+
+        <!-- Page Numbers -->
+        {% for num in facilities.paginator.page_range %}
+            {% if facilities.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+            {% elif num > facilities.number|add:'-3' and num < facilities.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Next -->
+        {% if facilities.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ facilities.next_page_number }}">Next</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+        {% endif %}
+
+    </ul>
+</nav>
+{% endif %}
+
+{% endblock %}

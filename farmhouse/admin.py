@@ -35,14 +35,15 @@ class FarmhouseAdmin(admin.ModelAdmin):
     search_fields = ('title', 'address', 'user__username', 'user__email')
     prepopulated_fields = {'slug': ('title',)}
     inlines = [FarmhousePricingInline, FarmhouseImageInline]
-    filter_horizontal = ('amenities',)
+    # filter_horizontal = ('amenities')
+    filter_horizontal = ('amenities', 'facilities')
 
     fieldsets = (
         ('Basic Information', {
             'fields': ('title', 'slug', 'user', 'location', 'address','guest_count','extra_guest_count' , 'distance_km')
         }),
         ('Property Details', {
-            'fields': ('halls', 'bedrooms', 'ac_bedrooms', 'amenities')
+            'fields': ('halls', 'bedrooms', 'ac_bedrooms', 'amenities','facilities')
         }),
         ('Description', {
             'fields': ('short_description', 'description')
@@ -86,7 +87,7 @@ class FarmhouseAdmin(admin.ModelAdmin):
 
 admin.site.register(Amenity)
 admin.site.register(Banner)
-
+admin.site.register(FarmhouseFacilities)
 
 
 @admin.register(TouristPlace)

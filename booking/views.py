@@ -48,9 +48,20 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import BlockedDate
 
+from django.db.models import Q
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
 
 
 
+import razorpay
+import json
+from django.conf import settings
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from decimal import Decimal
+from .models import Booking
 
 
 
@@ -62,26 +73,6 @@ client = razorpay.Client(
 )
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import AllowAny
-
-# @api_view(["GET"])
-# @authentication_classes([])   
-# @permission_classes([AllowAny])
-# def blocked_dates_api(request, farmhouse_id):
-
-#     blocked_ranges = []
-
-#     blocked = BlockedDate.objects.filter(
-#         farmhouse_id=farmhouse_id
-#     )
-
-#     for b in blocked:
-#         blocked_ranges.append({
-#             "from": b.start_date,
-#             "to": b.end_date
-#             # "to": b.end_date - timedelta(days=1)
-#         })
-
-#     return Response(blocked_ranges)
 
 @api_view(["GET"])
 @authentication_classes([])
@@ -123,44 +114,9 @@ def blocked_dates_api(request, farmhouse_id):
 
 
 
-# booking/views.py
-# @api_view(["GET"])
-# def blocked_dates_api(request, farmhouse_id):
-
-#     blocked_ranges = []
-
-#     blocked = BlockedDate.objects.filter(
-#         farmhouse_id=farmhouse_id
-#     )
-
-#     # bookings = Booking.objects.filter(
-#     #     farmhouse_id=farmhouse_id,
-#     #     # status__in=["pending","confirmed"]
-#     #     status="confirmed"
-#     # )
-
-#     for b in blocked:
-#         blocked_ranges.append({
-#             "from": b.start_date,
-#             "to": b.end_date - timedelta(days=1)
-#         })
-
-    # for booking in bookings:
-    #     blocked_ranges.append({
-    #         "from": booking.check_in,
-    #         "to": booking.check_out - timedelta(days=1)
-    #     })
-    # for booking in bookings:
-    #     blocked_ranges.append({
-    #         "from": booking.check_in,
-    #         "to": booking.check_out
-    #     })
 
     # return Response(blocked_ranges)
-from django.db.models import Q
-from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
-from django.utils.crypto import get_random_string
+
 
 User = get_user_model()
 class CreateBookingAPI(APIView):
@@ -485,14 +441,6 @@ class CreateBookingAPI(APIView):
 
 
 
-
-import razorpay
-import json
-from django.conf import settings
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from decimal import Decimal
-from .models import Booking
 
 
 @csrf_exempt

@@ -187,7 +187,7 @@ class="{% if request.resolver_match.url_name == 'superadmin-dashboard' %}active-
 <a href="{% url 'banner-list' %}"
 class="{% if request.resolver_match.url_name == 'banner-list' %}active-parent{% endif %}">
 <div class="menu-left">
-<i class="fa-solid fa-gauge"></i>
+<i class="fa-solid fa-image"></i>
 <span class="menu-text">Banner List</span>
 </div>
 </a>
@@ -196,7 +196,7 @@ class="{% if request.resolver_match.url_name == 'banner-list' %}active-parent{% 
 <a href="{% url 'amenity-list' %}"
 class="{% if request.resolver_match.url_name == 'amenity-list' %}active-parent{% endif %}">
 <div class="menu-left">
-<i class="fa-solid fa-gauge"></i>
+<i class="fa-solid fa-list-check"></i>
 <span class="menu-text">Amenities</span>
 </div>
 </a>
@@ -204,11 +204,20 @@ class="{% if request.resolver_match.url_name == 'amenity-list' %}active-parent{%
 <a href="{% url 'location-list' %}"
 class="{% if request.resolver_match.url_name == 'location-list' %}active-parent{% endif %}">
 <div class="menu-left">
-<i class="fa-solid fa-gauge"></i>
+ <i class="fa-solid fa-location-dot"></i>
 <span class="menu-text">Locations</span>
 </div>
 </a>
 
+<a href="{% url 'farmhouse-facility-list' %}"
+   class="{% if request.resolver_match.url_name in 'farmhouse-facility-list farmhouse-facility-create farmhouse-facility-update' %}active-parent{% endif %}">
+    
+    <div class="menu-left">
+        <i class="fa-solid fa-screwdriver-wrench"></i>
+        <span class="menu-text">Facilities</span>
+    </div>
+
+</a>
 
 <!-- PAYMENT POLICY -->
 <a onclick="toggleMenu('paymentMenu',this)"

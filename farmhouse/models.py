@@ -37,6 +37,13 @@ class Amenity(models.Model):
     def __str__(self):
         return self.name
 
+class FarmhouseFacilities(models.Model):
+    name = models.CharField(max_length=100 ,null=True,blank=True)
+    active = models.BooleanField(default=True)
+    Slot_position = models.PositiveIntegerField(blank=True,null=True)
+    
+    def __str__(self):
+        return self.name
 
 from django.utils.text import slugify
 from django.conf import settings
@@ -75,6 +82,11 @@ class Farmhouse(models.Model):
         Amenity,
         blank=True,
         related_name='farmhouses'
+    )
+    facilities = models.ManyToManyField(
+        FarmhouseFacilities,
+        blank=True,
+        related_name='farmhouses_facility'
     )
 
     short_description = models.TextField(
@@ -170,6 +182,11 @@ class FarmhousePricing(models.Model):
 
     def __str__(self):
         return f"{self.farmhouse.title} Pricing"
+
+
+
+
+
 
 class FarmhouseImage(models.Model):
     farmhouse = models.ForeignKey(

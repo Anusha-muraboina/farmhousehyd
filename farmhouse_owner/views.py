@@ -920,3 +920,99 @@ def owner_blocked_dates_delete(request, pk):
     )
 
     return redirect("blocked-dates")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from farmhouse_owner.forms import FarmhousePaymentPolicy
+
+def owner_payment_policy_list(request):
+
+    if request.user.is_superuser:
+        policies = FarmhousePaymentPolicy.objects.select_related("farmhouse")
+    else:
+        policies = FarmhousePaymentPolicy.objects.select_related("farmhouse").filter(
+            farmhouse__user=request.user
+        )
+
+    return render(request, "farmhouse_admin/payment_policy/list.html", {
+        "policies": policies
+    })
+
+
+def owner_payment_policy_create(request):
+
+    form = FarmhousePaymentPolicyForm(request.POST or None)
+
+    # 🔐 Owner can select only their farmhouses
+    if not request.user.is_superuser:
+        form.fields["farmhouse"].queryset = Farmhouse.objects.filter(
+            user=request.user
+        )
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Payment Policy Created Successfully")
+        return redirect("payment_policy_list")
+
+    return render(request, "farmhouse_admin/payment_policy/form.html", {
+        "form": form
+    })
+
+
+def owner_payment_policy_update(request, pk):
+
+    if request.user.is_superuser:
+        policy = get_object_or_404(FarmhousePaymentPolicy, pk=pk)
+    else:
+        policy = get_object_or_404(
+            FarmhousePaymentPolicy,
+            pk=pk,
+            farmhouse__user=request.user
+        )
+
+    form = FarmhousePaymentPolicyForm(request.POST or None, instance=policy)
+
+    if not request.user.is_superuser:
+        form.fields["farmhouse"].queryset = Farmhouse.objects.filter(
+            user=request.user
+        )
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Payment Policy Updated Successfully")
+        return redirect("payment_policy_list")
+
+    return render(request, "farmhouse_admin/payment_policy/form.html", {
+        "form": form
+    })
+
+
+
+def owner_payment_policy_delete(request, pk):
+
+    if request.user.is_superuser:
+        policy = get_object_or_404(FarmhousePaymentPolicy, pk=pk)
+    else:
+        policy = get_object_or_404(
+            FarmhousePaymentPolicy,
+            pk=pk,
+            farmhouse__user=request.user
+        )
+
+    policy.delete()
+    messages.success(request, "Payment Policy Deleted Successfully")
+
+    return redirect("payment_policy_list")
