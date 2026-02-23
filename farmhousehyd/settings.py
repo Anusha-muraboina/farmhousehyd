@@ -25,7 +25,13 @@ SECRET_KEY = 'django-insecure-1@_wfmmx_cuuy!&_%a_dl*zh!_+)bpp!6k5w@#ga8c+g+#=q8^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+                "farmhouseshyderabad.com",
+                "www.farmhouseshyderabad.com",
+                "http://3.110.215.192" , 
+                'localhost',
+                '127.0.0.1',
+                 ]
 
 
 # Application definition
@@ -48,6 +54,8 @@ INSTALLED_APPS = [
     'cms',
     "farmhouse_owner",
     "superadmin_dashboard",
+    
+    "storages",
     
     'corsheaders',
     "django_ckeditor_5",
@@ -175,7 +183,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LOCAL_URL = "http://127.0.0.1:9000/"
+LOCAL_URL = "farmhouseshyderabad.com/"
 
 
 # ================= EMAIL (SMTP) SETTINGS =================
@@ -201,10 +209,9 @@ CC_EMAIL = ["anushamuraboina99@gmail.com"]
 
 
 
-
-RAZORPAY_KEY_ID = "rzp_test_SBYvT8xD1uirfa"
-RAZORPAY_KEY_SECRET = "0ss566690QyQc7rnGotK0Q6q"
-RAZORPAY_WEBHOOK_SECRET = "kbidshinvirgsdbgi2378057sgh8hkrh@herwer782SaD"
+RAZORPAY_KEY_ID = "rzp_live_SJVDXOrw6k20Yj"
+RAZORPAY_KEY_SECRET = "a2oTbAtcyq3XYQsiYyib7Hhz"
+RAZORPAY_WEBHOOK_SECRET = "fosufweh fsdufjhtu3u40574075jlkrwSSdsdFosdjth84j@#$5jjhgjldsg"
 
 # ====================================
 
@@ -263,15 +270,20 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:9000",
-    "https://5639-2404-1f00-8047-a466-dc0a-9cc6-4d68-1ae6.ngrok-free.app",
+    "http://127.0.0.1:8000",
+    "http://3.110.215.192",
+    "https://farmhouseshyderabad.com",
+    # "https://5639-2404-1f00-8047-a466-dc0a-9cc6-4d68-1ae6.ngrok-free.app",
     
 ]
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:9000",
-    "https://5639-2404-1f00-8047-a466-dc0a-9cc6-4d68-1ae6.ngrok-free.app",
+    "http://127.0.0.1:8000",
+    "http://3.110.215.192",
+    "https://farmhouseshyderabad.com",
+    # "http://127.0.0.1:9000",
+    # "https://5639-2404-1f00-8047-a466-dc0a-9cc6-4d68-1ae6.ngrok-free.app",
 ]
 
 # 
