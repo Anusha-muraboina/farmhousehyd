@@ -24,14 +24,27 @@
 <div class="card border-0 shadow-lg table-card">
 
     <!-- SEARCH -->
-    <div class="p-3 border-bottom bg-white">
+    {% comment %} <div class="p-3 border-bottom bg-white">
         <input type="text"
                class="form-control"
                placeholder="🔍 Search farmhouses..."
                style="max-width:280px;">
-    </div>
+    </div> {% endcomment %}
 
+<form method="get" class="d-flex gap-2 p-3 border-bottom bg-white">
+   
+    <input type="text"
+           name="q"
+           value="{{ query }}"
+           class="form-control"
+           style="max-width:280px;"
+           placeholder="🔍 Search farmhouses...">
 
+    <button class="btn btn-light border">
+        Search
+    </button>
+
+</form>
     <!-- ✅ OUR CUSTOM SCROLL (NOT bootstrap) -->
     <div class="mobile-scroll">
 

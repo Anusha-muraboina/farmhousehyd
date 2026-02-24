@@ -326,20 +326,48 @@ from superadmin_dashboard.forms import FarmhouseForm, FarmhousePricingForm,Farmh
 # ===============================
 # LIST
 # ===============================
+# @superadmin_required
+# # @user_passes_test(superadmin_required)
+# def farmhouse_list(request):
+#         # ✅ permission check
+#     if not is_farmhouse_staff(request.user) and not request.user.is_superuser:
+#         return HttpResponseForbidden("Not allowed")
+
+#     farmhouses = Farmhouse.objects.all()
+#     return render(
+#         request,
+#         "superadmin/farmhouses.html",
+#         {"farmhouses": farmhouses}
+#     )
+
+
+from django.db.models import Q
+from django.http import HttpResponseForbidden
+from django.shortcuts import render
+
+
 @superadmin_required
-# @user_passes_test(superadmin_required)
 def farmhouse_list(request):
-        # ✅ permission check
+
     if not is_farmhouse_staff(request.user) and not request.user.is_superuser:
         return HttpResponseForbidden("Not allowed")
 
-    farmhouses = Farmhouse.objects.all()
-    return render(
-        request,
-        "superadmin/farmhouses.html",
-        {"farmhouses": farmhouses}
-    )
+    query = request.GET.get("q", "").strip()
 
+    farmhouses = Farmhouse.objects.select_related("user").all()
+
+    if query:
+        farmhouses = farmhouses.filter(
+            Q(title__icontains=query) |
+            Q(user__email__icontains=query)
+        )
+
+    context = {
+        "farmhouses": farmhouses,
+        "query": query
+    }
+
+    return render(request, "superadmin/farmhouses.html", context)
 
 # ===============================
 # ADD
