@@ -84,6 +84,7 @@ ROOT_URLCONF = 'farmhousehyd.urls'
 AUTH_USER_MODEL = "user.User"
 
 
+
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = "Lax"
 
