@@ -218,4 +218,9 @@ urlpatterns = [
     ),
 
 
+    path("cancel-reasons/", views.cancel_reason_list, name="cancel_reason_list"),
+    path("cancel-reasons/add/", views.cancel_reason_create, name="cancel_reason_create"),
+    path("cancel-reasons/<int:pk>/edit/", views.cancel_reason_update, name="cancel_reason_update"),
+    path("cancel-reasons/<int:pk>/delete/", views.cancel_reason_delete, name="cancel_reason_delete"),
+
 ]

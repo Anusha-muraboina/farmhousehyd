@@ -20,6 +20,18 @@
 </div>
 
 
+{% if form.errors %}
+<div class="alert alert-danger">
+    {{ form.errors }}
+</div>
+{% endif %}
+
+{% if pricing_form.errors %}
+<div class="alert alert-danger">
+    {{ pricing_form.errors }}
+</div>
+{% endif %}
+
 <form method="POST" enctype="multipart/form-data">
 {% csrf_token %}
 
@@ -45,6 +57,14 @@ Farmhouse Title
 {{ form.title }}
 </div>
 
+<div class="mb-4">
+<label class="custom-label">
+Owner
+<span class="label-hint">Select farmhouse owner</span>
+</label>
+{{ form.user }}
+</div>
+
 <!-- LOCATION -->
 <div class="mb-4">
 <label class="custom-label">
@@ -62,6 +82,31 @@ Full Address
 </label>
 {{ form.address }}
 </div>
+
+
+
+
+
+
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <label class="custom-label">Guest Capacity</label>
+        {{ form.guest_count }}
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <label class="custom-label">Extra Guest Allowed</label>
+        {{ form.extra_guest_count }}
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <label class="custom-label">Commission %</label>
+        {{ form.commission_percentage }}
+    </div>
+</div>
+
+
 
 <!-- GRID -->
 <div class="row">
@@ -142,6 +187,41 @@ Base Price / Day
 {{ form.price_per_day }}
 </div>
 
+
+<!-- ADVANCED PRICING -->
+<div class="mt-4">
+
+<h6 class="fw-semibold mb-3">Advanced Pricing</h6>
+
+<div class="mb-3">
+<label class="custom-label">
+Weekday Price
+<span class="label-hint">Mon – Thu pricing</span>
+</label>
+{{ pricing_form.normal_day_price }}
+</div>
+
+<div class="mb-3">
+<label class="custom-label">
+Weekend Price
+<span class="label-hint">Fri – Sun pricing</span>
+</label>
+{{ pricing_form.weekend_price }}
+</div>
+
+<div class="mb-3">
+<label class="custom-label">
+Extra Guest Price
+<span class="label-hint">Per guest charge</span>
+</label>
+{{ pricing_form.extra_guest_price }}
+</div>
+
+</div>
+
+
+
+
 <div class="form-check form-switch mb-3">
 {{ form.free_cancellation }}
 <div class="ms-2">
@@ -187,6 +267,16 @@ Drag & drop or click to browse (Recommended: 1600×900)
 <input type="file" name="gallery_images" multiple hidden>
 </label>
 
+
+{% if farmhouse %}
+<div class="row mt-3">
+    {% for img in farmhouse.images.all %}
+    <div class="col-4 mb-2">
+        <img src="{{ img.image.url }}" class="img-fluid rounded">
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 </div>
 </div>
 

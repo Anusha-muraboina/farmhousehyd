@@ -343,6 +343,10 @@ class="{% if request.resolver_match.url_name in 'blog_lists category_list tag_li
 <div id="blogMenu"
 class="submenu {% if request.resolver_match.url_name in 'blog_lists category_list tag_list comment_list' %}{% else %}d-none{% endif %}">
 
+
+
+
+
 <!-- ALL BLOGS -->
 <a href="{% url 'blog_lists' %}"
 class="{% if request.resolver_match.url_name == 'blog_lists' %}active{% endif %}">
@@ -378,6 +382,96 @@ class="{% if request.resolver_match.url_name == 'comment_list' %}active{% endif 
         <span class="menu-text">Comments</span>
     </div>
 </a>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<!-- COUPONS -->
+<a onclick="toggleMenu('couponMenu',this)"
+class="{% if request.resolver_match.url_name in 'coupon_list coupon_add coupon_edit coupon_usage_list' %}active-parent{% endif %}">
+    
+    <div class="menu-left">
+        <i class="fa-solid fa-ticket"></i>
+        <span class="menu-text">Coupons</span>
+    </div>
+
+    <i class="fa-solid fa-chevron-down arrow"></i>
+</a>
+
+<div id="couponMenu"
+class="submenu {% if request.resolver_match.url_name in 'coupon_list coupon_add coupon_edit coupon_usage_list' %}{% else %}d-none{% endif %}">
+
+    <!-- All Coupons -->
+    <a href="{% url 'coupon_list' %}"
+    class="{% if request.resolver_match.url_name == 'coupon_list' %}active{% endif %}">
+        <div class="menu-left">
+            <i class="fa-solid fa-tags"></i>
+            <span class="menu-text">All Coupons</span>
+        </div>
+    </a>
+
+    <!-- Add Coupon -->
+    <a href="{% url 'coupon_add' %}"
+    class="{% if request.resolver_match.url_name == 'coupon_add' %}active{% endif %}">
+        <div class="menu-left">
+            <i class="fa-solid fa-plus"></i>
+            <span class="menu-text">Add Coupon</span>
+        </div>
+    </a>
+
+    <!-- Coupon Usage -->
+    <a href="{% url 'coupon_usage_list' %}"
+    class="{% if request.resolver_match.url_name == 'coupon_usage_list' %}active{% endif %}">
+        <div class="menu-left">
+            <i class="fa-solid fa-chart-line"></i>
+            <span class="menu-text">Coupon Usage</span>
+        </div>
+    </a>
+
+</div>
+
+
+
+<!-- CANCEL REASONS -->
+<a onclick="toggleMenu('reasonMenu',this)"
+class="{% if request.resolver_match.url_name in 'cancel_reason_list cancel_reason_create cancel_reason_update' %}active-parent{% endif %}">
+    
+    <div class="menu-left">
+        <i class="fa-solid fa-ban"></i>
+        <span class="menu-text">Cancel Reasons</span>
+    </div>
+
+    <i class="fa-solid fa-chevron-down arrow"></i>
+</a>
+
+<div id="reasonMenu"
+class="submenu {% if request.resolver_match.url_name in 'cancel_reason_list cancel_reason_create cancel_reason_update' %}{% else %}d-none{% endif %}">
+
+    <!-- All Reasons -->
+    <a href="{% url 'cancel_reason_list' %}"
+    class="{% if request.resolver_match.url_name == 'cancel_reason_list' %}active{% endif %}">
+        <div class="menu-left">
+            <i class="fa-solid fa-list"></i>
+            <span class="menu-text">All Reasons</span>
+        </div>
+    </a>
+
+    <!-- Add Reason -->
+    <a href="{% url 'cancel_reason_create' %}"
+    class="{% if request.resolver_match.url_name == 'cancel_reason_create' %}active{% endif %}">
+        <div class="menu-left">
+            <i class="fa-solid fa-plus"></i>
+            <span class="menu-text">Add Reason</span>
+        </div>
+    </a>
 
 </div>
 

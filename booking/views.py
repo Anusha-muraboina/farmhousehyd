@@ -544,6 +544,14 @@ class BookingSuccessAPI(APIView):
             Booking.objects.select_related("farmhouse"),
             id=booking_id
         )
+        
+                ############################################
+        # ⭐ CREATE INVOICE IF NOT EXISTS
+        ############################################
+        Invoice.objects.get_or_create(
+            booking=booking,
+            defaults={"user": booking.user}
+        )
 
         return Response({
 

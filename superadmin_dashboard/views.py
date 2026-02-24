@@ -344,6 +344,7 @@ def farmhouse_list(request):
 # ===============================
 # ADD
 # ===============================
+
 @superadmin_required
 def farmhouse_add(request):
 
@@ -353,18 +354,13 @@ def farmhouse_add(request):
 
         if form.is_valid() and pricing_form.is_valid():
 
-            farmhouse = form.save(commit=False)
-            farmhouse.user = request.user
-            farmhouse.save()
-            form.save_m2m()
+            farmhouse = form.save()
 
             pricing = pricing_form.save(commit=False)
             pricing.farmhouse = farmhouse
             pricing.save()
 
-            # ✅ GALLERY SAVE
             images = request.FILES.getlist("gallery_images")
-
             for i, img in enumerate(images):
                 FarmhouseImage.objects.create(
                     farmhouse=farmhouse,
@@ -382,6 +378,45 @@ def farmhouse_add(request):
         "form": form,
         "pricing_form": pricing_form
     })
+# @superadmin_required
+# def farmhouse_add(request):
+
+#     if request.method == "POST":
+#         form = FarmhouseForm(request.POST)
+#         pricing_form = FarmhousePricingForm(request.POST)
+
+#         if form.is_valid() and pricing_form.is_valid():
+
+#             farmhouse = form.save(commit=False)
+#             # farmhouse.user = request.user
+#             farmhouse.save()
+#             form.save_m2m()
+
+#             pricing = pricing_form.save(commit=False)
+#             pricing.farmhouse = farmhouse
+#             pricing.save()
+#             print(form.errors)
+#             print(pricing_form.errors)
+#             # ✅ GALLERY SAVE
+#             images = request.FILES.getlist("gallery_images")
+
+#             for i, img in enumerate(images):
+#                 FarmhouseImage.objects.create(
+#                     farmhouse=farmhouse,
+#                     image=img,
+#                     is_primary=(i == 0)
+#                 )
+
+#             return redirect("superadmin-farmhouses")
+
+#     else:
+#         form = FarmhouseForm()
+#         pricing_form = FarmhousePricingForm()
+
+#     return render(request, "superadmin/farmhouse_add.html", {
+#         "form": form,
+#         "pricing_form": pricing_form
+#     })
 @superadmin_required
 # @user_passes_test(superadmin_required)
 def farmhouse_edit(request, id):
@@ -2172,3 +2207,44 @@ def facility_delete(request, pk):
     messages.success(request, "Facility deleted successfully 🗑️")
 
     return redirect("facility-list")
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from booking.models import CancelReason
+from .forms import CancelReasonForm
+
+
+# LIST
+def cancel_reason_list(request):
+    reasons = CancelReason.objects.all().order_by("-id")
+    return render(request, "superadmin/cancel_reason/list.html", {"reasons": reasons})
+
+
+# CREATE
+def cancel_reason_create(request):
+    form = CancelReasonForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect("cancel_reason_list")
+    return render(request, "superadmin/cancel_reason/form.html", {"form": form})
+
+
+# UPDATE
+def cancel_reason_update(request, pk):
+    reason = get_object_or_404(CancelReason, pk=pk)
+    form = CancelReasonForm(request.POST or None, instance=reason)
+    if form.is_valid():
+        form.save()
+        return redirect("cancel_reason_list")
+    return render(request, "superadmin/cancel_reason/form.html", {"form": form})
+
+
+# DELETE
+def cancel_reason_delete(request, pk):
+    reason = get_object_or_404(CancelReason, pk=pk)
+
+    if request.method == "POST":
+        reason.delete()
+
+    return redirect("cancel_reason_list")

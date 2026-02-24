@@ -1,0 +1,66 @@
+{% extends "superadmin/base.html" %}
+{% block title %}Cancel Reason Form{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h4 class="fw-semibold mb-1">
+            {% if form.instance.pk %}
+                Edit Cancel Reason
+            {% else %}
+                Add Cancel Reason
+            {% endif %}
+        </h4>
+        <p class="text-muted small mb-0">Fill the details below</p>
+    </div>
+
+    <!-- Card -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body">
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <!-- Reason Field -->
+                <div class="mb-4">
+                    <label class="form-label fw-medium">Reason</label>
+                    {{ form.reason }}
+
+                    {% if form.reason.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ form.reason.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Active Field -->
+                <div class="form-check form-switch mb-4">
+                    {{ form.is_active }}
+                    <label class="form-check-label ms-2">Active</label>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex gap-2">
+
+                    <button type="submit" class="btn btn-success shadow-sm">
+                        <i class="fa-solid fa-check me-1"></i> Save
+                    </button>
+
+                    <a href="{% url 'cancel_reason_list' %}" 
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -19,7 +19,12 @@ Location Name
 </label>
 {{ form.name }}
 </div>
-
+<div class="mb-4 form-check">
+    {{ form.is_active }}
+    <label class="form-check-label fw-semibold">
+        Active
+    </label>
+</div>
 <button class="btn btn-warning px-4">
 <i class="fa fa-save me-2"></i>
 Save Location

@@ -68,69 +68,110 @@ TEXTAREA_CLASS = (
 # form-control-lg
 INPUT_CLASS = "form-control "
 TEXTAREA_CLASS = "form-control "
+
+
+from django import forms
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 class FarmhouseForm(forms.ModelForm):
+
     class Meta:
         model = Farmhouse
         fields = "__all__"
 
         widgets = {
-            "title": forms.TextInput(attrs={
-                "class": INPUT_CLASS,
-                "placeholder": "Enter farmhouse title"
-            }),
+            "title": forms.TextInput(attrs={"class": "form-control"}),
+            "user": forms.Select(attrs={"class": "form-control"}),
+            "location": forms.Select(attrs={"class": "form-control"}),
+            "address": forms.TextInput(attrs={"class": "form-control"}),
+            "distance_km": forms.NumberInput(attrs={"class": "form-control"}),
+            "halls": forms.NumberInput(attrs={"class": "form-control"}),
+            "bedrooms": forms.NumberInput(attrs={"class": "form-control"}),
+            "ac_bedrooms": forms.NumberInput(attrs={"class": "form-control"}),
+            "short_description": forms.Textarea(attrs={"class": "form-control"}),
+            "description": forms.Textarea(attrs={"class": "form-control"}),
+            "price_per_day": forms.NumberInput(attrs={"class": "form-control"}),
+            "free_cancellation": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "is_featured": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            
+                        # ✅ ADD THESE
+            "guest_count": forms.NumberInput(attrs={"class": "form-control"}),
+            "extra_guest_count": forms.NumberInput(attrs={"class": "form-control"}),
+            "commission_percentage": forms.NumberInput(attrs={"class": "form-control"}),
 
-            "location": forms.Select(attrs={
-                "class": INPUT_CLASS
-            }),
-
-            "address": forms.TextInput(attrs={
-                "class": INPUT_CLASS,
-                "placeholder": "Enter full address"
-            }),
-
-            "distance_km": forms.NumberInput(attrs={
-                "class": INPUT_CLASS
-            }),
-
-            "halls": forms.NumberInput(attrs={
-                "class": INPUT_CLASS
-            }),
-
-            "bedrooms": forms.NumberInput(attrs={
-                "class": INPUT_CLASS
-            }),
-
-            "ac_bedrooms": forms.NumberInput(attrs={
-                "class": INPUT_CLASS
-            }),
-
-            "short_description": forms.Textarea(attrs={
-                "class": TEXTAREA_CLASS,
-                "rows": 3
-            }),
-
-            "description": forms.Textarea(attrs={
-                "class": TEXTAREA_CLASS,
-                "rows": 6
-            }),
-
-            "price_per_day": forms.NumberInput(attrs={
-                "class": INPUT_CLASS
-            }),
-
-            "free_cancellation": forms.CheckboxInput(attrs={
-                "class": "form-check-input"
-            }),
-
-            "is_active": forms.CheckboxInput(attrs={
-                "class": "form-check-input"
-            }),
-
-            "is_featured": forms.CheckboxInput(attrs={
-                "class": "form-check-input"
-            }),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # ✅ Only farmhouse owners
+        self.fields["user"].queryset = User.objects.filter(farmhouse_user=True)
+# class FarmhouseForm(forms.ModelForm):
+#     class Meta:
+#         model = Farmhouse
+#         fields = "__all__"
+
+#         widgets = {
+#             "title": forms.TextInput(attrs={
+#                 "class": INPUT_CLASS,
+#                 "placeholder": "Enter farmhouse title"
+#             }),
+
+#             "location": forms.Select(attrs={
+#                 "class": INPUT_CLASS
+#             }),
+
+#             "address": forms.TextInput(attrs={
+#                 "class": INPUT_CLASS,
+#                 "placeholder": "Enter full address"
+#             }),
+
+#             "distance_km": forms.NumberInput(attrs={
+#                 "class": INPUT_CLASS
+#             }),
+
+#             "halls": forms.NumberInput(attrs={
+#                 "class": INPUT_CLASS
+#             }),
+
+#             "bedrooms": forms.NumberInput(attrs={
+#                 "class": INPUT_CLASS
+#             }),
+
+#             "ac_bedrooms": forms.NumberInput(attrs={
+#                 "class": INPUT_CLASS
+#             }),
+
+#             "short_description": forms.Textarea(attrs={
+#                 "class": TEXTAREA_CLASS,
+#                 "rows": 3
+#             }),
+
+#             "description": forms.Textarea(attrs={
+#                 "class": TEXTAREA_CLASS,
+#                 "rows": 6
+#             }),
+
+#             "price_per_day": forms.NumberInput(attrs={
+#                 "class": INPUT_CLASS
+#             }),
+
+#             "free_cancellation": forms.CheckboxInput(attrs={
+#                 "class": "form-check-input"
+#             }),
+
+#             "is_active": forms.CheckboxInput(attrs={
+#                 "class": "form-check-input"
+#             }),
+
+#             "is_featured": forms.CheckboxInput(attrs={
+#                 "class": "form-check-input"
+#             }),
+#         }
+    # ✅ FILTER USER DROPDOWN
 
 class FarmhousePricingForm(forms.ModelForm):
     class Meta:
@@ -205,6 +246,17 @@ class BannerForm(forms.ModelForm):
 
 
 
+# class LocationForm(forms.ModelForm):
+#     class Meta:
+#         model = Location
+#         fields = "__all__"
+
+#         widgets = {
+#             "name": forms.TextInput(attrs={
+#                 "class": INPUT,
+#                 "placeholder":"Enter location name"
+#             }),
+#         }
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
@@ -213,10 +265,12 @@ class LocationForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(attrs={
                 "class": INPUT,
-                "placeholder":"Enter location name"
+                "placeholder": "Enter location name"
+            }),
+            "is_active": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
             }),
         }
-
 
 
 class AmenityForm(forms.ModelForm):
@@ -949,4 +1003,18 @@ class FacilityForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "active": forms.CheckboxInput(attrs={"class": "form-check-input"})
+        }
+
+
+
+from django import forms
+from booking.models import CancelReason
+
+class CancelReasonForm(forms.ModelForm):
+    class Meta:
+        model = CancelReason
+        fields = ["reason", "is_active"]
+        widgets = {
+            "reason": forms.TextInput(attrs={"class": "form-control"}),
+            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
