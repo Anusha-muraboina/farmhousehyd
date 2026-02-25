@@ -514,6 +514,7 @@ class CouponForm(forms.ModelForm):
         model = Coupon
         fields = "__all__"
         widgets = {
+            "farmhouse": forms.Select(attrs={"class": "form-control"}),
             "title": forms.TextInput(attrs={
                 "class": "form-control",
                 "placeholder": "Coupon title"
