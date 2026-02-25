@@ -20,24 +20,39 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
+from django.views.generic import TemplateView
 
 
 from django.contrib.sitemaps.views import sitemap
-from farmhousehyd.sitemap import BlogListSitemap, BlogDetailSitemap
+
+from farmhousehyd.sitemap import StaticSitemap, FarmhouseSitemap, BlogSitemap
 
 sitemaps = {
-    "blogs": BlogListSitemap,
-    "blog_detail": BlogDetailSitemap,
+    "static": StaticSitemap(),
+    "farmhouses": FarmhouseSitemap(),
+    "blogs": BlogSitemap(),
 }
+# from farmhousehyd.sitemap import BlogSitemap, BlogListSitemap,StaticSitemap,BookingSitemap
 
-
-
-
+# sitemaps = {
+#     "blogs": BlogSitemap(),
+#     "blog-list": BlogListSitemap(),
+#     "static": StaticSitemap(),
+#     "bookings": BookingSitemap(),
+# }
 
 
 urlpatterns = [
     
-    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}),
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
+    
+    path(
+        "robots.txt",
+        TemplateView.as_view(
+            template_name="robots.txt",
+            content_type="text/plain"
+        ),
+    ),
     
     path('admin/', admin.site.urls),
     path('farmhouse_admin/' , include("farmhouse_owner.urls")),

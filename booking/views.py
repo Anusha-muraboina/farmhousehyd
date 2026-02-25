@@ -597,7 +597,6 @@ from booking.models import Invoice
 
 @login_required
 def view_invoice(request, booking_id):
-
     invoice = get_object_or_404(
         Invoice.objects.select_related(
             "booking",
@@ -609,7 +608,7 @@ def view_invoice(request, booking_id):
 
     return render(
         request,
-        "invoice/invoice.html",
+        "emails/invoice.html",
         {
             "invoice": invoice,
             "booking": invoice.booking

@@ -6,8 +6,8 @@
 
 from django.http import HttpResponse
 
-def coupon(request):
-    return HttpResponse("Hello, this is Blog Page")
+# def coupon(request):
+#     return HttpResponse("Hello, this is Blog Page")
 
 
 # # Create your views here.

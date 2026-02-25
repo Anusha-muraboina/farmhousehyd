@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /api/
+Disallow: /bookings/create/
+Disallow: /bookings/payments/
+Disallow: /bookings/verify-payment/
+Disallow: /bookings/invoice/
+Disallow: /bookings/cancel-booking/
+Disallow: /bookings/blocked-dates/
+Disallow: /farmhouse_admin/
+Disallow: /farmhouse_superadmin/
+
+
+Sitemap: https://farmhouseshyderabad.com/sitemap.xml

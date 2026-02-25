@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 # Create your views here.
-def cms(request):
-    return HttpResponse("This is the cms Page")
+# def cms(request):
+#     return HttpResponse("This is the cms Page")
 
 
 
