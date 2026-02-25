@@ -296,6 +296,81 @@ class="submenu {% if request.resolver_match.url_name|slice:':13' != 'admin-booki
 
 
 
+
+
+<!-- THINGS -->
+<a onclick="toggleMenu('thingsMenu',this)"
+class="{% if request.resolver_match.url_name in 'things_list things_create things_update' %}active-parent{% endif %}">
+    
+    <div class="menu-left">
+        <i class="fa-solid fa-box"></i>
+        <span class="menu-text">Things</span>
+    </div>
+
+    <i class="fa-solid fa-chevron-down arrow"></i>
+</a>
+
+<div id="thingsMenu"
+class="submenu {% if request.resolver_match.url_name in 'things_list things_create things_update' %}{% else %}d-none{% endif %}">
+
+    <!-- All Things -->
+    <a href="{% url 'things_list' %}"
+    class="{% if request.resolver_match.url_name == 'things_list' %}active{% endif %}">
+        <div class="menu-left">
+            <i class="fa-solid fa-list"></i>
+            <span class="menu-text">All Things</span>
+        </div>
+    </a>
+
+    <!-- Add Thing -->
+    <a href="{% url 'things_create' %}"
+    class="{% if request.resolver_match.url_name == 'things_create' %}active{% endif %}">
+        <div class="menu-left">
+            <i class="fa-solid fa-plus"></i>
+            <span class="menu-text">Add Thing</span>
+        </div>
+    </a>
+
+</div>
+
+
+
+<!-- PROPERTY RULES -->
+<a onclick="toggleMenu('rulesMenu',this)"
+class="{% if request.resolver_match.url_name in 'propertyrules_list propertyrules_create propertyrules_update' %}active-parent{% endif %}">
+    
+    <div class="menu-left">
+        <i class="fa-solid fa-scale-balanced"></i>
+        <span class="menu-text">Property Rules</span>
+    </div>
+
+    <i class="fa-solid fa-chevron-down arrow"></i>
+</a>
+
+<div id="rulesMenu"
+class="submenu {% if request.resolver_match.url_name in 'propertyrules_list propertyrules_create propertyrules_update' %}{% else %}d-none{% endif %}">
+
+    <!-- All Rules -->
+    <a href="{% url 'propertyrules_list' %}"
+    class="{% if request.resolver_match.url_name == 'propertyrules_list' %}active{% endif %}">
+        <div class="menu-left">
+            <i class="fa-solid fa-list"></i>
+            <span class="menu-text">All Rules</span>
+        </div>
+    </a>
+
+    <!-- Add Rule -->
+    <a href="{% url 'propertyrules_create' %}"
+    class="{% if request.resolver_match.url_name == 'propertyrules_create' %}active{% endif %}">
+        <div class="menu-left">
+            <i class="fa-solid fa-plus"></i>
+            <span class="menu-text">Add Rule</span>
+        </div>
+    </a>
+
+</div>
+
+
 <!-- AVAILABILITY -->
 <a onclick="toggleMenu('blockedMenu',this)"
 class="{% if request.resolver_match.url_name in 'blocked-dates blocked-dates-create' %}active-parent{% endif %}">

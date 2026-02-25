@@ -1,0 +1,30 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<h4 class="mb-4">
+    {% if form.instance.pk %}Edit{% else %}Add{% endif %} Property Rule
+</h4>
+
+<form method="post"  class="bg-white p-3">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label>Name</label>
+        {{ form.name }}
+    </div>
+
+    <div class="mb-3">
+        <label>Slot Position</label>
+        {{ form.slot_position }}
+    </div>
+
+    <div class="form-check mb-3">
+        {{ form.active }}
+        <label class="form-check-label">Active</label>
+    </div>
+
+    <button class="btn btn-success">Save</button>
+    <a href="{% url 'propertyrules_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}

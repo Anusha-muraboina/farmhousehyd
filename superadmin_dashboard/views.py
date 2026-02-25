@@ -2276,3 +2276,105 @@ def cancel_reason_delete(request, pk):
         reason.delete()
 
     return redirect("cancel_reason_list")
+
+
+
+
+
+# LIST
+def things_list(request):
+    query = request.GET.get("q", "")
+    things = Thingstocarry.objects.all()
+
+    if query:
+        things = things.filter(name__icontains=query)
+
+    return render(request, "superadmin/thingstocarry/list.html", {
+        "things": things,
+        "query": query
+    })
+
+
+# CREATE
+def things_create(request):
+    form = ThingstocarryForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        return redirect("things_list")
+
+    return render(request, "superadmin/thingstocarry/form.html", {"form": form})
+
+
+# UPDATE
+def things_update(request, pk):
+    obj = get_object_or_404(Thingstocarry, pk=pk)
+    form = ThingstocarryForm(request.POST or None, instance=obj)
+
+    if form.is_valid():
+        form.save()
+        return redirect("things_list")
+
+    return render(request, "superadmin/thingstocarry/form.html", {"form": form})
+
+
+# DELETE
+def things_delete(request, pk):
+    obj = get_object_or_404(Thingstocarry, pk=pk)
+
+    if request.method == "POST":
+        obj.delete()
+        return redirect("things_list")
+
+    return redirect("things_list")
+
+
+
+# from django.db.models import Q
+
+
+# LIST + SEARCH
+def propertyrules_list(request):
+    query = request.GET.get("q", "")
+    rules = Propertyrules.objects.all()
+
+    if query:
+        rules = rules.filter(name__icontains=query)
+
+    return render(request, "superadmin/propertyrules/list.html", {
+        "rules": rules,
+        "query": query
+    })
+
+
+# CREATE
+def propertyrules_create(request):
+    form = PropertyrulesForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        return redirect("propertyrules_list")
+
+    return render(request, "superadmin/propertyrules/form.html", {"form": form})
+
+
+# UPDATE
+def propertyrules_update(request, pk):
+    obj = get_object_or_404(Propertyrules, pk=pk)
+    form = PropertyrulesForm(request.POST or None, instance=obj)
+
+    if form.is_valid():
+        form.save()
+        return redirect("propertyrules_list")
+
+    return render(request, "superadmin/propertyrules/form.html", {"form": form})
+
+
+# DELETE
+def propertyrules_delete(request, pk):
+    obj = get_object_or_404(Propertyrules, pk=pk)
+
+    if request.method == "POST":
+        obj.delete()
+
+    return redirect("propertyrules_list")

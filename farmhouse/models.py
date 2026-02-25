@@ -45,6 +45,34 @@ class FarmhouseFacilities(models.Model):
     def __str__(self):
         return self.name
 
+
+
+
+class Thingstocarry(models.Model):
+    name = models.CharField(max_length=2000)
+    active = models.BooleanField(default=True)
+    slot_position = models.PositiveIntegerField(blank=True,null=True)
+    
+    def __str__(self):
+        return self.name
+
+
+
+class Propertyrules(models.Model):
+    name = models.CharField(max_length=2000)
+    active = models.BooleanField(default=True)
+    slot_position = models.PositiveIntegerField(blank=True,null=True)
+    
+    def __str__(self):
+        return self.name
+
+
+
+
+
+
+
+
 from django.utils.text import slugify
 from django.conf import settings
 class Farmhouse(models.Model):
@@ -89,6 +117,17 @@ class Farmhouse(models.Model):
         related_name='farmhouses_facility'
     )
 
+    properyrules =  models.ManyToManyField(
+        Propertyrules,
+        blank=True,
+        related_name='propertyrules'
+    )
+    thingstocarry =  models.ManyToManyField(
+        Thingstocarry,
+        blank=True,
+        related_name='thingstocarry'
+    )
+    
     short_description = models.TextField(
         help_text="Shown in card view"
     )

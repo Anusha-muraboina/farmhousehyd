@@ -1,7 +1,9 @@
 # farmhouse/admin.py
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from .models import Farmhouse, FarmhousePricing, FarmhouseImage
+from .models import Farmhouse, FarmhousePricing, FarmhouseImage ,Thingstocarry ,Propertyrules
+from .models import *
+
 
 User = get_user_model()
 
@@ -12,11 +14,14 @@ class FarmhousePricingInline(admin.StackedInline):
     extra = 0
 
 
+admin.site.register(Thingstocarry)
+admin.site.register(Propertyrules)
+
+
+
 class FarmhouseImageInline(admin.TabularInline):
     model = FarmhouseImage
     extra = 1
-
-from .models import *
 
 
 
@@ -36,14 +41,14 @@ class FarmhouseAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
     inlines = [FarmhousePricingInline, FarmhouseImageInline]
     # filter_horizontal = ('amenities')
-    filter_horizontal = ('amenities', 'facilities')
+    filter_horizontal = ('amenities', 'facilities','properyrules','thingstocarry')
 
     fieldsets = (
         ('Basic Information', {
             'fields': ('title', 'slug', 'user', 'location', 'address','guest_count','extra_guest_count' , 'distance_km')
         }),
         ('Property Details', {
-            'fields': ('halls', 'bedrooms', 'ac_bedrooms', 'amenities','facilities')
+            'fields': ('halls', 'bedrooms', 'ac_bedrooms', 'amenities','facilities',  'properyrules','thingstocarry')
         }),
         ('Description', {
             'fields': ('short_description', 'description')

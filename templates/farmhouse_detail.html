@@ -44,9 +44,9 @@
         % comment %
     }
 
-    .hidden {
+    {% comment %} .hidden {
         display: none;
-    }
+    } {% endcomment %}
 
         {
         % endcomment %
@@ -362,9 +362,11 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
     <!-- ✅ LEFT SIDE (BOOKING) -->
-    <div class="w-full bg-white p-4 rounded">
+    {% comment %} <div class="w-full bg-white p-4 rounded "> {% endcomment %}
 
-
+<!-- LEFT SIDE (BOOKING) -->
+<div class="sticky top-10 h-fit">
+    <div class="bg-white p-4 rounded shadow">
 
 
 
@@ -994,19 +996,16 @@ Book Now
 
 </form>
 
+
+ </div>
 </div>
 
-
-
+{% comment %} </div> {% endcomment %}
 
         <!-- ✅ RIGHT SIDE (DESCRIPTION CARD) -->
         <div class="w-full">
 
             <div class="sticky top-10 bg-white shadow-xl rounded-2xl p-6 border">
-
-
-
-
 {% comment %} 
 <div class="max-w-5xl mx-auto leading-relaxed text-gray-700">
 
@@ -1212,15 +1211,11 @@ ${farmhouse.pricing.sale_price > 0
 
                 <!-- AMENITIES -->
 <div class="mt-10">
-
     <h3 class="text-3xl font-bold mb-6">
         Amenities
     </h3>
-
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-
 ${farmhouse.amenities.map(a => `
-
     <div class="flex items-center gap-3 p-4 border rounded-xl bg-white">
 
         <i data-lucide="${a.icon_class}" 
@@ -1235,12 +1230,44 @@ ${farmhouse.amenities.map(a => `
 `).join("")}
 
 </div>
+</div>
 
 
+<!-- THINGS TO CARRY -->
+<div class="mt-10">
+    <h3 class="text-3xl font-bold mb-4">
+        Things to Carry
+    </h3>
+
+    <ul class="space-y-2">
+        ${farmhouse.thingstocarry.map(t => `
+            <li class="flex items-center gap-2 text-gray-700">
+                <i data-lucide="check" class="w-4 h-4 text-orange-500"></i>
+                <span>${t.name}</span>
+            </li>
+        `).join("")}
+    </ul>
 </div>
 
 
 
+
+
+<!-- PROPERTY RULES -->
+<div class="mt-10">
+    <h3 class="text-3xl font-bold mb-4">
+        Property Rules
+    </h3>
+
+    <ul class="space-y-2">
+        ${(farmhouse.properyrules || []).map(r => `
+            <li class="flex items-center gap-2 text-gray-700">
+                <i data-lucide="shield-check" class="w-4 h-4 text-orange-500"></i>
+                <span>${r.name}</span>
+            </li>
+        `).join("")}
+    </ul>
+</div>
 
 
 <!-- FACILITIES -->

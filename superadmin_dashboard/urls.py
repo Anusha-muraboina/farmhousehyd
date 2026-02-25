@@ -5,13 +5,13 @@ urlpatterns = [
 
     path("dashboard/", views.superadmin_dashboard, name="superadmin-dashboard"),
     # path("farmhouses/", views.all_farmhouses, name="superadmin-farmhouses"),
-    
+
     path("farmhouses/", views.farmhouse_list, name="superadmin-farmhouses"),
     path("farmhouses/add/", views.farmhouse_add, name="superadmin-farmhouse-add"),
     path("farmhouses/edit/<int:id>/", views.farmhouse_edit, name="superadmin-farmhouse-edit"),
     path("farmhouses/delete/<int:id>/", views.farmhouse_delete, name="superadmin-farmhouse-delete"),
     
-    
+
     path("banners/", views.banner_list, name="banner-list"),
     path("banners/add/", views.banner_create, name="banner-add"),
     path("banners/<int:pk>/edit/", views.banner_update, name="banner-edit"),
@@ -102,17 +102,12 @@ urlpatterns = [
     path("coupons/add/", views.coupon_add, name="coupon_add"),
     path("coupons/edit/<int:id>/", views.coupon_edit, name="coupon_edit"),
     path("coupons/delete/<int:id>/", views.coupon_delete, name="coupon_delete"),
-
     path("coupon-usage/", views.coupon_usage_list, name="coupon_usage_list"),
-
-
 
     path("users/", views.admin_user_list, name="admin_user_list"),
     path("users/add/", views.admin_user_add, name="admin_user_add"),
     path("users/edit/<int:id>/", views.admin_user_edit, name="admin_user_edit"),
     path("users/delete/<int:id>/", views.admin_user_delete, name="admin_user_delete"),
-    
-    
     
     path("info/", views.contact_info_list, name="contact_info_list"),
     path("info/add/", views.contact_info_add, name="contact_info_add"),
@@ -121,8 +116,6 @@ urlpatterns = [
 
     path("messages/", views.contact_message_list, name="contact_message_list"),
     path("messages/delete/<int:id>/", views.contact_message_delete, name="contact_message_delete"),
-    
-    
     
     path("payment-policies/", views.payment_policy_list, name="payment_policy_list"),
     path("payment-policies/add/", views.payment_policy_create, name="payment_policy_create"),
@@ -141,86 +134,36 @@ urlpatterns = [
     path("admin/calc-booking-price/", views.admin_calculate_booking_price,  name="admin_calc_booking_price" ),
     
     
-    path( "admin/bookings/",  views.admin_booking_list, name="admin-bookings"
-    ),
-
-    path(  "admin/bookings/create/", views.admin_booking_create,  name="admin-booking-create"),
-
-    path(
-        "admin/bookings/<int:pk>/",
-        views.admin_booking_detail,
-        name="admin-booking-detail"
-    ),
-
-    path(
-        "admin/bookings/<int:pk>/edit/",
-        views.admin_booking_update,
-        name="admin-booking-update"
-    ),
-
-    path(
-        "admin/bookings/<int:pk>/cancel/",
-        views.admin_booking_cancel,
-        name="admin-booking-cancel"
-    ),
+    path("admin/bookings/",  views.admin_booking_list, name="admin-bookings"),
+    path("admin/bookings/create/", views.admin_booking_create,  name="admin-booking-create"),
+    path("admin/bookings/<int:pk>/",views.admin_booking_detail,name="admin-booking-detail"),
+    path("admin/bookings/<int:pk>/edit/",views.admin_booking_update,name="admin-booking-update"),
+    path( "admin/bookings/<int:pk>/cancel/", views.admin_booking_cancel, name="admin-booking-cancel"),
     
+    path("admin/blocked-dates/",views.blocked_dates_list,name="blocked-dates"),
+    path( "admin/blocked-dates/create/", views.blocked_dates_create, name="blocked-dates-create"),
+    path("admin/blocked-dates/<int:pk>/edit/",views.blocked_dates_update,name="blocked-dates-update"),
+    path("admin/blocked-dates/<int:pk>/delete/",views.blocked_dates_delete,name="blocked-dates-delete"),
     
-    
-    
-    path(
-    "admin/blocked-dates/",
-    views.blocked_dates_list,
-    name="blocked-dates"
-    ),
-
-    path(
-        "admin/blocked-dates/create/",
-        views.blocked_dates_create,
-        name="blocked-dates-create"
-    ),
-
-    path(
-        "admin/blocked-dates/<int:pk>/edit/",
-        views.blocked_dates_update,
-        name="blocked-dates-update"
-    ),
-
-    path(
-        "admin/blocked-dates/<int:pk>/delete/",
-        views.blocked_dates_delete,
-        name="blocked-dates-delete"
-    ),
-    
-    
-    
-    path(
-    "admin/blocked-dates/",
-    views.blocked_dates_list,
-    name="blocked-dates"
-    ),
-
-    path(
-        "admin/blocked-dates/create/",
-        views.blocked_dates_create,
-        name="blocked-dates-create"
-    ),
-
-    path(
-        "admin/blocked-dates/<int:pk>/edit/",
-        views.blocked_dates_update,
-        name="blocked-dates-update"
-    ),
-
-    path(
-        "admin/blocked-dates/<int:pk>/delete/",
-        views.blocked_dates_delete,
-        name="blocked-dates-delete"
-    ),
-
+    path("admin/blocked-dates/",views.blocked_dates_list,name="blocked-dates"),
+    path( "admin/blocked-dates/create/", views.blocked_dates_create, name="blocked-dates-create" ),
+    path( "admin/blocked-dates/<int:pk>/edit/",views.blocked_dates_update, name="blocked-dates-update"),
+    path("admin/blocked-dates/<int:pk>/delete/",views.blocked_dates_delete,name="blocked-dates-delete"),
 
     path("cancel-reasons/", views.cancel_reason_list, name="cancel_reason_list"),
     path("cancel-reasons/add/", views.cancel_reason_create, name="cancel_reason_create"),
     path("cancel-reasons/<int:pk>/edit/", views.cancel_reason_update, name="cancel_reason_update"),
     path("cancel-reasons/<int:pk>/delete/", views.cancel_reason_delete, name="cancel_reason_delete"),
+
+
+    path("things/", views.things_list, name="things_list"),
+    path("things/add/", views.things_create, name="things_create"),
+    path("things/<int:pk>/edit/", views.things_update, name="things_update"),
+    path("things/<int:pk>/delete/", views.things_delete, name="things_delete"),
+
+    path("property-rules/", views.propertyrules_list, name="propertyrules_list"),
+    path("property-rules/add/", views.propertyrules_create, name="propertyrules_create"),
+    path("property-rules/<int:pk>/edit/", views.propertyrules_update, name="propertyrules_update"),
+    path("property-rules/<int:pk>/delete/", views.propertyrules_delete, name="propertyrules_delete"),
 
 ]

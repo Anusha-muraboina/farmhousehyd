@@ -2,8 +2,12 @@ from django import forms
 from farmhouse.models import *
 
 
-from django import forms
+
 from booking.models import FarmhousePaymentPolicy
+from farmhouse.models import Location
+from farmhouse.models import FarmhouseFacilities
+from booking.models import CancelReason
+
 
 class FarmhousePaymentPolicyForm(forms.ModelForm):
     class Meta:
@@ -555,6 +559,12 @@ from django import forms
 from user.models import User
 from django import forms
 from user.models import User
+
+
+
+# from django import forms
+# from .models import User
+
 class AdminUserForm(forms.ModelForm):
     password = forms.CharField(
         required=False,
@@ -588,13 +598,61 @@ class AdminUserForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
 
-        if self.cleaned_data.get("password"):
-            user.set_password(self.cleaned_data["password"])
+        # ✅ Update password only if entered
+        password = self.cleaned_data.get("password")
+        if password:
+            user.set_password(password)
+
+        # ✅ If farmhouse owner → auto enable staff
+        if self.cleaned_data.get("farmhouse_user"):
+            user.is_staff = True
 
         if commit:
             user.save()
 
         return user
+    
+    
+# class AdminUserForm(forms.ModelForm):
+#     password = forms.CharField(
+#         required=False,
+#         widget=forms.PasswordInput(attrs={
+#             "class": "form-control",
+#             "placeholder": "Leave blank to keep current password"
+#         })
+#     )
+
+#     class Meta:
+#         model = User
+#         fields = [
+#             "username",
+#             "email",
+#             "phone",
+#             "password",
+#             "is_staff",
+#             "farmhouse_user",
+#             "is_active",
+#         ]
+
+#         widgets = {
+#             "username": forms.TextInput(attrs={"class": "form-control"}),
+#             "email": forms.EmailInput(attrs={"class": "form-control"}),
+#             "phone": forms.TextInput(attrs={"class": "form-control"}),
+#             "is_staff": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+#             "farmhouse_user": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+#             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+#         }
+
+#     def save(self, commit=True):
+#         user = super().save(commit=False)
+
+#         if self.cleaned_data.get("password"):
+#             user.set_password(self.cleaned_data["password"])
+
+#         if commit:
+#             user.save()
+
+#         return user
 
 
 
@@ -970,7 +1028,6 @@ class BlogForm(forms.ModelForm):
 
 
 
-from farmhouse.models import Location
 
 class LocationForm(forms.ModelForm):
 
@@ -993,8 +1050,6 @@ class LocationForm(forms.ModelForm):
 
 # forms.py
 
-from django import forms
-from farmhouse.models import FarmhouseFacilities
 
 class FacilityForm(forms.ModelForm):
     class Meta:
@@ -1007,8 +1062,7 @@ class FacilityForm(forms.ModelForm):
 
 
 
-from django import forms
-from booking.models import CancelReason
+
 
 class CancelReasonForm(forms.ModelForm):
     class Meta:
@@ -1017,4 +1071,31 @@ class CancelReasonForm(forms.ModelForm):
         widgets = {
             "reason": forms.TextInput(attrs={"class": "form-control"}),
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
+        
+        
+
+
+class ThingstocarryForm(forms.ModelForm):
+    class Meta:
+        model = Thingstocarry
+        fields = ["name", "active", "slot_position"]
+
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "slot_position": forms.NumberInput(attrs={"class": "form-control"}),
+        }
+        
+        
+
+class PropertyrulesForm(forms.ModelForm):
+    class Meta:
+        model = Propertyrules
+        fields = ["name", "active", "slot_position"]
+
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "slot_position": forms.NumberInput(attrs={"class": "form-control"}),
         }

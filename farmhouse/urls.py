@@ -25,7 +25,7 @@ urlpatterns = [
     path('blogdetail/',BlogDetail,name='blogdetail'),
     
     
-        # 🔌 API
+    # API
     path("api/home/", HomeAPIView.as_view(), name="home-api"),
     path("api/about/", AboutAPIView.as_view(), name="about-api"),
     

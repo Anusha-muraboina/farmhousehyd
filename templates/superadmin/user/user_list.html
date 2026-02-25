@@ -41,11 +41,27 @@
                             <td>{{ u.phone }}</td>
 
                             <td>
-                                {% if u.is_staff and u.farmhouse_user %}
+
+
+
+                                {% if u.is_staff and not u.farmhouse_user %}
+                                   <span class="badge bg-info">
+                                        Admin
+                                    </span>
+                                {% elif u.farmhouse_user %}
+                                     <span class="badge bg-warning text-dark">
+                                        Farmhouse Owner
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        User
+                                    </span>
+                                {% endif %}
+                                {% comment %} {% if u.is_staff and u.farmhouse_user %}
                                     <span class="badge bg-warning text-dark">
                                         Farmhouse Owner
                                     </span>
-                                {% elif u.is_staff %}
+                                {% elif u.is_staff and u.assignedpermission %}
                                     <span class="badge bg-info">
                                         Admin
                                     </span>
@@ -53,7 +69,7 @@
                                     <span class="badge bg-secondary">
                                         User
                                     </span>
-                                {% endif %}
+                                {% endif %} {% endcomment %}
                             </td>
 
                             <td>

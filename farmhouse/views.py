@@ -17,7 +17,8 @@ from .serializers import (
     BannerSerializer,
     LocationSerializer,
     FarmhouseSerializer,
-    BlogSerializer
+    BlogSerializer ,
+    PropertyrulesSerializer
 )
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import AllowAny
@@ -85,7 +86,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
 from .models import Farmhouse, Location
-from .serializers import FarmhouseSerializer, LocationSerializer
+from .serializers import FarmhouseSerializer, LocationSerializer ,ThingstocarrySerializer
 
 
 # ------------------ FARMHOUSE LIST API ------------------
@@ -136,10 +137,11 @@ class FarmhouseListAPI(APIView):
 
         locations = Location.objects.filter(is_active=True)
         location_serializer = LocationSerializer(locations, many=True)
-
+        
         return Response({
             "farmhouses": serializer.data,
-            "locations": location_serializer.data
+            "locations": location_serializer.data ,
+
         })
 
 
@@ -158,7 +160,9 @@ class FarmhouseDetailAPI(APIView):
             ).prefetch_related(
                 "images",
                 "amenities",
-                "facilities"
+                "facilities",
+               "thingstocarry",      # ✅ ADD THIS
+               "properyrules", 
             ),
             slug=slug,
             is_active=True
@@ -186,6 +190,12 @@ class FarmhouseDetailAPI(APIView):
                 similar, many=True, context={"request": request}
             ).data
         })
+
+
+
+
+
+
 
 # class FarmhouseDetailAPI(APIView):
 #     authentication_classes = [BasicAuthentication]
