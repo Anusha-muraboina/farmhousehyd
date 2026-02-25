@@ -105,6 +105,10 @@ class FarmhouseForm(forms.ModelForm):
             "guest_count": forms.NumberInput(attrs={"class": "form-control"}),
             "extra_guest_count": forms.NumberInput(attrs={"class": "form-control"}),
             "commission_percentage": forms.NumberInput(attrs={"class": "form-control"}),
+            
+            "meta_title": forms.TextInput(attrs={"class": "form-control"}),
+            "meta_description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+            "meta_keywords": forms.TextInput(attrs={"class": "form-control"}),
 
         }
 

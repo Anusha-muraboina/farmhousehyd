@@ -406,45 +406,8 @@ def farmhouse_add(request):
         "form": form,
         "pricing_form": pricing_form
     })
-# @superadmin_required
-# def farmhouse_add(request):
+    
 
-#     if request.method == "POST":
-#         form = FarmhouseForm(request.POST)
-#         pricing_form = FarmhousePricingForm(request.POST)
-
-#         if form.is_valid() and pricing_form.is_valid():
-
-#             farmhouse = form.save(commit=False)
-#             # farmhouse.user = request.user
-#             farmhouse.save()
-#             form.save_m2m()
-
-#             pricing = pricing_form.save(commit=False)
-#             pricing.farmhouse = farmhouse
-#             pricing.save()
-#             print(form.errors)
-#             print(pricing_form.errors)
-#             # ✅ GALLERY SAVE
-#             images = request.FILES.getlist("gallery_images")
-
-#             for i, img in enumerate(images):
-#                 FarmhouseImage.objects.create(
-#                     farmhouse=farmhouse,
-#                     image=img,
-#                     is_primary=(i == 0)
-#                 )
-
-#             return redirect("superadmin-farmhouses")
-
-#     else:
-#         form = FarmhouseForm()
-#         pricing_form = FarmhousePricingForm()
-
-#     return render(request, "superadmin/farmhouse_add.html", {
-#         "form": form,
-#         "pricing_form": pricing_form
-#     })
 @superadmin_required
 # @user_passes_test(superadmin_required)
 def farmhouse_edit(request, id):
