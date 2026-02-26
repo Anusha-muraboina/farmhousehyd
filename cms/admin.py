@@ -20,3 +20,7 @@ class AboutFeatureInline(admin.TabularInline):
 class AboutSectionAdmin(admin.ModelAdmin):
     inlines = [AboutFeatureInline]
     list_display = ("main_title", "is_active")
+
+
+
+admin.site.register(PageSEO)

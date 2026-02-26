@@ -24,6 +24,8 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import AllowAny
 from cms.models import *
 from cms.serializers import *
+from cms.models import PageSEO
+
 
 # def home(request):
 #     # return HttpResponse("Hello, this is Blog Page")
@@ -57,10 +59,19 @@ from cms.serializers import *
 #     })
 
 # views.py
+# def home_page(request):
+#     return render(request, "home.html")
+
+
 def home_page(request):
-    return render(request, "home.html")
 
+    seo = PageSEO.objects.filter(page="home").first()
 
+    return render(request, "home.html", {
+        "meta_title": seo.meta_title if seo else "",
+        "meta_description": seo.meta_description if seo else "",
+        "meta_keywords": seo.meta_keywords if seo else "",
+    })
 
 def about(request):
     # return HttpResponse("Hello, this is Blog Page")
@@ -71,14 +82,55 @@ def contact(request):
     # return HttpResponse("Hello, this is Blog Page")
     return render(request , "contact.html")
 
+# def Farmhouses(request):
+#     # return HttpResponse("Hello, this is Blog Page")
+#     return render(request , "farmhouse_list.html")
+
 def Farmhouses(request):
-    # return HttpResponse("Hello, this is Blog Page")
-    return render(request , "farmhouse_list.html")
+
+    seo = PageSEO.objects.filter(page="farmhouses").first()
+
+    return render(request, "farmhouse_list.html", {
+        "meta_title": seo.meta_title if seo else "",
+        "meta_description": seo.meta_description if seo else "",
+        "meta_keywords": seo.meta_keywords if seo else "",
+    })
+
 # def Farmhouse_detail(request):
 #     # return HttpResponse("Hello, this is Blog Page")
 #     return render(request , "farmhouse_detail.html")
+
+
+
+
+# def Farmhouse_detail(request, slug):
+#     return render(request, "farmhouse_detail.html", {"slug": slug})
+
+
+
+
+
+
 def Farmhouse_detail(request, slug):
-    return render(request, "farmhouse_detail.html", {"slug": slug})
+
+    farmhouse = get_object_or_404(
+        Farmhouse,
+        slug=slug,
+        is_active=True
+    )
+
+    return render(request, "farmhouse_detail.html", {
+        "farmhouse": farmhouse,
+
+        # ⭐ SEO from model
+        "meta_title": farmhouse.meta_title or farmhouse.title,
+        "meta_description": farmhouse.meta_description or farmhouse.short_description,
+        "meta_keywords": farmhouse.meta_keywords,
+    })
+
+
+
+
 
 from rest_framework.views import APIView
 from rest_framework.response import Response

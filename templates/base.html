@@ -4,9 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>
+    {{ meta_title|default:"Luxury Farmhouses in Hyderabad" }}
+    </title>
+
+    <meta name="description"
+        content="{{ meta_description|default:'Book luxury farmhouses in Hyderabad with private pool and party venues.' }}">
+
+    {% if meta_keywords %}
+    <meta name="keywords" content="{{ meta_keywords }}">
+    {% endif %}
+
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
     <title>{% block title %}Farmhouses Hyderabad{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Best farmhouses in Hyderabad{% endblock %}">
-{% load static %}
+    {% load static %}
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="{% static 'images\FARM_HOUSES_HYDERABAD.jpeg' %}">
