@@ -3,9 +3,7 @@ from django.db.models import Count, Q
 from .models import Blog, BlogCategory, BlogTag, BlogComment
 from django.contrib import messages
 
-from django.shortcuts import render
-from django.db.models import Q, Count
-from .models import Blog, BlogCategory, BlogTag
+
 
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import AllowAny
@@ -13,16 +11,11 @@ from cms.models import *
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Q, Count
-from django.shortcuts import get_object_or_404
 
-from django.db.models import Count, Q
+
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
+
 from rest_framework import status
 
 
@@ -166,7 +159,6 @@ def blog_detail(request, slug):
     }
 
     return render(request, "blog_detailpage.html", context)
-
 
 
 class AddCommentAPIView(APIView):
