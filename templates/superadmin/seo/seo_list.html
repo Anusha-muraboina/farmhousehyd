@@ -1,0 +1,56 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between mb-3">
+    <h4>Page SEO</h4>
+
+    <a href="{% url 'seo_create' %}" class="btn btn-warning text-white">
+        + Add SEO
+    </a>
+</div>
+
+<form method="get" class="mb-3 bg-white p-3">
+<input type="text" name="q" value="{{ query }}"
+       class="form-control" placeholder="Search pages...">
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Page</th>
+            <th>Meta Title</th>
+            <th width="140">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for seo in seo_pages %}
+        <tr>
+            <td>{{ seo.get_page_display }}</td>
+            <td>{{ seo.meta_title }}</td>
+
+            <td>
+                <a href="{% url 'seo_update' seo.id %}"
+                   class="btn btn-sm btn-warning text-white">
+                   Edit
+                </a>
+
+                <form method="post"
+                      action="{% url 'seo_delete' seo.id %}"
+                      style="display:inline;"
+                      onsubmit="return confirm('Delete SEO?');">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+
+        {% empty %}
+        <tr>
+            <td colspan="3" class="text-center">No SEO records found</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

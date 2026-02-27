@@ -110,23 +110,43 @@ def Farmhouses(request):
 
 
 
-
 def Farmhouse_detail(request, slug):
-
     farmhouse = get_object_or_404(
         Farmhouse,
         slug=slug,
         is_active=True
     )
 
-    return render(request, "farmhouse_detail.html", {
+    context = {
         "farmhouse": farmhouse,
+        "slug": slug,   # ✅ slug added
 
-        # ⭐ SEO from model
-        "meta_title": farmhouse.meta_title or farmhouse.title,
+        # ⭐ Dynamic SEO
+        "meta_title": farmhouse.meta_title or f"{farmhouse.title} | Vivaan Farmhouse",
         "meta_description": farmhouse.meta_description or farmhouse.short_description,
         "meta_keywords": farmhouse.meta_keywords,
-    })
+    }
+
+    return render(request, "farmhouse_detail.html", context)
+
+
+
+# def Farmhouse_detail(request, slug):
+
+#     farmhouse = get_object_or_404(
+#         Farmhouse,
+#         slug=slug,
+#         is_active=True
+#     )
+
+#     return render(request, "farmhouse_detail.html", {
+#         "farmhouse": farmhouse,
+
+#         # ⭐ SEO from model
+#         "meta_title": farmhouse.meta_title or farmhouse.title,
+#         "meta_description": farmhouse.meta_description or farmhouse.short_description,
+#         "meta_keywords": farmhouse.meta_keywords,
+#     })
 
 
 

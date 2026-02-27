@@ -1104,3 +1104,10 @@ class PropertyrulesForm(forms.ModelForm):
             "active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "slot_position": forms.NumberInput(attrs={"class": "form-control"}),
         }
+        
+        
+        
+class PageSEOForm(forms.ModelForm):
+    class Meta:
+        model = PageSEO
+        fields = "__all__"

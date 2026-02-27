@@ -56,6 +56,13 @@ class FarmhouseAdmin(admin.ModelAdmin):
         ('Pricing & Status', {
             'fields': ('price_per_day', 'free_cancellation', 'is_active', 'is_featured')
         }),
+        
+                # ⭐ NEW SEO SECTION
+        ('SEO Settings', {
+            'fields': ('meta_title', 'meta_description', 'meta_keywords'),
+            'description': 'Meta tags used for search engines (Google SEO)'
+        }),
+
     )
 
     # ✅ THIS IS THE KEY FIX

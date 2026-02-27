@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>
+    {{ meta_title|default:blog.title }}
+</title>
+
+<meta name="description"
+      content="{{ meta_description|default:blog.short_description }}">
+
+{% if meta_keywords %}
+<meta name="keywords" content="{{ meta_keywords }}">
+{% endif %}
 
 {% block content %}
 

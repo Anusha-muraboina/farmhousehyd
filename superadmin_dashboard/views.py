@@ -2341,3 +2341,60 @@ def propertyrules_delete(request, pk):
         obj.delete()
 
     return redirect("propertyrules_list")
+
+
+
+
+
+
+
+
+
+
+from cms.models import PageSEO
+
+
+# 🔹 List
+def seo_list(request):
+    query = request.GET.get("q", "")
+
+    seo_pages = PageSEO.objects.all()
+
+    if query:
+        seo_pages = seo_pages.filter(
+            Q(page__icontains=query) |
+            Q(meta_title__icontains=query) |
+            Q(meta_description__icontains=query)
+        )
+
+    context = {
+        "seo_pages": seo_pages,
+        "query": query,
+    }
+
+    return render(request, "superadmin/seo/seo_list.html", context)
+
+# 🔹 Create
+def seo_create(request):
+    form = PageSEOForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect("seo_list")
+    return render(request, "superadmin/seo/seo_form.html", {"form": form})
+
+
+# 🔹 Update
+def seo_update(request, pk):
+    seo = get_object_or_404(PageSEO, pk=pk)
+    form = PageSEOForm(request.POST or None, instance=seo)
+    if form.is_valid():
+        form.save()
+        return redirect("seo_list")
+    return render(request, "superadmin/seo/seo_form.html", {"form": form})
+
+
+# 🔹 Delete
+def seo_delete(request, pk):
+    seo = get_object_or_404(PageSEO, pk=pk)
+    seo.delete()
+    return redirect("seo_list")

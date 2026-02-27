@@ -165,5 +165,18 @@ urlpatterns = [
     path("property-rules/add/", views.propertyrules_create, name="propertyrules_create"),
     path("property-rules/<int:pk>/edit/", views.propertyrules_update, name="propertyrules_update"),
     path("property-rules/<int:pk>/delete/", views.propertyrules_delete, name="propertyrules_delete"),
+    
+    
+    # path("seo/", views.seo_list, name="seo_list"),
+    # path("seo/create/", views.seo_create, name="seo_create"),
+    # path("seo/<int:pk>/edit/", views.seo_update, name="seo_update"),
+    # path("seo/<int:pk>/delete/", views.seo_delete, name="seo_delete"),
+    
+    
+    path("seo/", views.seo_list, name="seo_list"),
+    path("seo/create/", views.seo_create, name="seo_create"),
+    path("seo/<int:pk>/edit/", views.seo_update, name="seo_update"),
+    path("seo/<int:pk>/delete/", views.seo_delete, name="seo_delete"),
+
 
 ]

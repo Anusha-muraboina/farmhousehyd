@@ -8,6 +8,17 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<title>
+    {{ meta_title|default:"Luxury Farmhouses in Hyderabad" }}
+</title>
+
+<meta name="description"
+      content="{{ meta_description|default:'Book luxury farmhouses in Hyderabad with private pool and party venues.' }}">
+
+{% if meta_keywords %}
+<meta name="keywords" content="{{ meta_keywords }}">
+{% endif %}
 <!-- ✅ FORCE DJANGO TO CREATE CSRF COOKIE -->
 {% comment %} <form method="post" style="display:none;">
     {% csrf_token %}

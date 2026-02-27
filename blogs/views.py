@@ -119,12 +119,54 @@ class RecentBlogsAPIView(ListAPIView):
 
 
 
+# def blog_list(request):
+#     return render(request, "blog_listing.html")
+
+
+
 def blog_list(request):
-    return render(request, "blog_listing.html")
+    blogs = Blog.objects.filter(is_published=True)
+
+    # 🔎 Get SEO data for blog listing page
+    seo = PageSEO.objects.filter(page="blog").first()  
+    # 👉 if you add "blog" choice later, change to page="blog"
+
+    context = {
+        "blogs": blogs,
+
+        # ⭐ Dynamic SEO with fallback
+        "meta_title": seo.meta_title if seo else "Blog | Vivaan Farmhouse",
+        "meta_description": seo.meta_description if seo else "Read the latest tips, travel guides, and updates from Vivaan Farmhouse.",
+        "meta_keywords": seo.meta_keywords if seo else "farmhouse blog, travel blog, weekend getaway tips",
+    }
+
+    return render(request, "blog_listing.html", context)
+
+
+# def blog_detail(request, slug):
+#     return render(request, "blog_detailpage.html", {"slug": slug})
+
 
 
 def blog_detail(request, slug):
-    return render(request, "blog_detailpage.html", {"slug": slug})
+    blog = get_object_or_404(
+        Blog,
+        slug=slug,
+        is_published=True
+    )
+
+    context = {
+        "blog": blog,
+        "slug": slug,
+
+        # ⭐ Dynamic SEO with fallback
+        "meta_title": blog.meta_title or blog.title,
+        "meta_description": blog.meta_description or blog.short_description,
+        "meta_keywords": blog.meta_keywords,
+    }
+
+    return render(request, "blog_detailpage.html", context)
+
 
 
 class AddCommentAPIView(APIView):

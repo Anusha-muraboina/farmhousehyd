@@ -1,5 +1,19 @@
 {% extends "base.html" %}
+
+<title>
+    {{ meta_title|default:blog.title }}
+</title>
+
+<meta name="description"
+      content="{{ meta_description|default:blog.short_description }}">
+
+{% if meta_keywords %}
+<meta name="keywords" content="{{ meta_keywords }}">
+{% endif %}
+
+
 {% block content %}
+
 <style>
 
   .blog-content {

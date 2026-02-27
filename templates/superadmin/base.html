@@ -627,6 +627,18 @@ class="{% if request.resolver_match.url_name == 'facilities_list' %}active{% end
     </div>
 </a>
 
+
+<a href="{% url 'seo_list' %}"
+class="{% if request.resolver_match.url_name == 'seo_list' %}active{% endif %}">
+    <div class="menu-left">
+        <i class="fa-solid fa-hotel"></i>
+        <span class="menu-text">Page SEO</span>
+    </div>
+</a>
+
+
+
+
 </div>
 
 

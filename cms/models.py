@@ -178,6 +178,7 @@ class PageSEO(models.Model):
 
     PAGE_CHOICES = (
         ("home", "Home"),
+        ("blog", "Blog Listing"),
         ("farmhouses", "Farmhouse Listing"),
         ("about", "About"),
         ("contact", "Contact"),
