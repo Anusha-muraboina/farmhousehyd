@@ -326,3 +326,47 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 # MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/"
 
+
+
+
+
+
+
+AWS_ACCESS_KEY_ID = 'AKIA3BMEOPVFWWCJIQUP'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'farmhousehyd-media'
+AWS_S3_SIGNATURE_NAME = 's3v4'
+AWS_S3_REGION_NAME = 'ap-south-1'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_S3_VERIFY = True
+
+AWS_QUERYSTRING_AUTH = False   # Optional: avoid signed URLs
+AWS_DEFAULT_ACL = 'public-read'  # Optional: control file visibility
+
+# Custom domain (Amazon S3 URL or your CloudFront if you have one)
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+
+# Use this only for Django 4.2+:
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "location": "media",
+            "default_acl": None,
+        }
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",  # Use the default static storage backend
+    },
+}
+
+
+
+# MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/'
+
+
+
+# Media URL - replaces MEDIA_URL = '/media/'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+
