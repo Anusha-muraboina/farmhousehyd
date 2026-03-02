@@ -12,6 +12,15 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+
+
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -330,13 +339,16 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 
 
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
 
-
-AWS_ACCESS_KEY_ID = 'AKIA3BMEOPVFWWCJIQUP'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'farmhousehyd-media'
+# AWS_ACCESS_KEY_ID = 'AKIA3BMEOPVFWWCJIQUP'
+# AWS_SECRET_ACCESS_KEY = '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'
+# AWS_STORAGE_BUCKET_NAME = 'farmhousehyd-media'
 AWS_S3_SIGNATURE_NAME = 's3v4'
-AWS_S3_REGION_NAME = 'ap-south-1'
+# AWS_S3_REGION_NAME = 'ap-south-1'
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 AWS_S3_VERIFY = True
