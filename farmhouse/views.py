@@ -297,7 +297,7 @@ class HomeAPIView(APIView):
             is_published=True
         ).order_by("-published_at")[:3]
 
-        farmhouses = farmhouses.order_by("-created_at")[:3]
+        farmhouses = farmhouses.order_by("-created_at")[:15]
 
         return Response({
             "banners": BannerSerializer(banners, many=True , context={"request": request}).data,

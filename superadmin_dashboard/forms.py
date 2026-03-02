@@ -109,7 +109,16 @@ class FarmhouseForm(forms.ModelForm):
             "meta_title": forms.TextInput(attrs={"class": "form-control"}),
             "meta_description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
             "meta_keywords": forms.TextInput(attrs={"class": "form-control"}),
+            
+                        # ✅ ManyToMany with multi select
+            # "amenities": forms.SelectMultiple(attrs={"class": "form-control"}),
+            # "thingstocarry": forms.SelectMultiple(attrs={"class": "form-control"}),
+            # "properyrules": forms.SelectMultiple(attrs={"class": "form-control"}),
 
+    "amenities": forms.CheckboxSelectMultiple(),
+    "thingstocarry": forms.CheckboxSelectMultiple(),
+    "properyrules": forms.CheckboxSelectMultiple(),
+    "facilities": forms.CheckboxSelectMultiple(),
         }
 
     def __init__(self, *args, **kwargs):

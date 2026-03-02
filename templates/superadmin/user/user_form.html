@@ -14,6 +14,192 @@
     <form method="post">
         {% csrf_token %}
 
+        <!-- 🔴 NON FIELD ERRORS -->
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div class="row">
+
+            <!-- LEFT COLUMN -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+
+                        <h6 class="text-uppercase text-muted fw-bold mb-3">
+                            User Information
+                        </h6>
+
+                        <div class="row">
+
+                            <!-- USERNAME -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Username</label>
+                                {{ form.username }}
+                                {% if form.username.errors %}
+                                    <div class="text-danger small">
+                                        {{ form.username.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- EMAIL -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Email</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small">
+                                        {{ form.email.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                        <!-- PHONE -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Phone</label>
+                            {{ form.phone }}
+                            {% if form.phone.errors %}
+                                <div class="text-danger small">
+                                    {{ form.phone.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- PASSWORD -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Password</label>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                                <div class="text-danger small">
+                                    {{ form.password.errors|striptags }}
+                                </div>
+                            {% endif %}
+                            <small class="text-muted">
+                                Leave blank to keep current password
+                            </small>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+
+                        <h6 class="text-uppercase text-muted fw-bold mb-3">
+                            Permissions
+                        </h6>
+
+                        <!-- ADMIN ACCESS -->
+                        <div class="form-check mb-2">
+                            {{ form.is_staff }}
+                            <label class="form-check-label">Admin Access</label>
+                            {% if form.is_staff.errors %}
+                                <div class="text-danger small">
+                                    {{ form.is_staff.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- ASSIGNED PERMISSION -->
+                        <div class="form-check mb-2">
+                            {{ form.assignedpermission }}
+                            <label class="form-check-label">Assigned Permission</label>
+                            {% if form.assignedpermission.errors %}
+                                <div class="text-danger small">
+                                    {{ form.assignedpermission.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- FARMHOUSE USER -->
+                        <div class="form-check mb-2">
+                            {{ form.farmhouse_user }}
+                            <label class="form-check-label">Farmhouse User</label>
+                            {% if form.farmhouse_user.errors %}
+                                <div class="text-danger small">
+                                    {{ form.farmhouse_user.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- ACTIVE -->
+                        <div class="form-check mt-3">
+                            {{ form.is_active }}
+                            <label class="form-check-label">Active</label>
+                            {% if form.is_active.errors %}
+                                <div class="text-danger small">
+                                    {{ form.is_active.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        
+    <div class="form-check mt-3">
+                            {{ form.is_staff }}
+                            <label class="form-check-label">is staff</label>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'admin_user_list' %}" class="btn btn-dark px-4">
+                Cancel
+            </a>
+
+            <button type="submit" class="btn btn-success px-5">
+                 Save User
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} 
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold">{{ title }}</h4>
+
+        <a href="{% url 'admin_user_list' %}" class="btn btn-outline-secondary">
+            ← Back
+        </a>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
         <div class="row">
 
             <div class="col-lg-8">
@@ -47,14 +233,6 @@
         Leave blank to keep current password
     </small>
 </div>
-
-                        {% comment %} <div class="mb-3">
-                            <label class="form-label fw-semibold">Password</label>
-                            {{ form.password }}
-                            <small class="text-muted">
-                                Leave blank to keep current password
-                            </small>
-                        </div> {% endcomment %}
 
                     </div>
                 </div>
@@ -125,12 +303,4 @@
 
 
 
-
-
-
-
-
-
-
-
-
+ {% endcomment %}
