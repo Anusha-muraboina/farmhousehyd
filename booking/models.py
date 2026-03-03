@@ -64,7 +64,7 @@ class Booking(models.Model):
         null=True,
         blank=True
     )
-
+   
     # Guest snapshot (VERY IMPORTANT)
     guest_name = models.CharField(max_length=200)
     guest_email = models.EmailField()

@@ -319,12 +319,11 @@ async function loadFarmhouses() {
 
                     <p class="text-xl font-bold mb-1">${f.title}</p>
 
-                    <p class="text-gray-500 text-sm mb-2">${f.address || ""}</p>
+                    <p class="text-gray-500 text-sm mb-2 break-words w-full">${f.address || ""}</p>
 
                     <p class="text-sm text-gray-600 mb-3">
                         ${(f.short_description || "").substring(0,90)}...
                     </p>
-
 
                         <div class="flex gap-4 text-sm text-gray-700 mb-3">
 
@@ -404,7 +403,7 @@ async function loadFarmhouses() {
                         </div> {% endcomment %}
 
                         <a href="/farmhouse/${f.slug}/"
-                           class="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-600">
+                           class="bg-orange-500 text-white px-2 md:px-4 py-2 rounded-lg text-sm hover:bg-orange-600">
                            Know More →
                         </a>
 

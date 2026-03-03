@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 
-
-
+from django.db import transaction
+from decimal import Decimal
 from .forms import *
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -430,12 +430,13 @@ def owner_booking_list(request):
     # OWNER FARMHOUSES
     ###################################
     farmhouses = Farmhouse.objects.filter(user=request.user)
-
+    
     ###################################
     # BASE QUERY
     ###################################
     bookings = Booking.objects.filter(
-        farmhouse__in=farmhouses
+        # farmhouse__in=farmhouses
+         farmhouse__user=request.user 
     ).select_related("farmhouse").order_by("-created_at")
 
     ###################################
@@ -1016,3 +1017,217 @@ def owner_payment_policy_delete(request, pk):
     messages.success(request, "Payment Policy Deleted Successfully")
 
     return redirect("payment_policy_list")
+
+
+
+
+
+
+
+
+
+
+
+@owner_required
+def owner_booking_create(request):
+
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+
+        farmhouse_id = request.GET.get("farmhouse_id")
+
+        if not farmhouse_id:
+            return JsonResponse([], safe=False)
+
+        bookings = Booking.objects.filter(
+            farmhouse_id=farmhouse_id,
+            status="confirmed"
+        )
+
+        blocked = []
+
+        for booking in bookings:
+            start_date = booking.check_in
+            end_date = booking.check_out - timedelta(days=1)  # 🔥 block only nights
+
+            if end_date >= start_date:
+                blocked.append({
+                    "from": start_date.strftime("%Y-%m-%d"),
+                    # "to": end_date.strftime("%Y-%m-%d"),
+                    "to": booking.check_out - timedelta(days=1)
+                })
+
+        return JsonResponse(blocked, safe=False)
+
+
+    if request.method == "POST":
+
+        # form = ownerBookingForm(request.POST)
+        form = ownerBookingForm(request.POST, user=request.user)
+        form.fields["farmhouse"].queryset = Farmhouse.objects.filter(user=request.user)
+        
+        
+        if form.is_valid():
+
+            ########################################
+            # DO NOT SAVE YET
+            ########################################
+            booking = form.save(commit=False)
+            booking.user = request.user 
+
+            ########################################
+            # GET PRICING
+            ########################################
+            farmhouse = booking.farmhouse
+            pricing = farmhouse.pricing
+
+            start = booking.check_in
+            end = booking.check_out
+
+            subtotal = Decimal("0.00")
+
+            while start < end:
+
+                if pricing.sale_price and pricing.sale_price > 0:
+                    subtotal += pricing.sale_price
+
+                elif start.weekday() in [5, 6]:
+                    subtotal += pricing.weekend_price
+
+                else:
+                    subtotal += pricing.normal_day_price
+
+                start += timedelta(days=1)
+
+            ########################################
+            # EXTRA GUEST
+            ########################################
+            subtotal += booking.extra_guest_count * pricing.extra_guest_price
+
+            ########################################
+            # COUPON
+            ########################################
+            discount = Decimal("0.00")
+
+            if booking.coupon_applied:
+                coupon = booking.coupon_applied
+
+                if coupon.is_active and subtotal >= coupon.min_booking_amount:
+                    discount = coupon.calculate_discount(subtotal)
+
+            ########################################
+            # FINAL AMOUNTS
+            ########################################
+            booking.sub_total = subtotal
+            booking.disc_price = discount
+            booking.tax_price = Decimal("0.00")   # add GST if needed
+            booking.total_amount = subtotal - discount
+            booking.remaining_amount = booking.total_amount
+
+            ########################################
+            # PREVENT DOUBLE BOOKING
+            ########################################
+            overlap = Booking.objects.filter(
+                farmhouse=farmhouse,
+                status="confirmed",
+                check_in__lt=booking.check_out,
+                check_out__gt=booking.check_in
+            ).exists()
+
+            if overlap:
+                messages.error(request, "Selected dates already booked.")
+                return render(
+                    request,
+                    "superadmin/booking/form.html",
+                    {"form": form}
+                )
+
+            ########################################
+            # SAVE
+            ########################################
+            with transaction.atomic():
+                booking.save()
+
+                transaction.on_commit(
+                    lambda: booking.send_booking_email("pending", request)
+                )
+
+            messages.success(request, "Booking created successfully!")
+            return redirect("admin-bookings")
+
+    else:
+        form = ownerBookingForm(user=request.user)
+
+    return render(
+        request,
+        "farmhouse_admin/bookings/form.html",
+        {"form": form}
+    )
+
+
+
+
+@owner_required
+def owner_booking_update(request, pk):
+
+    booking = get_object_or_404(Booking, pk=pk , farmhouse__user=request.user)
+
+    old_status = booking.status
+
+    if request.method == "POST":
+
+        form = ownerBookingForm(
+            request.POST,
+            instance=booking
+        )
+
+        if form.is_valid():
+
+            booking = form.save()
+
+            if old_status != booking.status:
+
+                transaction.on_commit(
+                    lambda: booking.send_booking_email(
+                        booking.status,
+                        request
+                    )
+                )
+
+            messages.success(
+                request,
+                "Booking updated!"
+            )
+
+            return redirect("admin-bookings")
+
+    else:
+        form = ownerBookingForm(instance=booking)
+
+    return render(
+        request,
+        "farmhouse_admin/bookings/form.html",
+        {"form": form}
+    )
+
+
+@owner_required
+def owner_booking_cancel(request, pk):
+
+    booking = get_object_or_404(Booking, pk=pk , farmhouse__user=request.user)
+
+    try:
+        booking.cancel_booking(user=request.user)
+
+        messages.success(
+            request,
+            "Booking cancelled successfully!"
+        )
+
+    except Exception as e:
+
+        messages.error(request, str(e))
+
+    return redirect("owner-bookings")
+
+
+

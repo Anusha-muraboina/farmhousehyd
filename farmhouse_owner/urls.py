@@ -30,40 +30,23 @@ urlpatterns = [
         name="owner_bookings"
     ),
 
-    path(
-        "booking/<int:pk>/",
-        owner_booking_detail,
-        name="owner_booking_detail"
-    ),
-    path(
-        "messages/",
-        owner_contact_list,
-        name="owner_contact_list"
-    ),
+    path( "booking/<int:pk>/",owner_booking_detail, name="owner_booking_detail"),
+    
+    path("owner/bookings/create/", owner_booking_create,  name="owner-booking-create"),
+    path("owner/bookings/<int:pk>/edit/",owner_booking_update,name="owner-booking-update"),
+    path( "owner/bookings/<int:pk>/cancel/", owner_booking_cancel, name="owner-booking-cancel"),
+    
+    
+    path( "messages/", owner_contact_list, name="owner_contact_list"),
 
-    path(
-        "messages/<int:pk>/",
-        owner_contact_detail,
-        name="owner_contact_detail"
-    ),
+    path("messages/<int:pk>/", owner_contact_detail, name="owner_contact_detail"),
 
-    path(
-        "coupons/",
-        owner_coupon_list,
-        name="owner_coupon_list"
-    ),
+    path("coupons/", owner_coupon_list, name="owner_coupon_list"),
 
-    path(
-        "coupons/add/",
-        owner_coupon_create,
-        name="owner_coupon_create"
-    ),
+    path("coupons/add/",owner_coupon_create,name="owner_coupon_create"),
 
-    path(
-        "coupons/<int:pk>/edit/",
-        owner_coupon_update,
-        name="owner_coupon_update"
-    ),
+    path( "coupons/<int:pk>/edit/",owner_coupon_update, name="owner_coupon_update"),
+
 
     path(
         "coupons/<int:pk>/delete/",

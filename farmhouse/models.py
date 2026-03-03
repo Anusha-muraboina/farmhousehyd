@@ -95,13 +95,21 @@ class Farmhouse(models.Model):
         null=True,
         related_name='farmhouses'
     )
+    check_in_time = models.TimeField(
+    default="14:00",
+    help_text="Example: 2:00 PM"
+    )
 
+    check_out_time = models.TimeField(
+        default="11:00",
+        help_text="Example: 11:00 AM"
+    )
     address = models.CharField(max_length=300)
 
     distance_km = models.PositiveIntegerField(
         help_text="Distance from city in KM (e.g. 21)"
     )
-
+    
     halls = models.PositiveIntegerField(default=1)
     bedrooms = models.PositiveIntegerField(default=4)
     ac_bedrooms = models.PositiveIntegerField(default=4)

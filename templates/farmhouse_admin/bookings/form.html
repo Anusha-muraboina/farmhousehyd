@@ -1,0 +1,400 @@
+{% extends "farmhouse_admin/base.html" %}
+{% block content %}
+
+<!-- FLATPICKR -->
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+<div class="container-fluid">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">
+            {% if form.instance.pk %}
+                Update Booking
+            {% else %}
+                Create Booking
+            {% endif %}
+        </h2>
+
+        <a href="{% url 'admin-bookings' %}"
+           class="btn btn-outline-dark">
+            ← Back
+        </a>
+    </div>
+
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="row g-4">
+
+            <!-- LEFT -->
+            <div class="col-lg-6">
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+
+                        <h4>Guest Details</h4>
+                        <hr>
+
+                        {{ form.guest_name.label_tag }}
+                        {{ form.guest_name }}
+
+                        {{ form.guest_email.label_tag }}
+                        {{ form.guest_email }}
+
+                        {{ form.guest_phone.label_tag }}
+                        {{ form.guest_phone }}
+
+                        {% comment %} {{ form.user.label_tag }}
+                        {{ form.user }} {% endcomment %}
+
+                    </div>
+                </div>
+
+
+                <div class="card shadow-sm mt-4">
+                    <div class="card-body">
+
+                        <h4>Stay Info</h4>
+                        <hr>
+
+                        {{ form.farmhouse.label_tag }}
+                        {{ form.farmhouse }}
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                {{ form.check_in.label_tag }}
+                                {{ form.check_in }}
+                            </div>
+
+                            <div class="col-md-6">
+                                {{ form.check_out.label_tag }}
+                                {{ form.check_out }}
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                {{ form.guest_count.label_tag }}
+                                {{ form.guest_count }}
+                            </div>
+
+                            <div class="col-md-6">
+                                {{ form.extra_guest_count.label_tag }}
+                                {{ form.extra_guest_count }}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            {% comment %} <div class="card shadow-sm mt-4 border-success">
+    <div class="card-body">
+
+        <h4 class="fw-bold">Live Price</h4>
+        <hr>
+
+        <h3>
+            Subtotal: ₹ <span id="subtotal">0</span>
+        </h3>
+
+        <h3 class="text-danger">
+            Discount: ₹ <span id="discount">0</span>
+        </h3>
+
+        <h3 class="text-success fw-bold">
+            Total: ₹ <span id="total">0</span>
+        </h3>
+
+    </div>
+</div> {% endcomment %}
+
+
+
+            <!-- RIGHT -->
+            <div class="col-lg-6">
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+
+                        <h4>Payment Info</h4>
+                        <hr>
+
+                                  {{ form.coupon_applied.label_tag }}
+                        {{ form.coupon_applied }}
+
+    {% comment %} <div class="card-body">
+
+        <h4 class="fw-bold">Live Price</h4>
+        <hr>
+
+        <h6>
+            Subtotal: ₹ <span id="subtotal">0</span>
+        </h6>
+
+        <h6 class="text-danger">
+            Discount: ₹ <span id="discount">0</span>
+        </h6>
+
+        <h6 class="text-success fw-bold">
+            Total: ₹ <span id="total">0</span>
+        </h6>
+
+    </div> {% endcomment %}
+              
+    
+
+<div class=" my-4">
+    <div class="">
+
+        <h6>
+            Subtotal: ₹ <span id="subtotal">0</span>
+        </h6>
+
+        <h6 class="text-danger">
+            Discount: ₹ <span id="discount">0</span>
+        </h6>
+
+        <h6 class="text-success fw-bold">
+            Total: ₹ <span id="total">0</span>
+        </h6>
+
+    </div>
+</div>
+
+
+
+                        {% comment %} {{ form.sub_total.label_tag }}
+                        {{ form.sub_total }}
+
+                        {{ form.disc_price.label_tag }}
+                        {{ form.disc_price }}
+
+                        {{ form.tax_price.label_tag }}
+                        {{ form.tax_price }}
+
+                        {{ form.total_amount.label_tag }}
+                        {{ form.total_amount }}
+
+
+                        {{ form.remaining_amount.label_tag }}
+                        {{ form.remaining_amount }} {% endcomment %}
+
+              
+                    </div>
+                </div>
+
+
+                <div class="card shadow-sm mt-4 border-warning">
+                    <div class="card-body">
+
+                        <h4>Status</h4>
+                        <hr>
+
+                        {{ form.status.label_tag }}
+                        {{ form.status }}
+
+                        {{ form.payment_method.label_tag }}
+                        {{ form.payment_method }}
+
+                        {{ form.payment_status.label_tag }}
+                        {{ form.payment_status }}
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="mt-4">
+            <button class="btn btn-warning btn-lg px-5 text-white ">
+                 Save Booking
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+
+
+<!-- ✅ ULTRA SAFE FLATPICKR -->
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    const farmhouseField = document.getElementById("id_farmhouse");
+    const checkIn = document.getElementById("id_check_in");
+    const checkOut = document.getElementById("id_check_out");
+
+    if(!checkIn || !checkOut){
+        console.error("Date fields NOT found.");
+        return;
+    }
+
+    let checkinPicker;
+    let checkoutPicker;
+
+    ////////////////////////////////////////////////////
+    // ⭐ ALWAYS INIT CALENDAR FIRST
+    ////////////////////////////////////////////////////
+
+    function initEmptyCalendar(){
+
+        checkinPicker = flatpickr(checkIn,{
+            minDate:"today",
+            dateFormat:"Y-m-d"
+        });
+
+        checkoutPicker = flatpickr(checkOut,{
+            minDate:new Date().fp_incr(1),
+            dateFormat:"Y-m-d"
+        });
+    }
+
+    initEmptyCalendar();
+
+
+    ////////////////////////////////////////////////////
+    // LOAD BLOCKED DATES
+    ////////////////////////////////////////////////////
+
+    function loadBlockedDates(farmhouseId){
+
+        if(!farmhouseId) return;
+
+        {% comment %} fetch(`/bookings/blocked-dates/${farmhouseId}/`) {% endcomment %}
+    fetch(`?farmhouse_id=${farmhouseId}`, {
+    headers: {
+        "X-Requested-With": "XMLHttpRequest"
+    }
+})
+        .then(res => res.json())
+        .then(data => {
+
+            const blocked = data.map(d => ({
+                from: d.from,
+                to: d.to
+            }));
+
+            // destroy old
+            checkinPicker.destroy();
+            checkoutPicker.destroy();
+
+            ////////////////////////////////////////////////////
+            // CHECKIN
+            ////////////////////////////////////////////////////
+
+            checkinPicker = flatpickr(checkIn,{
+                minDate:"today",
+                dateFormat:"Y-m-d",
+                disable: blocked,
+
+                onChange:function(selectedDates){
+
+                    if(!selectedDates.length) return;
+
+                    let nextDay = new Date(selectedDates[0]);
+                    nextDay.setDate(nextDay.getDate()+1);
+
+                    checkoutPicker.set("minDate", nextDay);
+                    checkOut.value="";
+                }
+            });
+
+            ////////////////////////////////////////////////////
+            // CHECKOUT
+            ////////////////////////////////////////////////////
+
+            checkoutPicker = flatpickr(checkOut,{
+                minDate:new Date().fp_incr(1),
+                dateFormat:"Y-m-d",
+                {% comment %} disable: blocked {% endcomment %}
+            });
+
+        });
+    }
+
+    ////////////////////////////////////////////////////
+    // FARMHOUSE CHANGE
+    ////////////////////////////////////////////////////
+
+    farmhouseField?.addEventListener("change", function(){
+        loadBlockedDates(this.value);
+    });
+
+
+    ////////////////////////////////////////////////////
+    // EDIT MODE
+    ////////////////////////////////////////////////////
+
+    if(farmhouseField?.value){
+        loadBlockedDates(farmhouseField.value);
+    }
+
+});
+
+</script>
+<script>
+
+const farmhouse = document.getElementById("id_farmhouse");
+const checkin = document.getElementById("id_check_in");
+const checkout = document.getElementById("id_check_out");
+const extraGuests = document.getElementById("id_extra_guest_count");
+const coupon = document.getElementById("id_coupon_applied");
+
+function calculatePrice(){
+
+    if(!farmhouse?.value || !checkin?.value || !checkout?.value){
+        return;
+    }
+
+    fetch("{% url 'admin_calc_booking_price' %}", {
+
+        method: "POST",
+
+        headers:{
+            "Content-Type":"application/json",
+            "X-CSRFToken":"{{ csrf_token }}"
+        },
+
+        body: JSON.stringify({
+
+            farmhouse: farmhouse.value,
+            check_in: checkin.value,
+            check_out: checkout.value,
+            extra_guest_count: extraGuests?.value || 0,
+            coupon: coupon?.value || null
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        document.getElementById("subtotal").innerText = data.subtotal ?? 0;
+        document.getElementById("discount").innerText = data.discount ?? 0;
+        document.getElementById("total").innerText = data.total ?? 0;
+
+    });
+
+}
+
+/////////////////////////////////////////////////////
+// 🔥 AUTO TRIGGERS
+/////////////////////////////////////////////////////
+
+[farmhouse, checkin, checkout, extraGuests, coupon]
+.forEach(el=>{
+    el?.addEventListener("change", calculatePrice);
+});
+
+</script>
+
+{% endblock %}
