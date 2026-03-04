@@ -362,13 +362,24 @@ def farmhouse_list(request):
             Q(user__email__icontains=query)
         )
 
+    # context = {
+    #     "farmhouses": farmhouses,
+    #     "query": query
+    # }
+
+    # return render(request, "superadmin/farmhouses.html", context)
+    # 🔹 PAGINATION
+    paginator = Paginator(farmhouses, 10)  # 10 per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "farmhouses": farmhouses,
+        "farmhouses": page_obj,
+        "page_obj": page_obj,
         "query": query
     }
 
     return render(request, "superadmin/farmhouses.html", context)
-
 # ===============================
 # ADD
 # ===============================
@@ -521,13 +532,26 @@ def banner_delete(request, pk):
 #     return render(request, "superadmin/locations/locations_list.html", {"locations": locations})
 @superadmin_required
 def location_list(request):
-    items = Location.objects.all()
+    # items = Location.objects.all()
+    # return render(request, "superadmin/locations/location_list.html", {
+    #     "items": items,
+    #     "title": "Locations",
+    #     "add_url": "location-add",
+    # })
+    locations = Location.objects.all().order_by("name")
+
+    paginator = Paginator(locations, 10)   # 10 locations per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    
     return render(request, "superadmin/locations/location_list.html", {
-        "items": items,
+        "items": page_obj,
+        "page_obj": page_obj,
         "title": "Locations",
         "add_url": "location-add",
     })
-
+    
+    
 @superadmin_required
 def location_create(request):
     form = LocationForm(request.POST or None)
@@ -562,12 +586,24 @@ def location_delete(request, pk):
 
 @superadmin_required
 def amenity_list(request):
-    items = Amenity.objects.all()
+    amenities = Amenity.objects.all().order_by("name")
+
+    paginator = Paginator(amenities, 10)  # 10 items per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "superadmin/amenities/amenities_list.html", {
-        "items": items,
+        "items": page_obj,
+        "page_obj": page_obj,
         "title": "Amenities",
         "add_url": "amenity-add",
     })
+    # items = Amenity.objects.all()
+    # return render(request, "superadmin/amenities/amenities_list.html", {
+    #     "items": items,
+    #     "title": "Amenities",
+    #     "add_url": "amenity-add",
+    # })
 
 @superadmin_required
 def amenity_create(request):

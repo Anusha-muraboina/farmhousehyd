@@ -44,7 +44,7 @@
 
     .acc-body {
         border: 1px solid #ffffff;
-        padding: 20px;
+        padding: 10px 5px;
         border-radius: 12px;
         margin-bottom: 15px;
         /* ⭐ ADD THIS */
@@ -381,10 +381,40 @@
 
 
 
-<h1 class="text-3xl font-bold mb-6">
-Entire Farmhouse Booking
+<h1 class="text-xl  md:text-3xl text-orange-600 font-bold mb-6">
+{% comment %} Entire Farmhouse Booking {% endcomment %}
+  ${farmhouse.title}
 </h1>
 
+<div class="grid  grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+
+    <!-- Check In -->
+    <div class="bg-gray-50 p-4 rounded-lg border flex items-center gap-3">
+        <div class="bg-green-100 p-2 rounded-full">
+            <i data-lucide="log-in" class="w-5 h-5 text-green-600"></i>
+        </div>
+        <div class="flex justify-between w-full items-center">
+            <p class="text-md text-orange-800">Check In</p>
+            <p class="font-semibold text-gray-800">
+                {{ farmhouse.check_in_time }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Check Out -->
+    <div class="bg-gray-50 p-4 rounded-lg border flex items-center gap-3">
+        <div class="bg-red-100 p-2 rounded-full">
+            <i data-lucide="log-out" class="w-5 h-5 text-red-600"></i>
+        </div>
+        <div class="flex justify-between w-full items-center">
+            <p class="text-md text-orange-800">Check Out</p>
+            <p class="font-semibold text-gray-800">
+                {{ farmhouse.check_out_time }}
+            </p>
+        </div>
+    </div>
+
+</div>
 
 <form id="bookingForm">
 
@@ -443,8 +473,8 @@ placeholder="Select Check-out" readonly required>
 
 <div>
 
-       <label class="block text-sm font-semibold text-gray-700 mt-2">
-          Extra  Guests Allowed
+       <label class="block text-sm  md:font-semibold text-gray-700 mt-2">
+          Extra  Guests
         </label>
 <input 
     id="extra_guest_count"
@@ -1109,9 +1139,9 @@ Book Now
 
 
 
-<h2 class="text-2xl font-bold mb-3 ">
+{% comment %} <h2 class="text-2xl font-bold mb-3 ">
     ${farmhouse.title}
-</h2>
+</h2> {% endcomment %}
 
 <p id="descShort" class="text-gray-600 mb-2"></p>
 
@@ -1229,9 +1259,9 @@ ${farmhouse.pricing.sale_price > 0
 
                 <!-- AMENITIES -->
 <div class="mt-10">
-    <h3 class="text-3xl font-bold mb-6">
+    <h2 class="text-xl md:text-3xl text-orange-600 font-bold mb-6">
         Amenities
-    </h3>
+    </h2>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 ${farmhouse.amenities.map(a => `
     <div class="flex items-center gap-3 p-4 border rounded-xl bg-white">
@@ -1253,7 +1283,7 @@ ${farmhouse.amenities.map(a => `
 
 <!-- THINGS TO CARRY -->
 <div class="mt-10">
-    <h3 class="text-3xl font-bold mb-4">
+    <h3 class="text-xl md:text-3xl text-orange-600 font-bold mb-4">
         Things to Carry
     </h3>
 
@@ -1273,7 +1303,7 @@ ${farmhouse.amenities.map(a => `
 
 <!-- PROPERTY RULES -->
 <div class="mt-10">
-    <h3 class="text-3xl font-bold mb-4">
+    <h3 class="text-xl  md:text-3xl  text-orange-600 font-bold mb-4">
         Property Rules
     </h3>
 
@@ -1291,7 +1321,7 @@ ${farmhouse.amenities.map(a => `
 <!-- FACILITIES -->
 <div class="mt-10">
 
-    <h3 class="text-3xl font-bold mb-6">
+    <h3 class="text-xl md:text-3xl text-orange-600 font-bold mb-6">
         Facilities
     </h3>
 

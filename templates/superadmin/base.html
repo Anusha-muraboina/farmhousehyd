@@ -135,6 +135,33 @@ body{
 }
 
 </style>
+
+<style>
+
+.pagination .page-link{
+    color:#ff7a00;
+    border-color:#ffe2c4;
+}
+
+.pagination .page-link:hover{
+    background:#fff3e8;
+    color:#ff7a00;
+    border-color:#ffb347;
+}
+
+/* Active page */
+.pagination .active .page-link{
+    background:linear-gradient(135deg,#ff7a00,#ffb347);
+    border-color:#ff7a00;
+    color:white;
+}
+
+/* Focus remove blue */
+.pagination .page-link:focus{
+    box-shadow:none;
+}
+
+</style>
 </head>
 
 <body>
@@ -263,41 +290,6 @@ class="{% if request.resolver_match.url_name == 'superadmin-farmhouses' %}active
 </a>
 
 
-
-<!-- BOOKINGS -->
-<!-- BOOKINGS -->
-<a onclick="toggleMenu('bookingMenu',this)"
-class="{% if request.resolver_match.url_name|slice:':13' == 'admin-booking' %}active-parent{% endif %}">
-<div class="menu-left">
-<i class="fa-solid fa-book"></i>
-<span class="menu-text">Bookings</span>
-</div>
-<i class="fa-solid fa-chevron-down arrow"></i>
-</a>
-
-<div id="bookingMenu"
-class="submenu {% if request.resolver_match.url_name|slice:':13' != 'admin-booking' %}d-none{% endif %}">
-
-<a href="{% url 'admin-bookings' %}">
-<div class="menu-left">
-<i class="fa-solid fa-list-check"></i>
-<span class="menu-text">All Bookings</span>
-</div>
-</a>
-
-<a href="{% url 'admin-booking-create' %}">
-<div class="menu-left">
-<i class="fa-solid fa-calendar-plus"></i>
-<span class="menu-text">Add Booking</span>
-</div>
-</a>
-
-</div>
-
-
-
-
-
 <!-- THINGS -->
 <a onclick="toggleMenu('thingsMenu',this)"
 class="{% if request.resolver_match.url_name in 'things_list things_create things_update' %}active-parent{% endif %}">
@@ -369,6 +361,50 @@ class="submenu {% if request.resolver_match.url_name in 'propertyrules_list prop
     </a>
 
 </div>
+
+
+
+
+
+
+
+
+
+
+<!-- BOOKINGS -->
+<!-- BOOKINGS -->
+<a onclick="toggleMenu('bookingMenu',this)"
+class="{% if request.resolver_match.url_name|slice:':13' == 'admin-booking' %}active-parent{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-book"></i>
+<span class="menu-text">Bookings</span>
+</div>
+<i class="fa-solid fa-chevron-down arrow"></i>
+</a>
+
+<div id="bookingMenu"
+class="submenu {% if request.resolver_match.url_name|slice:':13' != 'admin-booking' %}d-none{% endif %}">
+
+<a href="{% url 'admin-bookings' %}">
+<div class="menu-left">
+<i class="fa-solid fa-list-check"></i>
+<span class="menu-text">All Bookings</span>
+</div>
+</a>
+
+<a href="{% url 'admin-booking-create' %}">
+<div class="menu-left">
+<i class="fa-solid fa-calendar-plus"></i>
+<span class="menu-text">Add Booking</span>
+</div>
+</a>
+
+</div>
+
+
+
+
+
 
 
 <!-- AVAILABILITY -->

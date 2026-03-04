@@ -1116,7 +1116,35 @@ class PropertyrulesForm(forms.ModelForm):
         
         
         
+# class PageSEOForm(forms.ModelForm):
+#     class Meta:
+#         model = PageSEO
+#         fields = "__all__"
+
+
 class PageSEOForm(forms.ModelForm):
     class Meta:
         model = PageSEO
         fields = "__all__"
+
+        widgets = {
+            "page": forms.Select(attrs={
+                "class": "form-select"
+            }),
+
+            "meta_title": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter SEO title"
+            }),
+
+            "meta_description": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 4,
+                "placeholder": "Enter meta description (150-160 characters)"
+            }),
+
+            "meta_keywords": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "farmhouse, resort, weekend stay"
+            }),
+        }

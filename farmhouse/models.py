@@ -77,9 +77,7 @@ from django.utils.text import slugify
 from django.conf import settings
 class Farmhouse(models.Model):
     
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,   # User model
-        on_delete=models.CASCADE,
+    user = models.ForeignKey( settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
         related_name="farmhouses",
         limit_choices_to={
             "is_staff": True
@@ -95,15 +93,12 @@ class Farmhouse(models.Model):
         null=True,
         related_name='farmhouses'
     )
-    check_in_time = models.TimeField(
-    default="14:00",
-    help_text="Example: 2:00 PM"
-    )
-
-    check_out_time = models.TimeField(
-        default="11:00",
-        help_text="Example: 11:00 AM"
-    )
+    
+    
+    check_in_time = models.TimeField( default="14:00", help_text="Example: 2:00 PM" )
+    check_out_time = models.TimeField( default="11:00",  help_text="Example: 11:00 AM")
+    
+    
     address = models.CharField(max_length=300)
 
     distance_km = models.PositiveIntegerField(
