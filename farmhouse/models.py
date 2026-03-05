@@ -148,8 +148,6 @@ class Farmhouse(models.Model):
         max_digits=10,
         decimal_places=2
     )
-    
-    
     meta_title = models.CharField(max_length=255,blank=True,help_text="SEO title for search engines")
     meta_description = models.TextField( blank=True,help_text="Short description for SEO (150–160 chars)" )
     meta_keywords = models.CharField(max_length=255,blank=True, help_text="Comma separated keywords")

@@ -34,15 +34,15 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = [
-#                 "farmhouseshyderabad.com",
-#                 "www.farmhouseshyderabad.com",
-#                 "http://3.110.215.192" , 
-#                 'localhost',
-#                 '127.0.0.1',
-#                  ]
+ALLOWED_HOSTS = [
+                "farmhouseshyderabad.com",
+                "www.farmhouseshyderabad.com",
+                "http://3.110.215.192" , 
+                'localhost',
+                '127.0.0.1',
+                 ]
 
-ALLOWED_HOSTS = ["*"]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -163,7 +163,7 @@ DATABASES = {
         "NAME": "farmhouse_hyd",        # DB NAME
         "USER": "farmhouse_user",       # DB USER
         "PASSWORD": "Farmhouse@2026!",  # DB PASSWORD
-        "HOST": "3.110.215.192",            # or localhost
+        "HOST": "127.0.0.1",            # or localhost
         "PORT": "3306",
 
         "OPTIONS": {
