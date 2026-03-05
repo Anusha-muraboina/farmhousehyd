@@ -101,6 +101,18 @@ class FarmhouseForm(forms.ModelForm):
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "is_featured": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             
+            
+            
+                        # ✅ Check-in / Check-out time
+            "check_in_time": forms.TimeInput(
+                attrs={"class": "form-control", "type": "time"}
+            ),
+            "check_out_time": forms.TimeInput(
+                attrs={"class": "form-control", "type": "time"}
+            ),
+            
+            
+            
                         # ✅ ADD THESE
             "guest_count": forms.NumberInput(attrs={"class": "form-control"}),
             "extra_guest_count": forms.NumberInput(attrs={"class": "form-control"}),
@@ -119,6 +131,9 @@ class FarmhouseForm(forms.ModelForm):
     "thingstocarry": forms.CheckboxSelectMultiple(),
     "properyrules": forms.CheckboxSelectMultiple(),
     "facilities": forms.CheckboxSelectMultiple(),
+    
+    
+    
         }
 
     def __init__(self, *args, **kwargs):
@@ -126,6 +141,12 @@ class FarmhouseForm(forms.ModelForm):
 
         # ✅ Only farmhouse owners
         self.fields["user"].queryset = User.objects.filter(farmhouse_user=True)
+        
+        
+        
+        
+        
+        
 # class FarmhouseForm(forms.ModelForm):
 #     class Meta:
 #         model = Farmhouse
