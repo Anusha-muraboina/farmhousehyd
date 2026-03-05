@@ -907,8 +907,8 @@ if (blogs.length > 1) {
             ${f.title}
           </p>
 
-          <p class="text-gray-500 text-sm mb-3 flex items-center gap-2">
-            <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
+          <p class="text-gray-500 text-sm mb-3 flex items-center gap-2 break-words w-full">
+            <i data-lucide="map-pin" class="w-4 h-4 text-primary "></i>
             ${f.address}
           </p>
 
@@ -954,7 +954,7 @@ if (blogs.length > 1) {
     ${
       sale > 0
       ? `<span class="text-xs text-red-500 font-semibold">
-           🔥 Limited Time Deal
+           Limited Time Deal
          </span>`
       : `<span class="text-xs text-gray-500">
            Weekday ₹${weekday.toLocaleString()} • Weekend ₹${weekend.toLocaleString()}
@@ -965,7 +965,7 @@ if (blogs.length > 1) {
 
   <a href="/farmhouse/${f.slug}/"
      class="bg-primary text-white px-1  md:px-4 py-2 rounded-lg text-sm md:font-medium hover:bg-primary-dark transition">
-    Know More →
+    Know More 
   </a>
 
 </div>
