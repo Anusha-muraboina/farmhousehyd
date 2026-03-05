@@ -386,28 +386,28 @@
   ${farmhouse.title}
 </h1>
 
-<div class="grid  grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+<div class="grid  grid-cols-2 gap-2 md:gap-6 mt-4 md:mt-6">
 
     <!-- Check In -->
-    <div class="bg-gray-50 p-4 rounded-lg border flex items-center gap-3">
-        <div class="bg-green-100 p-2 rounded-full">
+    <div class="bg-gray-50 p-2 md:p-4 rounded-lg border flex items-center gap-3">
+        {% comment %} <div class="bg-green-100 p-2 rounded-full">
             <i data-lucide="log-in" class="w-5 h-5 text-green-600"></i>
-        </div>
+        </div> {% endcomment %}
         <div class="flex justify-between w-full items-center">
-            <p class="text-md text-orange-800">Check In</p>
-            <p class="font-semibold text-gray-800">
+            <p class="text-sm text-black">Check In</p>
+            <p class="font-semibold text-orange-800">
                 {{ farmhouse.check_in_time }}
             </p>
         </div>
     </div>
 
     <!-- Check Out -->
-    <div class="bg-gray-50 p-4 rounded-lg border flex items-center gap-3">
-        <div class="bg-red-100 p-2 rounded-full">
+    <div class="bg-gray-50 p-1 md:p-4 rounded-lg border flex items-center gap-3">
+        {% comment %} <div class="bg-red-100 p-2 rounded-full">
             <i data-lucide="log-out" class="w-5 h-5 text-red-600"></i>
-        </div>
+        </div> {% endcomment %}
         <div class="flex justify-between w-full items-center">
-            <p class="text-md text-orange-800">Check Out</p>
+            <p class="text-sm text-orange-800">Check Out</p>
             <p class="font-semibold text-gray-800">
                 {{ farmhouse.check_out_time }}
             </p>
@@ -1053,81 +1053,11 @@ Book Now
         <!-- ✅ RIGHT SIDE (DESCRIPTION CARD) -->
         <div class="w-full">
 
-            <div class="lg:sticky top-10 bg-white shadow-xl rounded-2xl p-6 border">
-{% comment %} 
-<div class="max-w-5xl mx-auto leading-relaxed text-gray-700">
+            <div class="lg:sticky top-10 bg-white shadow-xl rounded-2xl p-2 md:p-6 border">
 
-    <!-- TITLE -->
-    <h2 class="text-3xl font-bold mb-4">
-        Keesara Farmhouse: A Serene Escape Near Hyderabad
-    </h2>
 
-    <!-- SHORT INTRO -->
-    <p id="shortContent">
-        Nestled in the tranquil countryside near Hyderabad, Keesara Farmhouse offers a perfect blend of modern luxury and rustic charm. This beautifully designed retreat is an ideal destination for families, friends, or couples looking to escape the hustle and bustle of city life and immerse themselves in nature’s tranquility.
-    </p>
 
-    <!-- FULL CONTENT -->
-    <div id="fullContent" class="collapsed space-y-6 mt-4">
 
-        <div>
-            <h3 class="text-xl font-semibold mb-2">Location and Surroundings</h3>
-            <p>
-                Keesara Farmhouse is located just a short drive from Hyderabad, making it a convenient yet secluded getaway. Surrounded by lush greenery and a meticulously maintained lawn, it provides a peaceful environment perfect for relaxation, outdoor games, and enjoying fresh air.
-            </p>
-        </div>
-
-        <div>
-            <h3 class="text-xl font-semibold mb-2">Architectural Design</h3>
-            <p>
-                The farmhouse blends contemporary style with traditional elements. Clean lines, large windows, and open spaces fill the interiors with natural light, creating a bright and airy atmosphere. The white exterior with earthy tones complements the surrounding landscape beautifully.
-            </p>
-        </div>
-
-        <div>
-            <h3 class="text-xl font-semibold mb-2">Outdoor Spaces</h3>
-            <p>
-                The expansive lawn is perfect for yoga, cricket, picnics, or simply relaxing. Guests can also enjoy a spacious patio with seating for morning coffee or evening barbecues. The landscaped garden adds charm with vibrant plants and flowers.
-            </p>
-        </div>
-
-        <div>
-            <h3 class="text-xl font-semibold mb-2">Interior Design</h3>
-            <p>
-                Inside, the farmhouse offers elegant furnishings and a warm ambiance. The living area is spacious for gatherings, while the dining area comfortably hosts group meals. Bedrooms are designed for comfort, featuring large windows, stylish décor, and modern amenities.
-            </p>
-        </div>
-
-        <div>
-            <h3 class="text-xl font-semibold mb-2">Amenities</h3>
-            <p>
-                Guests can enjoy a fully equipped kitchen, modern bathrooms, and plenty of outdoor space for activities. A covered terrace provides the perfect spot for sunsets and stargazing, making every moment memorable.
-            </p>
-        </div>
-
-        <div>
-            <h3 class="text-xl font-semibold mb-2">Ideal for Events</h3>
-            <p>
-                Keesara Farmhouse is perfect for family reunions, birthday parties, and corporate retreats. The spacious outdoor area accommodates both intimate and larger gatherings, offering a serene setting for any occasion.
-            </p>
-        </div>
-
-        <div>
-            <h3 class="text-xl font-semibold mb-2">Conclusion</h3>
-            <p>
-                More than just a stay, Keesara Farmhouse is a destination to relax, rejuvenate, and create lasting memories. With its serene surroundings, modern comforts, and elegant design, it stands out as the perfect getaway near Hyderabad.
-            </p>
-        </div>
-
-    </div>
-
-    <!-- TOGGLE BUTTON -->
-    <button id="toggleBtn"
-        class="mt-4 text-orange-600 font-semibold hover:underline">
-        Read More
-    </button>
-
-</div> {% endcomment %}
 
                  {% comment %} <h2 class="text-2xl font-bold mb-3">
                     ${farmhouse.title}
@@ -1143,7 +1073,7 @@ Book Now
     ${farmhouse.title}
 </h2> {% endcomment %}
 
-<p id="descShort" class="text-gray-600 mb-2"></p>
+<p id="descShort" class="text-gray-600 text-md mb-2"></p>
 
 {% comment %} <p id="descFull" class="text-gray-600 mb-2 hidden"></p> {% endcomment %}
 <div class="farmhouse-content  text-gray-600 mb-2 hidden" id="descFull"></div>
@@ -1169,12 +1099,11 @@ Book Now
 
 
                 
-                <div class="border-t pt-6 mt-6">
-
-    <div class="grid grid-cols-2 gap-4">
+    <div class="border-t pt-6 mt-6">
+    <div class="grid grid-cols-2 gap-2 md:gap-4">
 
         <!-- Guests -->
-        <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+        <div class="flex items-center gap-3 p-2 md:p-4 bg-gray-50 rounded-xl">
             <i data-lucide="users" class="w-6 h-6 text-orange-500"></i>
             <div>
                 <p class="text-sm text-gray-500">Guests</p>
@@ -1185,7 +1114,7 @@ Book Now
         </div>
 
         <!-- Extra Guests -->
-        <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+        <div class="flex items-center gap-3 p-1 md:p-4 bg-gray-50 rounded-xl">
             <i data-lucide="user-plus" class="w-6 h-6 text-orange-500"></i>
             <div>
                 <p class="text-sm text-gray-500">Extra Guests</p>

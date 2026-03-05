@@ -2,7 +2,7 @@
 
 <footer class="bg-secondary text-white">
         <div class=" mx-auto px-2 md:px-4 md:py-16 py-4">
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-12">
               
                 <div>
                     <div class="flex items-center gap-2 mb-6">
@@ -24,7 +24,7 @@
                 </div>
                 
                 <div>
-                    <p class="font-bold text-lg mb-6">Quick Links</p>
+                    <p class="font-bold text-lg mb-2 md:mb-6">Quick Links</p>
                     <ul class="space-y-3 text-gray-400">
                         <li><a href="{% url 'home' %}" class="hover:text-primary transition-colors">Home</a></li>
                         <li><a href="{% url 'about' %}" class="hover:text-primary transition-colors">About</a></li>
@@ -34,7 +34,7 @@
                 </div>
                 
                 <div>
-                    <p class="font-bold text-lg mb-6">Phone Enquiry</p>
+                    <p class="font-bold text-lg mb-2 md:mb-6">Phone Enquiry</p>
                     <p class="text-gray-400 mb-2">+91 77024 93890</p>
                     <p class="font-bold text-lg mt-6 mb-4">Send Mail</p>
                     <p class="text-gray-400">info@farmhouseshyderabad.com</p>
@@ -42,7 +42,7 @@
                 
               
                 <div>
-                    <p class="font-bold text-lg mb-6">We Are Here</p>
+                    <p class="font-bold text-lg mb-2 md:mb-6">We Are Here</p>
                     <p class="text-gray-400 text-sm leading-relaxed mb-6">
                         Near Shamirpet Lake, Shamirpet, Hyderabad, Telangana 500078, India
                     </p>
@@ -58,24 +58,23 @@
             </div>
         </div>
         
-       
         <div class="border-t border-white/10">
             <div class="container mx-auto px-4 py-6">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
                     {% comment %} <p class="text-gray-400 text-sm">
                         © 2026 Farmhouses Hyderabad. All rights reserved.
                     </p> {% endcomment %}
 
-                    <p>
+                    <p class="md:text-md text-sm">
         © 2026 Farmhouse Hyderabad. All rights reserved. 
         Powered by 
         <a href="https://laxminarayaninfotech.com" target="_blank" class="text-white hover:text-orange-500 font-semibold transition">
             Laxminarayan Infotech
         </a>.
     </p>
-                    <div class="flex gap-6 text-gray-400 text-sm">
+                    <div class="flex flex-col md:flex-row  gap-3 md:gap-6 text-white text-sm justify-start items-start">
                         {% comment %} <a href="#" class="hover:text-primary transition-colors">Privacy Policy</a> {% endcomment %}
-                       <a href="{% url 'privacy_policy' %}" class="hover:text-green-600">
+                       <a href="{% url 'privacy_policy' %}" class="hover:text-orange-600">
     Privacy Policy
 </a>
 
