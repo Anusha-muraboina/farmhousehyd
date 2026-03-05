@@ -163,7 +163,7 @@ DATABASES = {
         "NAME": "farmhouse_hyd",        # DB NAME
         "USER": "farmhouse_user",       # DB USER
         "PASSWORD": "Farmhouse@2026!",  # DB PASSWORD
-        "HOST": "3.110.215.192",            # or localhost
+        "HOST": "127.0.0.1",            # or localhost
         "PORT": "3306",
 
         "OPTIONS": {
@@ -324,7 +324,11 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 
 
-
+#AWS_ACCESS_KEY_ID = 'AKIA3BMEOPVFWWCJIQUP'
+#AWS_SECRET_ACCESS_KEY = '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'
+#AWS_STORAGE_BUCKET_NAME = 'farmhousehyd-media'
+#AWS_S3_SIGNATURE_NAME = 's3v4'
+#AWS_S3_REGION_NAME = 'ap-south-1'
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
