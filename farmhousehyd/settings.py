@@ -34,15 +34,15 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-                "farmhouseshyderabad.com",
-                "www.farmhouseshyderabad.com",
-                "http://3.110.215.192" , 
-                'localhost',
-                '127.0.0.1',
-                 ]
+# ALLOWED_HOSTS = [
+#                 "farmhouseshyderabad.com",
+#                 "www.farmhouseshyderabad.com",
+#                 "http://3.110.215.192" , 
+#                 'localhost',
+#                 '127.0.0.1',
+#                  ]
 
-
+ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
@@ -163,7 +163,7 @@ DATABASES = {
         "NAME": "farmhouse_hyd",        # DB NAME
         "USER": "farmhouse_user",       # DB USER
         "PASSWORD": "Farmhouse@2026!",  # DB PASSWORD
-        "HOST": "127.0.0.1",            # or localhost
+        "HOST": "3.110.215.192",            # or localhost
         "PORT": "3306",
 
         "OPTIONS": {
@@ -285,7 +285,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
     "http://3.110.215.192",
     "https://farmhouseshyderabad.com",
-    # "https://5639-2404-1f00-8047-a466-dc0a-9cc6-4d68-1ae6.ngrok-free.app",
+    
     
 ]
 

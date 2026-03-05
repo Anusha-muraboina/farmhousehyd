@@ -325,7 +325,7 @@ class CreateBookingAPI(APIView):
             total_amount=total_amount,
             remaining_amount=total_amount,
             payment_status="pending",
-            status="pending",
+            status="pending", 
             coupon_applied=coupon_obj
         )
         
@@ -345,9 +345,9 @@ class CreateBookingAPI(APIView):
         if is_new_user:
 
             send_mail(
-                subject="Your Vivaan Farmhouse Account Created 🎉",
+                subject="Your Farmhouse Hyd Account Created 🎉",
                 message=f"""
-        Welcome to Vivaan Farmhouse!
+        Welcome to Farmhouse Hyd!
 
         Your account was created automatically during booking.
 

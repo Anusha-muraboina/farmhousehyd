@@ -128,8 +128,8 @@ def blog_list(request):
         "blogs": blogs,
 
         # ⭐ Dynamic SEO with fallback
-        "meta_title": seo.meta_title if seo else "Blog | Vivaan Farmhouse",
-        "meta_description": seo.meta_description if seo else "Read the latest tips, travel guides, and updates from Vivaan Farmhouse.",
+        "meta_title": seo.meta_title if seo else "Blog | Farmhouse Hyd",
+        "meta_description": seo.meta_description if seo else "Read the latest tips, travel guides, and updates from Farmhouse Hyd.",
         "meta_keywords": seo.meta_keywords if seo else "farmhouse blog, travel blog, weekend getaway tips",
     }
 

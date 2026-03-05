@@ -18,13 +18,14 @@ class Banner(models.Model):
 class Location(models.Model):
     name = models.CharField(max_length=100)  # Gachibowli, Moinabad
     slug = models.SlugField(unique=True)
-
     is_active = models.BooleanField(default=True)
-
+    meta_title = models.CharField(max_length=255,blank=True,help_text="SEO title for search engines")
+    meta_description = models.TextField( blank=True,help_text="Short description for SEO (150–160 chars)" )
+    meta_keywords = models.CharField(max_length=255,blank=True, help_text="Comma separated keywords")
+    
     def __str__(self):
         return self.name
     
-
 
 class Amenity(models.Model):
     name = models.CharField(max_length=100)  # Swimming Pool, Lawn
