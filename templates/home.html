@@ -64,7 +64,7 @@
 </style>
 
 <!-- ================= HERO ================= -->
-<section class="relative h-[600px]">
+<section class="relative  md:h-[600px]">
 
   <!-- SLIDER -->
   <div class="absolute inset-0">
@@ -74,7 +74,7 @@
   </div>
 
   <!-- CONTENT -->
-  <div class="relative h-full flex items-center justify-center text-center text-white bg-black">
+  <div class="relative h-full flex items-center justify-center py-8 text-center text-white bg-black">
     <div class="space-y-4 w-full">
 
       <h1 class="md:text-4xl text-xl font-bold text-white-600 pb-2 md:pb-8 ">
@@ -82,11 +82,17 @@
       </h1>
       <!-- SEARCH -->
       <form action="/farmhouses/" method="GET"
-        class="bg-white rounded-full shadow-xl px-2 md:px-4 py-2 max-w-xl mx-auto">
+        class="bg-white rounded-full shadow-xl  px-1 md:px-4 py-2 max-w-xl mx-auto">
         <div class="flex gap-3">
-          <input name="search" placeholder="Search farmhouses..."
-            class="flex-1 py-2 outline-none text-gray-700">
-          <button class="bg-primary text-white px-4 py-2 rounded-full">
+          {% comment %} <input name="search" placeholder="Search farmhouses..."
+            class="flex-1 py-1 md:py-2 outline-none text-gray-700"> {% endcomment %}
+
+            <input name="search"
+       value="{{ request.GET.search }}"
+       placeholder="Search farmhouses..."
+       class="flex-1 py-1 md:py-2 outline-none text-gray-700">
+
+          <button class="bg-primary text-white px-1 md:px-4 py-1 md:py-2 rounded-full">
             Search
           </button>
         </div>
@@ -137,7 +143,7 @@
 
     <!-- Heading -->
     <div class="text-center mb-10">
-      <h2 class="text-primary font-medium mb-2">Find Best Farmhouses</h2>
+      {% comment %} <h2 class="text-primary font-medium mb-2">Find Best Farmhouses</h2> {% endcomment %}
       <p class="font-display text-xl md:text-4xl md:text-5xl font-bold">
         Ultimate Stay Experience
       </p>
@@ -227,82 +233,6 @@
 
 
 
-{% comment %} <section class="relative py-20 bg-cover bg-center"
-    style="background-image: url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80');">
-
-
-    <div class="absolute inset-0 bg-white/85"></div>
-
-
-    <div class="relative  mx-auto px-4 md:px-12 ">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-
-            <div>
-                <p class="text-primary font-medium mb-2 flex items-center gap-2">
-                    <i data-lucide="info" class="w-4 h-4"></i>
-                    About Us
-                </p>
-
-                <h2 class="font-display text-4xl md:text-5xl font-bold text-secondary mb-6">
-                    Know Who We Are
-                </h2>
-
-                <div class="flex gap-8 mb-6">
-                    <button class="flex items-center gap-2 text-primary font-medium border-b-2 border-primary pb-2">
-                        <i data-lucide="target" class="w-5 h-5"></i>
-                        Mission & Vision
-                    </button>
-
-                </div>
-
-                <p class="text-gray-700 mb-6 leading-relaxed">
-                    Our vision is to provide unforgettable experiences by blending
-                    nature’s tranquility with quality services, great food,
-                    and lively celebrations.
-                </p>
-
-                <p class="text-gray-700 mb-8 leading-relaxed">
-                    We aim to become Hyderabad’s most trusted farmhouse booking
-                    platform, helping people find the perfect stay with ease.
-                </p>
-                <div class="flex gap-8 mb-6">
-                
-                    <button class="flex items-center gap-2  font-medium pb-2 text-primary transition-colors border-b-2 border-primary">
-                        <i data-lucide="flag" class="w-5 h-5"></i>
-                        How We Do It Differently
-                    </button>
-                </div>
-                       <p class="text-gray-700 mb-6 leading-relaxed">
-                    Our vision is to provide unforgettable experiences by blending
-                    nature’s tranquility with quality services, great food,
-                    and lively celebrations.
-                </p>
-
-              
-                <a href="#"
-                   class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-medium hover:bg-primary-dark transition">
-                    More about us
-                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                </a>
-            </div>
-
-            <div class="relative">
-                <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80"
-                     alt="About Us"
-                     class="rounded-2xl shadow-xl">
-
-                <div class="absolute -bottom-6 -left-6 bg-primary text-white p-6 rounded-2xl shadow-lg">
-                    <p class="text-3xl font-bold">10+</p>
-                    <p class="text-sm">Years Experience</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section> {% endcomment %}
-
-
-
 <section class="relative py-20 bg-cover bg-center"
     style="background-image:url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80');">
 
@@ -367,151 +297,6 @@
         </div>
     </div>
 </section>
-
-
-
-
-
-
-
-    <!-- Finest Farmhouses with Food Section -->
-
-
-    {% comment %} <section class="food-section py-20 text-white relative overflow-hidden bg-black">
-
-    <div class=" mx-auto px-4 md:px-12 ">
-        <div id="foodSlider" class="relative">
-
-            <!-- SLIDE 1 -->
-            <div class="food-slide grid lg:grid-cols-2 gap-12 items-center transition-opacity duration-700 opacity-100">
-
-                <!-- CONTENT -->
-                <div>
-                    <p class="text-white/80 font-medium mb-2 flex items-center gap-2">
-                        <span class="w-8 h-0.5 bg-white/50"></span>
-                        Our Specialty
-                    </p>
-
-                    <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">
-                        Finest Farmhouses<br>with Food
-                    </h2>
-
-                    <p class="text-white/80 mb-8 leading-relaxed">
-                        Our family-operated resorts serve our own organically grown Indian cuisine.
-                        Enjoy the best food during staycations, parties, and group events.
-                    </p>
-
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center gap-3">✔ Veg & Non-Veg Available</li>
-                        <li class="flex items-center gap-3">✔ Farmhouse with Trees</li>
-                        <li class="flex items-center gap-3">✔ Swimming Pool</li>
-                        <li class="flex items-center gap-3">✔ Party Friendly</li>
-                        <li class="flex items-center gap-3">✔ Budget Friendly</li>
-                    </ul>
-                </div>
-
-                <!-- IMAGE -->
-                <div class="relative">
-                    <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=80"
-                         class="rounded-2xl shadow-2xl">
-                </div>
-            </div>
-
-            <!-- SLIDE 2 -->
-            <div class="food-slide grid lg:grid-cols-2 gap-12 items-center transition-opacity duration-700 opacity-0 absolute inset-0">
-
-                <div>
-                    <p class="text-white/80 font-medium mb-2 flex items-center gap-2">
-                        <span class="w-8 h-0.5 bg-white/50"></span>
-                        Our Experience
-                    </p>
-
-                    <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">
-                        Luxury Stay<br>with Homemade Food
-                    </h2>
-
-                    <p class="text-white/80 mb-8 leading-relaxed">
-                        Taste authentic homemade meals prepared with organic ingredients,
-                        perfect for family stays and celebrations.
-                    </p>
-
-                    <ul class="space-y-3 mb-8">
-                        <li>✔ Authentic Indian Cuisine</li>
-                        <li>✔ Hygienic Preparation</li>
-                        <li>✔ Family Friendly</li>
-                        <li>✔ Large Open Spaces</li>
-                        <li>✔ Peaceful Environment</li>
-                    </ul>
-                </div>
-
-                <div>
-                    <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80"
-                         class="rounded-2xl shadow-2xl">
-                </div>
-            </div>
-
-            <!-- SLIDE 3 -->
-            <div class="food-slide grid lg:grid-cols-2 gap-12 items-center transition-opacity duration-700 opacity-0 absolute inset-0">
-
-                <div>
-                    <p class="text-white/80 font-medium mb-2 flex items-center gap-2">
-                        <span class="w-8 h-0.5 bg-white/50"></span>
-                        Our Promise
-                    </p>
-
-                    <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">
-                        Best Food<br>Best Memories
-                    </h2>
-
-                    <p class="text-white/80 mb-8 leading-relaxed">
-                        A perfect combination of comfort, nature, and delicious food
-                        to make your stay unforgettable.
-                    </p>
-
-                    <ul class="space-y-3 mb-8">
-                        <li>✔ Event Friendly</li>
-                        <li>✔ Spacious Farmhouses</li>
-                        <li>✔ Fresh Ingredients</li>
-                        <li>✔ Affordable Packages</li>
-                        <li>✔ Great Hospitality</li>
-                    </ul>
-                </div>
-
-                <div>
-                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80"
-                         class="rounded-2xl shadow-2xl">
-                </div>
-            </div>
-
-        </div>
-
-        <!-- CONTROLS -->
-        <div class="flex items-center justify-center gap-6 mt-10">
-
-            <button onclick="prevFoodSlide()"
-                    class="px-4 py-2 rounded-full bg-white/20 hover:bg-white/40">
-                ❮
-            </button>
-
-            <div class="flex gap-2">
-                <span class="food-dot w-8 h-1 bg-white rounded-full"></span>
-                <span class="food-dot w-8 h-1 bg-white/40 rounded-full"></span>
-                <span class="food-dot w-8 h-1 bg-white/40 rounded-full"></span>
-            </div>
-
-            <button onclick="nextFoodSlide()"
-                    class="px-4 py-2 rounded-full bg-white/20 hover:bg-white/40">
-                ❯
-            </button>
-
-        </div>
-
-    </div>
-
-</section> {% endcomment %}
-
-
-
 
 
 <section class="food-section py-20 text-white relative overflow-hidden bg-black">
@@ -661,7 +446,7 @@ axios.get("/api/home/", {
     </div>
   `;
 
-  data.locations.forEach(loc => {
+  {% comment %} data.locations.forEach(loc => {
     bar.innerHTML += `
       <div class="wood-item">
         <span class="rope"></span>
@@ -670,10 +455,32 @@ axios.get("/api/home/", {
           ${loc.name}
         </a>
       </div>`;
-  });
+  }); {% endcomment %}
 
 
+data.locations.forEach(loc => {
 
+  let isActive = false;
+
+  if (locationParam === loc.slug) {
+      isActive = true;
+  }
+
+  // if search contains location name
+  if (searchParam && loc.name.toLowerCase().includes(searchParam.toLowerCase())) {
+      isActive = true;
+  }
+
+  bar.innerHTML += `
+    <div class="wood-item">
+      <span class="rope"></span>
+      <a href="/?location=${loc.slug}"
+         class="block plank ${isActive ? 'active' : ''}">
+        ${loc.name}
+      </a>
+    </div>
+  `;
+});
 
 
 
