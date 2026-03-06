@@ -1,368 +1,320 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
+
 <title>Owner Panel</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 
 body{
-    font-family:'Inter',sans-serif;
-    background:#f6f8fb;
-    margin:0;
+font-family:Inter,sans-serif;
+background:#f6f8fb;
+margin:0;
 }
 
 /* HEADER */
 .header{
-    background:#fff;
-    border-bottom:1px solid #eee;
-    position:sticky;
-    top:0;
-    z-index:1000;
+background:#fff;
+border-bottom:1px solid #eee;
+{% comment %} position:sticky; {% endcomment %}
+top:0;
+z-index:1000;
 }
 
 .brand{
-    color:#ff7a00;
-    font-weight:700;
+color:#ff7a00;
+font-weight:700;
 }
 
 /* SIDEBAR */
 .sidebar{
-    width:240px;
-    background:#fff;
-    min-height:100vh;
-    border-right:1px solid #eee;
-    padding:18px 12px;
-    transition:.35s ease;
+width:240px;
+background:#fff;
+min-height:100vh;
+border-right:1px solid #eee;
+padding:18px 12px;
 }
 
-/* DESKTOP COLLAPSE */
-.sidebar.collapsed{
-    width:78px;
-}
-
-.sidebar.collapsed .menu-text,
-.sidebar.collapsed .arrow{
-    display:none;
-}
-
-.sidebar.collapsed a{
-    justify-content:center;
-}
-
-/* MENU */
+/* MENU LINKS */
 .sidebar a{
-    position:relative;
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:13px 16px;
-    border-radius:12px;
-    color:#374151;
-    text-decoration:none;
-    transition:.25s;
-    font-weight:500;
+display:flex;
+align-items:center;
+gap:14px;
+padding:13px 16px;
+border-radius:12px;
+color:#374151;
+text-decoration:none;
+font-weight:500;
 }
 
 .sidebar i{
-    width:22px;
-    font-size:18px;
-    text-align:center;
-}
-
-/* ACTIVE */
-.sidebar a.active-parent{
-    background:#fff4e5;
-    color:#ff7a00;
-}
-
-.sidebar a.active-parent::before{
-    content:"";
-    position:absolute;
-    left:-12px;
-    top:8px;
-    height:70%;
-    width:5px;
-    border-radius:6px;
-    background:#ff7a00;
+width:22px;
+font-size:18px;
 }
 
 /* HOVER */
 .sidebar a:hover{
-    background:#fff4e5;
-    color:#ff7a00;
+background:#fff4e5;
+color:#ff7a00;
 }
 
-/* SUBMENU */
-.submenu{
-    padding-left:12px;
-    margin-top:6px;
-}
-
-.submenu a{
-    font-size:14px;
-    padding:9px 14px;
-    margin-bottom:4px;
-}
-
-.rotate{
-    transform:rotate(180deg);
+/* ACTIVE */
+.sidebar a.active-parent{
+background:#fff4e5;
+color:#ff7a00;
 }
 
 /* CONTENT */
 .content{
-    width:100%;
-    padding:28px;
+width:100%;
+padding:28px;
 }
 
-/* OVERLAY */
-#sidebarOverlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.45);
-    opacity:0;
-    pointer-events:none;
-    transition:.3s;
-    z-index:998;
+/* OFFCANVAS MENU STYLE */
+.offcanvas .sidebar{
+width:100%;
+border-right:none;
+padding:12px;
+min-height:auto;
 }
 
-/* MOBILE SIDEBAR */
-@media(max-width:768px){
 
-.sidebar{
-    position:fixed;
-    left:-240px;
-    top:0;
-    height:100%;
-    z-index:999;
+/* ===========================
+PAGINATION STYLE
+=========================== */
+
+.pagination{
+gap:6px;
 }
 
-/* slide in */
-.sidebar.show{
-    left:0;
+.pagination .page-link{
+color:#ff7a00;
+border:1px solid #ffe2c4;
+padding:8px 14px;
+border-radius:10px;
+font-weight:600;
 }
 
-/* IMPORTANT — disable collapsed on mobile */
-.sidebar.collapsed{
-    width:240px;
+.pagination .page-link:hover{
+background:#fff3e8;
+color:#ff7a00;
+border-color:#ffb347;
 }
 
-#sidebarOverlay.active{
-    opacity:1;
-    pointer-events:auto;
+.pagination .active .page-link{
+background:linear-gradient(135deg,#ff7a00,#ffb347);
+border-color:#ff7a00;
+color:white;
 }
 
+.pagination .page-link:focus{
+box-shadow:none;
 }
-
 </style>
+
 </head>
 
 <body>
 
-<div id="sidebarOverlay" onclick="closeSidebar()"></div>
-
 <!-- HEADER -->
+
 <nav class="navbar header px-4 py-3 d-flex justify-content-between">
 
 <div class="d-flex align-items-center gap-3">
-<button class="btn btn-light" onclick="toggleSidebar()">
+
+<!-- MOBILE MENU BUTTON -->
+
+<button class="btn btn-light d-md-none"
+data-bs-toggle="offcanvas"
+data-bs-target="#mobileSidebar">
+
 <i class="fa-solid fa-bars"></i>
+
 </button>
 
-<h5 class="mb-0 brand">Farmhouse Owner</h5>
+<h5 class="mb-0  brand">Farmhouse Owner</h5>
+
 </div>
 
 <div class="dropdown">
-<button class="btn d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+
+<button class="btn d-flex align-items-center gap-2"
+data-bs-toggle="dropdown">
+
 <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center"
 style="width:36px;height:36px;">
+
 {{ request.user.username|first|upper }}
+
 </div>
-{{ request.user.username }}
+
+{% comment %} {{ request.user.username }} {% endcomment %}
+
 </button>
 
 <ul class="dropdown-menu dropdown-menu-end">
-<li><a class="dropdown-item" href="#">Profile</a></li>
-<li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">Logout</a></li>
+
+<li>
+<a class="dropdown-item" href="#">
+Profile
+</a>
+</li>
+
+<li>
+<a class="dropdown-item text-danger"
+href="{% url 'accounts:logout' %}">
+Logout
+</a>
+</li>
+
 </ul>
+
 </div>
 
 </nav>
 
+<!-- MOBILE OFFCANVAS -->
+
+<div class="offcanvas offcanvas-start d-md-none"
+tabindex="-1"
+id="mobileSidebar">
+
+<div class="offcanvas-header">
+
+<h6 class="brand">Farmhouse Owner</h6>
+
+<button type="button"
+class="btn-close"
+data-bs-dismiss="offcanvas"></button>
+
+</div>
+
+<div class="offcanvas-body p-0">
+
+<div class="sidebar">
+
+<a href="{% url 'owner_dashboard' %}">
+<i class="fa-solid fa-chart-line"></i>
+Dashboard
+</a>
+
+<a href="{% url 'owner_blocked-dates' %}">
+<i class="fa-solid fa-tags"></i>
+Blocked Dates
+</a>
+
+<a href="{% url 'owner_farmhouses' %}">
+<i class="fa-solid fa-building"></i>
+Farmhouses
+</a>
+
+<a href="{% url 'owner_bookings' %}">
+<i class="fa-solid fa-calendar-check"></i>
+Bookings
+</a>
+
+<a href="{% url 'owner_payment_policy_list' %}">
+<i class="fa-solid fa-credit-card"></i>
+Payment
+</a>
+
+<a href="{% url 'owner_contact_list' %}">
+<i class="fa-solid fa-envelope"></i>
+Messages
+</a>
+
+<a href="{% url 'owner_coupon_list' %}">
+<i class="fa-solid fa-tags"></i>
+Coupons
+</a>
+
+</div>
+
+</div>
+
+</div>
 
 <div class="d-flex">
-<!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
 
-<a href="{% url 'owner_dashboard' %}" class="{% if request.resolver_match.url_name == 'owner_dashboard' %}active-parent{% endif %}">
+<!-- DESKTOP SIDEBAR -->
+
+<aside class="sidebar d-none d-md-block">
+
+<a href="{% url 'owner_dashboard' %}"
+class="{% if request.resolver_match.url_name == 'owner_dashboard' %}active-parent{% endif %}">
+
 <i class="fa-solid fa-chart-line"></i>
-<span class="menu-text">Dashboard</span>
+Dashboard
+
 </a>
 
+<a href="{% url 'owner_blocked-dates' %}"
+class="{% if request.resolver_match.url_name in 'owner_blocked-dates owner_blocked-dates-create owner_blocked-dates-update' %}active-parent{% endif %}">
 
-<a href="{% url 'owner_blocked-dates' %}" class="{% if request.resolver_match.url_name in 'owner_blocked-dates owner_blocked-dates-create owner_blocked-dates-update' %}active-parent{% endif %}">
 <i class="fa-solid fa-tags"></i>
-<span class="menu-text">Blocked Dates</span>
+Blocked Dates
+
 </a>
 
-<a href="{% url 'owner_farmhouses' %}" class="{% if request.resolver_match.url_name in 'owner_farmhouses owner_farmhouse_create owner_farmhouse_update' %}active-parent{% endif %}">
+<a href="{% url 'owner_farmhouses' %}"
+class="{% if request.resolver_match.url_name in 'owner_farmhouses owner_farmhouse_create owner_farmhouse_update' %}active-parent{% endif %}">
+
 <i class="fa-solid fa-building"></i>
-<span class="menu-text">Farmhouses</span>
+Farmhouses
+
 </a>
 
-<!-- BOOKINGS -->
-<a onclick="toggleMenu('bookingMenu',this)" class="{% if request.resolver_match.url_name in 'owner_bookings owner_booking_detail' %}active-parent{% endif %}">
+<a href="{% url 'owner_bookings' %}"
+class="{% if request.resolver_match.url_name in 'owner_bookings owner_booking_detail' %}active-parent{% endif %}">
+
 <i class="fa-solid fa-calendar-check"></i>
-<span class="menu-text">Bookings</span>
-<i class="fa-solid fa-chevron-down arrow ms-auto"></i>
+Bookings
+
 </a>
 
-<div id="bookingMenu" class="submenu {% if request.resolver_match.url_name in 'owner_bookings owner_booking_detail' %}{% else %}d-none{% endif %}">
-<a href="{% url 'owner_bookings' %}">
-<i class="fa-solid fa-tags"></i>
-All Bookings
-</a>
-</div>
+<a href="{% url 'owner_payment_policy_list' %}">
 
+<i class="fa-solid fa-credit-card"></i>
+Payment
 
-
-
-
-<a onclick="toggleMenu('paymentPolicyMenu',this)" 
-   class="{% if request.resolver_match.url_name in 'owner_payment_policy_list owner_payment_policy_create owner_payment_policy_update' %}active-parent{% endif %}">
-    
-    <i class="fa-solid fa-credit-card"></i>
-    <span class="menu-text">Payment</span>
-    <i class="fa-solid fa-chevron-down arrow ms-auto"></i>
 </a>
 
-<div id="paymentPolicyMenu" 
-     class="submenu {% if request.resolver_match.url_name in 'owner_payment_policy_list owner_payment_policy_create owner_payment_policy_update' %}{% else %}d-none{% endif %}">
-    
-    <a href="{% url 'owner_payment_policy_list' %}">
-        <i class="fa-solid fa-list"></i>
-        All Policies
-    </a>
-
-    <a href="{% url 'owner_payment_policy_create' %}">
-        <i class="fa-solid fa-plus"></i>
-        Add Policy
-    </a>
-
-</div>
-
-
-
-
-<a onclick="toggleMenu('contactMenu',this)" class="{% if request.resolver_match.url_name in 'owner_contact_list owner_contact_detail' %}active-parent{% endif %}">
-<i class="fa-solid fa-envelope"></i>
-<span class="menu-text">Messages</span>
-<i class="fa-solid fa-chevron-down arrow ms-auto"></i>
-</a>
-
-<div id="contactMenu" class="submenu {% if request.resolver_match.url_name in 'owner_contact_list owner_contact_detail' %}{% else %}d-none{% endif %}">
 <a href="{% url 'owner_contact_list' %}">
-<i class="fa-solid fa-tags"></i>
-All Messages
-</a>
-</div>
 
-<a href="{% url 'owner_coupon_list' %}" class="{% if request.resolver_match.url_name in 'owner_coupon_list owner_coupon_create owner_coupon_update' %}active-parent{% endif %}">
+<i class="fa-solid fa-envelope"></i>
+Messages
+
+</a>
+
+<a href="{% url 'owner_coupon_list' %}"
+class="{% if request.resolver_match.url_name in 'owner_coupon_list owner_coupon_create owner_coupon_update' %}active-parent{% endif %}">
+
 <i class="fa-solid fa-tags"></i>
-<span class="menu-text">Coupons</span>
+Coupons
+
 </a>
 
 </aside>
 
+<!-- PAGE CONTENT -->
+
 <main class="content">
+
 {% block content %}{% endblock %}
+
 </main>
 
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-
-/* TOGGLE */
-function toggleSidebar(){
-
-    const sidebar=document.getElementById("sidebar");
-    const overlay=document.getElementById("sidebarOverlay");
-
-    if(window.innerWidth < 768){
-
-        sidebar.classList.remove("collapsed"); // 🔥 critical
-        sidebar.classList.toggle("show");
-        overlay.classList.toggle("active");
-
-    }else{
-
-        sidebar.classList.toggle("collapsed");
-    }
-}
-
-/* CLOSE */
-function closeSidebar(){
-    document.getElementById("sidebar").classList.remove("show");
-    document.getElementById("sidebarOverlay").classList.remove("active");
-}
-
-/* RESET ON RESIZE — VERY IMPORTANT */
-function handleResize(){
-
-    const sidebar=document.getElementById("sidebar");
-    const overlay=document.getElementById("sidebarOverlay");
-
-    if(window.innerWidth < 768){
-
-        sidebar.classList.remove("collapsed");
-
-    }else{
-
-        sidebar.classList.remove("show");
-        overlay.classList.remove("active");
-    }
-}
-
-window.addEventListener("load",handleResize);
-window.addEventListener("resize",handleResize);
-
-/* SUBMENU */
-function toggleMenu(menuId,el){
-
-    const menu=document.getElementById(menuId);
-    const arrow=el.querySelector(".arrow");
-
-    const isOpen=!menu.classList.contains("d-none");
-
-    document.querySelectorAll(".submenu").forEach(m=>m.classList.add("d-none"));
-    document.querySelectorAll(".arrow").forEach(a=>a.classList.remove("rotate"));
-
-    if(!isOpen){
-        menu.classList.remove("d-none");
-        arrow.classList.add("rotate");
-    }
-}
-
-/* AUTO CLOSE MOBILE */
-document.querySelectorAll(".sidebar a").forEach(link=>{
-
-    link.addEventListener("click",()=>{
-
-        if(window.innerWidth < 768){
-            closeSidebar();
-        }
-
-    });
-
-});
-
-</script>
 
 </body>
 </html>

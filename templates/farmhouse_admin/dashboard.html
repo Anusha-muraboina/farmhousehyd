@@ -5,210 +5,252 @@
 
 <div class="container-fluid px-3 px-md-4 py-4">
 
-<h2 class="fw-bold mb-4">Owner Dashboard</h2>
+<h2 class="fw-bold mb-4">Dashboard Overview</h2>
 
-<!-- ===================== TOP CARDS ===================== -->
+<!-- ===================== STATS ===================== -->
 
 <div class="row g-4 mb-4">
 
-<div class="col-12 col-md-6 col-lg-4 col-xl-3">
-<div class="card stat bg-orange">
-<h3>{{stats.today_bookings}}</h3>
-<p>Today's Check-ins</p>
+<div class="col-6 col-lg-3">
+<div class="stat-card orange">
+<i class="fa-solid fa-calendar-check"></i>
+<div>
+<h4>{{stats.today_bookings}}</h4>
+<span>Today's Check-ins</span>
 </div>
-</div>
-
-<div class="col-12 col-md-6 col-lg-4 col-xl-3">
-<div class="card stat bg-blue">
-<h3>{{stats.tomorrow_bookings}}</h3>
-<p>Tomorrow</p>
 </div>
 </div>
 
-<div class="col-12 col-md-6 col-lg-4 col-xl-3">
-<div class="card stat bg-green">
-<h3>{{stats.monthly_bookings}}</h3>
-<p>Monthly Bookings</p>
+<div class="col-6 col-lg-3">
+<div class="stat-card blue">
+<i class="fa-solid fa-clock"></i>
+<div>
+<h4>{{stats.tomorrow_bookings}}</h4>
+<span>Tomorrow</span>
 </div>
-</div>
-
-<div class="col-12 col-md-6 col-lg-4 col-xl-3">
-<div class="card stat bg-purple">
-<h3>{{stats.yearly_bookings}}</h3>
-<p>Yearly Bookings</p>
 </div>
 </div>
 
+<div class="col-6 col-lg-3">
+<div class="stat-card green">
+<i class="fa-solid fa-chart-line"></i>
+<div>
+<h4>{{stats.monthly_bookings}}</h4>
+<span>Monthly</span>
+</div>
+</div>
 </div>
 
+<div class="col-6 col-lg-3">
+<div class="stat-card purple">
+<i class="fa-solid fa-trophy"></i>
+<div>
+<h4>{{stats.yearly_bookings}}</h4>
+<span>Yearly</span>
+</div>
+</div>
+</div>
 
+</div>
 
 <!-- ===================== REVENUE ===================== -->
 
 <div class="row g-4 mb-4">
 
-<div class="col-12 col-md-6 col-lg-4 col-xl-3">
-<div class="revenue">
-₹{{revenue.weekly}}
+<div class="col-6 col-lg-3">
+<div class="revenue-card">
+<h4>₹{{revenue.weekly}}</h4>
 <span>Weekly Revenue</span>
 </div>
 </div>
 
-<div class="col-12 col-md-6 col-lg-4 col-xl-3">
-<div class="revenue">
-₹{{revenue.monthly}}
+<div class="col-6 col-lg-3">
+<div class="revenue-card">
+<h4>₹{{revenue.monthly}}</h4>
 <span>Monthly Revenue</span>
 </div>
 </div>
 
-<div class="col-12 col-md-6 col-lg-4 col-xl-3">
-<div class="revenue">
-₹{{revenue.six_months}}
+<div class="col-6 col-lg-3">
+<div class="revenue-card">
+<h4>₹{{revenue.six_months}}</h4>
 <span>6 Months Revenue</span>
 </div>
 </div>
 
-<div class="col-12 col-md-6 col-lg-4 col-xl-3">
-<div class="revenue highlight">
-₹{{yearly_net}}
+<div class="col-6 col-lg-3">
+<div class="revenue-card highlight">
+<h4>₹{{yearly_net}}</h4>
 <span>Your Net Earnings</span>
 </div>
 </div>
 
 </div>
 
-
-
 <!-- ===================== CHART ===================== -->
 
-<div class="card shadow-sm border-0 mb-4">
+<div class="card dashboard-card mb-4">
+
 <div class="card-body">
 
 <h5 class="fw-bold mb-3">Bookings Trend</h5>
 
-<div class="chart-wrapper">
+<div class="chart-container">
 <canvas id="bookingChart"></canvas>
 </div>
 
 </div>
+
 </div>
-
-
 
 <!-- ===================== TABLES ===================== -->
 
 <div class="row g-4">
 
 <!-- BOOKINGS -->
-<div class="col-12 col-lg-7">
-<div class="card shadow-sm border-0 h-100">
+
+<div class="col-lg-7">
+
+<div class="card dashboard-card">
+
 <div class="card-body">
 
 <h5 class="fw-bold mb-3">Recent Bookings</h5>
 
 {% for b in recent_bookings %}
-<div class="list">
+
+<div class="booking-row">
+
 <div>
-<b>{{b.booking_id}}</b><br>
-<small class="text-muted">{{b.farmhouse.title}}</small>
+
+<strong>{{b.booking_id}}</strong>
+
+<div class="text-muted small">
+{{b.farmhouse.title}}
 </div>
-<div>
-<span class="badge bg-success">₹{{b.total_amount}}</span>
+
 </div>
+
+<span class="badge bg-success px-3 py-2">
+₹{{b.total_amount}}
+</span>
+
 </div>
+
 {% empty %}
-<p>No bookings yet.</p>
+
+<p class="text-muted">No bookings yet</p>
+
 {% endfor %}
 
 </div>
+
 </div>
+
 </div>
 
 <!-- MESSAGES -->
-<div class="col-12 col-lg-5">
-<div class="card shadow-sm border-0 h-100">
+
+<div class="col-lg-5">
+
+<div class="card dashboard-card">
+
 <div class="card-body">
 
 <h5 class="fw-bold mb-3">Recent Messages</h5>
 
 {% for m in recent_messages %}
-<div class="list">
+
+<div class="booking-row">
+
 <div>
-<b>{{m.name}}</b><br>
-<small class="text-muted">{{m.phone}}</small>
+
+<strong>{{m.name}}</strong>
+
+<div class="text-muted small">
+{{m.phone}}
 </div>
-<small class="text-muted">
+
+</div>
+
+<span class="small text-muted">
 {{m.created_at|date:"d M"}}
-</small>
+</span>
+
 </div>
+
 {% empty %}
-<p>No messages.</p>
+
+<p class="text-muted">No messages</p>
+
 {% endfor %}
 
 </div>
-</div>
-</div>
 
 </div>
 
 </div>
 
+</div>
 
+</div>
 
 <style>
 
-/* ===============================
-STAT CARDS
-=============================== */
+/* ================= STAT CARDS ================= */
 
-.stat{
-color:white;
-padding:22px;
-border-radius:18px;
-text-align:center;
-min-height:120px;
+.stat-card{
 display:flex;
-flex-direction:column;
-justify-content:center;
+align-items:center;
+gap:18px;
+padding:20px;
+border-radius:16px;
+color:white;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 
-.stat h3{
-font-weight:800;
-margin-bottom:5px;
-}
-
-.stat p{
-margin:0;
-font-size:14px;
+.stat-card i{
+font-size:28px;
 opacity:.9;
 }
 
-.bg-orange{background:linear-gradient(135deg,#ff7a00,#ffb347);}
-.bg-blue{background:linear-gradient(135deg,#36d1dc,#5b86e5);}
-.bg-green{background:linear-gradient(135deg,#11998e,#38ef7d);}
-.bg-purple{background:linear-gradient(135deg,#6a11cb,#2575fc);}
-
-
-/* ===============================
-REVENUE CARDS
-=============================== */
-
-.revenue{
-background:#fff;
-padding:20px;
-border-radius:16px;
-text-align:center;
-font-size:20px;
-font-weight:800;
-box-shadow:0 5px 20px rgba(0,0,0,.05);
-height:100%;
+.stat-card h4{
+margin:0;
+font-weight:700;
 }
 
-.revenue span{
-display:block;
+.stat-card span{
+font-size:13px;
+opacity:.9;
+}
+
+/* COLORS */
+
+.orange{background:linear-gradient(135deg,#ff7a00,#ffb347);}
+.blue{background:linear-gradient(135deg,#36d1dc,#5b86e5);}
+.green{background:linear-gradient(135deg,#11998e,#38ef7d);}
+.purple{background:linear-gradient(135deg,#6a11cb,#2575fc);}
+
+
+
+/* ================= REVENUE ================= */
+
+.revenue-card{
+background:white;
+border-radius:16px;
+padding:22px;
+text-align:center;
+box-shadow:0 8px 20px rgba(0,0,0,.05);
+}
+
+.revenue-card h4{
+font-weight:800;
+margin-bottom:4px;
+}
+
+.revenue-card span{
 font-size:13px;
 color:#777;
-margin-top:5px;
 }
 
 .highlight{
@@ -217,11 +259,20 @@ color:white;
 }
 
 
-/* ===============================
-LIST STYLE
-=============================== */
 
-.list{
+/* ================= DASHBOARD CARD ================= */
+
+.dashboard-card{
+border:none;
+border-radius:16px;
+box-shadow:0 10px 30px rgba(0,0,0,.05);
+}
+
+
+
+/* ================= BOOKING ROW ================= */
+
+.booking-row{
 display:flex;
 justify-content:space-between;
 align-items:center;
@@ -230,66 +281,70 @@ border-bottom:1px solid #eee;
 }
 
 
-/* ===============================
-CHART FIX
-=============================== */
 
-.chart-wrapper{
+/* ================= CHART ================= */
+
+.chart-container{
 position:relative;
 height:320px;
 }
 
+
+
+/* ================= MOBILE ================= */
+
 @media(max-width:768px){
-.chart-wrapper{
+
+.chart-container{
 height:250px;
 }
-}
 
-
-/* ===============================
-MOBILE IMPROVEMENTS
-=============================== */
-
-@media(max-width:768px){
-
-h2{
-font-size:22px;
-}
-
-.list{
+.booking-row{
 flex-direction:column;
 align-items:flex-start;
-gap:4px;
+gap:5px;
 }
 
 }
 
 </style>
 
-
-
 <script>
+
 new Chart(
 document.getElementById('bookingChart'),
 {
 type:'line',
+
 data:{
 labels:{{chart_labels|safe}},
+
 datasets:[{
+
 label:'Bookings',
+
 data:{{chart_data|safe}},
+
 borderColor:'#ff7a00',
+
 backgroundColor:'rgba(255,122,0,.15)',
+
 fill:true,
+
 tension:.4
+
 }]
 },
+
 options:{
 responsive:true,
 maintainAspectRatio:false
 }
+
 }
+
 );
+
 </script>
 
 {% endblock %}

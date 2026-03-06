@@ -3,146 +3,325 @@
 
 <style>
 
-/* =====================================================
-   🔥 CRITICAL FIX — Allow Horizontal Scroll
-   (Most admin layouts block overflow)
-===================================================== */
+/* ===========================
+ALLOW HORIZONTAL SCROLL
+=========================== */
 
 .container-fluid,
 .row,
 .card,
 .content,
 .main-content{
-    overflow:visible !important;
+overflow:visible !important;
 }
 
 
-/* =====================================================
-   TABLE STYLE
-===================================================== */
+/* ===========================
+TABLE STYLE
+=========================== */
 
-/* Prevent text from wrapping */
 .bookings-table th,
 .bookings-table td{
-    white-space:nowrap;
-    vertical-align:middle;
-    padding:16px;
+white-space:nowrap;
+vertical-align:middle;
+padding:16px;
 }
 
-
-/* =====================================================
-   MOBILE ONLY — ENABLE SCROLL
-===================================================== */
+/* ===========================
+MOBILE SCROLL
+=========================== */
 
 @media (max-width:768px){
 
 .table-responsive{
-    overflow-x:auto !important;
-    -webkit-overflow-scrolling:touch;
+overflow-x:auto !important;
+-webkit-overflow-scrolling:touch;
 }
 
-/* 🔥 VERY IMPORTANT */
-/* Forces table wider than mobile screen */
 .bookings-table{
-    min-width:1200px;
+min-width:1200px;
 }
 
 }
 
+/* Scrollbar */
 
-/* Smooth scrollbar */
 .table-responsive::-webkit-scrollbar{
-    height:6px;
+height:6px;
 }
 
 .table-responsive::-webkit-scrollbar-thumb{
-    background:#d1d5db;
-    border-radius:10px;
+background:#d1d5db;
+border-radius:10px;
 }
 
+/* Hover */
 
-/* Optional hover */
 .table-hover tbody tr:hover{
-    background:#fafafa;
+background:#fafafa;
 }
+
+/* ===========================
+STATUS CARDS
+=========================== */
+
+.status-card{
+display:flex;
+align-items:center;
+gap:16px;
+padding:20px;
+border-radius:16px;
+color:white;
+font-weight:600;
+box-shadow:0 6px 20px rgba(0,0,0,0.08);
+transition:.25s;
+}
+
+.status-card:hover{
+transform:translateY(-3px);
+box-shadow:0 10px 30px rgba(0,0,0,0.12);
+}
+
+.status-icon{
+width:48px;
+height:48px;
+border-radius:12px;
+background:rgba(255,255,255,0.2);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+}
+
+.status-card h4{
+margin:0;
+font-size:22px;
+font-weight:800;
+}
+
+.status-card p{
+margin:0;
+font-size:13px;
+opacity:.9;
+}
+
+/* CARD COLORS */
+
+.pending{
+background:linear-gradient(135deg,#f59e0b,#fbbf24);
+}
+
+.confirmed{
+background:linear-gradient(135deg,#16a34a,#4ade80);
+}
+
+.cancelled{
+background:linear-gradient(135deg,#ef4444,#f87171);
+}
+
+.paid{
+background:linear-gradient(135deg,#2563eb,#60a5fa);
+}
+
+{% comment %} /* ===========================
+PAGINATION STYLE
+=========================== */
+
+.pagination{
+gap:6px;
+}
+
+.pagination .page-link{
+color:#ff7a00;
+border:1px solid #ffe2c4;
+padding:8px 14px;
+border-radius:10px;
+font-weight:600;
+}
+
+.pagination .page-link:hover{
+background:#fff3e8;
+color:#ff7a00;
+border-color:#ffb347;
+}
+
+.pagination .active .page-link{
+background:linear-gradient(135deg,#ff7a00,#ffb347);
+border-color:#ff7a00;
+color:white;
+}
+
+.pagination .page-link:focus{
+box-shadow:none;
+} {% endcomment %}
 
 </style>
 
-
-
-<div class="container-fluid px-4 py-4">
+<div class="container-fluid px-4 py-4 bg-white  ">
 
 <!-- HEADER -->
+
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="fw-bold">My Bookings</h2>
-        <small class="text-muted">
-            Manage reservations across your farmhouses.
-        </small>
-    </div>
-            <a href="{% url 'owner-booking-create' %}"
-           class="btn btn-warning shadow-sm text-white">
-            + Create Booking
-        </a>
+
+<div>
+<h2 class="fw-bold">My Bookings</h2>
+
+{% comment %} <small class="text-muted">
+Manage reservations across your farmhouses.
+</small> {% endcomment %}
+
 </div>
 
+<a href="{% url 'owner-booking-create' %}"
+class="btn btn-warning  text-sm text-white">
 
+Create Booking
+
+</a>
+
+</div>
+
+<!-- STATUS CARDS -->
+
+<div class="row g-3 mb-4">
+
+<div class="col-6 col-md-3">
+<div class="status-card pending">
+<div class="status-icon">
+<i class="fa-solid fa-hourglass-half"></i>
+</div>
+<div>
+<h4>{{pending_count}}</h4>
+<p>Pending</p>
+</div>
+</div>
+</div>
+
+<div class="col-6 col-md-3">
+<div class="status-card confirmed">
+<div class="status-icon">
+<i class="fa-solid fa-check-circle"></i>
+</div>
+<div>
+<h4>{{confirmed_count}}</h4>
+<p>Confirmed</p>
+</div>
+</div>
+</div>
+
+<div class="col-6 col-md-3">
+<div class="status-card cancelled">
+<div class="status-icon">
+<i class="fa-solid fa-xmark-circle"></i>
+</div>
+<div>
+<h4>{{cancelled_count}}</h4>
+<p>Cancelled</p>
+</div>
+</div>
+</div>
+
+<div class="col-6 col-md-3">
+<div class="status-card paid">
+<div class="status-icon">
+<i class="fa-solid fa-indian-rupee-sign"></i>
+</div>
+<div>
+<h4>{{paid_count}}</h4>
+<p>Paid</p>
+</div>
+</div>
+</div>
+
+</div>
 
 <!-- FILTER CARD -->
+
 <div class="card border-0 shadow-sm mb-4">
+
 <div class="card-body">
 
 <form method="get" class="row g-3">
 
 <div class="col-lg-3 col-md-6">
+
 <input name="search"
 value="{{request.GET.search}}"
 class="form-control"
 placeholder="Search guest / booking ID">
+
 </div>
 
 <div class="col-lg-2 col-md-6">
+
 <select name="status" class="form-select">
+
 <option value="">All Status</option>
+
 <option value="pending" {% if request.GET.status == "pending" %}selected{% endif %}>Pending</option>
+
 <option value="confirmed" {% if request.GET.status == "confirmed" %}selected{% endif %}>Confirmed</option>
+
 <option value="cancelled" {% if request.GET.status == "cancelled" %}selected{% endif %}>Cancelled</option>
+
 <option value="completed" {% if request.GET.status == "completed" %}selected{% endif %}>Completed</option>
+
 </select>
+
 </div>
 
 <div class="col-lg-2 col-md-6">
+
 <select name="payment_status" class="form-select">
+
 <option value="">All Payments</option>
+
 <option value="pending" {% if request.GET.payment_status == "pending" %}selected{% endif %}>Pending</option>
+
 <option value="partial" {% if request.GET.payment_status == "partial" %}selected{% endif %}>Partial</option>
+
 <option value="paid" {% if request.GET.payment_status == "paid" %}selected{% endif %}>Paid</option>
+
 <option value="failed" {% if request.GET.payment_status == "failed" %}selected{% endif %}>Failed</option>
+
 </select>
+
 </div>
 
 <div class="col-lg-3 col-md-6">
+
 <select name="payment_method" class="form-select">
+
 <option value="">All Methods</option>
+
 <option value="farmhouse" {% if request.GET.payment_method == "farmhouse" %}selected{% endif %}>Pay at Farmhouse</option>
+
 <option value="partial_razorpay" {% if request.GET.payment_method == "partial_razorpay" %}selected{% endif %}>Partial Razorpay</option>
+
 <option value="full_razorpay" {% if request.GET.payment_method == "full_razorpay" %}selected{% endif %}>Full Razorpay</option>
+
 </select>
+
 </div>
 
 <div class="col-lg-2 col-md-6">
+
 <button class="btn btn-warning w-100 fw-semibold">
+
 Filter
+
 </button>
+
 </div>
 
 </form>
-</div>
+
 </div>
 
-
+</div>
 
 <!-- BOOKINGS TABLE -->
+
 <div class="card border-0 shadow-sm">
 
 <div class="table-responsive">
@@ -150,127 +329,255 @@ Filter
 <table class="table table-hover align-middle mb-0 bookings-table">
 
 <thead class="table-light">
+
 <tr>
+
 <th>ID</th>
+
 <th>Farmhouse</th>
+
 <th>Guest</th>
+
 <th>Dates</th>
+
 <th>Payment</th>
+
 <th>Status</th>
+
 <th>Total</th>
+
 <th>Action</th>
+
 </tr>
+
 </thead>
 
 <tbody>
 
 {% for booking in bookings %}
+
 <tr>
 
 <td class="fw-bold">{{booking.booking_id}}</td>
 
 <td class="fw-semibold text-warning">
+
 {{booking.farmhouse.title}}
+
 </td>
 
 <td>
+
 {{booking.guest_name}}<br>
+
 <small class="text-muted">
+
 {{booking.guest_email}}
+
 </small>
+
 </td>
 
-<td>{{booking.check_in}} → {{booking.check_out}}</td>
+<td>
+
+{{booking.check_in}} → {{booking.check_out}}
+
+</td>
 
 <td>
+
 <span class="badge
+
 {% if booking.payment_status == 'paid' %}
+
 bg-success
+
 {% elif booking.payment_status == 'partial' %}
+
 bg-warning text-dark
+
 {% elif booking.payment_status == 'failed' %}
+
 bg-danger
+
 {% else %}
+
 bg-secondary
+
 {% endif %}">
+
 {{booking.payment_status|title}}
+
 </span>
+
 </td>
 
 <td>
+
 <span class="badge
+
 {% if booking.status == 'confirmed' %}
+
 bg-success
+
 {% elif booking.status == 'pending' %}
+
 bg-warning text-dark
+
 {% elif booking.status == 'cancelled' %}
+
 bg-danger
+
 {% else %}
+
 bg-info
+
 {% endif %}">
+
 {{booking.status|title}}
+
 </span>
+
 </td>
 
 <td class="fw-bold text-success">
+
 ₹{{booking.total_amount}}
+
 </td>
 
 <td>
+
 <a href="{% url 'owner_booking_detail' booking.id %}"
+
 class="btn btn-sm btn-outline-dark">
+
 View
+
 </a>
+
 </td>
 
 </tr>
 
 {% empty %}
+
 <tr>
+
 <td colspan="8" class="text-center p-4">
+
 No bookings found.
+
 </td>
+
 </tr>
+
 {% endfor %}
 
 </tbody>
+
 </table>
 
 </div>
+
 </div>
-
-
 
 <!-- PAGINATION -->
-<div class="mt-4 d-flex justify-content-center">
+
+{% if bookings.paginator.count > 0 %}
+
+<p class="text-muted text-center mt-4">
+
+Showing {{ bookings.start_index }} – {{ bookings.end_index }}
+of {{ bookings.paginator.count }} bookings
+
+</p>
+
+<div class="d-flex justify-content-center mt-2">
+
+<nav>
+
+<ul class="pagination">
 
 {% if bookings.has_previous %}
-<a class="btn btn-outline-dark me-2"
-href="?page={{bookings.previous_page_number}}
+
+<li class="page-item">
+
+<a class="page-link"
+
+href="?page={{ bookings.previous_page_number }}
 &search={{request.GET.search}}
 &status={{request.GET.status}}
 &payment_status={{request.GET.payment_status}}
 &payment_method={{request.GET.payment_method}}">
-Prev
+
+<i class="fa-solid fa-angle-left"></i>
+
 </a>
+
+</li>
+
 {% endif %}
 
-<span class="align-self-center mx-2 fw-semibold">
-Page {{bookings.number}}
-</span>
+{% for num in bookings.paginator.page_range %}
+
+{% if bookings.number == num %}
+
+<li class="page-item active">
+
+<span class="page-link">{{ num }}</span>
+
+</li>
+
+{% elif num > bookings.number|add:'-3' and num < bookings.number|add:'3' %}
+
+<li class="page-item">
+
+<a class="page-link"
+
+href="?page={{ num }}
+&search={{request.GET.search}}
+&status={{request.GET.status}}
+&payment_status={{request.GET.payment_status}}
+&payment_method={{request.GET.payment_method}}">
+
+{{ num }}
+
+</a>
+
+</li>
+
+{% endif %}
+
+{% endfor %}
 
 {% if bookings.has_next %}
-<a class="btn btn-outline-dark ms-2"
-href="?page={{bookings.next_page_number}}
+
+<li class="page-item">
+
+<a class="page-link"
+
+href="?page={{ bookings.next_page_number }}
 &search={{request.GET.search}}
 &status={{request.GET.status}}
 &payment_status={{request.GET.payment_status}}
 &payment_method={{request.GET.payment_method}}">
-Next
+
+<i class="fa-solid fa-angle-right"></i>
+
 </a>
+
+</li>
+
 {% endif %}
 
+</ul>
+
+</nav>
+
 </div>
+
+{% endif %}
 
 </div>
 

@@ -8,7 +8,51 @@ from booking.models import BlockedDate ,Booking
 from django import forms
 from farmhouse.models import Farmhouse 
 from booking.models import FarmhousePaymentPolicy
+INPUT_CLASS = (
+    "w-full px-4 py-3 border border-gray-300 rounded-xl "
+    "bg-white text-gray-800 "
+    "focus:outline-none focus:ring-2 focus:ring-orange-400 "
+    "focus:border-orange-400 transition"
+)
 
+TEXTAREA_CLASS = (
+    "w-full px-4 py-3 border border-gray-300 rounded-xl "
+    "bg-white text-gray-800 resize-none "
+    "focus:outline-none focus:ring-2 focus:ring-orange-400 "
+    "focus:border-orange-400 transition"
+)
+# form-control-lg
+INPUT_CLASS = "form-control "
+TEXTAREA_CLASS = "form-control "
+
+class FarmhousePricingForm(forms.ModelForm):
+    class Meta:
+        model = FarmhousePricing
+        fields = [
+            "normal_day_price",
+            "weekend_price",
+            "extra_guest_price",
+        ]
+
+        widgets = {
+            "normal_day_price": forms.NumberInput(attrs={"class": INPUT_CLASS}),
+            "weekend_price": forms.NumberInput(attrs={"class": INPUT_CLASS}),
+            "extra_guest_price": forms.NumberInput(attrs={"class": INPUT_CLASS}),
+        }
+class FarmhouseImageForm(forms.ModelForm):
+    class Meta:
+        model = FarmhouseImage
+        fields = ["image", "is_primary"]
+
+        widgets = {
+            "image": forms.FileInput(attrs={
+                "class": "form-control"
+            }),
+            "is_primary": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
+            }),
+        }
+        
 class FarmhouseForm(forms.ModelForm):
 
     class Meta:
@@ -33,13 +77,26 @@ class FarmhouseForm(forms.ModelForm):
             "bedrooms": forms.NumberInput(attrs={
                 "class": "form-control"
             }),
-            "guest_count": forms.NumberInput(attrs={
-                "class": "form-control"
-            }),
-            "amenities": forms.SelectMultiple(attrs={
-                "class": "form-select",
-                "style": "height:120px"
-            }),
+            # "guest_count": forms.NumberInput(attrs={
+            #     "class": "form-control"
+            # }),
+            # "amenities": forms.SelectMultiple(attrs={
+            #     "class": "form-select",
+            #     "style": "height:120px"
+            # }),
+            "amenities": forms.CheckboxSelectMultiple(),
+            "thingstocarry": forms.CheckboxSelectMultiple(),
+            "properyrules": forms.CheckboxSelectMultiple(),
+            "facilities": forms.CheckboxSelectMultiple(),
+            
+            "guest_count": forms.NumberInput(attrs={"class": "form-control"}),
+            "extra_guest_count": forms.NumberInput(attrs={"class": "form-control"}),
+            "commission_percentage": forms.NumberInput(attrs={"class": "form-control"}),
+            
+            "meta_title": forms.TextInput(attrs={"class": "form-control"}),
+            "meta_description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+            "meta_keywords": forms.TextInput(attrs={"class": "form-control"}),
+            
             "short_description": forms.Textarea(attrs={
                 "class": "form-control",
                 "rows": 10
@@ -54,6 +111,15 @@ class FarmhouseForm(forms.ModelForm):
             "free_cancellation": forms.CheckboxInput(attrs={
                 "class": "form-check-input"
             }),
+            
+                                    # ✅ Check-in / Check-out time
+            "check_in_time": forms.TimeInput(
+                attrs={"class": "form-control", "type": "time"}
+            ),
+            "check_out_time": forms.TimeInput(
+                attrs={"class": "form-control", "type": "time"}
+            ),
+            
         }
 
 

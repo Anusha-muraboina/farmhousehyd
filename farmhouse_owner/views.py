@@ -266,9 +266,18 @@ from farmhouse.models import Farmhouse
 @owner_required
 def owner_farmhouses(request):
 
-    farmhouses = Farmhouse.objects.filter(
-        user=request.user   # 🔥 KEY LINE
-    )
+    # farmhouses = Farmhouse.objects.filter(
+    #     user=request.user   # 🔥 KEY LINE
+    # )
+    farmhouses_qs = Farmhouse.objects.filter(
+        user=request.user
+    ).order_by("-id")
+
+    paginator = Paginator(farmhouses_qs, 10)
+
+    page = request.GET.get("page")
+
+    farmhouses = paginator.get_page(page)
 
     return render(
         request,
@@ -276,53 +285,149 @@ def owner_farmhouses(request):
         {"farmhouses": farmhouses}
     )
     
+# @owner_required
+# def add_farmhouse(request):
+
+#     if request.method == "POST":
+
+#         form = FarmhouseForm(request.POST)
+#         pricing_form = FarmhousePricingForm(request.POST)
+#         if form.is_valid() and pricing_form.is_valid():
+   
+#             farmhouse = form.save(commit=False)
+
+#             farmhouse.user = request.user   # 🔥 AUTO OWNER
+
+#             farmhouse.save()
+#             form.save_m2m()
+
+#             return redirect("owner_farmhouses")
+
+#     else:
+#         form = FarmhouseForm()
+
+#     return render(request, "farmhouse_admin/farmhouse_form.html", {
+#         "form": form
+#     })
+
+# @owner_required
+# def edit_farmhouse(request, id):
+
+#     farmhouse = get_object_or_404(
+#         Farmhouse,
+#         id=id,
+#         user=request.user   # 🔥 SECURITY FILTER
+#     )
+
+#     form = FarmhouseForm(
+#         request.POST or None,
+#         instance=farmhouse
+#     )
+
+#     if form.is_valid():
+#         form.save()
+#         return redirect("owner_farmhouses")
+
+#     return render(request, "farmhouse_admin/farmhouse_form.html", {
+#         "form": form
+#     })
+
+
+
 @owner_required
 def add_farmhouse(request):
 
     if request.method == "POST":
 
         form = FarmhouseForm(request.POST)
+        pricing_form = FarmhousePricingForm(request.POST)
 
-        if form.is_valid():
+        if form.is_valid() and pricing_form.is_valid():
 
             farmhouse = form.save(commit=False)
-
-            farmhouse.user = request.user   # 🔥 AUTO OWNER
-
+            farmhouse.user = request.user   # owner
             farmhouse.save()
+
             form.save_m2m()
+
+            # SAVE PRICING
+            pricing = pricing_form.save(commit=False)
+            pricing.farmhouse = farmhouse
+            pricing.save()
+
+            # SAVE MULTIPLE IMAGES
+            images = request.FILES.getlist("gallery_images")
+
+            for i, img in enumerate(images):
+                FarmhouseImage.objects.create(
+                    farmhouse=farmhouse,
+                    image=img,
+                    is_primary=(i == 0)
+                )
 
             return redirect("owner_farmhouses")
 
     else:
         form = FarmhouseForm()
+        pricing_form = FarmhousePricingForm()
 
-    return render(request, "farmhouse_admin/farmhouse_form.html", {
-        "form": form
-    })
-
+    return render(
+        request,
+        "farmhouse_admin/farmhouse_form.html",
+        {
+            "form": form,
+            "pricing_form": pricing_form
+        }
+    )
 @owner_required
 def edit_farmhouse(request, id):
 
     farmhouse = get_object_or_404(
         Farmhouse,
         id=id,
-        user=request.user   # 🔥 SECURITY FILTER
+        user=request.user
     )
 
-    form = FarmhouseForm(
-        request.POST or None,
-        instance=farmhouse
+    pricing, _ = FarmhousePricing.objects.get_or_create(
+        farmhouse=farmhouse
     )
 
-    if form.is_valid():
-        form.save()
-        return redirect("owner_farmhouses")
+    if request.method == "POST":
 
-    return render(request, "farmhouse_admin/farmhouse_form.html", {
-        "form": form
-    })
+        form = FarmhouseForm(request.POST, instance=farmhouse)
+        pricing_form = FarmhousePricingForm(request.POST, instance=pricing)
 
+        if form.is_valid() and pricing_form.is_valid():
+
+            form.save()
+            pricing_form.save()
+
+            # ADD NEW IMAGES
+            images = request.FILES.getlist("gallery_images")
+
+            for img in images:
+                FarmhouseImage.objects.create(
+                    farmhouse=farmhouse,
+                    image=img
+                )
+
+            return redirect("owner_farmhouses")
+
+    else:
+
+        form = FarmhouseForm(instance=farmhouse)
+        pricing_form = FarmhousePricingForm(instance=pricing)
+
+    return render(
+        request,
+        "farmhouse_admin/farmhouse_form.html",
+        {
+            "form": form,
+            "pricing_form": pricing_form,
+            "farmhouse": farmhouse
+        }
+    )
+    
 @owner_required
 def delete_farmhouse(request, id):
 
@@ -438,6 +543,16 @@ def owner_booking_list(request):
         # farmhouse__in=farmhouses
          farmhouse__user=request.user 
     ).select_related("farmhouse").order_by("-created_at")
+  ###################################
+    # 🔢 BOOKING COUNTS (FOR TOP CARDS)
+    ###################################
+    pending_count = bookings.filter(status="pending").count()
+
+    confirmed_count = bookings.filter(status="confirmed").count()
+
+    cancelled_count = bookings.filter(status="cancelled").count()
+
+    paid_count = bookings.filter(payment_status="paid").count()
 
     ###################################
     # SEARCH FILTER
@@ -479,6 +594,12 @@ def owner_booking_list(request):
         "farmhouse_admin/bookings/list.html",
         {
             "bookings": bookings,
+            
+              # top cards
+            "pending_count": pending_count,
+            "confirmed_count": confirmed_count,
+            "cancelled_count": cancelled_count,
+            "paid_count": paid_count,
         }
     )
 
@@ -707,19 +828,78 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from farmhouse_owner.forms import BlockedDateForm
 
+# @owner_required
+# def owner_blocked_dates_list(request):
+
+#     blocked = BlockedDate.objects.select_related("farmhouse")\
+#         .filter(farmhouse__user=request.user)\
+#         .order_by("-created_at")
+#     return render(
+#         request,
+#         "farmhouse_admin/blocked/list.html",
+#         {"blocked": blocked}
+#     )
+
 @owner_required
 def owner_blocked_dates_list(request):
 
-    blocked = BlockedDate.objects.select_related("farmhouse")\
+    today = timezone.now().date()
+
+    ########################################
+    # BASE QUERY
+    ########################################
+
+    blocked_qs = BlockedDate.objects.select_related("farmhouse")\
         .filter(farmhouse__user=request.user)\
         .order_by("-created_at")
+
+
+    ########################################
+    # STATS FOR TOP CARDS
+    ########################################
+
+    total_blocks = blocked_qs.count()
+
+    active_blocks = blocked_qs.filter(
+        start_date__lte=today,
+        end_date__gte=today
+    ).count()
+
+    upcoming_blocks = blocked_qs.filter(
+        start_date__gt=today
+    ).count()
+
+    expired_blocks = blocked_qs.filter(
+        end_date__lt=today
+    ).count()
+
+
+    ########################################
+    # PAGINATION
+    ########################################
+
+    paginator = Paginator(blocked_qs, 10)
+
+    page = request.GET.get("page")
+
+    blocked = paginator.get_page(page)
+
+
+    ########################################
+    # RENDER
+    ########################################
+
     return render(
         request,
         "farmhouse_admin/blocked/list.html",
-        {"blocked": blocked}
+        {
+            "blocked": blocked,
+            "total_blocks": total_blocks,
+            "active_blocks": active_blocks,
+            "upcoming_blocks": upcoming_blocks,
+            "expired_blocks": expired_blocks,
+        }
     )
-
-
 
 from django.http import JsonResponse
 

@@ -1,116 +1,330 @@
 {% extends "farmhouse_admin/base.html" %}
+
 {% block content %}
 
 <style>
 
-/* ⭐ FORCE HORIZONTAL SCROLL */
+/* ===========================
+TABLE SCROLL
+=========================== */
+
 .table-responsive{
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+overflow-x:auto;
+-webkit-overflow-scrolling:touch;
 }
 
-/* ⭐ DO NOT ALLOW TABLE TO SHRINK */
 .farm-table{
-    min-width: 750px;   /* VERY IMPORTANT */
+min-width:750px;
 }
 
-/* ⭐ PREVENT TEXT WRAP */
 .farm-table th,
 .farm-table td{
-    white-space: nowrap;
+white-space:nowrap;
+padding:14px 16px;
 }
 
-/* ⭐ Better spacing */
-.farm-table td{
-    padding: 14px 16px;
+/* ===========================
+CARD STYLE
+=========================== */
+
+.page-card{
+background:white;
+border-radius:14px;
+box-shadow:0 4px 18px rgba(0,0,0,0.05);
+overflow:hidden;
 }
 
-/* Optional — smoother scroll */
-.table-responsive::-webkit-scrollbar{
-    height:6px;
+/* ===========================
+HEADER
+=========================== */
+
+.page-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px;
 }
 
-.table-responsive::-webkit-scrollbar-thumb{
-    background:#d1d5db;
-    border-radius:10px;
+.page-title{
+font-weight:700;
+color:#1f2937;
+}
+
+/* ===========================
+ADD BUTTON
+=========================== */
+
+.btn-orange{
+background:#ff7a00;
+border:none;
+color:white;
+padding:9px 18px;
+font-weight:600;
+border-radius:8px;
+}
+
+.btn-orange:hover{
+background:#e66a00;
+color:white;
+}
+
+/* ===========================
+STATUS BADGE
+=========================== */
+
+.badge-active{
+background:#16a34a;
+}
+
+.badge-inactive{
+background:#ef4444;
+}
+
+/* ===========================
+TABLE HOVER
+=========================== */
+
+.table tbody tr:hover{
+background:#fffaf5;
+}
+
+/* ===========================
+PAGINATION
+=========================== */
+
+.pagination{
+gap:6px;
+}
+
+.pagination .page-link{
+color:#ff7a00;
+border:1px solid #ffe2c4;
+border-radius:8px;
+font-weight:600;
+padding:8px 14px;
+}
+
+.pagination .page-link:hover{
+background:#fff3e8;
+border-color:#ffb347;
+}
+
+.pagination .active .page-link{
+background:linear-gradient(135deg,#ff7a00,#ffb347);
+border-color:#ff7a00;
+color:white;
+}
+
+.pagination .page-link:focus{
+box-shadow:none;
 }
 
 </style>
 
+<div class="container-fluid px-4 py-4 bg-white">
 
-<div class="container mt-4">
+<!-- HEADER -->
 
-    <div class="d-flex justify-content-between mb-3">
-        <h4 class="fw-bold">My Farmhouses</h4>
-    </div>
+<div class="page-header">
 
-    <div class="card shadow-sm border-0 rounded-4">
+<h4 class="page-title">
 
-        <!-- KEEP THIS -->
-        <div class="table-responsive">
+<i class="fa-solid fa-building text-warning me-2"></i>
 
-            <table class="table align-middle mb-0 farm-table">
+My Farmhouses
 
-                <thead class="table-light">
-                    <tr>
-                        <th style="min-width:180px;">Title</th>
-                        <th style="min-width:160px;">Location</th>
-                        <th style="min-width:120px;">Price</th>
-                        <th style="min-width:130px;">Status</th>
-                        <th style="min-width:180px;">Actions</th>
-                    </tr>
-                </thead>
+</h4>
 
-                <tbody>
-                    {% for farmhouse in farmhouses %}
-                    <tr>
 
-                        <td>{{ farmhouse.title }}</td>
 
-                        <td>{{ farmhouse.location }}</td>
+</div>
 
-                        <td>₹ {{ farmhouse.price_per_day }}</td>
+<div class="page-card">
 
-                        <td>
-                            {% if farmhouse.is_active %}
-                                <span class="badge bg-success">
-                                    Active
-                                </span>
-                            {% else %}
-                                <span class="badge bg-danger">
-                                    Inactive
-                                </span>
-                            {% endif %}
-                        </td>
+<div class="table-responsive">
 
-                        <td>
-                            <div class="d-flex gap-2">
-                                <a href="{% url 'owner_farmhouse_edit' farmhouse.id %}"
-                                   class="btn btn-sm btn-warning">
-                                   Edit
-                                </a>
+<table class="table align-middle mb-0 farm-table">
 
-                                {% comment %} <a href="{% url 'owner_farmhouse_delete' farmhouse.id %}"
-                                   class="btn btn-sm btn-danger">
-                                   Delete
-                                </a> {% endcomment %}
-                            </div>
-                        </td>
+<thead class="table-light">
 
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5" class="text-center text-muted py-4">
-                            No farmhouses added yet.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
+<tr>
 
-            </table>
+<th>Title</th>
+<th>Location</th>
+<th>Price / Day</th>
+<th>Status</th>
+<th>Actions</th>
 
-        </div>
-    </div>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for farmhouse in farmhouses %}
+
+<tr>
+
+<td class="fw-semibold text-warning">
+
+{{ farmhouse.title }}
+
+</td>
+
+<td>
+
+{{ farmhouse.location }}
+
+</td>
+
+<td class="fw-bold">
+
+₹ {{ farmhouse.price_per_day }}
+
+</td>
+
+<td>
+
+{% if farmhouse.is_active %}
+
+<span class="badge badge-active">
+
+Active
+
+</span>
+
+{% else %}
+
+<span class="badge badge-inactive">
+
+Inactive
+
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+<div class="d-flex gap-2">
+
+<a href="{% url 'owner_farmhouse_edit' farmhouse.id %}"
+class="btn btn-sm btn-warning">
+
+Edit
+
+</a>
+
+</div>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="5" class="text-center py-4 text-muted">
+
+No farmhouses added yet.
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- PAGINATION -->
+
+{% if farmhouses.paginator.count > 0 %}
+
+<p class="text-muted text-center mt-4">
+
+Showing {{ farmhouses.start_index }} – {{ farmhouses.end_index }}
+of {{ farmhouses.paginator.count }} farmhouses
+
+</p>
+
+<div class="d-flex justify-content-center">
+
+<nav>
+
+<ul class="pagination">
+
+{% if farmhouses.has_previous %}
+
+<li class="page-item">
+
+<a class="page-link"
+href="?page={{ farmhouses.previous_page_number }}">
+
+<i class="fa-solid fa-angle-left"></i>
+
+</a>
+
+</li>
+
+{% endif %}
+
+{% for num in farmhouses.paginator.page_range %}
+
+{% if farmhouses.number == num %}
+
+<li class="page-item active">
+
+<span class="page-link">{{ num }}</span>
+
+</li>
+
+{% elif num > farmhouses.number|add:'-3' and num < farmhouses.number|add:'3' %}
+
+<li class="page-item">
+
+<a class="page-link"
+href="?page={{ num }}">
+
+{{ num }}
+
+</a>
+
+</li>
+
+{% endif %}
+
+{% endfor %}
+
+{% if farmhouses.has_next %}
+
+<li class="page-item">
+
+<a class="page-link"
+href="?page={{ farmhouses.next_page_number }}">
+
+<i class="fa-solid fa-angle-right"></i>
+
+</a>
+
+</li>
+
+{% endif %}
+
+</ul>
+
+</nav>
+
+</div>
+
+{% endif %}
 
 </div>
 
