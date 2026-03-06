@@ -291,8 +291,24 @@ class HomeAPIView(APIView):
         know_whoweare = AboutWhoWeAre.objects.filter(is_active = True)
         selected_location = request.GET.get("location")
 
+
+        search = request.GET.get("search")
+
+        # location filter
         if selected_location:
             farmhouses = farmhouses.filter(location__slug=selected_location)
+
+        # search filter
+        if search:
+            
+            farmhouses = farmhouses.filter(
+                Q(title__icontains=search) |
+                Q(location__name__icontains=search)
+            )
+
+        
+        # if selected_location:
+        #     farmhouses = farmhouses.filter(location__slug=selected_location)
 
         latest_blogs = Blog.objects.filter(
             is_published=True

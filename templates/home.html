@@ -61,7 +61,47 @@
 .plank.active {
   background: linear-gradient(145deg, #fff1d0, #e9c38a);
 }
+
+
+
+/* ===== MOBILE LOCATION SCROLL GRID ===== */
+/* MOBILE 2x2 HORIZONTAL SCROLL */
+@media (max-width:768px){
+
+  .location-bar{
+    display:grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(2,auto);
+    grid-auto-columns: 50%;
+    gap:10px;
+
+    overflow-x:auto;
+    overflow-y:hidden;
+
+      padding-top:10px;   /* top gap */
+    padding-bottom:10px;
+
+    scroll-snap-type:x mandatory;
+    width:100%;
+  }
+
+  .location-bar::-webkit-scrollbar{
+    height:6px;
+  }
+
+  .location-bar::-webkit-scrollbar-thumb{
+    background:#aaa;
+    border-radius:10px;
+  }
+
+  .wood-item{
+    scroll-snap-align:start;
+  }
+
+}
+
 </style>
+
 
 <!-- ================= HERO ================= -->
 <section class="relative  md:h-[600px]">
@@ -75,18 +115,16 @@
 
   <!-- CONTENT -->
   <div class="relative h-full flex items-center justify-center py-8 text-center text-white bg-black">
-    <div class="space-y-4 w-full">
+    <div class="space-y-4 px-2 md:px-0 w-full">
 
       <h1 class="md:text-4xl text-xl font-bold text-white-600 pb-2 md:pb-8 ">
         Find the Best Farmhouses in Hyderabad  
       </h1>
       <!-- SEARCH -->
-      <form action="/farmhouses/" method="GET"
+      {% comment %} <form action="/farmhouses/" method="GET"
         class="bg-white rounded-full shadow-xl  px-1 md:px-4 py-2 max-w-xl mx-auto">
         <div class="flex gap-3">
-          {% comment %} <input name="search" placeholder="Search farmhouses..."
-            class="flex-1 py-1 md:py-2 outline-none text-gray-700"> {% endcomment %}
-
+       
             <input name="search"
        value="{{ request.GET.search }}"
        placeholder="Search farmhouses..."
@@ -96,15 +134,47 @@
             Search
           </button>
         </div>
-      </form>
+      </form> {% endcomment %}
 
+
+      <!-- SEARCH -->
+<form action="/farmhouses/" method="GET"
+      class="bg-white rounded-full shadow-xl px-2 md:px-4 py-2 max-w-xl mx-auto relative">
+
+  <div class="flex gap-3 items-center">
+
+    <!-- SEARCH INPUT -->
+    <input id="searchInput"
+           name="search"
+           value="{{ request.GET.search }}"
+           placeholder="Search farmhouses or locations..."
+           autocomplete="off"
+           class="flex-1 text-sm py-1 md:py-2 outline-none text-gray-700">
+
+    <button class="bg-primary text-white text-sm px-3 md:px-4  py-1 md:py-2 rounded-full">
+      Search
+    </button>
+
+  </div>
+
+  <!-- DROPDOWN -->
+  <div id="searchDropdown"
+       class="absolute left-0 right-0 top-full bg-white shadow-xl rounded-xl mt-2 hidden z-50 max-h-64 overflow-y-auto text-left">
+  </div>
+
+</form>
       <!-- LADDER TOP STICK -->
       <div class="ladder-top"></div>
 
       <!-- LOCATIONS -->
-      <div id="location-bar"
-        class="flex flex-wrap justify-center gap-3 md:gap-5">
+       {% comment %} <div id="location-bar"
+        class="flex flex-wrap justify-center gap-3 md:gap-5">  {% endcomment %}
 
+        <div id="location-bar"
+class="location-bar md:flex md:flex-wrap md:justify-center md:gap-5  px-2">
+
+        {% comment %} <div id="location-bar"
+  class="location-scroll flex md:flex-wrap gap-3 md:gap-5 justify-start md:justify-center overflow-x-auto md:overflow-visible px-2"> {% endcomment %}
         <div class="wood-item">
           <span class="rope"></span>
           <a href="/" class="block plank active">All Farmhouses</a>
@@ -117,7 +187,7 @@
 
   <!-- ARROWS -->
   <button onclick="prevSlide()"
-    class="hidden md:block  absolute left-6 top-1/2 bg-orange-500 px-3 py-2 rounded-full text-white  hover:bg-orange-700">
+    class=" hidden md:block absolute left-6 top-1/2 bg-orange-500 px-3 py-2 rounded-full text-white  hover:bg-orange-700">
     ❮
   </button>
 
@@ -408,6 +478,10 @@ const params = new URLSearchParams(window.location.search);
 const locationParam = params.get("location");
 const searchParam = params.get("search");
 
+
+let locationsList = [];
+let farmhousesList = [];
+
 /* ================= API CALL ================= */
 axios.get("/api/home/", {
   params: {
@@ -419,6 +493,10 @@ axios.get("/api/home/", {
 
   const data = res.data;
 
+
+
+  locationsList = data.locations || [];
+  farmhousesList = data.farmhouses || [];
   /* ================= BANNERS ================= */
   const slider = document.getElementById("slider");
   slider.innerHTML = `<div class="absolute inset-0 bg-bloack border-t"></div>`;
@@ -457,25 +535,25 @@ axios.get("/api/home/", {
       </div>`;
   }); {% endcomment %}
 
-
 data.locations.forEach(loc => {
 
-  let isActive = false;
+  let activeClass = "";
 
+  // if URL location param exists
   if (locationParam === loc.slug) {
-      isActive = true;
+      activeClass = "active";
   }
 
-  // if search contains location name
+  // if user searched location name
   if (searchParam && loc.name.toLowerCase().includes(searchParam.toLowerCase())) {
-      isActive = true;
+      activeClass = "active";
   }
 
   bar.innerHTML += `
     <div class="wood-item">
       <span class="rope"></span>
       <a href="/?location=${loc.slug}"
-         class="block plank ${isActive ? 'active' : ''}">
+         class="block plank ${activeClass}">
         ${loc.name}
       </a>
     </div>
@@ -499,6 +577,101 @@ data.services.forEach(service => {
       <p class="text-gray-600 text-sm mt-2">${service.description}</p>
     </div>
   `;
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ================= SEARCH DROPDOWN ================= */
+
+const searchInput = document.getElementById("searchInput");
+const dropdown = document.getElementById("searchDropdown");
+
+function showDefaultLocations(){
+
+  dropdown.innerHTML = "";
+
+  locationsList.slice(0,6).forEach(loc => {
+
+    dropdown.innerHTML += `
+      <a href="/?location=${loc.slug}"
+         class="block px-4 py-2 hover:bg-gray-100 text-black">
+         <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
+     
+          ${loc.name}
+      </a>
+    `;
+
+  });
+
+  dropdown.classList.remove("hidden");
+}
+
+searchInput.addEventListener("focus", showDefaultLocations);
+
+searchInput.addEventListener("input", function(){
+
+  const value = this.value.toLowerCase().trim();
+
+  dropdown.innerHTML = "";
+
+  if(value === ""){
+      showDefaultLocations();
+      return;
+  }
+
+  const locationMatches = locationsList.filter(loc =>
+      loc.name.toLowerCase().includes(value)
+  );
+
+  const farmhouseMatches = farmhousesList.filter(f =>
+      f.title.toLowerCase().includes(value)
+  );
+
+  locationMatches.forEach(loc => {
+
+    dropdown.innerHTML += `
+      <a href="/?location=${loc.slug}"
+         class="block px-4 py-2 hover:bg-gray-100 text-black">
+           <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
+     
+          ${loc.name}
+      </a>
+    `;
+
+  });
+
+  farmhouseMatches.slice(0,5).forEach(f => {
+
+    dropdown.innerHTML += `
+      <a href="/farmhouse/${f.slug}/"
+         class="block px-4 py-2 hover:bg-gray-100 text-black">
+           <i data-lucide="home" class="w-4 h-4 text-primary"></i>
+          ${f.title}
+      </a>
+    `;
+
+  });
+
+  dropdown.classList.remove("hidden");
+
+});
+
+document.addEventListener("click", function(e){
+
+  if(!searchInput.contains(e.target) && !dropdown.contains(e.target)){
+      dropdown.classList.add("hidden");
+  }
+
 });
 
 

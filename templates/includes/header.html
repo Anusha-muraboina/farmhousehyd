@@ -148,15 +148,97 @@ My Bookings
 {% else %}
 
 <!-- ================= LOGIN BUTTON ================= -->
-<a href="{% url 'login-page' %}"
-   class="border-2 border-primary text-primary px-6 py-2 rounded-full
+{% comment %} <a href="{% url 'login-page' %}"
+   class="border-2 border-primary text-primary px-2 md:px-6 py-2 rounded-full
           hover:bg-primary hover:text-white transition font-medium">
-  Login
+  <i data-lucide="log-in" class="w-4 h-4"></i>
+
+  
 </a>
+<div class="flex justify-center">
+  <button onclick="openWhatWeDoModal()"
+          class="border-2 border-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
+
+    <i data-lucide="briefcase" class="w-4 h-4 text-orange-600"></i>
+
+  </button>
+</div> {% endcomment %}
+
+
+
+
+
+<div class="flex items-center gap-3">
+
+  <!-- LOGIN -->
+  <a href="{% url 'login-page' %}"
+     class="border-2 border-primary text-primary px-2  py-2 rounded-full
+            hover:bg-primary hover:text-white transition font-medium
+            flex items-center justify-center">
+
+      <i data-lucide="log-in" class="w-4 h-4"></i>
+
+  </a>
+
+  <!-- WHAT WE DO -->
+  <button onclick="openWhatWeDoModal()"
+          class="border-2 border-primary p-2 rounded-full text-orange-600
+                 hover:bg-primary hover:text-white transition
+                 flex items-center justify-center">
+
+      <i data-lucide="briefcase" class="w-4 h-4 "></i>
+
+  </button>
+
+</div>
+
 
 {% endif %}
 
 
+
+<!-- WHAT WE DO MODAL -->
+<div id="whatWeDoModal"
+     class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+
+  <div class="bg-white rounded-2xl shadow-xl p-6 max-w-lg w-full relative">
+
+    <!-- Close button -->
+    <button onclick="closeWhatWeDoModal()"
+            class="absolute top-3 right-3 text-gray-500 hover:text-black">
+      ✕
+    </button>
+
+    <h3 class="text-xl font-bold mb-4 text-center">What We Do</h3>
+
+    <ul class="space-y-3 text-sm text-gray-700">
+
+      <li>🏡 <b>All in One Place</b> – Explore the best farmhouses across Hyderabad location-wise on a single platform.</li>
+
+      <li>💰 <b>Clear Pricing</b> – View transparent prices directly on our website—no hidden charges.</li>
+
+      <li>⏳ <b>Time-Saving</b> – Compare and book easily in minutes.</li>
+
+      <li>📞 <b>Full Transparency</b> – After booking, we share the owner’s contact details so you can connect personally.</li>
+
+      <li>🤝 <b>Trusted Bridge</b> – We connect guests and farmhouse owners with verified listings and a smooth experience.</li>
+
+    </ul>
+
+  </div>
+</div>
+
+
+<script>
+function openWhatWeDoModal(){
+  document.getElementById("whatWeDoModal").classList.remove("hidden");
+  document.getElementById("whatWeDoModal").classList.add("flex");
+}
+
+function closeWhatWeDoModal(){
+  document.getElementById("whatWeDoModal").classList.add("hidden");
+}
+</script>
 
                 <button id="mobileMenuBtn" class="lg:hidden p-2">
                     <i data-lucide="menu" class="w-6 h-6"></i>
