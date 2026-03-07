@@ -249,11 +249,18 @@
             Edit Booking
         </a>
 
-        <a href="/bookings/invoice/${b.booking_id}/"
+
+       <a href="{% url 'admin_view_invoice' booking.booking_id %}"
+class="btn btn-danger text-white">
+<i class="fa-solid fa-file-invoice"></i>
+Invoice
+</a>
+
+        {% comment %} <a href="/bookings/invoice/${b.booking_id}/"
 class="btn btn-danger text-white">
 View Invoice
-</a>
-    </div>
+</a> {% endcomment %}
+    </div>  
 
 </div>
 

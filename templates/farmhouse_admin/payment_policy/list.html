@@ -3,121 +3,139 @@
 
 <div class="container-fluid mt-4">
 
-    <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <div>
-            <h4 class="fw-bold mb-1">Payment Policies</h4>
-            <small class="text-muted">Manage farmhouse payment settings</small>
-        </div>
+<!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
 
-        <a href="{% url 'owner_payment_policy_create' %}"
-           class="btn btn-warning text-white px-4 shadow-sm">
-            <i class="fa-solid fa-plus me-2"></i> Add Policy
-        </a>
+    <div>
+        <h4 class="fw-bold mb-1">Payment Policies</h4>
+        {% comment %} <small class="text-muted">
+            Manage payment options for each farmhouse
+        </small> {% endcomment %}
     </div>
 
+    <a href="{% url 'owner_payment_policy_create' %}"
+       class="btn btn-warning text-white px-4 shadow-sm rounded-pill">
+        <i class="fa-solid fa-plus me-2"></i>
+        Add Policy
+    </a>
 
-    <!-- CARD -->
-    <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body p-0">
+</div>
 
-            {% if policies %}
 
-            <!-- ✅ MOBILE SCROLL WRAPPER -->
-            <div class="policy-scroll">
-                <table class="table align-middle mb-0 policy-table">
+<!-- CARD -->
+<div class="card border-0 shadow-sm rounded-4">
 
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="ps-4">Farmhouse</th>
-                            <th>Pay at Farmhouse</th>
-                            <th>Partial Payment</th>
-                            <th>Full Payment</th>
-                            <th class="text-end pe-4">Actions</th>
-                        </tr>
-                    </thead>
+<div class="card-body p-0">
 
-                    <tbody>
-                        {% for policy in policies %}
-                        <tr class="hover-row">
+<div class="policy-scroll">
 
-                            <td class="ps-4 fw-semibold">
-                                {{ policy.farmhouse }}
-                            </td>
+<table class="table align-middle mb-0 policy-table">
 
-                            <td>
-                                {% if policy.allow_pay_at_farmhouse %}
-                                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">
-                                        Enabled
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">
-                                        Disabled
-                                    </span>
-                                {% endif %}
-                            </td>
+<thead>
+<tr>
+<th class="ps-4">Farmhouse</th>
+<th class="text-center">Pay at Farmhouse</th>
+<th class="text-center">Partial</th>
+<th class="text-center">Full</th>
+<th class="text-end pe-4">Actions</th>
+</tr>
+</thead>
 
-                            <td>
-                                {% if policy.allow_partial_payment %}
-                                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">
-                                        Enabled
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">
-                                        Disabled
-                                    </span>
-                                {% endif %}
-                            </td>
+<tbody>
 
-                            <td>
-                                {% if policy.allow_full_payment %}
-                                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">
-                                        Enabled
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">
-                                        Disabled
-                                    </span>
-                                {% endif %}
-                            </td>
+{% if policies %}
 
-                            <td class="text-end pe-4">
-                                <a href="{% url 'payment_policy_update' policy.id %}"
-                                   class="btn btn-sm btn-outline-warning me-2">
-                                    <i class="fa-solid fa-pen"></i> Edit 
-                                </a>
+{% for policy in policies %}
 
-                                <a href="{% url 'payment_policy_delete' policy.id %}"
-                                   class="btn btn-sm btn-outline-danger"
-                                   onclick="return confirm('Are you sure you want to delete this policy?');">
-                                    <i class="fa-solid fa-trash"></i> Delete
-                                </a>
-                            </td>
+<tr class="policy-row">
 
-                        </tr>
-                        {% endfor %}
-                    </tbody>
+<td class="ps-4 fw-semibold">
+<i class="fa-solid fa-house text-warning me-2"></i>
+{{ policy.farmhouse }}
+</td>
 
-                </table>
-            </div>
+<td class="text-center">
+{% if policy.allow_pay_at_farmhouse %}
+<span class="status success">
+<i class="fa-solid fa-check"></i> Enabled
+</span>
+{% else %}
+<span class="status danger">
+<i class="fa-solid fa-xmark"></i> Disabled
+</span>
+{% endif %}
+</td>
 
-            {% else %}
+<td class="text-center">
+{% if policy.allow_partial_payment %}
+<span class="status success">
+<i class="fa-solid fa-check"></i> Enabled
+</span>
+{% else %}
+<span class="status danger">
+<i class="fa-solid fa-xmark"></i> Disabled
+</span>
+{% endif %}
+</td>
 
-            <!-- EMPTY STATE -->
-            <div class="text-center py-5">
-                <i class="fa-solid fa-file-circle-xmark fa-3x text-muted mb-3"></i>
-                <h6 class="fw-semibold">No Payment Policies Found</h6>
-                <p class="text-muted small">Create a policy to manage payment options.</p>
-                <a href="{% url 'payment_policy_create' %}"
-                   class="btn btn-warning text-white px-4 mt-2">
-                   Add First Policy
-                </a>
-            </div>
+<td class="text-center">
+{% if policy.allow_full_payment %}
+<span class="status success">
+<i class="fa-solid fa-check"></i> Enabled
+</span>
+{% else %}
+<span class="status danger">
+<i class="fa-solid fa-xmark"></i> Disabled
+</span>
+{% endif %}
+</td>
 
-            {% endif %}
+<td class="text-end pe-4">
 
-        </div>
-    </div>
+<a href="{% url 'payment_policy_update' policy.id %}"
+   class="btn btn-sm btn-outline-warning me-2">
+   <i class="fa-solid fa-pen"></i>
+</a>
+
+<a href="{% url 'payment_policy_delete' policy.id %}"
+   class="btn btn-sm btn-outline-danger"
+   onclick="return confirm('Delete this policy?')">
+   <i class="fa-solid fa-trash"></i>
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+{% else %}
+
+<tr>
+<td colspan="5" class="text-center py-5 text-muted">
+
+<i class="fa-solid fa-file-circle-xmark fa-2x mb-2"></i>
+
+<p class="mt-2 mb-2">No Payment Policies Found</p>
+
+<a href="{% url 'owner_payment_policy_create' %}"
+   class="btn btn-warning btn-sm text-white px-3">
+   Add First Policy
+</a>
+
+</td>
+</tr>
+
+{% endif %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+</div>
 
 </div>
 
@@ -125,76 +143,90 @@
 
 <style>
 
-/* =====================================
-DESKTOP — NORMAL TABLE
-(No Scroll)
-===================================== */
-
-.policy-scroll{
-    width:100%;
-    overflow-x:visible;
-}
+/* TABLE */
 
 .policy-table{
-    width:100%;
+width:100%;
 }
 
-/* Keep text in one line */
-.policy-table th,
+.policy-table th{
+background:#fafafa;
+font-size:14px;
+font-weight:600;
+padding:16px;
+border-bottom:1px solid #eee;
+white-space:nowrap;
+}
+
 .policy-table td{
-    white-space:nowrap;
+padding:16px;
+vertical-align:middle;
+border-bottom:1px solid #f2f2f2;
+white-space:nowrap;
 }
 
+/* HOVER ROW */
 
-/* =====================================
-🔥 MOBILE — HORIZONTAL SCROLL
-===================================== */
+.policy-row:hover{
+background:#fff8ef;
+transition:.2s;
+}
+
+/* STATUS BADGES */
+
+.status{
+padding:6px 14px;
+border-radius:20px;
+font-size:13px;
+font-weight:600;
+display:inline-flex;
+align-items:center;
+gap:6px;
+}
+
+.status.success{
+background:#e8f8ee;
+color:#1f9d55;
+}
+
+.status.danger{
+background:#fdecec;
+color:#e3342f;
+}
+
+/* MOBILE SCROLL */
+
+.policy-scroll{
+width:100%;
+overflow-x:auto;
+-webkit-overflow-scrolling:touch;
+}
 
 @media (max-width:768px){
 
-.policy-scroll{
-    overflow-x:auto;
-    -webkit-overflow-scrolling:touch;
-}
-
-/* 🔥 THIS FORCES SCROLL */
 .policy-table{
-    min-width:850px;
+min-width:850px;
 }
 
 }
 
+/* BUTTONS */
 
-/* =====================================
-IMPORTANT FIX
-(Admin layouts often block scroll)
-===================================== */
-
-.card,
-.container-fluid{
-    overflow:visible !important;
+.btn-outline-warning,
+.btn-outline-danger{
+border-radius:8px;
+padding:6px 10px;
 }
 
+/* SCROLLBAR */
 
-/* Hover Effect */
-.hover-row:hover{
-    background:#fff8ef;
-    transition:.2s;
-}
-
-.badge{
-    font-size:13px;
-}
-
-
-/* Smooth Scrollbar */
 .policy-scroll::-webkit-scrollbar{
-    height:6px;
+height:6px;
 }
 
 .policy-scroll::-webkit-scrollbar-thumb{
-    background:#d1d5db;
-    border-radius:20px;
+background:#d1d5db;
+border-radius:20px;
 }
 
 </style>

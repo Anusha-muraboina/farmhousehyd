@@ -1,29 +1,35 @@
 {% extends "farmhouse_admin/base.html" %}
 {% block content %}
 
-<div class="container-fluid px-4 py-4">
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-<!-- ⭐ HEADER -->
-<div class="d-flex justify-content-between align-items-center mb-4">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <div>
-        <h2 class="fw-bold mb-1">
-            {% if form.instance.pk %}
-                Edit Coupon
-            {% else %}
-                Create Coupon
-            {% endif %}
-        </h2>
 
-        <small class="text-muted">
-            Offer discounts to attract more bookings.
-        </small>
-    </div>
+<div class="container-fluid px-4 py-4 bg-white">
 
-    <a href="{% url 'owner_coupon_list' %}"
-       class="btn btn-light shadow-sm back-btn">
-        ← Back
-    </a>
+<!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+
+<div>
+<h3 class="fw-bold mb-1">
+{% if form.instance.pk %}
+Edit Coupon
+{% else %}
+Create Coupon
+{% endif %}
+</h3>
+
+<small class="text-muted">
+Offer discounts to attract more bookings
+</small>
+
+</div>
+
+<a href="{% url 'owner_coupon_list' %}" class="btn btn-light back-btn">
+← Back
+</a>
 
 </div>
 
@@ -32,145 +38,153 @@
 <form method="post">
 {% csrf_token %}
 
-<div class="row g-4">
-
-    <!-- LEFT -->
-    <div class="col-lg-8">
-
-        <div class="custom-card">
-
-            <h5 class="section-title">
-                Coupon Information
-            </h5>
-
-            {% if form.errors %}
-            <div class="alert alert-danger">
-                Please fix the errors below.
-            </div>
-            {% endif %}
-
-            <div class="row g-3">
-
-                <div class="col-md-6 ">
-                    <label class="label">Coupon Title</label>
-                    {{form.title}}
-                </div>
-
-                <div class="col-md-6">
-                    <label class="label">Coupon Code</label>
-                    {{form.code}}
-                </div>
-
-                <div class="col-md-6">
-                    <label class="label">Discount Type</label>
-                    {{form.discount_type}}
-                </div>
-
-                <div class="col-md-6">
-                    <label class="label">Discount Value</label>
-                    {{form.discount_value}}
-                </div>
-
-            </div>
-
-        </div>
 
 
-        <!-- BOOKING RULES -->
-        <div class="custom-card mt-4">
+<!-- STEP 1 -->
+<div id="step1">
 
-            <h5 class="section-title">
-                Booking Rules
-            </h5>
+<div class="custom-card">
 
-            <div class="row g-3">
+<h5 class="section-title">Coupon Information</h5>
 
-                <div class="col-md-6">
-                    <label class="label">
-                        Minimum Booking Amount
-                    </label>
-                    {{form.min_booking_amount}}
-                </div>
+<div class="row g-3">
 
-                <div class="col-md-6">
-                    <label class="label">
-                        Maximum Discount
-                    </label>
-                    {{form.max_discount_amount}}
-                </div>
+<div class="col-md-6">
+<label class="label">Coupon Title</label>
+{{form.title}}
+</div>
 
-                <div class="col-md-6">
-                    <label class="label">
-                        Start Date
-                    </label>
-                    {{form.start_date}}
-                </div>
+<div class="col-md-6">
+<label class="label">Coupon Code</label>
+{{form.code}}
+</div>
 
-                <div class="col-md-6">
-                    <label class="label">
-                        End Date
-                    </label>
-                    {{form.end_date}}
-                </div>
+<div class="col-md-6">
+<label class="label">Discount Type</label>
+{{form.discount_type}}
+</div>
 
-            </div>
+<div class="col-md-6">
+<label class="label">Discount Value</label>
+{{form.discount_value}}
+</div>
 
-        </div>
+</div>
 
-    </div>
+<div class="text-end mt-4">
+<button type="button" onclick="nextStep(1)" class="btn btn-warning">
+Next →
+</button>
+</div>
 
-
-
-    <!-- RIGHT -->
-    <div class="col-lg-4">
-
-        <!-- STATUS -->
-        <div class="custom-card">
-
-            <h5 class="section-title">
-                Coupon Status
-            </h5>
-
-            <label class="label">
-                Usage Limit
-            </label>
-
-            {{form.usage_limit}}
-
-            <div class="form-check modern-check mt-3">
-                {{form.is_active}}
-                <label class="form-check-label">
-                    Active Coupon
-                </label>
-            </div>
-
-        </div>
-
-
-        <!-- TIP BOX -->
-        <div class="tip-card mt-4">
-
-            💡 <b>Pro Tip:</b><br>
-            Percentage coupons convert better than flat discounts.
-
-        </div>
-
-    </div>
+</div>
 
 </div>
 
 
 
-<!-- ⭐ SAVE BAR -->
+<!-- STEP 2 -->
+<div id="step2" style="display:none">
+
+<div class="custom-card">
+
+<h5 class="section-title">Booking Rules</h5>
+
+<div class="row g-3">
+
+<div class="col-md-6">
+<label class="label">Minimum Booking Amount</label>
+{{form.min_booking_amount}}
+</div>
+
+<div class="col-md-6">
+<label class="label">Maximum Discount</label>
+{{form.max_discount_amount}}
+</div>
+
+<div class="col-md-6">
+<label class="label">Start Date</label>
+{{form.start_date}}
+</div>
+
+<div class="col-md-6">
+<label class="label">End Date</label>
+{{form.end_date}}
+</div>
+
+</div>
+
+<div class="d-flex justify-content-between mt-4">
+
+<button type="button" onclick="prevStep(2)" class="btn btn-outline-secondary">
+← Prev
+</button>
+
+<button type="button" onclick="nextStep(2)" class="btn btn-warning">
+Next →
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- STEP 3 -->
+<div id="step3" style="display:none">
+
+<div class="row g-4">
+
+<div class="col-lg-8">
+
+<div class="custom-card">
+
+<h5 class="section-title">Coupon Status</h5>
+
+<label class="label">Usage Limit</label>
+
+{{form.usage_limit}}
+
+<div class="form-check modern-check mt-3">
+{{form.is_active}}
+<label class="form-check-label">
+Active Coupon
+</label>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="col-lg-4">
+
+<div class="tip-card">
+
+💡 <b>Pro Tip:</b><br>
+Percentage coupons convert better than flat discounts.
+
+</div>
+
+</div>
+
+</div>
+
+
+
 <div class="save-bar">
 
-    <span class="text-muted">
-        Double-check details before saving.
-    </span>
+<button type="button" onclick="prevStep(3)" class="btn btn-outline-secondary">
+← Prev
+</button>
 
-    <button class="btn btn-warning save-btn">
-        Save Coupon
-    </button>
+<button class="btn btn-warning save-btn">
+Save Coupon
+</button>
+
+</div>
 
 </div>
 
@@ -180,82 +194,161 @@
 
 
 
-<!-- ⭐⭐⭐ MODERN CSS -->
+<!-- STEP NAVIGATION -->
+
+<script>
+
+function nextStep(n){
+
+document.getElementById("step"+n).style.display="none"
+document.getElementById("step"+(n+1)).style.display="block"
+
+window.scrollTo({top:0,behavior:"smooth"})
+
+}
+
+function prevStep(n){
+
+document.getElementById("step"+n).style.display="none"
+document.getElementById("step"+(n-1)).style.display="block"
+
+window.scrollTo({top:0,behavior:"smooth"})
+
+}
+
+</script>
+
+
+
+<!-- DATE PICKER -->
+
+<script>
+
+flatpickr("#id_start_date",{
+dateFormat:"Y-m-d"
+})
+
+flatpickr("#id_end_date",{
+dateFormat:"Y-m-d"
+})
+
+</script>
+
+
+
 <style>
 
+/* BUTTON */
+
 .back-btn{
-    border-radius:10px;
-    padding:8px 18px;
+border-radius:10px;
+padding:8px 18px;
 }
+
 
 /* CARD */
+
 .custom-card{
-    background:#fff;
-    border-radius:16px;
-    padding:26px;
-    box-shadow:0 6px 20px rgba(0,0,0,.05);
+background:#fff;
+border-radius:16px;
+padding:26px;
+box-shadow:0 6px 20px rgba(0,0,0,.05);
 }
 
-/* TITLES */
+
+/* TITLE */
+
 .section-title{
-    font-weight:700;
-    margin-bottom:20px;
+font-weight:700;
+margin-bottom:20px;
 }
+
 
 /* LABEL */
+
 .label{
-    font-weight:600;
-    margin-bottom:6px;
-    display:block;
+font-weight:600;
+margin-bottom:6px;
+display:block;
 }
 
-/* INPUTS */
-input, textarea, select{
-    border-radius:10px !important;
-    padding:10px !important;
+
+/* INPUT STYLE */
+
+input,
+select,
+textarea{
+width:100% !important;
+border-radius:10px !important;
+padding:10px 12px !important;
+border:1px solid #ddd;
+font-size:14px;
 }
 
-/* ORANGE FOCUS */
+
+/* FOCUS */
+
 input:focus,
-textarea:focus,
-select:focus{
-    border-color:#ff7a00 !important;
-    box-shadow:0 0 0 3px rgba(255,122,0,.15) !important;
+select:focus,
+textarea:focus{
+border-color:#ff7a00 !important;
+box-shadow:0 0 0 3px rgba(255,122,0,.15) !important;
 }
+
 
 /* CHECKBOX */
+
 .modern-check{
-    display:flex;
-    gap:10px;
-    align-items:center;
-    font-weight:500;
+display:flex;
+gap:10px;
+align-items:center;
 }
+
+.modern-check input{
+width:auto !important;
+}
+
 
 /* TIP */
+
 .tip-card{
-    background:#fff4e5;
-    border-left:5px solid #ff7a00;
-    padding:18px;
-    border-radius:12px;
-    font-size:14px;
+background:#fff4e5;
+border-left:5px solid #ff7a00;
+padding:18px;
+border-radius:12px;
+font-size:14px;
 }
+
 
 /* SAVE BAR */
+
 .save-bar{
-    margin-top:30px;
-    background:#fff;
-    padding:18px 24px;
-    border-radius:16px;
-    box-shadow:0 -4px 16px rgba(0,0,0,.05);
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+margin-top:30px;
+background:#fff;
+padding:18px 24px;
+border-radius:16px;
+box-shadow:0 -4px 16px rgba(0,0,0,.05);
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
+
 .save-btn{
-    padding:12px 34px;
-    border-radius:12px;
-    font-weight:600;
+padding:12px 34px;
+border-radius:12px;
+font-weight:600;
+}
+
+
+/* MOBILE */
+
+@media (max-width:768px){
+
+.custom-card{
+padding:18px;
+}
+
 }
 
 </style>

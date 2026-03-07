@@ -453,8 +453,28 @@ def farmhouse_edit(request, id):
         "pricing_form": pricing_form,
         "farmhouse": farmhouse
     })
+from booking.models import Invoice
+@superadmin_required
+def admin_view_invoice(request, booking_id):
 
+    booking = get_object_or_404(
+        Booking.objects.select_related("farmhouse", "user"),
+        booking_id=booking_id
+    )
 
+    invoice, created = Invoice.objects.get_or_create(
+        booking=booking,
+        defaults={"user": booking.user}
+    )
+
+    return render(
+        request,
+        "emails/invoice.html",
+        {
+            "booking": booking,
+            "invoice": invoice
+        }
+    )
 
 # ===============================
 # DELETE

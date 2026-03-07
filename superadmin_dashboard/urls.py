@@ -179,4 +179,10 @@ urlpatterns = [
     path("seo/<int:pk>/delete/", views.seo_delete, name="seo_delete"),
 
 
+    path(
+        "admin/invoice/<str:booking_id>/",
+        views.admin_view_invoice,
+        name="admin_view_invoice"
+    ),
+
 ]
