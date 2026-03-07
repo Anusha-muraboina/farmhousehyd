@@ -100,7 +100,7 @@ class FarmhouseForm(forms.ModelForm):
             "free_cancellation": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "is_featured": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-            
+            "map_embed" :  forms.TextInput(attrs={"class": "form-control"}),
             
             
                         # ✅ Check-in / Check-out time

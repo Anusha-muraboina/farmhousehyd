@@ -195,6 +195,35 @@
 ::-webkit-scrollbar-thumb:hover {
     background: #ea580c;
 }
+
+/* MAP FULL WIDTH */
+
+.map-container{
+width:100%;
+}
+
+.map-frame{
+width:100%;
+overflow:hidden;
+border-radius:12px;
+}
+
+.map-frame iframe{
+width:100% !important;
+height:420px;
+border:0;
+display:block;
+}
+
+/* Mobile */
+
+@media (max-width:768px){
+
+.map-frame iframe{
+height:300px;
+}
+
+}
 </style>
 
 
@@ -1320,7 +1349,28 @@ ${farmhouse.amenities.map(a => `
 
 
 
+<!-- MAP LOCATION -->
+<div class="md:mb-8 mb-2 px-2 md:px-16 mt-2 md:mt-4">
 
+<h3 class="text-xl md:text-2xl text-orange-500 font-bold mb-4">
+Location
+</h3>
+
+<div class="map-container">
+
+${farmhouse.map_embed ? `
+<div class="map-frame">
+${farmhouse.map_embed}
+</div>
+` : `
+<div class="text-center py-20 text-gray-500">
+Map location not available
+</div>
+`}
+
+</div>
+
+</div>
 `;
     }
 
