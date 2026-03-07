@@ -183,39 +183,107 @@ My Bookings
 
 {% endif %} {% endcomment %}
 
-
-
 <!-- WHAT WE DO MODAL -->
 <div id="whatWeDoModal"
-     class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+     class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
 
-  <div class="bg-white rounded-2xl shadow-xl p-6 max-w-lg w-full relative">
+  <!-- MODAL BOX -->
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl relative overflow-hidden">
 
-    <!-- Close button -->
-    <button onclick="closeWhatWeDoModal()"
-            class="absolute top-3 right-3 text-gray-500 hover:text-black">
-      ✕
-    </button>
+    <!-- HEADER -->
+    <div class="flex items-center justify-between border-b px-5 py-4">
 
-    <h3 class="text-xl font-bold mb-4 text-center">What We Do</h3>
+      <h3 class="text-lg md:text-xl font-bold text-gray-800">
+        What We Do
+      </h3>
 
-    <ul class="space-y-3 text-sm text-gray-700">
+      <button onclick="closeWhatWeDoModal()"
+              class="w-9 h-9 flex items-center justify-center
+                     rounded-full bg-gray-100 hover:bg-gray-200 transition">
+        <i data-lucide="x" class="w-5 h-5 text-gray-700"></i>
+      </button>
 
-      <li>🏡 <b>All in One Place</b> – Explore the best farmhouses across Hyderabad location-wise on a single platform.</li>
+    </div>
 
-      <li>💰 <b>Clear Pricing</b> – View transparent prices directly on our website—no hidden charges.</li>
+    <!-- CONTENT -->
+    <div class="p-5 md:p-6 grid md:grid-cols-2 gap-5 max-h-[70vh] overflow-y-auto">
 
-      <li>⏳ <b>Time-Saving</b> – Compare and book easily in minutes.</li>
+      <!-- CARD -->
+      <div class="flex gap-4 p-4 border rounded-xl hover:shadow-md transition">
+        <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-orange-100">
+          <i data-lucide="map-pin" class="w-5 h-5 text-orange-600"></i>
+        </div>
 
-      <li>📞 <b>Full Transparency</b> – After booking, we share the owner’s contact details so you can connect personally.</li>
+        <div>
+          <p class="font-semibold text-gray-800">All in One Place</p>
+          <p class="text-sm text-gray-600">
+            Discover the best farmhouses across Hyderabad location-wise on one platform.
+          </p>
+        </div>
+      </div>
 
-      <li>🤝 <b>Trusted Bridge</b> – We connect guests and farmhouse owners with verified listings and a smooth experience.</li>
+      <!-- CARD -->
+      <div class="flex gap-4 p-4 border rounded-xl hover:shadow-md transition">
+        <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-green-100">
+          <i data-lucide="badge-dollar-sign" class="w-5 h-5 text-green-600"></i>
+        </div>
 
-    </ul>
+        <div>
+          <p class="font-semibold text-gray-800">Transparent Pricing</p>
+          <p class="text-sm text-gray-600">
+            View clear prices directly on the website with no hidden charges.
+          </p>
+        </div>
+      </div>
+
+      <!-- CARD -->
+      <div class="flex gap-4 p-4 border rounded-xl hover:shadow-md transition">
+        <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-100">
+          <i data-lucide="clock" class="w-5 h-5 text-blue-600"></i>
+        </div>
+
+        <div>
+          <p class="font-semibold text-gray-800">Save Time</p>
+          <p class="text-sm text-gray-600">
+            Compare farmhouses quickly and complete your booking in minutes.
+          </p>
+        </div>
+      </div>
+
+      <!-- CARD -->
+      <div class="flex gap-4 p-4 border rounded-xl hover:shadow-md transition">
+        <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-purple-100">
+          <i data-lucide="phone-call" class="w-5 h-5 text-purple-600"></i>
+        </div>
+
+        <div>
+          <p class="font-semibold text-gray-800">Direct Owner Contact</p>
+          <p class="text-sm text-gray-600">
+            After booking, we share the owner's contact details for direct coordination.
+          </p>
+        </div>
+      </div>
+
+      <!-- FULL WIDTH CARD -->
+      <div class="flex gap-4 p-4 border rounded-xl hover:shadow-md transition md:col-span-2">
+        <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-yellow-100">
+          <i data-lucide="handshake" class="w-5 h-5 text-yellow-600"></i>
+        </div>
+
+        <div>
+          <p class="font-semibold text-gray-800">Trusted Bridge</p>
+          <p class="text-sm text-gray-600">
+            We connect guests and farmhouse owners through verified listings
+            and ensure a smooth booking experience.
+          </p>
+        </div>
+      </div>
+
+    </div>
 
   </div>
-</div>
 
+</div>
 
 <script>
 function openWhatWeDoModal(){
