@@ -30,69 +30,89 @@
                     <a href="{% url 'farmhouses' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Farm Houses</a>
                     {% comment %} <a href="{% url 'destination' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Destinations</a> {% endcomment %}
                     <a href="{% url 'blog_list' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Blogs</a>
-                    <a href="{% url 'contact' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Contact</a>
-               
-               
-                  
+                    <a href="{% url 'contact' %}" class="text-gray-600 hover:text-primary font-medium transition-colors">Contact</a>          
                 </nav>
-                
-           
-                {% comment %} <div class="hidden lg:flex items-center gap-4">
 
-                       <a href="{% url 'login' %}" class="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-full hover:bg-primary-dark transition-colors">
-                      
-                       Login
-                    </a>
-                </div> {% endcomment %}
-                
-               
 
-            {% comment %} <div class="hidden lg:flex items-center gap-4">
-                {% if user.is_authenticated %}
-                <div class="relative" x-data="{ open: false }" @click.away="open = false">
-                    <button @click="open = !open"
-                        class="flex items-center gap-2 bg-gray-50 border border-gray-100 pl-2 pr-4 py-1.5 rounded-full hover:bg-white transition-all shadow-sm">
-                        <div
-                            class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold">
-                            {{ user.username|first|upper }}
-                        </div>
-                        <span class="text-sm font-medium text-gray-700">{{ user.username }}</span>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 mt-0.5"></i>
-                    </button>
-
-                    <div x-show="open" x-transition:enter="transition ease-out duration-100"
-                        x-transition:enter-start="transform opacity-0 scale-95"
-                        x-transition:enter-end="transform opacity-100 scale-100"
-                        class="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50">
-                        <a href="#"
-                            class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                            <i data-lucide="user" class="w-4 h-4"></i>
-                            My User
-                        </a>
-                        <div class="border-t border-gray-50 my-1"></div>
-                        <a href="#"
-                            class="flex items-center gap-3 px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors">
-                            <i data-lucide="log-out" class="w-4 h-4"></i>
-                            Logout
-                        </a>
-                    </div>
-                </div>
-                {% else %}
-                <a href="{% url 'login' %}"
-                    class="flex items-center gap-2 border-2 border-primary text-primary px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">
-                    Login
-                </a>
-
-                {% endif %}
-            </div> {% endcomment %}
-
+<div class="flex items-center gap-3">
 
 {% if user.is_authenticated %}
 
 <!-- ================= USER DROPDOWN ================= -->
 <div class="relative">
 
-  <!-- BUTTON -->
+  <button
+    id="userBtn"
+    class="flex items-center gap-2 bg-gray-50 border px-3 py-1.5 rounded-full shadow hover:bg-gray-100 transition">
+
+    <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+      {{ user.username|first|upper }}
+    </div>
+
+    <span class="hidden lg:inline font-medium text-gray-700">
+      {{ user.username }}
+    </span>
+
+    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+  </button>
+
+  <div
+    id="userDropdown"
+    class="hidden absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border py-2 z-50">
+
+    <a href="{% url 'profile_page' %}"
+       class="block px-4 py-2 text-sm hover:bg-gray-100">
+       My Profile
+    </a>
+
+    <a href="/user/my-bookings-page/"
+       class="block px-4 py-2 text-sm hover:bg-gray-100">
+       My Bookings
+    </a>
+
+    <div class="border-t my-1"></div>
+
+    <a href="{% url 'logout' %}"
+       class="block px-4 py-2 text-sm text-red-500 hover:bg-red-50">
+       Logout
+    </a>
+
+  </div>
+
+</div>
+
+{% else %}
+
+<!-- LOGIN BUTTON -->
+<a href="{% url 'login-page' %}"
+   class="border-2 border-primary text-primary px-2 py-2 rounded-full
+          hover:bg-primary hover:text-white transition font-medium
+          flex items-center justify-center">
+
+  <i data-lucide="log-in" class="w-4 h-4"></i>
+
+</a>
+
+{% endif %}
+
+<!-- ⭐ WHAT WE DO BUTTON (VISIBLE FOR BOTH) -->
+<button onclick="openWhatWeDoModal()"
+        class="border-2 border-primary p-2 rounded-full text-orange-600
+               hover:bg-primary hover:text-white transition
+               flex items-center justify-center">
+
+    <i data-lucide="briefcase" class="w-4 h-4"></i>
+
+</button>
+
+</div>
+
+
+{% comment %} {% if user.is_authenticated %}
+
+<div class="relative">
+
+  
   <button
     id="userBtn"
     class="flex items-center gap-2 bg-gray-50 border px-3 py-1.5 rounded-full shadow hover:bg-gray-100 transition">
@@ -102,9 +122,6 @@
       {{ user.username|first|upper }}
     </div>
 
-    {% comment %} <span class="font-medium text-gray-700">
-      {{ user.username }}
-    </span> {% endcomment %}
 <span class="hidden lg:inline font-medium text-gray-700">
     {{ user.username }}
 </span>
@@ -112,7 +129,6 @@
     <i data-lucide="chevron-down" class="w-4 h-4"></i>
   </button>
 
-  <!-- DROPDOWN -->
   <div
     id="userDropdown"
     class="hidden absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border py-2 z-50">
@@ -129,11 +145,6 @@ class="block px-4 py-2 text-sm hover:bg-gray-100">
 My Bookings
 </a>
 
-    {% comment %} <a href="/profile-page/"
-       class="block px-4 py-2 text-sm hover:bg-gray-100">
-      My Profile
-    </a> {% endcomment %}
-
     <div class="border-t my-1"></div>
 
     <a href="{% url 'logout' %}"
@@ -147,53 +158,30 @@ My Bookings
 
 {% else %}
 
-<!-- ================= LOGIN BUTTON ================= -->
-{% comment %} <a href="{% url 'login-page' %}"
-   class="border-2 border-primary text-primary px-2 md:px-6 py-2 rounded-full
-          hover:bg-primary hover:text-white transition font-medium">
-  <i data-lucide="log-in" class="w-4 h-4"></i>
-
-  
-</a>
-<div class="flex justify-center">
-  <button onclick="openWhatWeDoModal()"
-          class="border-2 border-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
-
-    <i data-lucide="briefcase" class="w-4 h-4 text-orange-600"></i>
-
-  </button>
-</div> {% endcomment %}
-
-
-
-
-
 <div class="flex items-center gap-3">
 
-  <!-- LOGIN -->
   <a href="{% url 'login-page' %}"
      class="border-2 border-primary text-primary px-2  py-2 rounded-full
             hover:bg-primary hover:text-white transition font-medium
             flex items-center justify-center">
 
-      {% comment %} <i data-lucide="log-in" class="w-4 h-4"></i> {% endcomment %}
-     login
+      <i data-lucide="log-in" class="w-4 h-4"></i> 
+    
   </a>
 
-  <!-- WHAT WE DO -->
-  {% comment %} <button onclick="openWhatWeDoModal()"
+ <button onclick="openWhatWeDoModal()"
           class="border-2 border-primary p-2 rounded-full text-orange-600
                  hover:bg-primary hover:text-white transition
                  flex items-center justify-center">
 
       <i data-lucide="briefcase" class="w-4 h-4 "></i>
 
-  </button> {% endcomment %}
+  </button> 
 
 </div>
 
 
-{% endif %}
+{% endif %} {% endcomment %}
 
 
 

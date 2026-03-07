@@ -110,10 +110,13 @@ def Farmhouses(request):
 
 
 
-def Farmhouse_detail(request, slug):
+def Farmhouse_detail(request,location_slug, slug):
 
     farmhouse = get_object_or_404(
-        Farmhouse,
+        # Farmhouse,
+        
+        Farmhouse.objects.select_related("location"),
+        location__slug=location_slug,
         slug=slug,
         is_active=True
     )
@@ -121,6 +124,7 @@ def Farmhouse_detail(request, slug):
     context = {
         "farmhouse": farmhouse,
         "slug": slug,   # ✅ slug added
+        "location_slug": location_slug,
 
         # ⭐ Dynamic SEO
         "meta_title": location.meta_title or f"{farmhouse.title} | Farmhouse Hyd",
@@ -240,7 +244,6 @@ class FarmhouseDetailAPI(APIView):
             slug=slug,
             is_active=True
         )
-
         # 🔹 Similar farmhouses (same location)
         similar = Farmhouse.objects.filter(
             location=farmhouse.location,
@@ -358,6 +361,7 @@ class AboutAPIView(APIView):
 
         
 # =======================================
+
 
 
 

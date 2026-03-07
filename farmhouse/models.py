@@ -148,6 +148,8 @@ class Farmhouse(models.Model):
         max_digits=10,
         decimal_places=2
     )
+    
+    Slot_position = models.PositiveIntegerField(blank=True,null=True)
     meta_title = models.CharField(max_length=255,blank=True,help_text="SEO title for search engines")
     meta_description = models.TextField( blank=True,help_text="Short description for SEO (150–160 chars)" )
     meta_keywords = models.CharField(max_length=255,blank=True, help_text="Comma separated keywords")
@@ -185,6 +187,14 @@ class Farmhouse(models.Model):
             return self.pricing.weekend_price
 
         return self.pricing.normal_day_price
+    
+    def get_location(self, obj):
+        if obj.location:
+            return {
+                "name": obj.location.name,
+                "slug": obj.location.slug
+            }
+        return None
     def __str__(self):
         return self.title
 

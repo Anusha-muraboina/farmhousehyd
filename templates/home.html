@@ -114,12 +114,13 @@
   </div>
 
   <!-- CONTENT -->
-  <div class="relative h-full flex items-center justify-center py-8 text-center text-white bg-black">
-    <div class="space-y-4 px-2 md:px-0 w-full">
+  <div class="relative h-full flex items-center justify-center py-4 text-center text-white bg-black">
+    <div class="space-y-1 md:space-y-4 px-2 md:px-0 w-full">
 
-      <h1 class="md:text-4xl text-xl font-bold text-white-600 pb-2 md:pb-8 ">
+      <h1 class="md:text-4xl text-md font-bold text-white-600 pb-2 md:pb-8 ">
         Find the Best Farmhouses in Hyderabad  
       </h1>
+
       <!-- SEARCH -->
       {% comment %} <form action="/farmhouses/" method="GET"
         class="bg-white rounded-full shadow-xl  px-1 md:px-4 py-2 max-w-xl mx-auto">
@@ -135,7 +136,6 @@
           </button>
         </div>
       </form> {% endcomment %}
-
 
       <!-- SEARCH -->
 <form action="/farmhouses/" method="GET"
@@ -171,7 +171,7 @@
         class="flex flex-wrap justify-center gap-3 md:gap-5">  {% endcomment %}
 
         <div id="location-bar"
-class="location-bar md:flex md:flex-wrap md:justify-center md:gap-5  px-2">
+class="location-bar md:flex md:flex-wrap md:justify-center gap-3 md:gap-5  px-2">
 
         {% comment %} <div id="location-bar"
   class="location-scroll flex md:flex-wrap gap-3 md:gap-5 justify-start md:justify-center overflow-x-auto md:overflow-visible px-2"> {% endcomment %}
@@ -203,7 +203,7 @@ class="location-bar md:flex md:flex-wrap md:justify-center md:gap-5  px-2">
 
 
 <section
-  class="relative w-full bg-cover bg-center py-6 md:py-10"
+  class="relative w-full bg-cover bg-center py-2 md:py-10"
   style="background-image:url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&q=80');">
 
   <!-- Overlay -->
@@ -212,7 +212,7 @@ class="location-bar md:flex md:flex-wrap md:justify-center md:gap-5  px-2">
   <div class="relative mx-auto px-4 md:px-12">
 
     <!-- Heading -->
-    <div class="text-center mb-10">
+    <div class="text-center mb-2 md:mb-10">
       {% comment %} <h2 class="text-primary font-medium mb-2">Find Best Farmhouses</h2> {% endcomment %}
       <p class="font-display text-xl md:text-4xl md:text-5xl font-bold">
         Ultimate Stay Experience
@@ -875,14 +875,12 @@ if (blogs.length > 1) {
 
     grid.innerHTML += `
       <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
-
         <div class="relative h-56">
           <img src="${f.primary_image || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80'}"
                class="w-full h-full object-cover">
         </div>
 
         <div class="p-5">
-
           <p class="text-xl font-bold text-secondary mb-2">
             ${f.title}
           </p>
@@ -943,7 +941,7 @@ if (blogs.length > 1) {
 
   </div>
 
-  <a href="/farmhouse/${f.slug}/"
+  <a href="/farmhouse/${f.location.slug}/${f.slug}/"
      class="bg-primary text-white px-1  md:px-4 py-2 rounded-lg text-sm md:font-medium hover:bg-primary-dark transition">
     Know More 
   </a>

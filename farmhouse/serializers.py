@@ -108,7 +108,7 @@ class FarmhouseSerializer(serializers.ModelSerializer):
     
     thingstocarry = ThingstocarrySerializer(many=True, read_only=True)
     properyrules = PropertyrulesSerializer(many=True, read_only=True)
-    
+    location = serializers.SerializerMethodField()
     # payment_policy = FarmhousePaymentPolicySerializer(read_only=True)
     payment_policy = serializers.SerializerMethodField()
 
@@ -138,6 +138,7 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             "pricing",
             "payment_policy",
             "map_embed",
+            "Slot_position",
             
         ]
 
@@ -156,7 +157,13 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(image.image.url)
 
         return None
-
+    def get_location(self, obj):
+        if obj.location:
+            return {
+                "name": obj.location.name,
+                "slug": obj.location.slug
+            }
+        return None
     def get_payment_policy(self, obj):
 
         policy = getattr(obj, "payment_policy", None)
