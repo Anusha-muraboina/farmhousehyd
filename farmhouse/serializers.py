@@ -137,6 +137,7 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             "images",
             "pricing",
             "payment_policy",
+            "map_embed",
             
         ]
 

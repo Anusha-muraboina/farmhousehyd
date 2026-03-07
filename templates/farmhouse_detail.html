@@ -172,6 +172,29 @@
     .farmhouse-content li {
         margin-bottom: 6px;
     }
+
+    /* Scrollbar width */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+/* Scrollbar track (background) */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+/* Scrollbar handle */
+::-webkit-scrollbar-thumb {
+    background: #f97316;   /* orange */
+    border-radius: 10px;
+}
+
+/* Hover effect */
+::-webkit-scrollbar-thumb:hover {
+    background: #ea580c;
+}
 </style>
 
 
@@ -331,9 +354,19 @@
         <div class="lg:col-span-1 order-2 lg:order-1">
 
             <!-- Mobile → Horizontal scroll -->
-            <div class="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto">
+            {% comment %} <div class="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto"> {% endcomment %}
+            <div class="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto max-h-[520px] pr-1">
 
-                ${farmhouse.images.slice(0,4 ).map(img => `
+            ${farmhouse.images.map(img => `
+    <img 
+        src="${img.image}"
+        onclick="changeImage('${img.image}')"
+        class="min-w-[90px] h-20 lg:w-full lg:h-24 
+        object-cover rounded-xl cursor-pointer
+        border-2 border-transparent 
+        hover:border-orange-500 transition">
+`).join("")}
+                {% comment %} ${farmhouse.images.slice(0,4 ).map(img => `
 
                     <img 
                         src="${img.image}"
@@ -343,7 +376,7 @@
                         border-2 border-transparent 
                         hover:border-orange-500 transition">
 
-                `).join("")}
+                `).join("")} {% endcomment %}
 
             </div>
 
@@ -1294,6 +1327,12 @@ ${farmhouse.amenities.map(a => `
 </div>
 
 </div>
+
+
+
+
+
+
 `;
     }
 
