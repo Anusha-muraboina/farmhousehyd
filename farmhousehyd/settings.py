@@ -163,7 +163,7 @@ DATABASES = {
         "NAME": "farmhouse_hyd",        # DB NAME
         "USER": "farmhouse_user",       # DB USER
         "PASSWORD": "Farmhouse@2026!",  # DB PASSWORD
-        "HOST": "3.110.215.192",            # or localhost
+        "HOST": "127.0.0.1",            # or localhost
         "PORT": "3306",
 
         "OPTIONS": {
@@ -195,7 +195,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LOCAL_URL = "farmhouseshyderabad.com/"
+LOCAL_URL = "https://farmhouseshyderabad.com/"
 
 
 # ================= EMAIL (SMTP) SETTINGS =================
