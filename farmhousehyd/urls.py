@@ -66,6 +66,7 @@ urlpatterns = [
     path('coupon/',include('coupon.urls')),
     path('rating/',include('rating.urls')),
     path('cms/',include('cms.urls')),
+    path('wallet/',include('wallet.urls')),
     path("ckeditor/", include("ckeditor_uploader.urls")),
     
         # ✅ ADD THIS LINE

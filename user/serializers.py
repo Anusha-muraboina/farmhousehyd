@@ -96,6 +96,7 @@ from .models import User
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    wallet_balance = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -104,12 +105,18 @@ class ProfileSerializer(serializers.ModelSerializer):
             "email",
             "username",
             "phone",
+            "wallet_balance",
           
         ]
 
         read_only_fields = ["email"]  
         # 🔥 NEVER allow email change easily
+    def get_wallet_balance(self, obj):
 
+        if hasattr(obj, "wallet"):
+            return obj.wallet.balance
+
+        return 0
 
 # serializers.py
 from rest_framework import serializers

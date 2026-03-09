@@ -618,6 +618,8 @@ def view_invoice(request, booking_id):
 
 
 
+
+
 class CancelReasonListAPI(ListAPIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]

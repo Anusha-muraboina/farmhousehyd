@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'booking',
     'rating',
     'cms',
+    'wallet',
     "farmhouse_owner",
     "superadmin_dashboard",
     

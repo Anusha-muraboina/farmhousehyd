@@ -81,7 +81,12 @@ class Booking(models.Model):
         help_text="Example: 10:00 AM"
     )
     special_requests = models.TextField(blank=True)
-
+    wallet_used = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        help_text="Amount used from wallet for this booking"
+    )
     sub_total = models.DecimalField(max_digits=10, decimal_places=2)
     disc_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
     tax_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
@@ -369,7 +374,6 @@ class Booking(models.Model):
         # SAVE FIRST
         ###################################
         self.save()
-
         ###################################
         # SEND EMAIL AFTER DB COMMIT
         ###################################
