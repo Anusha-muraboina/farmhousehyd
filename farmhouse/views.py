@@ -121,15 +121,35 @@ def Farmhouse_detail(request,location_slug, slug):
         is_active=True
     )
     location = farmhouse.location
+        # ✅ Get SEO for locations page
+    page_seo = PageSEO.objects.filter(page="locations").first()
+
     context = {
         "farmhouse": farmhouse,
         "slug": slug,   # ✅ slug added
         "location_slug": location_slug,
 
         # ⭐ Dynamic SEO
-        "meta_title": location.meta_title or f"{farmhouse.title} | Farmhouse Hyd",
-        "meta_description": location.meta_description or farmhouse.short_description,
-        "meta_keywords": location.meta_keywords,
+        # "meta_title": location.meta_title or f"{farmhouse.title} | Farmhouse Hyd",
+        # "meta_description": location.meta_description or farmhouse.short_description,
+        # "meta_keywords": location.meta_keywords,
+        
+        "meta_title": (
+            location.meta_title
+            or (page_seo.meta_title if page_seo else "")
+            or f"{farmhouse.title} | Farmhouse Hyd"
+        ),
+
+        "meta_description": (
+            location.meta_description
+            or (page_seo.meta_description if page_seo else "")
+            or farmhouse.short_description
+        ),
+
+        "meta_keywords": (
+            location.meta_keywords
+            or (page_seo.meta_keywords if page_seo else "")
+        ),
     }
 
     return render(request, "farmhouse_detail.html", context)

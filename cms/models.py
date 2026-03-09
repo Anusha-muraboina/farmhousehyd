@@ -180,6 +180,7 @@ class PageSEO(models.Model):
         ("home", "Home"),
         ("blog", "Blog Listing"),
         ("farmhouses", "Farmhouse Listing"),
+        ("locations", 'Locations'),
         ("about", "About"),
         ("contact", "Contact"),
     )

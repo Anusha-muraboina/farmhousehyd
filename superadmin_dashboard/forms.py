@@ -102,7 +102,11 @@ class FarmhouseForm(forms.ModelForm):
             "is_featured": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "map_embed" :  forms.TextInput(attrs={"class": "form-control"}),
             
-            
+                                    # ✅ Slot Position
+            "Slot_position": forms.NumberInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter slot position"
+            }),
                         # ✅ Check-in / Check-out time
             "check_in_time": forms.TimeInput(
                 attrs={"class": "form-control", "type": "time"}
