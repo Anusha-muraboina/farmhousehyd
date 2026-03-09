@@ -35,7 +35,7 @@ class LocationAdmin(admin.ModelAdmin):
 
 @admin.register(Farmhouse)
 class FarmhouseAdmin(admin.ModelAdmin):
-    list_display = ('title', 'location', 'user', 'price_per_day','check_in_time', 'check_out_time', 'map_embed','is_active', 'is_featured')
+    list_display = ('title', 'location', 'user', 'price_per_day','check_in_time', 'check_out_time', 'Slot_position', 'map_embed','is_active', 'is_featured')
     list_filter = ('is_active', 'is_featured', 'location', 'user')
     search_fields = ('title', 'address', 'user__username', 'user__email')
     prepopulated_fields = {'slug': ('title',)}
@@ -45,7 +45,7 @@ class FarmhouseAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Basic Information', {
-            'fields': ('title', 'slug', 'user', 'location', 'address','guest_count','extra_guest_count' , 'map_embed' ,'check_in_time', 'check_out_time', 'distance_km')
+            'fields': ('title', 'slug', 'user', 'location', 'address','guest_count','extra_guest_count' , 'Slot_position','map_embed' ,'check_in_time', 'check_out_time', 'distance_km')
         }),
         ('Property Details', {
             'fields': ('halls', 'bedrooms', 'ac_bedrooms', 'amenities','facilities',  'properyrules','thingstocarry')

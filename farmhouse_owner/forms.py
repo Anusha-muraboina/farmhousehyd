@@ -112,6 +112,12 @@ class FarmhouseForm(forms.ModelForm):
                 "class": "form-check-input"
             }),
             
+                        # ✅ Slot Position
+            "Slot_position": forms.NumberInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter slot position"
+            }),
+            
                                     # ✅ Check-in / Check-out time
             "check_in_time": forms.TimeInput(
                 attrs={"class": "form-control", "type": "time"}

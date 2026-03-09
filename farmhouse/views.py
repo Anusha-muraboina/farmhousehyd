@@ -164,7 +164,7 @@ from django.shortcuts import get_object_or_404
 
 from .models import Farmhouse, Location
 from .serializers import FarmhouseSerializer, LocationSerializer ,ThingstocarrySerializer
-
+from django.db.models import Q, F
 
 # ------------------ FARMHOUSE LIST API ------------------
 class FarmhouseListAPI(APIView):
@@ -182,6 +182,8 @@ class FarmhouseListAPI(APIView):
             is_active=True
         ).select_related("location","payment_policy").prefetch_related(
             "images", "amenities"
+        ).order_by(
+            F("Slot_position").asc(nulls_last=True)
         )
 
         # 🔍 Search
@@ -289,6 +291,7 @@ class HomeAPIView(APIView):
         banners = Banner.objects.filter(is_active=True).order_by("Slot_position")
         locations = Location.objects.filter(is_active=True)
         farmhouses = Farmhouse.objects.filter(is_active=True)
+        # farmhouses = Farmhouse.objects.filter(is_active=True).order_by("slot_position")
         services = Choos_Services.objects.filter(is_active = True)
         ourfacility = OurFacility.objects.filter(is_active = True)
         know_whoweare = AboutWhoWeAre.objects.filter(is_active = True)

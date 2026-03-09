@@ -5,13 +5,28 @@
 
 <div class="container-fluid px-3 px-md-4 py-4">
 
-<h2 class="fw-bold mb-4">Dashboard Overview</h2>
+<!-- HEADER -->
 
-<!-- ===================== STATS ===================== -->
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-<div class="row g-4 mb-4">
+<h2 class="fw-bold">Dashboard</h2>
 
-<div class="col-6 col-lg-3">
+<div>
+
+<button class="nav-btn" onclick="prevSection()">‹ Prev</button>
+<button class="nav-btn" onclick="nextSection()">Next ›</button>
+
+</div>
+
+</div>
+
+
+<!-- ===================== SECTION 1 ===================== -->
+<div class="dashboard-section active">
+
+<div class="row g-3 mb-4">
+
+<div class="col-12 col-md-6 col-lg-4">
 <div class="stat-card orange">
 <i class="fa-solid fa-calendar-check"></i>
 <div>
@@ -21,17 +36,8 @@
 </div>
 </div>
 
-<div class="col-6 col-lg-3">
-<div class="stat-card blue">
-<i class="fa-solid fa-clock"></i>
-<div>
-<h4>{{stats.tomorrow_bookings}}</h4>
-<span>Tomorrow</span>
-</div>
-</div>
-</div>
 
-<div class="col-6 col-lg-3">
+<div class="col-12 col-md-6 col-lg-4">
 <div class="stat-card green">
 <i class="fa-solid fa-chart-line"></i>
 <div>
@@ -41,7 +47,7 @@
 </div>
 </div>
 
-<div class="col-6 col-lg-3">
+<div class="col-12 col-md-6 col-lg-4">
 <div class="stat-card purple">
 <i class="fa-solid fa-trophy"></i>
 <div>
@@ -53,63 +59,112 @@
 
 </div>
 
-<!-- ===================== REVENUE ===================== -->
 
-<div class="row g-4 mb-4">
+<div class="row g-3">
 
-<div class="col-6 col-lg-3">
+<div class="col-12 col-md-6 col-lg-3">
 <div class="revenue-card">
 <h4>₹{{revenue.weekly}}</h4>
 <span>Weekly Revenue</span>
 </div>
 </div>
 
-<div class="col-6 col-lg-3">
+<div class="col-12 col-md-6 col-lg-3">
 <div class="revenue-card">
 <h4>₹{{revenue.monthly}}</h4>
 <span>Monthly Revenue</span>
 </div>
 </div>
 
-<div class="col-6 col-lg-3">
+<div class="col-12 col-md-6 col-lg-3">
 <div class="revenue-card">
 <h4>₹{{revenue.six_months}}</h4>
 <span>6 Months Revenue</span>
 </div>
 </div>
 
-<div class="col-6 col-lg-3">
+<div class="col-12 col-md-6 col-lg-3">
 <div class="revenue-card highlight">
 <h4>₹{{yearly_net}}</h4>
 <span>Your Net Earnings</span>
 </div>
 </div>
 
+
+
+
+<!-- ================= QUICK ACTIONS ================= -->
+
+<div class="row g-3 mb-4">
+
+<div class="col-12 col-md-6 col-lg-3">
+<a href="{% url 'owner_farmhouse_add' %}" class="action-card">
+<i class="fa-solid fa-house"></i>
+<h6>Add Farmhouse</h6>
+<p>Create new farmhouse listing</p>
+</a>
 </div>
 
-<!-- ===================== CHART ===================== -->
+<div class="col-12 col-md-6 col-lg-3">
+<a href="{% url 'owner-booking-create' %}" class="action-card">
+<i class="fa-solid fa-calendar-plus"></i>
+<h6>Create Booking</h6>
+<p>Manual booking entry</p>
+</a>
+</div>
 
-<div class="card dashboard-card mb-4">
+<div class="col-12 col-md-6 col-lg-3">
+<a href="{% url 'owner_payment_policy_create' %}" class="action-card">
+<i class="fa-solid fa-money-check-dollar"></i>
+<h6>Payment Policy</h6>
+<p>Manage payment rules</p>
+</a>
+</div>
+
+<div class="col-12 col-md-6 col-lg-3">
+<a href="{% url 'owner_blocked-dates-create' %}" class="action-card">
+<i class="fa-solid fa-ban"></i>
+<h6>Block Dates</h6>
+<p>Block unavailable dates</p>
+</a>
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+<!-- ===================== SECTION 2 ===================== -->
+
+<div class="dashboard-section">
+
+<div class="card dashboard-card">
 
 <div class="card-body">
 
 <h5 class="fw-bold mb-3">Bookings Trend</h5>
 
 <div class="chart-container">
+
 <canvas id="bookingChart"></canvas>
-</div>
 
 </div>
 
 </div>
 
-<!-- ===================== TABLES ===================== -->
+</div>
 
-<div class="row g-4">
+</div>
 
-<!-- BOOKINGS -->
 
-<div class="col-lg-7">
+
+<!-- ===================== SECTION 3 ===================== -->
+
+<div class="dashboard-section">
 
 <div class="card dashboard-card">
 
@@ -149,9 +204,11 @@
 
 </div>
 
-<!-- MESSAGES -->
 
-<div class="col-lg-5">
+
+<!-- ===================== SECTION 4 ===================== -->
+
+<div class="dashboard-section">
 
 <div class="card dashboard-card">
 
@@ -191,40 +248,75 @@
 
 </div>
 
-</div>
 
 </div>
+
 
 <style>
+/* ACTION CARDS */
 
-/* ================= STAT CARDS ================= */
+.action-card{
+display:block;
+background:white;
+border-radius:16px;
+padding:20px;
+text-align:center;
+text-decoration:none;
+color:#333;
+box-shadow:0 10px 25px rgba(0,0,0,.05);
+transition:.25s;
+height:100%;
+}
+
+.action-card i{
+font-size:26px;
+margin-bottom:10px;
+color:#ff7a00;
+}
+
+.action-card h6{
+font-weight:700;
+margin-bottom:4px;
+}
+
+.action-card p{
+font-size:12px;
+color:#777;
+margin:0;
+}
+
+.action-card:hover{
+transform:translateY(-4px);
+box-shadow:0 12px 30px rgba(0,0,0,.08);
+background:#fff7f0;
+}
+
+/* SECTION SWITCH */
+
+.dashboard-section{
+display:none;
+}
+
+.dashboard-section.active{
+display:block;
+}
+
+
+/* STAT CARDS */
 
 .stat-card{
 display:flex;
 align-items:center;
-gap:18px;
-padding:20px;
-border-radius:16px;
+gap:15px;
+padding:18px;
+border-radius:14px;
 color:white;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
+box-shadow:0 8px 20px rgba(0,0,0,.08);
 }
 
 .stat-card i{
-font-size:28px;
-opacity:.9;
+font-size:24px;
 }
-
-.stat-card h4{
-margin:0;
-font-weight:700;
-}
-
-.stat-card span{
-font-size:13px;
-opacity:.9;
-}
-
-/* COLORS */
 
 .orange{background:linear-gradient(135deg,#ff7a00,#ffb347);}
 .blue{background:linear-gradient(135deg,#36d1dc,#5b86e5);}
@@ -232,25 +324,14 @@ opacity:.9;
 .purple{background:linear-gradient(135deg,#6a11cb,#2575fc);}
 
 
-
-/* ================= REVENUE ================= */
+/* REVENUE */
 
 .revenue-card{
 background:white;
-border-radius:16px;
-padding:22px;
+border-radius:14px;
+padding:18px;
 text-align:center;
 box-shadow:0 8px 20px rgba(0,0,0,.05);
-}
-
-.revenue-card h4{
-font-weight:800;
-margin-bottom:4px;
-}
-
-.revenue-card span{
-font-size:13px;
-color:#777;
 }
 
 .highlight{
@@ -259,8 +340,7 @@ color:white;
 }
 
 
-
-/* ================= DASHBOARD CARD ================= */
+/* DASHBOARD CARD */
 
 .dashboard-card{
 border:none;
@@ -269,8 +349,7 @@ box-shadow:0 10px 30px rgba(0,0,0,.05);
 }
 
 
-
-/* ================= BOOKING ROW ================= */
+/* BOOKING ROW */
 
 .booking-row{
 display:flex;
@@ -281,42 +360,107 @@ border-bottom:1px solid #eee;
 }
 
 
-
-/* ================= CHART ================= */
+/* CHART */
 
 .chart-container{
-position:relative;
 height:320px;
 }
 
 
+/* NAV BUTTON */
 
-/* ================= MOBILE ================= */
+.nav-btn{
+background:#f3f3f3;
+border:none;
+padding:8px 14px;
+border-radius:8px;
+margin-left:5px;
+cursor:pointer;
+}
+
+.nav-btn:hover{
+background:#ff7a00;
+color:white;
+}
+
+
+/* MOBILE */
 
 @media(max-width:768px){
-
-.chart-container{
-height:250px;
-}
 
 .booking-row{
 flex-direction:column;
 align-items:flex-start;
-gap:5px;
+}
+
+.chart-container{
+height:250px;
 }
 
 }
 
 </style>
 
+
+
 <script>
 
+/* SECTION NAVIGATION */
+
+let currentSection=0
+
+const sections=document.querySelectorAll(".dashboard-section")
+
+function showSection(index){
+
+sections.forEach((s)=>s.classList.remove("active"))
+
+sections[index].classList.add("active")
+
+}
+
+function nextSection(){
+
+currentSection++
+
+if(currentSection>=sections.length){
+
+currentSection=sections.length-1
+
+}
+
+showSection(currentSection)
+
+}
+
+function prevSection(){
+
+currentSection--
+
+if(currentSection<0){
+
+currentSection=0
+
+}
+
+showSection(currentSection)
+
+}
+
+
+
+/* CHART */
+
 new Chart(
+
 document.getElementById('bookingChart'),
+
 {
+
 type:'line',
 
 data:{
+
 labels:{{chart_labels|safe}},
 
 datasets:[{
@@ -334,16 +478,20 @@ fill:true,
 tension:.4
 
 }]
+
 },
 
 options:{
+
 responsive:true,
+
 maintainAspectRatio:false
-}
 
 }
 
-);
+}
+
+)
 
 </script>
 

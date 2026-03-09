@@ -77,7 +77,11 @@ color:#ff7a00;
 width:100%;
 padding:28px;
 }
-
+@media (max-width:768px){
+.content{
+padding:12px;
+}
+}
 /* OFFCANVAS MENU STYLE */
 .offcanvas .sidebar{
 width:100%;
@@ -156,7 +160,7 @@ style="width:36px;height:36px;">
 
 </div>
 
-{% comment %} {{ request.user.username }} {% endcomment %}
+{% comment %} {{ request.user.username }}  {% endcomment %}
 
 </button>
 
