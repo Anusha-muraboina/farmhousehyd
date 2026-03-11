@@ -16,6 +16,37 @@ Manage your profile and security
 </div>
 
 
+<div class="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-8">
+
+<div class="flex justify-between items-center">
+
+<div>
+<p class="text-sm text-gray-500">Wallet Balance</p>
+<h2 id="wallet_balance" class="text-2xl font-bold text-orange-600">
+₹0
+</h2>
+</div>
+
+<div class="text-orange-500">
+<svg xmlns="http://www.w3.org/2000/svg"
+fill="none"
+viewBox="0 0 24 24"
+stroke-width="1.5"
+stroke="currentColor"
+class="w-8 h-8">
+<path stroke-linecap="round"
+stroke-linejoin="round"
+d="M12 6v12m-3-9h6m6 3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+</div>
+
+{% comment %} <div class="text-orange-500 text-3xl">
+💰
+</div> {% endcomment %}
+
+</div>
+
+</div>
 <!-- TWO SECTION GRID -->
 <div class="grid lg:grid-cols-3 gap-10">
 
@@ -28,6 +59,10 @@ Manage your profile and security
 <div class="w-20 h-20 rounded-full bg-orange-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
 {{ request.user.username|first|upper }}
 </div>
+
+
+
+
 
 <div>
 <h3 class="text-2xl font-bold">
@@ -200,7 +235,7 @@ function getCookie(name) {
 
 const csrftoken = getCookie('csrftoken');
 
-// ⭐⭐⭐ THE FIX — FORCE HEADER
+//  THE FIX — FORCE HEADER
 axios.defaults.headers.common['X-CSRFToken'] = csrftoken;
 axios.defaults.withCredentials = true;
 
@@ -230,6 +265,11 @@ const res = await axios.get("/user/profile/" , {
 username.value = res.data.username;
 email.value = res.data.email;
 phone.value = res.data.phone;
+
+
+// ⭐ wallet balance
+document.getElementById("wallet_balance").innerText =
+"₹" + res.data.wallet_balance;
 
 }catch{
 console.log("User not logged in");

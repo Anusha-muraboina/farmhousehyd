@@ -95,28 +95,6 @@ href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
             </div>
 
 
-            {% comment %} <div class="card shadow-sm mt-4 border-success">
-    <div class="card-body">
-
-        <h4 class="fw-bold">Live Price</h4>
-        <hr>
-
-        <h3>
-            Subtotal: ₹ <span id="subtotal">0</span>
-        </h3>
-
-        <h3 class="text-danger">
-            Discount: ₹ <span id="discount">0</span>
-        </h3>
-
-        <h3 class="text-success fw-bold">
-            Total: ₹ <span id="total">0</span>
-        </h3>
-
-    </div>
-</div> {% endcomment %}
-
-
 
             <!-- RIGHT -->
             <div class="col-lg-6">
@@ -171,26 +149,9 @@ href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 
 
-                        {% comment %} {{ form.sub_total.label_tag }}
-                        {{ form.sub_total }}
-
-                        {{ form.disc_price.label_tag }}
-                        {{ form.disc_price }}
-
-                        {{ form.tax_price.label_tag }}
-                        {{ form.tax_price }}
-
-                        {{ form.total_amount.label_tag }}
-                        {{ form.total_amount }}
-
-
-                        {{ form.remaining_amount.label_tag }}
-                        {{ form.remaining_amount }} {% endcomment %}
-
               
                     </div>
                 </div>
-
 
                 <div class="card shadow-sm mt-4 border-warning">
                     <div class="card-body">
@@ -251,12 +212,14 @@ document.addEventListener("DOMContentLoaded", function(){
 
         checkinPicker = flatpickr(checkIn,{
             minDate:"today",
-            dateFormat:"Y-m-d"
+            dateFormat:"Y-m-d",
+            disableMobile:true
         });
 
         checkoutPicker = flatpickr(checkOut,{
             minDate:new Date().fp_incr(1),
-            dateFormat:"Y-m-d"
+            dateFormat:"Y-m-d",
+            disableMobile:true
         });
     }
 

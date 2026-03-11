@@ -22,7 +22,12 @@ class Location(models.Model):
     meta_title = models.CharField(max_length=255,blank=True,help_text="SEO title for search engines")
     meta_description = models.TextField( blank=True,help_text="Short description for SEO (150–160 chars)" )
     meta_keywords = models.CharField(max_length=255,blank=True, help_text="Comma separated keywords")
-    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+
     def __str__(self):
         return self.name
     

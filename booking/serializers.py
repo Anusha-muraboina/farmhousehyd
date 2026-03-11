@@ -10,7 +10,6 @@ from .models import BlockedDate
 
 
 class BookingSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Booking
         fields = "__all__"
@@ -24,7 +23,8 @@ class BookingSerializer(serializers.ModelSerializer):
             "payment_id",
             "remaining_amount",
             "sub_total",
-            "total_amount",
+            "total_amount", 
+            "wallet_used",
         ]
 
     ###################################
@@ -81,77 +81,6 @@ class BookingSerializer(serializers.ModelSerializer):
         return data
 
 
-    # def validate(self, data):
-
-    #     check_in = data["check_in"]
-    #     check_out = data["check_out"]
-    #     farmhouse = data["farmhouse"]
-
-    #     if check_in < date.today():
-    #         raise serializers.ValidationError("Past date not allowed")
-
-    #     if check_out <= check_in:
-    #         raise serializers.ValidationError("Invalid checkout")
-
-    #     overlapping = Booking.objects.filter(
-    #         farmhouse=farmhouse,
-    #         status__in=["pending", "confirmed"],
-    #         check_in__lt=check_out,
-    #         check_out__gt=check_in
-    #     )
-
-    #     if overlapping.exists():
-    #         raise serializers.ValidationError("Dates already booked")
-
-    #     return data
-
-    ###################################
-    # CREATE BOOKING
-    ###################################
-
-    # def create(self, validated_data):
-
-    #     farmhouse = validated_data["farmhouse"]
-
-    #     total = calculate_booking_cost(
-    #         farmhouse=farmhouse,
-    #         check_in=validated_data["check_in"],
-    #         check_out=validated_data["check_out"],
-    #         extra_guest_count=validated_data.get("extra_guest_count", 0)
-    #     )
-
-    #     discount = Decimal("0.00")
-
-    #     # coupon = validated_data.get("coupon_applied")
-
-    #     # if coupon and coupon.is_valid():
-    #     #     discount = coupon.calculate_discount(total)
-
-    #     final_total = total - discount
-    #     validated_data["sub_total"] = total
-    #     validated_data["disc_price"] = discount
-    #     validated_data["total_amount"] = final_total
-    #     validated_data["remaining_amount"] = final_total
-    #     validated_data["payment_status"] = "pending"
-    #     validated_data["status"] = "pending"
-
-    #     booking = Booking.objects.create(**validated_data)
-
-    #     return booking
-        # booking = Booking.objects.create(
-
-        #     sub_total=total,
-        #     disc_price=discount,
-        #     total_amount=final_total,
-        #     remaining_amount=final_total,
-
-        #     payment_status="pending",
-        #     status="pending",
-
-        #     **validated_data
-        # )
-
-        # return booking
 
 
 

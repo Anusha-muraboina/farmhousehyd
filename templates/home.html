@@ -103,6 +103,30 @@
 </style>
 
 
+
+
+<!-- HOME POPUP MODAL -->
+<div id="homePopup"
+     class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] hidden">
+
+  <!-- POPUP CARD -->
+  <div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-[90%] p-6 flex items-center justify-center">
+
+    <!-- CLOSE BUTTON -->
+    <button onclick="closeHomePopup()"
+            class="absolute top-2 right-2 bg-white text-black rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-gray-200">
+        ✕
+    </button>
+
+    <!-- IMAGE -->
+    <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200"
+         class="max-w-full max-h-[70vh] object-contain rounded-lg">
+
+  </div>
+
+</div>
+
+
 <!-- ================= HERO ================= -->
 <section class="relative  md:h-[600px] px-2">
 
@@ -1048,5 +1072,26 @@ function prevFoodSlide() {
 setInterval(nextFoodSlide, 6000);
 
 </script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    const popup = document.getElementById("homePopup");
+
+    // show popup after page loads
+    setTimeout(()=>{
+        popup.classList.remove("hidden");
+    },500);
+
+});
+
+function closeHomePopup(){
+    document.getElementById("homePopup").classList.add("hidden");
+}
+
+</script>
+
+
 
 {% endblock %}

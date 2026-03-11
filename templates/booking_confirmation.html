@@ -126,6 +126,12 @@
                 <span>Discount</span>
                 <span>- ₹${b.discount}</span>
               </div>
+              
+              <div class="flex justify-between text-blue-600 font-medium">
+                <span>Wallet Used</span>
+                <span>- ₹${b.wallet_used}</span>
+              </div>
+
               <div class="flex justify-between text-black font-medium">
                 <span>Advanced Amount</span>
                 <span>₹${b.advance_paid}</span>
@@ -186,6 +192,7 @@ async function loadBooking() {
       .replace(/\${b\.guest_email}/g,   b.guest_email   || '—')
       .replace(/\${b\.sub_total}/g,     Number(b.sub_total||0).toLocaleString('en-IN'))
       .replace(/\${b\.discount}/g,      Number(b.discount||0).toLocaleString('en-IN'))
+      .replace(/\${b\.wallet_used}/g, Number(b.wallet_used||0).toLocaleString('en-IN'))
       .replace(/\${b\.remaining_amount}/g, Number(b.remaining_amount||0).toLocaleString('en-IN'))
       .replace(/\${b\.advance_paid}/g, Number(b.advance_paid||0).toLocaleString('en-IN'))
       .replace(/\${b\.total_amount}/g,  Number(b.total_amount||0).toLocaleString('en-IN'));

@@ -6,6 +6,6 @@ from . import views
 
 urlpatterns = [
     path("wallet/", views.wallet, name="wallet"),
-
+     path("balance/", views.wallet_balance),
 ]
 

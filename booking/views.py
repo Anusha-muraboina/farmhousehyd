@@ -14,7 +14,7 @@ from django.contrib.auth import login
 from datetime import timedelta
 from farmhouse.models import FarmhousePricing
 from rest_framework.permissions import IsAuthenticated
-
+from wallet.models import Wallet, WalletHistory
 from django.urls import reverse
 from django.http import JsonResponse
 # from .utils import calculate_booking_cost
@@ -23,7 +23,6 @@ from booking.serializers import *
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
-
 
 
 from rest_framework.authentication import SessionAuthentication
@@ -53,7 +52,7 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 
-
+from wallet.views import apply_wallet_to_booking
 
 import razorpay
 import json
@@ -121,7 +120,7 @@ def blocked_dates_api(request, farmhouse_id):
 User = get_user_model()
 class CreateBookingAPI(APIView):
 
-    authentication_classes = []   # 🔥 REMOVE BASIC AUTH (causing 401)
+    authentication_classes = []   #  REMOVE BASIC AUTH (causing 401)
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -296,17 +295,47 @@ class CreateBookingAPI(APIView):
 
         ###################################
         total_amount = max(sub_total - discount, Decimal("0.00"))
-        # total_amount = sub_total - discount
+        
 
+        # ###################################
+        # # APPLY WALLET AFTER BOOKING SAVE
+        # ###################################
+
+        # wallet_used = Decimal("0.00")
+        # use_wallet = str(data.get("use_wallet")).lower() in ["true", "1"]
+
+        # if use_wallet:
+
+        #     wallet = Wallet.objects.filter(user=user).first()
+
+        #     if wallet and wallet.balance > 0:
+
+        #         wallet_used = min(wallet.balance, booking.total_amount)
+
+        #         wallet.balance -= wallet_used
+        #         wallet.save()
+
+        #         booking.wallet_used = wallet_used
+        #         booking.total_amount -= wallet_used
+        #         booking.remaining_amount = booking.total_amount
+
+        #         booking.save()
+
+        #         WalletHistory.objects.create(
+        #             user=user,
+        #             amount=wallet_used,
+        #             transaction_type="debit",
+        #             description=f"Wallet used for booking {booking.booking_id}"
+        #         )
         ###################################
-        # OVERRIDE FRONTEND VALUES 🔥
+        # ALWAYS UPDATE DATA
         ###################################
 
         data["sub_total"] = sub_total
         data["disc_price"] = discount
         data["total_amount"] = total_amount
+        # data["wallet_used"] = wallet_used
         data["coupon_applied"] = coupon_obj.id if coupon_obj else None
-
         ###################################
         # SAVE BOOKING
         ###################################
@@ -318,6 +347,8 @@ class CreateBookingAPI(APIView):
 
 
         serializer.is_valid(raise_exception=True)
+        
+        
         booking = serializer.save(
             user=user,
             sub_total=sub_total,
@@ -326,9 +357,22 @@ class CreateBookingAPI(APIView):
             remaining_amount=total_amount,
             payment_status="pending",
             status="pending", 
-            coupon_applied=coupon_obj
+            coupon_applied=coupon_obj,
         )
-        
+
+
+        use_wallet = data.get("use_wallet") in [True, "true", "1", 1]
+
+        if use_wallet:
+            apply_wallet_to_booking(booking)
+            booking.refresh_from_db()
+       ###################################
+        # APPLY WALLET
+        ###################################
+
+      
+        # Apply wallet
+        # apply_wallet_to_booking(booking)
         ###################################
         # AUTO CREATE INVOICE ⭐⭐⭐⭐⭐
         ###################################
@@ -406,11 +450,15 @@ class CreateBookingAPI(APIView):
         ################################
         # RAZORPAY
         ################################
+        payable_amount = booking.total_amount
 
         if booking.payment_method == "partial_razorpay":
             # amount = int(booking.total_amount * Decimal("0.30") * 100)
-            amount = int((booking.total_amount * Decimal("0.30")).quantize(Decimal("1")))
-            amount *= 100
+            # amount = int((booking.total_amount * Decimal("0.30")).quantize(Decimal("1")))
+            # amount *= 100
+            payable_amount = (payable_amount * Decimal("0.30")).quantize(Decimal("0.01"))
+            amount = int(payable_amount * 100)
+        
         else:
             # amount = int(booking.total_amount * 100)
             amount = int(booking.total_amount.quantize(Decimal("1"))) * 100
@@ -428,7 +476,8 @@ class CreateBookingAPI(APIView):
             "key": settings.RAZORPAY_KEY_ID,
             "amount": amount,
             "order_id": order["id"],
-            "booking_id": booking.id
+            "booking_id": booking.id,
+            "wallet_used": booking.wallet_used
         })
 
 
@@ -564,7 +613,7 @@ class BookingSuccessAPI(APIView):
 
             "check_in": booking.check_in,
             "check_out": booking.check_out,
-
+            "wallet_used": booking.wallet_used, 
             "guest_count": booking.guest_count,
             "extra_guest_count": booking.extra_guest_count,
 

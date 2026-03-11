@@ -3,7 +3,7 @@
 
 <div class="min-h-screen bg-gray-50 py-14">
 
-<div class="max-w-7xl mx-auto px-6">
+<div class=" mx-auto px-2 md:px-16">
 
 <!-- HEADER -->
 <div class="mb-10">
@@ -17,12 +17,12 @@ View and manage your farmhouse reservations
 
 
 
-<div class="grid lg:grid-cols-12 gap-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
 <!-- ================= LEFT LIST ================= -->
 
 <div id="bookingList"
-class="lg:col-span-4 bg-white rounded-2xl border shadow-sm max-h-[650px] overflow-y-auto">
+class="lg:col-span-4 bg-white rounded-2xl border shadow-sm lg:max-h-[650px] overflow-y-auto">
 </div>
 
 
@@ -30,7 +30,7 @@ class="lg:col-span-4 bg-white rounded-2xl border shadow-sm max-h-[650px] overflo
 <!-- ================= RIGHT DETAIL ================= -->
 
 <div id="bookingDetail"
-class="lg:col-span-8 bg-white rounded-2xl border shadow-sm p-10 flex items-center justify-center">
+class="lg:col-span-8 bg-white rounded-2xl border shadow-sm p-4 md:p-8 flex items-center justify-center">
 
 <p class="text-gray-400 text-lg">
 Select a booking to view details
@@ -48,7 +48,6 @@ Select a booking to view details
 
 /* LEFT ITEM */
 .booking-row{
-padding:18px 22px;
 border-bottom:1px solid #eee;
 cursor:pointer;
 transition:.2s;
@@ -116,10 +115,10 @@ return;
 
 box.innerHTML = res.data.map(b=>`
 
-<div class="booking-row"
+<div class="booking-row p-2 md:p-4"
 onclick="loadDetail('${b.booking_id}', this)">
 
-<div class="flex justify-between">
+<div class="flex flex-col md:flex-row md:justify-between gap-1">
 
 <div>
 <p class="font-semibold text-gray-800">
@@ -131,7 +130,7 @@ ${b.check_in} → ${b.check_out}
 </p>
 </div>
 
-<p class="font-bold text-orange-600">
+<p class="md:font-bold text-orange-600">
 ₹${b.total_amount}
 </p>
 
@@ -197,7 +196,7 @@ ${paymentBadge(b.payment_status)}
 
 
 <!-- INFO -->
-<div class="grid md:grid-cols-2 gap-x-20 gap-y-5 text-[15px]">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4 text-sm md:text-[15px]">
 
 ${row("Check In", b.check_in)}
 ${row("Check Out", b.check_out)}

@@ -1,20 +1,32 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-# Create your views here.
-def wallet(request):
-    return HttpResponse("Hello, this is Blog Page")
-    # return render(request , "contact.html")
-
-
+from decimal import Decimal
 
 from wallet.models import Wallet, WalletHistory
+from booking.models import Booking
 
+
+###########################################################
+# SIMPLE TEST VIEW
+###########################################################
+
+def wallet(request):
+    return HttpResponse("Hello, this is Wallet Page")
+
+
+###########################################################
+# ADMIN WALLET CREDIT FUNCTION
+###########################################################
 
 def add_wallet_credit(user, amount, description="Admin wallet credit"):
+    """
+    Adds money to a user's wallet.
+    Example: Admin gives ₹2000 wallet credit
+    """
 
     wallet, created = Wallet.objects.get_or_create(user=user)
 
-    wallet.balance += amount
+    wallet.balance += Decimal(amount)
     wallet.save()
 
     WalletHistory.objects.create(
@@ -22,34 +34,64 @@ def add_wallet_credit(user, amount, description="Admin wallet credit"):
         amount=amount,
         transaction_type="credit",
         description=description
-        
     )
-    
-from wallet.models import Wallet, WalletHistory
 
+    return wallet
+
+
+###########################################################
+# APPLY WALLET TO BOOKING
+###########################################################
 
 def apply_wallet_to_booking(booking):
+    """
+    Deduct wallet balance for a booking
+    """
 
     wallet = Wallet.objects.filter(user=booking.user).first()
 
-    if not wallet or wallet.balance <= 0:
+    if not wallet:
         return booking
 
-    wallet_used = 0
+    if wallet.balance <= 0:
+        return booking
+
+    wallet_used = Decimal("0.00")
+
+    #######################################################
+    # FULL WALLET PAYMENT
+    #######################################################
 
     if wallet.balance >= booking.total_amount:
 
         wallet_used = booking.total_amount
         wallet.balance -= booking.total_amount
-        booking.total_amount = 0
+
+        booking.total_amount = Decimal("0.00")
+        booking.remaining_amount = Decimal("0.00")
+
+    #######################################################
+    # PARTIAL WALLET PAYMENT
+    #######################################################
 
     else:
 
         wallet_used = wallet.balance
+
         booking.total_amount -= wallet.balance
-        wallet.balance = 0
+        booking.remaining_amount = booking.total_amount
+
+        wallet.balance = Decimal("0.00")
+
+    #######################################################
+    # SAVE WALLET
+    #######################################################
 
     wallet.save()
+
+    #######################################################
+    # SAVE WALLET HISTORY
+    #######################################################
 
     WalletHistory.objects.create(
         user=booking.user,
@@ -58,7 +100,26 @@ def apply_wallet_to_booking(booking):
         description=f"Wallet used for booking {booking.booking_id}"
     )
 
+    #######################################################
+    # SAVE BOOKING
+    #######################################################
+
     booking.wallet_used = wallet_used
     booking.save()
 
     return booking
+
+
+from django.http import JsonResponse
+from wallet.models import Wallet
+
+def wallet_balance(request):
+
+    if not request.user.is_authenticated:
+        return JsonResponse({"balance": 0})
+
+    wallet = Wallet.objects.filter(user=request.user).first()
+
+    return JsonResponse({
+        "balance": wallet.balance if wallet else 0
+    })

@@ -379,6 +379,8 @@ class UserBookingListAPIView(generics.ListAPIView):
         return Booking.objects.filter(
             user=self.request.user
         ).select_related("farmhouse")
+        
+        
 from booking.serializers import BookingSerializer
 class MyBookingDetailAPIView(generics.RetrieveAPIView):
 

@@ -293,6 +293,10 @@ height:300px;
     let finalTotal = 0;
     let subTotal = 0;
     let checkoutPicker;
+    let similarFarmhouses = [];
+
+    let walletBalance = 0;   // ✅ ADD
+    let walletApplied = false; // ✅ ADD
 
     //////////////////////////////////////////////////
     async function loadFarmhouse() {
@@ -303,7 +307,7 @@ height:300px;
             await axios.get(`/api/farmhouses/${slug}/`);
 
         farmhouse = res.data.farmhouse;
-
+        similarFarmhouses = res.data.similar_farmhouses || [];
         buildUI();
         initDescriptionToggle();
         initPaymentSelection();
@@ -313,6 +317,7 @@ height:300px;
         await initFlatpickr();
         initListeners();
         initSubmit();
+        await loadWallet();
 
         loader.style.display = "none";
         app.style.display = "block";
@@ -544,6 +549,7 @@ placeholder="Select Check-out" readonly required>
 
 
 
+
 {% comment %} <input id="guest_count" type="number"
 value="1" class="input">
 
@@ -684,6 +690,39 @@ class="acc-body hidden">
     </p>
 </div>
 
+
+
+
+
+{% comment %}  {% endcomment %}
+<!-- WALLET -->
+<div class="mt-4 mb-4 border rounded-xl p-4 bg-green-50">
+
+<label class="flex items-center justify-between">
+
+<div>
+<p class="font-semibold">Wallet Balance</p>
+<p class="text-sm text-gray-600">
+₹<span id="wallet_balance">0</span>
+</p>
+</div>
+
+<button type="button"
+onclick="toggleWallet()"
+id="applyWalletBtn"
+class="px-4 py-2 bg-green-600 text-white rounded-lg">
+
+Apply Wallet
+
+</button>
+
+</label>
+
+</div>
+
+
+
+{% comment %}  {% endcomment %}
 
 
     <!-- PAY AT FARMHOUSE -->
@@ -1243,14 +1282,14 @@ ${farmhouse.pricing.sale_price > 0
     <h2 class="text-xl md:text-2xl text-orange-500 font-bold mb-6">
         Amenities
     </h2>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
 ${farmhouse.amenities.map(a => `
     <div class="flex items-center gap-3 p-4 border rounded-xl bg-white">
 
         <i data-lucide="${a.icon_class}" 
            class="w-5 h-5 text-orange-500"></i>
 
-        <span class="font-medium">
+        <span class="md:font-medium">
             ${a.name}
         </span>
 
@@ -1371,8 +1410,130 @@ Map location not available
 </div>
 
 </div>
+
+
+
+
+
+
+
+
+
+${similarFarmhouses.length ? `
+<div class="px-2 md:px-16 my-4 md:my-10">
+
+<h3 class="text-xl md:text-2xl text-orange-500 font-bold mb-6">
+Similar Farmhouses
+</h3>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6">
+
+{% comment %} ${res.data.similar_farmhouses.map(f => { {% endcomment %}
+
+${similarFarmhouses.map(f => {
+
+const sale = Number(f.pricing?.sale_price || 0);
+const weekday = Number(f.pricing?.normal_day_price || 0);
+const weekend = Number(f.pricing?.weekend_price || 0);
+
+let displayPrice = sale > 0 ? sale : Math.min(weekday, weekend);
+
+return `
+
+<div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+
+    <!-- IMAGE -->
+    <div class="h-56 overflow-hidden">
+        <img src="${safeImage(f.primary_image)}"
+             class="w-full h-full object-cover">
+    </div>
+
+    <!-- CONTENT -->
+    <div class="p-5">
+
+        <!-- TITLE -->
+        <p class="text-xl font-bold text-gray-800 mb-1">
+            ${f.title}
+        </p>
+
+        <!-- LOCATION -->
+        <p class="text-gray-500 text-sm flex items-center gap-2 mb-2">
+            <i data-lucide="map-pin" class="w-4 h-4 text-orange-500"></i>
+            ${f.location.name}
+        </p>
+
+        <!-- DESCRIPTION -->
+        <p class="text-sm text-gray-600 mb-4 line-clamp-2">
+            ${f.short_description || ""}
+        </p>
+
+        <!-- ICONS -->
+        <div class="flex gap-6 text-gray-600 text-sm mb-4">
+
+            <span class="flex items-center gap-1">
+                <i data-lucide="bed" class="w-4 h-4"></i>
+                ${f.bedrooms || 0} Beds
+            </span>
+
+            <span class="flex items-center gap-1">
+                <i data-lucide="home" class="w-4 h-4"></i>
+                ${f.halls || 0} Halls
+            </span>
+
+            <span class="flex items-center gap-1">
+                <i data-lucide="snowflake" class="w-4 h-4"></i>
+                ${f.ac_bedrooms || 0} AC
+            </span>
+
+        </div>
+
+        <hr class="mb-4">
+
+        <!-- PRICE + BUTTON -->
+        <div class="flex items-center justify-between">
+
+            <div>
+                <p class="text-xl font-bold text-green-600">
+                    ₹${displayPrice.toLocaleString()} / night
+                </p>
+
+                <p class="text-xs text-gray-500">
+                    Weekday ₹${weekday.toLocaleString()} • Weekend ₹${weekend.toLocaleString()}
+                </p>
+            </div>
+
+            <a href="/farmhouse/${f.slug}/${f.location.slug}/"
+               class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                Know More
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+`;
+
+}).join("")}
+
+</div>
+
+</div>
+` : ``}
+
+
 `;
     }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1711,6 +1872,13 @@ Please select an earlier checkout date.`
         subTotal += Number(extra_guest_count.value || 0) * extra;
 
         finalTotal = Math.max(subTotal - couponDiscount, 0);
+        if(walletApplied){
+
+        const walletUse = Math.min(walletBalance, finalTotal);
+
+        finalTotal -= walletUse;
+
+        }
         console.log("Subtotal:", subTotal);
         console.log("Final:", finalTotal);
 
@@ -1764,7 +1932,10 @@ Total: ₹${Number(finalTotal).toLocaleString()}
 
 
 function fillReview() {
-
+    let walletUse = walletApplied
+    ? Math.min(walletBalance, subTotal - couponDiscount)
+    : 0;
+        
     const reviewBox = document.getElementById("reviewBox");
     if (!reviewBox) return;
 
@@ -1837,7 +2008,10 @@ function fillReview() {
     <span>Advance Paid</span>
     <span>₹${Number(advance).toLocaleString()}</span>
 </div>
-
+<div class="flex justify-between text-blue-600">
+<span>Wallet Used</span>
+<span>- ₹${walletUse.toLocaleString()}</span>
+</div>
 <div class="flex justify-between text-red-600 font-medium">
     <span>Remaining</span>
     <span>₹${Number(remaining).toLocaleString()}</span>
@@ -2102,7 +2276,8 @@ Remaining: ₹${finalTotal - payNow}
 
                     check_in: check_in.value,
                     check_out: check_out.value,
-
+                    
+                    use_wallet: walletApplied,
                     coupon_applied: couponId || null,
                     payment_method:
                         method === "partial"
@@ -2111,7 +2286,7 @@ Remaining: ₹${finalTotal - payNow}
                                 ? "full_razorpay"
                                 : "farmhouse"
                 };
-
+                console.log("Wallet Applied:", walletApplied);
                 const res = await axios.post(
                     "/bookings/create/",
                     payload
@@ -2228,6 +2403,74 @@ Remaining: ₹${finalTotal - payNow}
     }
 
 
+
+
+    {% comment %}  {% endcomment %}
+
+
+
+async function loadWallet(){
+
+try{
+
+const res = await axios.get("/wallet/balance/");
+
+walletBalance = Number(res.data.balance);
+
+if(walletBalance <= 0){
+document.getElementById("applyWalletBtn").disabled = true;
+}
+
+document.getElementById("wallet_balance").innerText =
+walletBalance.toLocaleString();
+
+}catch(err){
+
+console.log("Wallet not available");
+
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+function toggleWallet(){
+
+walletApplied = !walletApplied;
+console.log("Wallet toggled:", walletApplied);
+const btn = document.getElementById("applyWalletBtn");
+
+if(walletApplied){
+
+btn.innerText = "Wallet Applied";
+btn.classList.remove("bg-green-600");
+btn.classList.add("bg-gray-500");
+
+}else{
+
+btn.innerText = "Apply Wallet";
+btn.classList.remove("bg-gray-500");
+btn.classList.add("bg-green-600");
+
+}
+
+{% comment %} calculateTotal(); {% endcomment %}
+
+calculateTotal();
+updatePayment();
+fillReview();
+
+}
 
 
 </script>
