@@ -27,7 +27,7 @@ class BannerSerializer(serializers.ModelSerializer):
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ["id", "name", "slug"]
+        fields = ["id", "name","meta_title","meta_description", "meta_keywords" ,"slug"]
 
 
 class AmenitySerializer(serializers.ModelSerializer):

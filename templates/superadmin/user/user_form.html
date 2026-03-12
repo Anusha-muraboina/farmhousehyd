@@ -69,6 +69,21 @@
                             {% endif %}
                         </div>
 
+
+                            <div class="mb-3">
+                            <label class="form-label fw-semibold">farmhouse_limit</label>
+                            {{ form.farmhouse_limit }}
+                            {% if form.farmhouse_limit.errors %}
+                                <div class="text-danger small">
+                                    {{ form.farmhouse_limit.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+
+
+                        
+
                         <!-- PASSWORD -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Password</label>

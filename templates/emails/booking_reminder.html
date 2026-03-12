@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Booking Reminder</title>
+</head>
+
+<body style="font-family: Arial; background:#f4f4f4; padding:30px;">
+
+<div style="max-width:600px; margin:auto; background:white; padding:30px; border-radius:10px;">
+
+<h2 style="color:#f97316;">Farmhouse Booking Reminder</h2>
+
+<p>Hello <b>{{ booking.guest_name }}</b>,</p>
+
+<p>This is a friendly reminder that your farmhouse booking is tomorrow.</p>
+
+<hr>
+
+<h3>Booking Details</h3>
+
+<p><b>Farmhouse:</b> {{ booking.farmhouse.title }}</p>
+<p><b>Check-in:</b> {{ booking.check_in }}</p>
+<p><b>Check-out:</b> {{ booking.check_out }}</p>
+<p><b>Guests:</b> {{ booking.guest_count }}</p>
+
+<hr>
+
+<p style="margin-top:20px;">
+We look forward to hosting you.  
+Have a great stay! 🌿
+</p>
+
+<p>
+Thanks,<br>
+<b>Farmhouses Hyderabad Team</b>
+</p>
+
+</div>
+
+</body>
+</html>

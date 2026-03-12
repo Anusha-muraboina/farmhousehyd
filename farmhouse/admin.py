@@ -31,7 +31,14 @@ class LocationAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     list_filter = ("is_active",)
     search_fields = ("name",)
-
+    fields = (
+        "name",
+        "slug",
+        "is_active",
+        "meta_title",
+        "meta_description",
+        "meta_keywords",
+    )
 
 @admin.register(Farmhouse)
 class FarmhouseAdmin(admin.ModelAdmin):

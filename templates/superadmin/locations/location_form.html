@@ -18,7 +18,26 @@
 Location Name
 </label>
 {{ form.name }}
+
 </div>
+
+  <div class="mb-4">
+    
+      {{ form.meta_title.label_tag }}
+      {{ form.meta_title }}
+  </div>
+
+  <div class="mb-4">
+      {{ form.meta_keywords.label_tag }}
+      {{ form.meta_keywords }}
+  </div>
+
+
+<div class="mb-4">
+    {{ form.meta_description.label_tag }}
+    {{ form.meta_description }}
+</div>
+
 <div class="mb-4 form-check">
     {{ form.is_active }}
     <label class="form-check-label fw-semibold">

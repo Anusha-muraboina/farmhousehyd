@@ -53,17 +53,8 @@ class Booking(models.Model):
 
     booking_id = models.CharField(max_length=20, unique=True, editable=False)
     
-    farmhouse = models.ForeignKey(
-        Farmhouse,
-        on_delete=models.CASCADE,
-        related_name="bookings"
-    )
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
+    farmhouse = models.ForeignKey(  Farmhouse,  on_delete=models.CASCADE,  related_name="bookings")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,  on_delete=models.SET_NULL,null=True, blank=True)
    
     # Guest snapshot (VERY IMPORTANT)
     guest_name = models.CharField(max_length=200)
@@ -81,52 +72,27 @@ class Booking(models.Model):
         help_text="Example: 10:00 AM"
     )
     special_requests = models.TextField(blank=True)
-    wallet_used = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0,
-        help_text="Amount used from wallet for this booking"
-    )
+    wallet_used = models.DecimalField( max_digits=10, decimal_places=2, default=0, help_text="Amount used from wallet for this booking")
     sub_total = models.DecimalField(max_digits=10, decimal_places=2)
     disc_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
     tax_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    coupon_applied = models.ForeignKey(
-        Coupon,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-    check_out_time = models.TimeField(
-        null=True,
-        blank=True,
-        help_text="Example: 09:00 AM"
-    )
+    coupon_applied = models.ForeignKey(Coupon,on_delete=models.SET_NULL,null=True,blank=True)
+    check_out_time = models.TimeField( null=True, blank=True, help_text="Example: 09:00 AM")
     remaining_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
-    payment_method = models.CharField(
-        max_length=20,
-        choices=PAYMENT_METHOD_CHOICES
-    )
+    payment_method = models.CharField(  max_length=20,  choices=PAYMENT_METHOD_CHOICES)
 
-    payment_status = models.CharField(
-        max_length=20,
-        choices=PAYMENT_STATUS_CHOICES,
-        default='pending'
-    )
+    payment_status = models.CharField(  max_length=20,  choices=PAYMENT_STATUS_CHOICES, default='pending')
 
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='pending'
-    )
+    status = models.CharField( max_length=20,  choices=STATUS_CHOICES, default='pending')
 
     transaction_id = models.CharField(max_length=100, blank=True, null=True)
     payment_id = models.CharField(max_length=100, blank=True, null=True)
 
     confirmation_email_sent_at = models.DateTimeField(null=True, blank=True)
     cancelled_at = models.DateTimeField(null=True, blank=True)
-
+    reminder_sent = models.BooleanField(default=False)
     cancelled_by = models.CharField(
         max_length=20,
         choices=[

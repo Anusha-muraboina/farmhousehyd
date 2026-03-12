@@ -339,7 +339,8 @@ def add_farmhouse(request):
 
     if request.method == "POST":
 
-        form = FarmhouseForm(request.POST)
+        # form = FarmhouseForm(request.POST)
+        form = FarmhouseForm(request.POST, request.FILES)
         pricing_form = FarmhousePricingForm(request.POST)
 
         if form.is_valid() and pricing_form.is_valid():
@@ -366,6 +367,10 @@ def add_farmhouse(request):
                 )
 
             return redirect("owner_farmhouses")
+        
+        else:
+            print("FORM ERRORS:", form.errors)
+            print("PRICING ERRORS:", pricing_form.errors)
 
     else:
         form = FarmhouseForm()
@@ -387,14 +392,15 @@ def edit_farmhouse(request, id):
         id=id,
         user=request.user
     )
-
+    
     pricing, _ = FarmhousePricing.objects.get_or_create(
         farmhouse=farmhouse
     )
 
     if request.method == "POST":
 
-        form = FarmhouseForm(request.POST, instance=farmhouse)
+        # form = FarmhouseForm(request.POST, instance=farmhouse)
+        form = FarmhouseForm(request.POST, request.FILES, instance=farmhouse)
         pricing_form = FarmhousePricingForm(request.POST, instance=pricing)
 
         if form.is_valid() and pricing_form.is_valid():
@@ -452,61 +458,6 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 
 
-# @owner_required
-# def owner_booking_list(request, farmhouse_id):
-
-#     #########################################
-#     # SECURITY 🔥 VERY IMPORTANT
-#     #########################################
-
-#     farmhouse = get_object_or_404(
-#         Farmhouse,
-#         id=farmhouse_id,
-#         user=request.user   # ⭐ prevents hacking
-#     )
-
-#     bookings = Booking.objects.filter(
-#         farmhouse=farmhouse
-#     ).select_related("user").order_by("-created_at")
-
-#     #########################################
-#     # SEARCH
-#     #########################################
-
-#     search = request.GET.get("search")
-
-#     if search:
-#         bookings = bookings.filter(
-#             Q(guest_name__icontains=search) |
-#             Q(guest_email__icontains=search) |
-#             Q(booking_id__icontains=search)
-#         )
-
-#     #########################################
-#     # STATUS FILTER
-#     #########################################
-
-#     status = request.GET.get("status")
-
-#     if status:
-#         bookings = bookings.filter(status=status)
-
-#     #########################################
-#     # PAGINATION
-#     #########################################
-
-#     paginator = Paginator(bookings, 10)
-#     page = request.GET.get("page")
-#     bookings = paginator.get_page(page)
-
-#     return render(
-#         request,
-#         "farmhouse_admin/bookings/list.html",
-#         {
-#             "farmhouse": farmhouse,
-#             "bookings": bookings
-#         }
-#     )
 from django.contrib.auth.decorators import login_required
 from booking.models import Booking
 from django.core.paginator import Paginator

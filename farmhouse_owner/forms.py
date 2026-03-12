@@ -77,6 +77,14 @@ class FarmhouseForm(forms.ModelForm):
             "bedrooms": forms.NumberInput(attrs={
                 "class": "form-control"
             }),
+            "halls": forms.NumberInput(attrs={
+                "class": "form-control"
+            }),
+            "ac_bedrooms": forms.NumberInput(attrs={
+                "class": "form-control"
+            }),
+            
+           
             # "guest_count": forms.NumberInput(attrs={
             #     "class": "form-control"
             # }),

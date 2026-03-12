@@ -241,6 +241,44 @@ height:300px;
 
 
 
+<!-- GALLERY MODAL -->
+<!-- GALLERY MODAL -->
+<div id="galleryModal"
+     class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center">
+
+    <!-- CLOSE BUTTON -->
+    <button onclick="closeGallery()"
+        class="absolute top-6 right-8 text-white text-4xl z-50 hover:text-gray-300">
+        ✕
+    </button>
+
+    <!-- LEFT ARROW -->
+    <button onclick="prevImage()"
+        class="absolute left-6 text-white text-5xl font-bold hover:text-gray-300">
+        ‹
+    </button>
+
+    <!-- IMAGE CONTAINER -->
+    <div class="px-6 text-center w-full flex flex-col items-center">
+
+        <img id="modalImage"
+             class="max-h-full max-w-full object-contain rounded-xl shadow-2xl">
+
+        <!-- COUNTER -->
+        <p id="imageCounter"
+           class="text-white mt-4 text-lg font-semibold"></p>
+
+    </div>
+
+    <!-- RIGHT ARROW -->
+    <button onclick="nextImage()"
+        class="absolute right-6 text-white text-5xl font-bold hover:text-gray-300">
+        ›
+    </button>
+
+</div>
+
+
 <script>
 
     function safeImage(url) {
@@ -340,79 +378,43 @@ height:300px;
 
 
         app.innerHTML = `
-
 <!-- IMAGE GALLERY -->
+<div class="px-2 md:px-16 mt-6">
 
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
 
-<div class="md:mb-8 mb-2 px-2 md:px-16 mt-2  md:mt-16 ">
+    <!-- BIG IMAGE -->
+    <div class="lg:col-span-2 h-[420px] overflow-hidden rounded-xl">
+        <img
+             src="${safeImage(farmhouse.images[0]?.image)}"
+             onclick="openGallery(0)"
+             class="w-full h-full object-cover cursor-pointer">
+    </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-6 gap-4">
+    <!-- RIGHT 2 IMAGES -->
+    <div class="grid grid-rows-2 gap-3 h-[420px]">
 
-        <!-- ⭐ BIG IMAGE FIRST ON MOBILE -->
-        <div class="lg:col-span-5 order-1 lg:order-2">
-
-            <div class="relative w-full h-[260px] sm:h-[380px] lg:h-[520px] 
-            flex items-center justify-center 
-            bg-gray-100 rounded-2xl overflow-hidden">
-
-                <img id="mainImage"
-                    {% comment %} src="${farmhouse.primary_image}" {% endcomment %}
-                    src="${safeImage(farmhouse.primary_image)}"
-                    class="w-full h-full object-cover transition duration-300">
-
-                <!-- ICONS -->
-                <div class="absolute top-3 right-3 flex gap-2">
-
-                    <button onclick="zoomIn()"
-                        class="bg-white shadow w-9 h-9 rounded-full flex items-center justify-center">
-                        <i data-lucide="zoom-in" class="w-4 h-4"></i>
-                    </button>
-
-                    <button onclick="zoomOut()"
-                        class="bg-white shadow w-9 h-9 rounded-full flex items-center justify-center">
-                        <i data-lucide="zoom-out" class="w-4 h-4"></i>
-                    </button>
-
-                    <button onclick="resetZoom()"
-                        class="bg-white shadow w-9 h-9 rounded-full flex items-center justify-center">
-                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-                    </button>
-
-                </div>
-
-            </div>
+        <!-- IMAGE 2 -->
+        <div class="overflow-hidden rounded-xl">
+            <img src="${safeImage(farmhouse.images[1]?.image)}"
+                 onclick="openGallery(1)"
+                 class="w-full h-full object-cover cursor-pointer">
         </div>
 
+        <!-- IMAGE 3 -->
+        <div class="relative overflow-hidden rounded-xl">
 
-        <!-- ⭐ THUMBNAILS -->
-        <div class="lg:col-span-1 order-2 lg:order-1">
+            <img src="${safeImage(farmhouse.images[2]?.image)}"
+                 onclick="openGallery(2)"
+                 class="w-full h-full object-cover cursor-pointer">
 
-            <!-- Mobile → Horizontal scroll -->
-            {% comment %} <div class="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto"> {% endcomment %}
-            <div class="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto max-h-[520px] pr-1">
-
-            ${farmhouse.images.map(img => `
-    <img 
-        src="${img.image}"
-        onclick="changeImage('${img.image}')"
-        class="min-w-[90px] h-20 lg:w-full lg:h-24 
-        object-cover rounded-xl cursor-pointer
-        border-2 border-transparent 
-        hover:border-orange-500 transition">
-`).join("")}
-                {% comment %} ${farmhouse.images.slice(0,4 ).map(img => `
-
-                    <img 
-                        src="${img.image}"
-                        onclick="changeImage('${img.image}')"
-                        class="min-w-[90px] h-20 lg:w-full lg:h-24 
-                        object-cover rounded-xl cursor-pointer
-                        border-2 border-transparent 
-                        hover:border-orange-500 transition">
-
-                `).join("")} {% endcomment %}
-
+            <!-- +Photos Overlay -->
+            ${farmhouse.images.length > 3 ? `
+            <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-xl font-bold cursor-pointer"
+                 onclick="openGallery(2)">
+                 +${farmhouse.images.length - 3} photos
             </div>
+            ` : ``}
 
         </div>
 
@@ -420,12 +422,24 @@ height:300px;
 
 </div>
 
+</div>
 
+
+<!-- THUMBNAILS -->
+{% comment %} <div class="flex gap-3 mt-4 overflow-x-auto">
+${farmhouse.images.map(img => `
+    <img src="${img.image}"
+         onclick="changeImage('${img.image}')"
+         class="w-28 h-20 object-cover rounded-lg cursor-pointer border hover:border-orange-500">
+`).join("")}
+</div> {% endcomment %}
+
+
+</div>
 
 
 
 <div class=" mx-auto py-4    md:py-10 px-2 md:px-16">
-
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
@@ -435,8 +449,6 @@ height:300px;
 <!-- LEFT SIDE (BOOKING) -->
 <div class="lg:sticky top-10 lg:h-fit">
     <div class="bg-white p-4 rounded shadow">
-
-
 
 <h1 class="text-xl  md:text-3xl text-orange-600 font-bold mb-6">
 {% comment %} Entire Farmhouse Booking {% endcomment %}
@@ -681,7 +693,7 @@ class="acc-body hidden">
 
         <button type="button"
                 onclick="applyCoupon()"
-                class="px-4 rounded-lg bg-gray-900 text-white font-semibold">
+                class="px-2 md:px-4 rounded-lg bg-gray-900 text-white font-semibold">
             Apply
         </button>
     </div>  
@@ -696,7 +708,7 @@ class="acc-body hidden">
 
 {% comment %}  {% endcomment %}
 <!-- WALLET -->
-<div class="mt-4 mb-4 border rounded-xl p-4 bg-green-50">
+{% comment %} <div class="mt-4 mb-4 border rounded-xl p-4 bg-green-50">
 
 <label class="flex items-center justify-between">
 
@@ -718,7 +730,7 @@ Apply Wallet
 
 </label>
 
-</div>
+</div> {% endcomment %}
 
 
 
@@ -2470,6 +2482,94 @@ calculateTotal();
 updatePayment();
 fillReview();
 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+function openGallery(){
+
+    const container = document.getElementById("galleryContainer");
+
+    container.innerHTML = farmhouse.images.map(img => `
+        <img src="${img.image}"
+             class="w-full h-full object-cover rounded-lg cursor-pointer">
+    `).join("");
+
+    document.getElementById("galleryModal").classList.remove("hidden");
+}
+
+function closeGallery(){
+    document.getElementById("galleryModal").classList.add("hidden");
+}
+
+let currentImageIndex = 0;
+
+function openGallery(index = 0){
+
+    currentImageIndex = index;
+
+    document
+        .getElementById("galleryModal")
+        .classList.remove("hidden");
+
+    showImage();
+}
+
+function closeGallery(){
+
+    document
+        .getElementById("galleryModal")
+        .classList.add("hidden");
+}
+
+function showImage(){
+
+    const images = farmhouse.images || [];
+
+    if(!images.length) return;
+
+    const img = images[currentImageIndex];
+
+    document.getElementById("modalImage").src = img.image;
+
+    document.getElementById("imageCounter").innerText =
+        (currentImageIndex + 1) + " / " + images.length;
+}
+
+function nextImage(){
+
+    const images = farmhouse.images || [];
+
+    currentImageIndex++;
+
+    if(currentImageIndex >= images.length){
+        currentImageIndex = 0;
+    }
+
+    showImage();
+}
+
+function prevImage(){
+
+    const images = farmhouse.images || [];
+
+    currentImageIndex--;
+
+    if(currentImageIndex < 0){
+        currentImageIndex = images.length - 1;
+    }
+
+    showImage();
 }
 
 

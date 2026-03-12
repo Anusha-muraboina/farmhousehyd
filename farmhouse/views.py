@@ -122,7 +122,7 @@ def Farmhouse_detail(request,location_slug, slug):
     )
     location = farmhouse.location
         # ✅ Get SEO for locations page
-    page_seo = PageSEO.objects.filter(page="locations").first()
+    # page_seo = PageSEO.objects.filter(page="locations").first()
 
     context = {
         "farmhouse": farmhouse,
@@ -136,19 +136,19 @@ def Farmhouse_detail(request,location_slug, slug):
         
         "meta_title": (
             location.meta_title
-            or (page_seo.meta_title if page_seo else "")
+            # or (page_seo.meta_title if page_seo else "")
             or f"{farmhouse.title} | Farmhouse Hyd"
         ),
 
         "meta_description": (
             location.meta_description
-            or (page_seo.meta_description if page_seo else "")
+            # or (page_seo.meta_description if page_seo else "")
             or farmhouse.short_description
         ),
 
         "meta_keywords": (
             location.meta_keywords
-            or (page_seo.meta_keywords if page_seo else "")
+            # or (page_seo.meta_keywords if page_seo else "")
         ),
     }
 
@@ -185,7 +185,7 @@ from django.shortcuts import get_object_or_404
 from .models import Farmhouse, Location
 from .serializers import FarmhouseSerializer, LocationSerializer ,ThingstocarrySerializer
 from django.db.models import Q, F
-
+from django.core.paginator import Paginator
 # ------------------ FARMHOUSE LIST API ------------------
 class FarmhouseListAPI(APIView):
     authentication_classes = [BasicAuthentication]
@@ -228,8 +228,18 @@ class FarmhouseListAPI(APIView):
         elif sort == "high_to_low":
             farmhouses = farmhouses.order_by("-price_per_day")
 
+
+                # ⭐ PAGINATION
+        page = int(request.GET.get("page", 1))
+        paginator = Paginator(farmhouses, 9)
+
+        page_obj = paginator.get_page(page)
+
+
+
         serializer = FarmhouseSerializer(
-            farmhouses, many=True, context={"request": request}
+             page_obj.object_list,
+            many=True, context={"request": request}
         )
         
         
@@ -240,7 +250,8 @@ class FarmhouseListAPI(APIView):
         return Response({
             "farmhouses": serializer.data,
             "locations": location_serializer.data ,
-
+            "has_next": page_obj.has_next(),
+            "page": page
         })
 
 
@@ -332,7 +343,6 @@ class HomeAPIView(APIView):
                 Q(location__name__icontains=search)
             )
 
-        
         # if selected_location:
         #     farmhouses = farmhouses.filter(location__slug=selected_location)
 
@@ -340,7 +350,7 @@ class HomeAPIView(APIView):
             is_published=True
         ).order_by("-published_at")[:3]
 
-        farmhouses = farmhouses.order_by("-created_at")[:15]
+        farmhouses = farmhouses.order_by("-created_at")[:9]
 
         return Response({
             "banners": BannerSerializer(banners, many=True , context={"request": request}).data,

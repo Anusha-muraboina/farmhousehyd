@@ -94,63 +94,87 @@
      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 </div>
 
+
+
+
+<div class="text-center mt-10">
+    <button id="loadMoreBtn"
+        class="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 hidden">
+        Load More Farmhouses
+    </button>
+</div>
+
+
     </div>
 </section>
 
-{% comment %} <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 
 <script>
-async function loadFarmhouses() {
+let currentPage = 1;
+let loading = false;
+
+async function loadFarmhouses(reset=false) {
 
     const container = document.getElementById("farmhouse-container");
+    const locationSelect = document.getElementById("locationSelect");
+    const loadMoreBtn = document.getElementById("loadMoreBtn");
 
-    container.innerHTML = "Loading farmhouses...";
+    if (loading) return;
+    loading = true;
+
+    if (reset) {
+        currentPage = 1;
+        container.innerHTML = "Loading farmhouses...";
+    }
 
     try {
 
-        const res = await axios.get("/api/farmhouses/");
+        // ⭐ get URL params
+        const params = new URLSearchParams(window.location.search);
+        params.set("page", currentPage);
+
+        const res = await axios.get(`/api/farmhouses/?${params.toString()}`);
+
         const farmhouses = res.data.farmhouses;
+        const locations = res.data.locations;
+        const hasNext = res.data.has_next;
 
+        // ⭐ populate locations (only first load)
+        if (currentPage === 1) {
 
+            locationSelect.innerHTML = `<option value="">All Locations</option>`;
 
+            locations.forEach(loc => {
+                locationSelect.innerHTML += `
+                    <option value="${loc.slug}">
+                        ${loc.name}
+                    </option>`;
+            });
 
-        let html = "";   // ⭐ use single render (faster)
+            const currentLocation = params.get("location");
+            if (currentLocation) {
+                locationSelect.value = currentLocation;
+            }
+
+            container.innerHTML = "";
+        }
+
+        let html = "";
 
         farmhouses.forEach(f => {
 
             const image = f.primary_image ||
             "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80";
 
+            const sale = Number(f.pricing?.sale_price || 0);
+            const weekday = Number(f.pricing?.normal_day_price || 0);
+            const weekend = Number(f.pricing?.weekend_price || 0);
 
-
-
-
-
-        const sale = Number(f.pricing?.sale_price || 0);
-        const weekday = Number(f.pricing?.normal_day_price || 0);
-        const weekend = Number(f.pricing?.weekend_price || 0);
-
-        let displayPrice = 0;
-        let originalPrice = 0;
-
-        // ⭐ If sale exists → show sale
-        if (sale > 0) {
-
-            displayPrice = sale;
-            originalPrice = Math.min(weekday, weekend);
-
-        } else {
-
-            displayPrice = Math.min(weekday, weekend);
-        }
-
-
-
-
-
-
-
-
+            let displayPrice = sale > 0 ? sale : Math.min(weekday, weekend);
+            let originalPrice = sale > 0 ? Math.min(weekday, weekend) : 0;
 
             html += `
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition">
@@ -161,18 +185,14 @@ async function loadFarmhouses() {
 
                 <div class="p-5">
 
-                    <p class="text-xl font-bold mb-1">
-                        ${f.title}
+                    <p class="text-xl font-bold mb-1">${f.title}</p>
+
+                    <p class="text-gray-500 text-sm mb-2">${f.address || ""}</p>
+
+                    <p class="text-sm text-gray-600 mb-3">
+                        ${(f.short_description || "").substring(0,90)}...
                     </p>
 
-                    <p class="text-gray-500 text-sm mb-2 flex items-center gap-1">
-                        <i data-lucide="map-pin" class="w-4 h-4"></i>
-                        ${f.address || ""}
-                    </p>
-  <p class="text-sm text-gray-600 mb-3">
-                        ${f.short_description?.substring(0,90) || ""}
-                        ...
-                    </p>
                     <div class="flex gap-4 text-sm text-gray-700 mb-3">
 
                         <span class="flex items-center gap-1">
@@ -194,72 +214,90 @@ async function loadFarmhouses() {
 
                     <div class="flex justify-between items-center border-t pt-4">
 
+                        <div class="flex flex-col">
 
-<div class="flex flex-col ">
+                            ${
+                                originalPrice > 0
+                                ? `<span class="text-xs text-gray-400 line-through">
+                                      ₹${originalPrice.toLocaleString()}
+                                   </span>`
+                                : ""
+                            }
 
-    ${
-        originalPrice > 0
-        ? `<span class="text-xs text-gray-400 line-through">
-              ₹${originalPrice.toLocaleString()}
-           </span>`
-        : ""
-    }
+                            <span class="text-lg font-bold text-green-600">
+                                ₹${displayPrice.toLocaleString()} / night
+                            </span>
 
-    <span class="text-lg font-bold text-green-600">
-        ₹${displayPrice.toLocaleString()} / night
-    </span>
+                            ${
+                                sale > 0
+                                ? `<span class="text-xs text-red-500 font-semibold">
+                                       Limited Time Deal
+                                   </span>`
+                                : `<span class="text-xs text-gray-500">
+                                      Weekday ₹${weekday.toLocaleString()} • Weekend ₹${weekend.toLocaleString()}
+                                   </span>`
+                            }
 
-    ${
-        sale > 0
-        ? `<span class="text-xs text-red-500 font-semibold">
-               Limited Time Deal
-           </span>`
-        : `<span class="text-xs text-gray-500">
-              Weekday ₹${weekday.toLocaleString()} • Weekend ₹${weekend.toLocaleString()}
-           </span>`
-    }
+                        </div>
 
-</div>
-
-
-
-
-                 
-
-                        <a href="/farmhouse/${f.slug}/"
-                           class="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-600">
-                           Know More →
+                        <a href="/farmhouse/${f.slug}/${f.location.slug}/"
+                           class="bg-orange-500 text-white px-2 md:px-4 py-2 rounded-lg text-sm hover:bg-orange-600">
+                           Know More
                         </a>
 
                     </div>
+
                 </div>
             </div>
             `;
         });
 
-        container.innerHTML = html;
+        container.insertAdjacentHTML("beforeend", html);
 
-        
         lucide.createIcons();
+
+        // ⭐ show/hide load more
+        if (hasNext) {
+            loadMoreBtn.style.display = "inline-block";
+        } else {
+            loadMoreBtn.style.display = "none";
+        }
+
+        loading = false;
 
     } catch (err) {
 
         console.error(err);
-
-        container.innerHTML = `
-            <p class="text-red-500 text-center col-span-3">
-                Failed to load farmhouses
-            </p>`;
+        container.innerHTML = `<p class="text-red-500">Failed to load farmhouses</p>`;
     }
 }
 
-loadFarmhouses();
+// ⭐ load more click
+document.getElementById("loadMoreBtn").addEventListener("click", function () {
+    currentPage++;
+    loadFarmhouses();
+});
 
+// ⭐ location filter
+document.addEventListener("change", function(e){
+    if (e.target.id === "locationSelect") {
 
-</script> {% endcomment %}
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        const value = e.target.value;
 
-<script>
+        if (value) {
+            window.location.href = `/farmhouses/?location=${value}`;
+        } else {
+            window.location.href = `/farmhouses/`;
+        }
+    }
+});
+
+// ⭐ initial load
+loadFarmhouses(true);
+
+</script>
+
+{% comment %} <script>
 async function loadFarmhouses() {
 
     const container = document.getElementById("farmhouse-container");
@@ -343,12 +381,7 @@ async function loadFarmhouses() {
                         </span>
 
                     </div>
-                    {% comment %} <div class="flex gap-4 text-sm text-gray-700 mb-3">
-                        <span>${f.bedrooms} Beds</span>
-                        
-                        <span>${f.halls} Halls</span>
-                        <span>${f.ac_bedrooms} AC</span>
-                    </div> {% endcomment %}
+                   
 
                     <div class="flex justify-between items-center border-t pt-4">
 
@@ -387,21 +420,6 @@ async function loadFarmhouses() {
 
 
 
-
-                        {% comment %} <div class="flex flex-col">
-                            ${
-                                originalPrice > 0
-                                ? `<span class="text-xs text-gray-400 line-through">
-                                    ₹${originalPrice.toLocaleString()}
-                                   </span>`
-                                : ""
-                            }
-
-                            <span class="text-lg font-bold text-green-600">
-                                ₹${displayPrice.toLocaleString()} / night
-                            </span>
-                        </div> {% endcomment %}
-
                         <a href="/farmhouse/${f.slug}/${f.location.slug}/"
                            class="bg-orange-500 text-white px-2 md:px-4 py-2 rounded-lg text-sm hover:bg-orange-600">
                            Know More 
@@ -434,7 +452,7 @@ document.addEventListener("change", function(e){
 });
 
 loadFarmhouses();
-</script>
+</script> {% endcomment %}
 
 {% endblock %}
 

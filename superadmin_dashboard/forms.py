@@ -304,11 +304,29 @@ class LocationForm(forms.ModelForm):
         model = Location
         fields = "__all__"
 
+
         widgets = {
             "name": forms.TextInput(attrs={
                 "class": INPUT,
                 "placeholder": "Enter location name"
             }),
+             "meta_title": forms.TextInput(attrs={
+                "class": INPUT,
+                "placeholder": "SEO title "
+            }),
+
+            "meta_description": forms.Textarea(attrs={
+                "class": INPUT,
+                "rows": 3,
+                "placeholder": "SEO description"
+            }),
+
+            "meta_keywords": forms.TextInput(attrs={
+                "class": INPUT,
+                "placeholder": "SEO keywords"
+            }),
+
+
             "is_active": forms.CheckboxInput(attrs={
                 "class": "form-check-input"
             }),
@@ -623,6 +641,7 @@ class AdminUserForm(forms.ModelForm):
             "is_staff",
             "farmhouse_user",
             "is_active",
+            "farmhouse_limit",
         ]
 
         widgets = {
@@ -632,6 +651,10 @@ class AdminUserForm(forms.ModelForm):
             "is_staff": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "farmhouse_user": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "farmhouse_limit": forms.NumberInput(attrs={
+                "class": "form-control",
+                "placeholder": "Maximum farmhouses allowed"
+            }),
         }
 
     def save(self, commit=True):
@@ -1068,21 +1091,21 @@ class BlogForm(forms.ModelForm):
 
 
 
-class LocationForm(forms.ModelForm):
+# class LocationForm(forms.ModelForm):
 
-    class Meta:
-        model = Location
-        fields = ['name', 'is_active']
+#     class Meta:
+#         model = Location
+#         fields = ['name', 'is_active']
 
-        widgets = {
-            'name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter Location Name'
-            }),
-            'is_active': forms.CheckboxInput(attrs={
-                'class': 'form-check-input'
-            }),
-        }
+#         widgets = {
+#             'name': forms.TextInput(attrs={
+#                 'class': 'form-control',
+#                 'placeholder': 'Enter Location Name'
+#             }),
+#             'is_active': forms.CheckboxInput(attrs={
+#                 'class': 'form-check-input'
+#             }),
+#         }
 
 
 

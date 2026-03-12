@@ -3,7 +3,7 @@
 # # Create your models here.
 
 from django.db import models
-
+from django.core.exceptions import ValidationError
 class Banner(models.Model):
     title = models.CharField(max_length=200 ,null=True ,blank=True)
     image = models.ImageField(upload_to='banners/' , null=True , blank=True)
@@ -171,7 +171,8 @@ class Farmhouse(models.Model):
     commission_percentage = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        default=10
+        default=10 ,
+        null=True,blank=True
     )
 
     class Meta:
@@ -204,6 +205,21 @@ class Farmhouse(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
+        
+        # if not self.pk and self.user:
+
+        #     # Only check for farmhouse owners
+        #     if self.user.farmhouse_user:
+
+        #         limit = self.user.farmhouse_limit
+
+        #         current_count = Farmhouse.objects.filter(user=self.user).count()
+
+        #         if current_count >= limit:
+        #             raise ValidationError(
+        #                 f"This owner can only create {limit} farmhouses."
+        #             )
+
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
