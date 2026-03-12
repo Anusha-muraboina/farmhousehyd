@@ -93,4 +93,7 @@ urlpatterns = [
     path("owner_payment-policies/<int:pk>/delete/", owner_payment_policy_delete, name="owner_payment_policy_delete"),
 
 
+    path("admin/calc-booking-price/", owner_calculate_booking_price,  name="owner_calc_booking_price" ),
+    
+
 ]

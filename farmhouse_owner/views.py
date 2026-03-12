@@ -1162,7 +1162,8 @@ def owner_payment_policy_delete(request, pk):
 @owner_required
 def owner_booking_create(request):
 
-    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+    # if request.headers.get("x-requested-with") == "XMLHttpRequest":
+    if request.method == "GET" and request.headers.get("x-requested-with") == "XMLHttpRequest":
 
         farmhouse_id = request.GET.get("farmhouse_id")
 
@@ -1361,4 +1362,81 @@ def owner_booking_cancel(request, pk):
     return redirect("owner-bookings")
 
 
+
+
+
+from django.http import JsonResponse
+from decimal import Decimal
+from datetime import datetime, timedelta
+from django.views.decorators.http import require_POST
+import json
+
+
+@owner_required
+@require_POST
+def owner_calculate_booking_price(request):
+    data = json.loads(request.body)
+    farmhouse_id = data.get("farmhouse")
+    check_in = data.get("check_in")
+    check_out = data.get("check_out")
+    extra_guest_count = int(data.get("extra_guest_count", 0))
+    coupon_id = data.get("coupon")
+
+    if not farmhouse_id or not check_in or not check_out:
+        return JsonResponse({"total": 0})
+
+    try:
+        farmhouse = Farmhouse.objects.select_related("pricing").get(id=farmhouse_id)
+        pricing = farmhouse.pricing
+    except:
+        return JsonResponse({"total": 0})
+
+    start = datetime.strptime(check_in, "%Y-%m-%d")
+    end = datetime.strptime(check_out, "%Y-%m-%d")
+
+    subtotal = Decimal("0.00")
+
+    while start < end:
+
+        # ⭐ SALE FIRST
+        if pricing.sale_price and pricing.sale_price > 0:
+            subtotal += pricing.sale_price
+
+        elif start.weekday() in [5, 6]:
+            subtotal += pricing.weekend_price
+
+        else:
+            subtotal += pricing.normal_day_price
+
+        start += timedelta(days=1)
+
+    ###################################
+    # EXTRA GUEST
+    ###################################
+
+    subtotal += extra_guest_count * pricing.extra_guest_price
+
+    ###################################
+    # COUPON
+    ###################################
+
+    discount = Decimal("0.00")
+
+    if coupon_id:
+
+        coupon = Coupon.objects.filter(
+            id=coupon_id,
+            is_active=True
+        ).first()
+
+        if coupon and subtotal >= coupon.min_booking_amount:
+            discount = coupon.calculate_discount(subtotal)
+
+    total = subtotal - discount
+
+    return JsonResponse({
+        "subtotal": float(subtotal),
+        "discount": float(discount),
+        "total": float(total)
+    })
 
