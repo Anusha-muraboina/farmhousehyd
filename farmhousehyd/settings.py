@@ -173,6 +173,8 @@ DATABASES = {
     }
 }
 
+
+
 TIME_ZONE = "Asia/Kolkata"
 USE_TZ = True
 
