@@ -114,7 +114,7 @@
                         <!-- ADMIN ACCESS -->
                         <div class="form-check mb-2">
                             {{ form.is_staff }}
-                            <label class="form-check-label">Admin Access</label>
+                            <label class="form-check-label">Is staff</label>
                             {% if form.is_staff.errors %}
                                 <div class="text-danger small">
                                     {{ form.is_staff.errors }}
@@ -132,6 +132,8 @@
                                 </div>
                             {% endif %}
                         </div>
+
+                        
 
                         <!-- FARMHOUSE USER -->
                         <div class="form-check mb-2">
@@ -156,10 +158,10 @@
                         </div>
 
                         
-    <div class="form-check mt-3">
+    {% comment %} <div class="form-check mt-3">
                             {{ form.is_staff }}
                             <label class="form-check-label">is staff</label>
-                        </div>
+                        </div> {% endcomment %}
 
 
 

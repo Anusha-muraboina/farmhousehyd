@@ -571,14 +571,40 @@ def location_list(request):
         "add_url": "location-add",
     })
     
-    
+
+
 @superadmin_required
 def location_create(request):
+
     form = LocationForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        return redirect("location-list")
-    return render(request, "superadmin/locations/location_form.html", {"form": form})
+
+    if request.method == "POST":
+
+        if form.is_valid():
+            form.save()
+            return redirect("location-list")
+
+        else:
+            print(form.errors)
+
+    return render(
+        request,
+        "superadmin/locations/location_form.html",
+        {
+            "form": form,
+            "title": "Add Location"
+        }
+    )
+    
+     
+# @superadmin_required
+# def location_create(request):
+#     form = LocationForm(request.POST or None)
+#     if form.is_valid():
+#         form.save()
+    
+#         return redirect("location-list")
+#     return render(request, "superadmin/locations/location_form.html", {"form": form})
 
 @superadmin_required
 def location_update(request, pk):

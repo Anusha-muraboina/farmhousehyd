@@ -7,6 +7,8 @@ from django.utils import timezone
 from farmhouse.models import *
 from django.utils.html import mark_safe
 from user.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 
 
 class Rating(models.Model):
@@ -22,7 +24,15 @@ class Rating(models.Model):
         related_name="ratings"
     )
 
-    rating = models.IntegerField()
+    # rating = models.IntegerField()
+    rating = models.DecimalField(
+        max_digits=2,
+        decimal_places=1,
+        validators=[
+            MinValueValidator(1.0),
+            MaxValueValidator(5.0)
+        ]
+    )
 
     review = models.TextField(
         blank=True,
@@ -32,7 +42,7 @@ class Rating(models.Model):
     anonymous = models.BooleanField(default=False)
     active = models.BooleanField(default=True)
 
-    review_date = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(default=timezone.now)
     def display_stars(self):
         full_stars = int(self.stars)
         half_star = self.stars - full_stars

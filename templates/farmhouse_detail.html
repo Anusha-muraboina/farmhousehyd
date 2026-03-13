@@ -378,17 +378,21 @@ height:300px;
 
 
         app.innerHTML = `
-<!-- IMAGE GALLERY -->
-<div class="px-2 md:px-16 mt-6">
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+
+        
+<!-- IMAGE GALLERY -->
+<!-- DESKTOP GALLERY -->
+<div class="hidden md:block px-2 md:px-16 mt-6">
+
+<div class="grid grid-cols-3 gap-3">
 
     <!-- BIG IMAGE -->
-    <div class="lg:col-span-2 h-[420px] overflow-hidden rounded-xl">
+    <div class="col-span-2 h-[420px] overflow-hidden rounded-xl">
         <img
-             src="${safeImage(farmhouse.images[0]?.image)}"
-             onclick="openGallery(0)"
-             class="w-full h-full object-cover cursor-pointer">
+            src="${safeImage(farmhouse.images[0]?.image)}"
+            onclick="openGallery(0)"
+            class="w-full h-full object-cover cursor-pointer">
     </div>
 
     <!-- RIGHT 2 IMAGES -->
@@ -408,11 +412,10 @@ height:300px;
                  onclick="openGallery(2)"
                  class="w-full h-full object-cover cursor-pointer">
 
-            <!-- +Photos Overlay -->
             ${farmhouse.images.length > 3 ? `
             <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-xl font-bold cursor-pointer"
                  onclick="openGallery(2)">
-                 +${farmhouse.images.length - 3} photos
+                +${farmhouse.images.length - 3} photos
             </div>
             ` : ``}
 
@@ -425,17 +428,44 @@ height:300px;
 </div>
 
 
-<!-- THUMBNAILS -->
-{% comment %} <div class="flex gap-3 mt-4 overflow-x-auto">
-${farmhouse.images.map(img => `
-    <img src="${img.image}"
-         onclick="changeImage('${img.image}')"
-         class="w-28 h-20 object-cover rounded-lg cursor-pointer border hover:border-orange-500">
-`).join("")}
-</div> {% endcomment %}
 
+
+
+
+
+
+
+
+
+
+
+<!-- MOBILE GALLERY -->
+<!-- MOBILE GALLERY -->
+<div class="md:hidden px-2 mt-4">
+
+<!-- BIG IMAGE -->
+<div class="w-full h-[260px] overflow-hidden rounded-xl">
+
+<img id="mobileMainImage"
+src="${safeImage(farmhouse.images[0]?.image)}"
+class="w-full h-full object-cover">
 
 </div>
+
+<!-- THUMBNAILS -->
+<div class="flex gap-2 mt-3 overflow-x-auto pb-2">
+
+${farmhouse.images.map((img,index)=>`
+<img
+src="${safeImage(img.image)}"
+onclick="changeMobileImage(${index})"
+class="mobile-thumb w-20 h-16 object-cover rounded-lg cursor-pointer border">
+`).join("")}
+
+</div>
+
+</div>
+
 
 
 
@@ -450,10 +480,29 @@ ${farmhouse.images.map(img => `
 <div class="lg:sticky top-10 lg:h-fit">
     <div class="bg-white p-4 rounded shadow">
 
-<h1 class="text-xl  md:text-3xl text-orange-600 font-bold mb-6">
+
+
+
+
+
+<div class="flex flex-col md:flex-row items-center gap-2 mt-1 mb-4">
+<h1 class="text-md  md:text-3xl text-orange-600 font-bold ">
 {% comment %} Entire Farmhouse Booking {% endcomment %}
   ${farmhouse.title}
 </h1>
+
+    {% comment %} <div class="flex text-yellow-500 text-lg text-center">
+        ${renderStars(farmhouse.average_rating)}
+    </div> {% endcomment %}
+
+    <span class="text-sm text-gray-600">
+        ${farmhouse.average_rating} (${farmhouse.total_reviews} reviews)
+    </span>
+
+</div>
+
+
+
 
 <div class="grid  grid-cols-2 gap-2 md:gap-6 mt-4 md:mt-6">
 
@@ -1400,6 +1449,211 @@ ${farmhouse.amenities.map(a => `
 
 
 
+
+
+
+<div class="px-2 md:px-16 py-2  md:py-10 bg-white rounded-2xl">
+
+<!-- TABS -->
+<div class="border-b flex gap-2 md:gap-6 text-lg font-semibold ">
+
+{% comment %} <button onclick="openTab('descTab')" 
+class="tab-btn text-orange-600 border-b-2 border-orange-500 pb-2">
+Description
+</button>
+
+<button onclick="openTab('amenitiesTab')" 
+class="tab-btn text-gray-600 pb-2">
+Amenities
+</button> {% endcomment %}
+
+<button onclick="openTab('reviewTab')" 
+class="tab-btn text-gray-600 pb-2">
+Reviews (${farmhouse.total_reviews})
+</button>
+
+</div>
+
+<!-- TAB CONTENT -->
+
+<!-- DESCRIPTION -->
+{% comment %} <div id="descTab" class="tab-content mt-6">
+<div class="farmhouse-content">
+${farmhouse.description || ""}
+</div>
+</div>
+
+<!-- AMENITIES -->
+<div id="amenitiesTab" class="tab-content mt-6 hidden">
+
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+
+${farmhouse.amenities.map(a => `
+<div class="flex items-center gap-3 p-4 border rounded-xl bg-white">
+
+<i data-lucide="${a.icon_class}" 
+class="w-5 h-5 text-orange-500"></i>
+
+<span>${a.name}</span>
+
+</div>
+`).join("")}
+
+</div>
+
+</div> {% endcomment %}
+
+<!-- REVIEWS -->
+{% comment %} <div id="reviewTab" class="tab-content mt-2 md:mt-6 ">
+
+${farmhouse.ratings.length ? `
+
+<div class="space-y-4">
+
+${farmhouse.ratings.map(r => `
+<div class="border rounded-xl p-4 bg-white shadow-sm">
+
+<div class="flex items-center justify-between">
+
+<div >
+<p class="font-semibold">${r.user_name}</p>
+
+<div class="text-yellow-500 text-lg">
+${renderStars(parseFloat(r.rating))}
+</div>
+</div>
+
+<span class="text-xs text-gray-500">
+${new Date(r.created_at).toLocaleDateString()}
+</span>
+
+</div>
+
+<p class="mt-2 text-gray-600">
+${r.review || ""}
+</p>
+
+</div>
+`).join("")}
+
+</div>
+
+` : `<p class="text-gray-500">No reviews yet</p>`} {% endcomment %}
+
+
+<!-- REVIEWS -->
+<div id="reviewTab" class="tab-content mt-2 md:mt-6 ">
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-8">
+
+<!-- LEFT SIDE : ADD REVIEW -->
+<div class="border rounded-xl p-2 md:p-5 bg-gray-50">
+
+<h4 class="font-semibold text-lg pb-2 md:pb-4">
+Write a Review
+</h4>
+
+<!-- STAR RATING -->
+<div id="ratingStars"
+class="flex gap-2 text-2xl text-gray-300 cursor-pointer mb-3">
+
+<span onclick="setRating(1)">★</span>
+<span onclick="setRating(2)">★</span>
+<span onclick="setRating(3)">★</span>
+<span onclick="setRating(4)">★</span>
+<span onclick="setRating(5)">★</span>
+
+</div>
+
+<input type="hidden" id="rating_value">
+
+<textarea id="review_text"
+placeholder="Write your review..."
+class="input"></textarea>
+
+<button onclick="submitReview()"
+class="btn mt-3 w-full">
+Submit Review
+</button>
+
+</div>
+
+
+<!-- RIGHT SIDE : REVIEW LIST -->
+<div class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+
+{% comment %} ${farmhouse.ratings.length ? farmhouse.ratings.map(r => ` {% endcomment %}
+${farmhouse.ratings.length ? farmhouse.ratings.slice(0,1).map(r => `
+<div class="border rounded-xl p-4 bg-white shadow-sm">
+
+<div class="flex items-center justify-between">
+
+<div>
+<p class="font-semibold">${r.user_name}</p>
+
+<div class="text-yellow-500 text-lg">
+${renderStars(parseFloat(r.rating))}
+</div>
+
+</div>
+
+<span class="text-xs text-gray-500">
+${new Date(r.created_at).toLocaleDateString()}
+</span>
+
+</div>
+
+<p class="mt-2 text-gray-600">
+${r.review || ""}
+</p>
+
+</div>
+`).join("") : `
+<p class="text-gray-500">No reviews yet</p>
+`}
+
+
+
+
+
+
+
+${farmhouse.total_reviews > 1 ? `
+<div class="text-center mt-4">
+
+<a href="/rating/farmhouse-reviews/${farmhouse.slug}/"
+class="inline-block px-5 py-2 border border-orange-500 text-orange-600 rounded-lg hover:bg-orange-50">
+
+See All Reviews (${farmhouse.total_reviews})
+
+</a>
+
+</div>
+` : ""}
+
+
+
+
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
+</div>
+
+</div>
+
+
+
+
+
+
+
 <!-- MAP LOCATION -->
 <div class="md:mb-8 mb-2 px-2 md:px-16 mt-2 md:mt-4">
 
@@ -1545,8 +1799,87 @@ return `
 
 
 
+function openTab(tabId){
+
+document.querySelectorAll(".tab-content")
+.forEach(tab => tab.classList.add("hidden"));
+
+document.getElementById(tabId)
+.classList.remove("hidden");
+
+document.querySelectorAll(".tab-btn")
+.forEach(btn=>{
+btn.classList.remove("text-orange-600","border-orange-500","border-b-2");
+btn.classList.add("text-gray-600");
+});
+
+event.target.classList.add("text-orange-600","border-orange-500","border-b-2");
+}
 
 
+
+
+
+
+
+
+let selectedRating = 0;
+
+function setRating(value){
+
+selectedRating = value;
+
+document.getElementById("rating_value").value = value;
+
+const stars = document.querySelectorAll("#ratingStars span");
+
+stars.forEach((star,index)=>{
+
+if(index < value){
+star.classList.remove("text-gray-300");
+star.classList.add("text-yellow-500");
+}else{
+star.classList.remove("text-yellow-500");
+star.classList.add("text-gray-300");
+}
+
+});
+
+}
+
+
+
+async function submitReview(){
+
+const rating = document.getElementById("rating_value").value;
+const review = document.getElementById("review_text").value;
+
+if(!rating){
+alert("Please select rating");
+return;
+}
+
+try{
+
+await axios.post("/rating/add-review/",{
+
+farmhouse: farmhouse.id,
+rating: rating,
+review: review
+
+});
+
+alert("Review submitted successfully");
+
+loadFarmhouse();
+
+}catch(err){
+
+alert("Please login to submit review");
+
+}
+
+}
 
 
 
@@ -2571,6 +2904,50 @@ function prevImage(){
 
     showImage();
 }
+
+
+
+function renderStars(rating){
+
+    let stars = "";
+    const full = Math.floor(rating);
+    const half = rating % 1 >= 0.5;
+
+    for(let i=0;i<full;i++){
+        stars += "★";
+    }
+
+    if(half){
+        stars += "½";
+    }
+
+    while(stars.length < 5){
+        stars += "☆";
+    }
+
+    return stars;
+}
+
+
+
+
+
+
+function changeMobileImage(index){
+
+const mainImage = document.getElementById("mobileMainImage");
+
+mainImage.src = farmhouse.images[index].image;
+
+// highlight active thumbnail
+document.querySelectorAll(".mobile-thumb")
+.forEach(t=>t.classList.remove("border-orange-500"));
+
+document.querySelectorAll(".mobile-thumb")[index]
+.classList.add("border-orange-500");
+
+}
+
 
 
 </script>

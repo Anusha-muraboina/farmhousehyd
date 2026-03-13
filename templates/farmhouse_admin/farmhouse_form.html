@@ -27,6 +27,15 @@ Provide accurate details to attract more bookings.
 
 </div>
 
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-danger">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+
 <form method="post" enctype="multipart/form-data">
 
 {% csrf_token %}

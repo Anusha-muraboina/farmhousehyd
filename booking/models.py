@@ -72,7 +72,7 @@ class Booking(models.Model):
         help_text="Example: 10:00 AM"
     )
     special_requests = models.TextField(blank=True)
-    wallet_used = models.DecimalField( max_digits=10, decimal_places=2, default=0, help_text="Amount used from wallet for this booking")
+    wallet_used = models.DecimalField( max_digits=10, decimal_places=2, blank=True,null=True, default=0, help_text="Amount used from wallet for this booking")
     sub_total = models.DecimalField(max_digits=10, decimal_places=2)
     disc_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
     tax_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
@@ -92,7 +92,7 @@ class Booking(models.Model):
 
     confirmation_email_sent_at = models.DateTimeField(null=True, blank=True)
     cancelled_at = models.DateTimeField(null=True, blank=True)
-    reminder_sent = models.BooleanField(default=False)
+    reminder_sent = models.BooleanField(default=False , null=True,blank=True)
     cancelled_by = models.CharField(
         max_length=20,
         choices=[
@@ -110,42 +110,7 @@ class Booking(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-    # def send_confirmation_email(self):
 
-    #     html = render_to_string(
-    #         "emails/user_booking_email.html",
-    #         {"booking": self}
-    #     )
-
-    #     email = EmailMultiAlternatives(
-    #         subject="Booking Confirmed – Farmhousehyd",
-    #         body="Your booking is confirmed.",
-    #         from_email=settings.DEFAULT_FROM_EMAIL,
-    #         to=[self.guest_email],
-    #     )
-
-    #     email.attach_alternative(html, "text/html")
-    #     email.send(fail_silently=False)
-
-    #     # ADMIN EMAIL
-    #     admin_html = render_to_string(
-    #         "emails/admin_booking_email.html",
-    #         {"booking": self}
-    #     )
-
-    #     admin = EmailMultiAlternatives(
-    #         subject=f"New Booking - {self.booking_id}",
-    #         body="New booking received",
-    #         from_email=settings.DEFAULT_FROM_EMAIL,
-    #         to=[settings.ADMIN_EMAIL],
-    #     )
-
-    #     admin.attach_alternative(admin_html, "text/html")
-    #     admin.send(fail_silently=False)
-
-    #     Booking.objects.filter(pk=self.pk).update(
-    #         confirmation_email_sent_at=timezone.now()
-    #     )
     @property
     def advance_paid(self):
 

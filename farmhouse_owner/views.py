@@ -343,6 +343,26 @@ def add_farmhouse(request):
         form = FarmhouseForm(request.POST, request.FILES)
         pricing_form = FarmhousePricingForm(request.POST)
 
+
+        ############################################
+        # 🔥 CHECK FARMHOUSE LIMIT
+        ############################################
+        user = request.user
+
+        if user.farmhouse_user:
+            current_count = Farmhouse.objects.filter(user=user).count()
+            limit = user.farmhouse_limit or 0
+
+            if current_count >= limit:
+                messages.error(
+                    request,
+                    f"You can only add {limit} farmhouses."
+                )
+
+                return redirect("owner_farmhouses")
+
+
+
         if form.is_valid() and pricing_form.is_valid():
 
             farmhouse = form.save(commit=False)

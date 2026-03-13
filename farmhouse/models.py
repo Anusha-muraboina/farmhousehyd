@@ -206,6 +206,17 @@ class Farmhouse(models.Model):
 
     def save(self, *args, **kwargs):
         
+        
+        if not self.pk and self.user and self.user.farmhouse_user:
+
+            limit = self.user.farmhouse_limit
+            current = Farmhouse.objects.filter(user=self.user).count()
+
+            if current >= limit:
+                raise ValidationError(
+                    f"This owner can only create {limit} farmhouses."
+                )
+
         # if not self.pk and self.user:
 
         #     # Only check for farmhouse owners

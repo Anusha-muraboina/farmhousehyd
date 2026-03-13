@@ -10,9 +10,10 @@ from .models import (
     Thingstocarry,
     Propertyrules
 )
+from django.db.models import Avg
 from blogs.models import *
 from booking.models import FarmhousePaymentPolicy
-
+from rating.serializers import RatingSerializer
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Banner
@@ -22,6 +23,7 @@ class BannerSerializer(serializers.ModelSerializer):
         if obj.image and request:
             return request.build_absolute_uri(obj.image.url)
         return None
+
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -112,6 +114,11 @@ class FarmhouseSerializer(serializers.ModelSerializer):
     # payment_policy = FarmhousePaymentPolicySerializer(read_only=True)
     payment_policy = serializers.SerializerMethodField()
 
+
+       # ⭐ ADD THESE
+    average_rating = serializers.SerializerMethodField()
+    total_reviews = serializers.SerializerMethodField()
+    ratings = serializers.SerializerMethodField()
     class Meta:
         model = Farmhouse
         fields = [
@@ -139,6 +146,11 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             "payment_policy",
             "map_embed",
             "Slot_position",
+            
+            # rating fields
+            "average_rating",
+            "total_reviews",
+            "ratings",
             
         ]
 
@@ -181,8 +193,35 @@ class FarmhouseSerializer(serializers.ModelSerializer):
         return {
             "allow_pay_at_farmhouse": policy.allow_pay_at_farmhouse,
             "allow_partial_payment": policy.allow_partial_payment,
-            "allow_full_payment": True,  # FORCE TRUE
+            "allow_full_payment": True, 
         }
+
+    # ⭐ Average Rating
+    def get_average_rating(self, obj):
+
+        avg = obj.ratings.aggregate(
+            avg=Avg("rating")
+        )["avg"]
+
+        if avg:
+            return round(avg, 1)
+
+        return 0
+
+
+    # ⭐ Total Reviews
+    def get_total_reviews(self, obj):
+
+        return obj.ratings.count()
+    
+    def get_ratings(self, obj):
+
+        ratings = obj.ratings.select_related("user").all()
+
+        return RatingSerializer(
+            ratings,
+            many=True
+        ).data
 
 class BlogSerializer(serializers.ModelSerializer):
     class Meta:

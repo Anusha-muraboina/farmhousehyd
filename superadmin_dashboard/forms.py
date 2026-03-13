@@ -299,6 +299,8 @@ class BannerForm(forms.ModelForm):
 #                 "placeholder":"Enter location name"
 #             }),
 #         }
+
+
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
@@ -310,6 +312,11 @@ class LocationForm(forms.ModelForm):
                 "class": INPUT,
                 "placeholder": "Enter location name"
             }),
+             "slug": forms.TextInput(attrs={
+                "class": INPUT,
+                "placeholder": "Enter slug (example: gachibowli)"
+            }),
+
              "meta_title": forms.TextInput(attrs={
                 "class": INPUT,
                 "placeholder": "SEO title "
@@ -326,11 +333,11 @@ class LocationForm(forms.ModelForm):
                 "placeholder": "SEO keywords"
             }),
 
-
             "is_active": forms.CheckboxInput(attrs={
                 "class": "form-check-input"
             }),
         }
+
 
 
 class AmenityForm(forms.ModelForm):
@@ -640,6 +647,7 @@ class AdminUserForm(forms.ModelForm):
             "password",
             "is_staff",
             "farmhouse_user",
+            'assignedpermission',
             "is_active",
             "farmhouse_limit",
         ]
@@ -650,6 +658,9 @@ class AdminUserForm(forms.ModelForm):
             "phone": forms.TextInput(attrs={"class": "form-control"}),
             "is_staff": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "farmhouse_user": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "assignedpermission": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
+            }),
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "farmhouse_limit": forms.NumberInput(attrs={
                 "class": "form-control",

@@ -26,7 +26,25 @@ href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
         </a>
     </div>
 
+{% if form.errors %}
+<div class="alert alert-danger">
 
+    <strong>Form Errors:</strong>
+
+    <ul>
+    {% for field in form %}
+        {% for error in field.errors %}
+            <li>{{ field.label }} : {{ error }}</li>
+        {% endfor %}
+    {% endfor %}
+
+    {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+
+</div>
+{% endif %}
     <form method="post">
         {% csrf_token %}
 

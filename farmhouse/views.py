@@ -273,6 +273,7 @@ class FarmhouseDetailAPI(APIView):
                 "facilities",
                "thingstocarry",      # ✅ ADD THIS
                "properyrules", 
+               "ratings__user"
             ),
             slug=slug,
             is_active=True
