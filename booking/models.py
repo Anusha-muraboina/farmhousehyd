@@ -122,6 +122,30 @@ class Booking(models.Model):
 
         return Decimal("0.00")
 
+
+
+    def get_advance_paid(self):
+
+        # Pay at farmhouse
+        if self.payment_method == "farmhouse":
+            return Decimal("0.00")
+
+        # Partial payment
+        if self.payment_method == "partial_razorpay":
+            return (self.total_amount * Decimal("0.30")).quantize(Decimal("0.01"))
+
+        # Full payment
+        if self.payment_method == "full_razorpay":
+            return self.total_amount
+
+        return Decimal("0.00")
+    
+    def get_remaining_amount(self):
+
+        advance = self.get_advance_paid()
+
+        return self.total_amount - advance
+    
     def send_booking_email(self, email_type,request=None):
         """
         email_type:
