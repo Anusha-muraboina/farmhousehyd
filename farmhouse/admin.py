@@ -16,7 +16,7 @@ class FarmhousePricingInline(admin.StackedInline):
 
 admin.site.register(Thingstocarry)
 admin.site.register(Propertyrules)
-
+admin.site.register(HomePopup)
 
 
 class FarmhouseImageInline(admin.TabularInline):

@@ -18,7 +18,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponseForbidden
 from functools import wraps
 from django.http import HttpResponseForbidden
-
+from django.views.decorators.http import require_POST
 # def superadmin_required(view_func):
 
 #     def wrapper(request, *args, **kwargs):
@@ -479,11 +479,30 @@ def admin_view_invoice(request, booking_id):
 # ===============================
 # DELETE
 # ===============================
+# @superadmin_required
+# # @user_passes_test(superadmin_required)
+# def farmhouse_delete(request, id):
+#     farmhouse = get_object_or_404(Farmhouse, id=id)
+#     farmhouse.delete()
+#     return redirect("superadmin-farmhouses")
+
+
 @superadmin_required
-# @user_passes_test(superadmin_required)
+@require_POST
 def farmhouse_delete(request, id):
+
     farmhouse = get_object_or_404(Farmhouse, id=id)
+
+    confirm_slug = request.POST.get("confirm_slug")
+
+    if confirm_slug != farmhouse.slug:
+        messages.error(request, "Slug does not match. Deletion cancelled.")
+        return redirect("superadmin-farmhouses")
+
     farmhouse.delete()
+
+    messages.success(request, "Farmhouse deleted successfully.")
+
     return redirect("superadmin-farmhouses")
 # ===========================================================
 

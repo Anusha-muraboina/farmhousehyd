@@ -8,3 +8,6 @@ class AssignedUserPermission(BasePermission):
             request.user.is_authenticated and
             request.user.assignedpermission
         )
+
+
+

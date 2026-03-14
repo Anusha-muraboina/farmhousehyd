@@ -29,4 +29,11 @@ urlpatterns = [
     path("api/home/", HomeAPIView.as_view(), name="home-api"),
     path("api/about/", AboutAPIView.as_view(), name="about-api"),
     
+    
+        # homepage
+    # path("", HomeAPIView.as_view(), name="home"),
+# 
+    # location page
+    path("<str:location>/", HomeAPIView.as_view(), name="home-location"),
+    
 ]

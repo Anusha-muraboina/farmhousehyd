@@ -2,92 +2,106 @@
 {% block title %}Contact Us{% endblock %}
 {% block content %}
 
-<section class="py-20 bg-gray-50">
+<section class="py-8 md:py-20 bg-gray-50">
   <div class="px-4 md:px-12 mx-auto max-w-7xl">
 
     <!-- HEADING -->
-    <div class="text-center mb-14">
-      <h1 class="text-4xl font-serif font-bold text-orange-500 mb-3">
+    <div class="text-center mb-10 md:mb-14">
+      <h1 class="text-2xl md:text-4xl font-serif font-bold text-orange-500 mb-3">
         Get in Touch
       </h1>
-      <p class="text-gray-600">
+      <p class="text-gray-600 text-sm md:text-base">
         We'd love to hear from you. Reach out anytime.
       </p>
     </div>
 
-    <div class="grid lg:grid-cols-2 gap-12">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
 
       <!-- LEFT CONTACT INFO -->
-      <div class="space-y-6">
+      <div class="space-y-4 md:space-y-6">
 
         <!-- PHONE -->
-        <div class="flex items-center gap-6 bg-white p-6 rounded-2xl shadow hover:shadow-lg transition">
-          <div class="w-14 h-14 bg-orange-500 text-white rounded-full flex items-center justify-center text-xl">
-             <i data-lucide="phone" class="w-7 h-7"></i>
+        <div class="flex items-center gap-4 md:gap-6 bg-white p-4 md:p-6 rounded-2xl shadow hover:shadow-lg transition">
+
+          <div class="w-12 h-12 md:w-14 md:h-14 bg-orange-500 text-white rounded-full flex items-center justify-center">
+            <i data-lucide="phone" class="w-5 h-5 md:w-7 md:h-7"></i>
           </div>
+
           <div>
             <p class="text-sm text-gray-500">Phone</p>
-            <p id="phone" class="font-semibold text-lg text-gray-900"></p>
+            <p id="phone" class="font-semibold text-base md:text-lg text-gray-900"></p>
           </div>
+
         </div>
 
         <!-- EMAIL -->
-        <div class="flex items-center gap-6 bg-white p-6 rounded-2xl shadow hover:shadow-lg transition">
-          <div class="w-14 h-14 bg-orange-500 text-white rounded-full flex items-center justify-center text-xl">
-             <i data-lucide="mail" class="w-7 h-7"></i>
+        <div class="flex items-center gap-4 md:gap-6 bg-white p-4 md:p-6 rounded-2xl shadow hover:shadow-lg transition">
+
+          <div class="w-12 h-12 md:w-14 md:h-14 bg-orange-500 text-white rounded-full flex items-center justify-center">
+            <i data-lucide="mail" class="w-5 h-5 md:w-7 md:h-7"></i>
           </div>
+
           <div>
             <p class="text-sm text-gray-500">Email</p>
             <p id="email1" class="font-semibold text-gray-900"></p>
             <p id="email2" class="font-semibold text-gray-900"></p>
           </div>
+
         </div>
 
         <!-- TIME -->
-        <div class="flex items-center gap-6 bg-white p-6 rounded-2xl shadow hover:shadow-lg transition">
-          <div class="w-14 h-14 bg-orange-500 text-white rounded-full flex items-center justify-center text-xl">
-             <i data-lucide="clock" class="w-7 h-7"></i>
+        <div class="flex items-center gap-4 md:gap-6 bg-white p-4 md:p-6 rounded-2xl shadow hover:shadow-lg transition">
+
+          <div class="w-12 h-12 md:w-14 md:h-14 bg-orange-500 text-white rounded-full flex items-center justify-center">
+            <i data-lucide="clock" class="w-5 h-5 md:w-7 md:h-7"></i>
           </div>
+
           <div>
             <p class="text-sm text-gray-500">Opening Time</p>
             <p id="time" class="font-semibold text-gray-900"></p>
           </div>
+
         </div>
 
       </div>
 
       <!-- RIGHT FORM -->
-      <div class="bg-white p-10 rounded-3xl shadow-xl">
+      <div class="bg-white p-6 md:p-10 rounded-3xl shadow-xl">
 
-        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">
+        <h2 class="text-xl md:text-2xl font-serif font-bold text-gray-900 mb-6">
           Reach Us Anytime
         </h2>
 
-        <form onsubmit="submitContact(event)" class="space-y-5">
+        <form onsubmit="submitContact(event)" class="space-y-4 md:space-y-5">
 
           <select id="farmhouse"
-                  class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none">
+            class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none">
+
             <option value="">Select Farmhouse</option>
+
           </select>
 
           <input id="name"
-                 placeholder="Your Name"
-                 class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none">
+            placeholder="Your Name"
+            class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none">
 
-          <div class="grid md:grid-cols-2 gap-4">
+          <!-- PHONE + EMAIL -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
             <input id="phoneInput"
-                   placeholder="Phone Number"
-                   class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none">
+              placeholder="Phone Number"
+              class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none">
 
             <input id="emailInput"
-                   placeholder="Email Address"
-                   class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none">
+              placeholder="Email Address"
+              class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none">
+
           </div>
 
           <textarea id="message"
-                    rows="4"
-                    placeholder="Write your message..."
-                    class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"></textarea>
+            rows="4"
+            placeholder="Write your message..."
+            class="w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"></textarea>
 
           <button
             class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg font-semibold transition">
@@ -112,42 +126,56 @@
 
 axios.get("/contact/api/contact-info/")
 .then(res => {
-  document.getElementById("phone").innerText = res.data.phone;
-  document.getElementById("email1").innerText = res.data.email_1;
-  document.getElementById("email2").innerText = res.data.email_2 || "";
-  document.getElementById("time").innerText = res.data.opening_time;
-});
+
+  document.getElementById("phone").innerText = res.data.phone
+  document.getElementById("email1").innerText = res.data.email_1
+  document.getElementById("email2").innerText = res.data.email_2 || ""
+  document.getElementById("time").innerText = res.data.opening_time
+
+})
 
 /* ================= FARMHOUSES ================= */
 
 axios.get("/contact/api/farmhouses/")
 .then(res => {
-  const box = document.getElementById("farmhouse");
+
+  const box = document.getElementById("farmhouse")
+
   res.data.forEach(f => {
-    box.innerHTML += `<option value="${f.id}">${f.title}</option>`;
-  });
-});
+
+    box.innerHTML += `<option value="${f.id}">${f.title}</option>`
+
+  })
+
+})
 
 /* ================= SUBMIT ================= */
 
-function submitContact(e) {
-  e.preventDefault();
+function submitContact(e){
 
-  axios.post("/contact/api/contact-message/", {
+  e.preventDefault()
+
+  axios.post("/contact/api/contact-message/",{
+
     farmhouse: document.getElementById("farmhouse").value || null,
     name: document.getElementById("name").value,
     phone: document.getElementById("phoneInput").value,
     email: document.getElementById("emailInput").value,
     message: document.getElementById("message").value
+
   })
-  .then(() => {
+  .then(()=>{
+
     document.getElementById("successMsg").innerText =
-      "✅ Message sent successfully!";
-    e.target.reset();
+      "✅ Message sent successfully!"
+
+    e.target.reset()
+
   })
-  .catch(() => {
-    alert("Please fill all fields");
-  });
+  .catch(()=>{
+    alert("Please fill all fields")
+  })
+
 }
 
 </script>

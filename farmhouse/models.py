@@ -15,6 +15,30 @@ class Banner(models.Model):
         return self.title  or "banner" 
 
 
+from django.db import models
+
+
+class HomePopup(models.Model):
+
+    image = models.ImageField(
+        upload_to="popup/",
+        help_text="Upload popup banner image"
+    )
+
+    is_active = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return "Homepage Popup"
+
 class Location(models.Model):
     name = models.CharField(max_length=100)  # Gachibowli, Moinabad
     slug = models.SlugField(unique=True)

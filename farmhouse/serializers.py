@@ -8,12 +8,14 @@ from .models import (
     FarmhousePricing,
     FarmhouseFacilities,
     Thingstocarry,
-    Propertyrules
+    Propertyrules,
+    HomePopup
 )
 from django.db.models import Avg
 from blogs.models import *
 from booking.models import FarmhousePaymentPolicy
 from rating.serializers import RatingSerializer
+
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Banner
@@ -242,3 +244,13 @@ class BlogSerializer(serializers.ModelSerializer):
         return None
     
     
+
+
+class HomePopupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = HomePopup
+        fields = [
+            "image",
+            "is_active"
+        ]

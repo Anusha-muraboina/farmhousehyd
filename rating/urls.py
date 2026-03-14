@@ -4,5 +4,14 @@ from .views import *
 urlpatterns = [
     path('rating/', rating, name='rating'),
     path("add-review/", AddReviewAPI.as_view()),
-    path( "farmhouse-reviews/<slug:slug>/",  farmhouse_reviews,  name="farmhouse_reviews")
+    # path(
+    #     "reviews/<slug:slug>/",
+    #     farmhouse_reviews
+    # ),
+    
+    path(
+        "farmhouse_reviews/<slug:slug>/",
+        farmhouse_reviews,
+        name="farmhouse_reviews"
+    ),
 ]

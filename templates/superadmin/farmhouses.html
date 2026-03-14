@@ -90,18 +90,62 @@
                         {% endif %}
                     </td>
 
+
+
                     <td class="text-end pe-4">
+
+    <!-- EDIT -->
+    <a href="{% url 'superadmin-farmhouse-edit' f.id %}"
+       class="btn btn-light btn-sm me-2 shadow-sm">
+        <i class="fa-solid fa-pen"></i>
+    </a>
+
+    <!-- DELETE -->
+    <form method="POST"
+          action="{% url 'superadmin-farmhouse-delete' f.id %}"
+          onsubmit="return confirmDelete(this,'{{ f.slug }}')"
+          style="display:inline-block;">
+
+        {% csrf_token %}
+
+        <input type="hidden" name="confirm_slug">
+
+        <button type="submit"
+                class="btn btn-light btn-sm shadow-sm text-danger">
+            <i class="fa-solid fa-trash"></i>
+        </button>
+
+    </form>
+
+</td>
+
+                    {% comment %} <td class="text-end pe-4">
                         <a href="{% url 'superadmin-farmhouse-edit' f.id %}"
                            class="btn btn-light btn-sm me-2 shadow-sm">
                             <i class="fa-solid fa-pen"></i>
                         </a>
+<form method="POST"
+      action="{% url 'superadmin-farmhouse-delete' f.id %}"
+      onsubmit="return confirmDelete(this,'{{ f.slug }}')">
+
+{% csrf_token %}
+
+<input type="hidden" name="confirm_slug">
+
+<button class="btn btn-light btn-sm shadow-sm text-danger">
+<i class="fa-solid fa-trash"></i>
+</button>
+
+</form>
+
+                        
 
                         <a href="{% url 'superadmin-farmhouse-delete' f.id %}"
                            onclick="return confirm('Delete farmhouse?')"
                            class="btn btn-light btn-sm shadow-sm text-danger">
                             <i class="fa-solid fa-trash"></i>
-                        </a>
-                    </td>
+                        </a> 
+                    </td> {% endcomment %}
 
                 </tr>
 
@@ -264,5 +308,26 @@ UI IMPROVEMENTS
 }
 
 </style>
+
+<script>
+function confirmDelete(form, slug){
+
+    const userInput = prompt(
+        "To confirm deletion, type the farmhouse name:\n\n" + slug
+    );
+
+    if(userInput === slug){
+
+        // put slug into hidden field
+        form.querySelector('input[name="confirm_slug"]').value = userInput;
+
+        return true;
+    }
+
+    alert("Slug does not match. Deletion cancelled.");
+
+    return false;
+}
+</script>
 
 {% endblock %}

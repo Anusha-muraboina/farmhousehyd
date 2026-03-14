@@ -1,35 +1,169 @@
 {% extends "base.html" %}
-{% block title %}Farmhouses Hyderabad - Best Farmhouses{% endblock %}
+
+{% block title %}
+Reviews for {{ farmhouse.title }} | Farmhouses Hyderabad
+{% endblock %}
+
 {% block content %}
 
+<div class="px-2 md:px-16 py-6">
 
-<h2 class="text-2xl font-bold px-2 md:px-16 mb-2 md:mb-6">
-Reviews for {{ farmhouse.title }}
+<h2 class="text-2xl md:text-3xl font-bold mb-6 text-gray-800">
+Guest Reviews for {{ farmhouse.title }}
 </h2>
 
-<div class="space-y-4 px-2 md:px-16  md:py-8 py-2 ">
+<!-- ================= RATING SUMMARY ================= -->
 
-{% for r in reviews %}
+<div class="bg-white rounded-2xl shadow-lg p-6 grid md:grid-cols-3 gap-8">
 
-<div class="border rounded-xl p-4 bg-white shadow-sm">
+<!-- AVG RATING -->
+<div class="flex flex-col items-center justify-center border-r">
 
-<div class="flex justify-between">
-
-<div>
-<p class="font-semibold">{{ r.user.username }}</p>
-<p class="text-yellow-500">
-{{ r.rating }} ⭐
-</p>
+<div class="text-5xl font-bold text-green-600">
+{{ avg_rating }}
 </div>
 
-<span class="text-xs text-gray-500">
-{{ r.created_at|date:"d M Y" }}
+<div class="text-yellow-400 text-xl mt-2">
+★★★★★
+</div>
+
+<p class="text-gray-500 mt-2">
+{{ total_reviews }} Reviews
+</p>
+
+</div>
+
+
+<!-- RATING BARS -->
+<div class="space-y-3">
+
+{% for star,count in rating_counts.items %}
+
+<div class="flex items-center gap-3">
+
+<span class="w-10 text-sm font-medium text-gray-600">
+{{ star }} ★
+</span>
+
+<div class="flex-1 bg-gray-200 h-2 rounded-full">
+
+<div class="bg-green-500 h-2 rounded-full"
+style="width: {{ count }}0%">
+</div>
+
+</div>
+
+<span class="text-sm text-gray-500 w-6">
+{{ count }}
 </span>
 
 </div>
 
-<p class="mt-2 text-gray-600">
+{% endfor %}
+
+</div>
+
+
+<!-- REVIEW HIGHLIGHT -->
+{% comment %} <div class="flex flex-col justify-center"> {% endcomment %}
+
+{% comment %} <p class="text-gray-600 text-sm">
+People love this farmhouse for its peaceful location,
+clean rooms, and great hospitality.
+</p> {% endcomment %}
+
+{% comment %} <div class="mt-4 flex gap-2 flex-wrap">
+
+<span class="px-3 py-1 text-xs bg-gray-100 rounded-full">
+Peaceful
+</span>
+
+<span class="px-3 py-1 text-xs bg-gray-100 rounded-full">
+Clean Rooms
+</span>
+
+<span class="px-3 py-1 text-xs bg-gray-100 rounded-full">
+Great Stay
+</span>
+
+</div>
+
+</div> {% endcomment %}
+
+</div>
+
+
+
+<!-- ================= REVIEWS ================= -->
+
+<div class="mt-10 space-y-6">
+
+{% for r in reviews %}
+
+<div class="bg-white shadow-md rounded-xl p-6 hover:shadow-lg transition">
+
+<div class="flex justify-between items-start">
+
+<div class="flex gap-4">
+
+<!-- USER AVATAR -->
+<div class="w-12 h-12 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-lg">
+
+{{ r.user.username|first|upper }}
+
+</div>
+
+<div>
+
+<p class="font-semibold text-gray-800">
+{{ r.user.username }}
+</p>
+
+<p class="text-xs text-gray-500">
+{{ r.created_at|date:"d M Y" }}
+</p>
+
+<!-- STARS -->
+<div class="text-yellow-400 text-sm mt-1">
+
+{% for i in "12345" %}
+{% if forloop.counter <= r.rating %}
+★
+{% else %}
+☆
+{% endif %}
+{% endfor %}
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- RATING BADGE -->
+<div class="bg-orange-500 text-white px-3 py-1 rounded-lg text-sm font-semibold">
+
+{{ r.rating }}/5
+
+</div>
+
+</div>
+
+
+<!-- REVIEW TEXT -->
+<p class="mt-4 text-gray-600 leading-relaxed">
 {{ r.review }}
+</p>
+
+</div>
+
+{% empty %}
+
+<div class="text-center py-10">
+
+<p class="text-gray-500 text-lg">
+No reviews yet.
 </p>
 
 </div>
@@ -38,5 +172,6 @@ Reviews for {{ farmhouse.title }}
 
 </div>
 
+</div>
 
 {% endblock %}
