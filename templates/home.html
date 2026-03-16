@@ -12,12 +12,12 @@
 
 <!-- PAGE LOADER -->
 <div id="pageLoader"
-class="fixed inset-0 bg-white flex items-center justify-center z-[99999]">
+class="fixed inset-0 bg-black/90 flex items-center justify-center z-[99999]">
 
     <div class="flex flex-col items-center gap-4">
           
     <img src="static\images\FARM_HOUSES_HYDERABAD_2.jpeg"
-         class="w-28 md:w-36 animate-pulse">
+         class="w-28 md:w-36 animate-pulse"  loading="lazy" >
 
         <!-- Spinner -->
         <div class="loader-spin"></div>
@@ -559,7 +559,7 @@ data.locations.forEach(loc => {
   bar.innerHTML += `
     <div class="wood-item">
       <span class="rope"></span>
-      <a href="/?location=${loc.meta_title.replaceAll(' ','_')}"
+      <a href="/${loc.meta_title.replaceAll(' ','_')}"
          class="block plank ${activeClass}">
         ${loc.name}
       </a>
@@ -651,7 +651,7 @@ function showDefaultLocations(){
   locationsList.slice(0,6).forEach(loc => {
 
     dropdown.innerHTML += `
-      <a href="/?location=${loc.slug}"
+      <a href="/${loc.meta_title.replaceAll(' ','_')}/"
          class="block px-4 py-2 hover:bg-gray-100 text-black">
          <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
      
@@ -688,7 +688,7 @@ searchInput.addEventListener("input", function(){
   locationMatches.forEach(loc => {
 
     dropdown.innerHTML += `
-      <a href="/?location=${loc.slug}"
+      <a href="/${loc.meta_title.replaceAll(' ','_')}/"
          class="block px-4 py-2 hover:bg-gray-100 text-black">
            <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
      
@@ -701,7 +701,7 @@ searchInput.addEventListener("input", function(){
   farmhouseMatches.slice(0,5).forEach(f => {
 
     dropdown.innerHTML += `
-      <a href="/farmhouse/${f.slug}/"
+      <a href="/farmhouse/${f.slug}/${f.location.slug}/"
          class="block px-4 py-2 hover:bg-gray-100 text-black">
            <i data-lucide="home" class="w-4 h-4 text-primary"></i>
           ${f.title}
@@ -797,7 +797,7 @@ if (data.ourfacility && data.ourfacility.length > 0) {
 
         <!-- IMAGE -->
         <div>
-          <img src="${item.image}"
+          <img src="${item.image}" loading="lazy" 
                class="rounded-2xl shadow-2xl">
         </div>
       </div>
@@ -831,7 +831,7 @@ const featured = blogs[0];
 blogGrid.innerHTML += `
   <div class="bg-gray-50 rounded-3xl overflow-hidden shadow-xl">
 
-    <img src="${featured.image}"
+    <img src="${featured.image}"  loading="lazy" 
          class="w-full h-96 object-cover">
 
     <div class="p-8">
@@ -863,7 +863,7 @@ if (blogs.length > 1) {
         {% comment %} <img src="${blog.image}"
              class="w-full h-44 object-cover"> {% endcomment %}
         ${blog.image ? `
-          <img src="${blog.image}"
+          <img src="${blog.image}"  loading="lazy" 
               class="w-full h-44 object-cover">
         ` : ``}
         <div class="p-6">
@@ -925,7 +925,7 @@ if (blogs.length > 1) {
       <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
         <div class="relative h-56">
           <img src="${f.primary_image || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80'}"
-               class="w-full h-full object-cover">
+               class="w-full h-full object-cover"  loading="lazy" >
         </div>
 
         <div class="p-5">

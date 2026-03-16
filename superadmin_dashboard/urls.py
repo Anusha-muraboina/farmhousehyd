@@ -179,10 +179,12 @@ urlpatterns = [
     path("seo/<int:pk>/delete/", views.seo_delete, name="seo_delete"),
 
 
-    path(
-        "admin/invoice/<str:booking_id>/",
-        views.admin_view_invoice,
-        name="admin_view_invoice"
-    ),
+    path( "admin/invoice/<str:booking_id>/", views.admin_view_invoice, name="admin_view_invoice"),
+    
+    
+    path("popup/", views.popup_list, name="popup-list"),
+    path("popup/create/", views.popup_create, name="popup-create"),
+    path("popup/<int:pk>/edit/", views.popup_update, name="popup-update"),
+    path("popup/<int:pk>/delete/", views.popup_delete, name="popup-delete"),
 
 ]

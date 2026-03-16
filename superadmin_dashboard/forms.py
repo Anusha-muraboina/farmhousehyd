@@ -1207,3 +1207,13 @@ class PageSEOForm(forms.ModelForm):
                 "placeholder": "farmhouse, resort, weekend stay"
             }),
         }
+        
+        
+
+
+
+class HomePopupForm(forms.ModelForm):
+
+    class Meta:
+        model = HomePopup
+        fields = ["image", "is_active"]

@@ -63,14 +63,56 @@ from cms.models import PageSEO
 #     return render(request, "home.html")
 
 
-def home_page(request):
+# def home_page(request,  location=None):
 
-    seo = PageSEO.objects.filter(page="home").first()
+#     seo = PageSEO.objects.filter(page="home").first()
+
+#     return render(request, "home.html", {
+#         "meta_title": seo.meta_title if seo else "",
+#         "meta_description": seo.meta_description if seo else "",
+#         "meta_keywords": seo.meta_keywords if seo else "",
+#         "location": location
+#     })
+
+
+# from locations.models import Location
+# from seo.models import PageSEO
+
+def home_page(request, location=None):
+
+    meta_title = ""
+    meta_description = ""
+    meta_keywords = ""
+
+    # LOCATION PAGE
+    if location:
+
+        selected_location = location.replace("_", " ")
+
+        loc = Location.objects.filter(
+            meta_title__iexact=selected_location,
+            is_active=True
+        ).first()
+
+        if loc:
+            meta_title = loc.meta_title
+            meta_description = loc.meta_description
+            meta_keywords = loc.meta_keywords
+
+    # HOMEPAGE SEO
+    else:
+        seo = PageSEO.objects.filter(page="home").first()
+
+        if seo:
+            meta_title = seo.meta_title
+            meta_description = seo.meta_description
+            meta_keywords = seo.meta_keywords
 
     return render(request, "home.html", {
-        "meta_title": seo.meta_title if seo else "",
-        "meta_description": seo.meta_description if seo else "",
-        "meta_keywords": seo.meta_keywords if seo else "",
+        "meta_title": meta_title,
+        "meta_description": meta_description,
+        "meta_keywords": meta_keywords,
+        "location": location
     })
 
 def about(request):
@@ -86,16 +128,46 @@ def contact(request):
 #     # return HttpResponse("Hello, this is Blog Page")
 #     return render(request , "farmhouse_list.html")
 
-def Farmhouses(request):
+# def Farmhouses(request):
+
+#     seo = PageSEO.objects.filter(page="farmhouses").first()
+
+#     return render(request, "farmhouse_list.html", {
+#         "meta_title": seo.meta_title if seo else "",
+#         "meta_description": seo.meta_description if seo else "",
+#         "meta_keywords": seo.meta_keywords if seo else "",
+#     })
+
+
+
+def Farmhouses(request, location=None):
+
+    location_meta = None
+    location_obj = None
+
+    if location:
+        selected_location = location.replace("_", " ")
+
+        location_obj = Location.objects.filter(
+            meta_title__iexact=selected_location,
+            is_active=True
+        ).first()
+
+        if location_obj:
+            location_meta = {
+                "meta_title": location_obj.meta_title,
+                "meta_description": location_obj.meta_description,
+                "meta_keywords": location_obj.meta_keywords
+            }
 
     seo = PageSEO.objects.filter(page="farmhouses").first()
 
     return render(request, "farmhouse_list.html", {
-        "meta_title": seo.meta_title if seo else "",
-        "meta_description": seo.meta_description if seo else "",
-        "meta_keywords": seo.meta_keywords if seo else "",
+        "meta_title": location_meta["meta_title"] if location_meta else (seo.meta_title if seo else ""),
+        "meta_description": location_meta["meta_description"] if location_meta else (seo.meta_description if seo else ""),
+        "meta_keywords": location_meta["meta_keywords"] if location_meta else (seo.meta_keywords if seo else ""),
+        "current_location": location_obj.name if location_obj else None
     })
-
 # def Farmhouse_detail(request):
 #     # return HttpResponse("Hello, this is Blog Page")
 #     return render(request , "farmhouse_detail.html")
@@ -218,8 +290,20 @@ class FarmhouseListAPI(APIView):
 
         # 📍 Location filter
         location = request.GET.get("location")
+        # if location:
+        #     farmhouses = farmhouses.filter(location__slug=location)
+        
         if location:
-            farmhouses = farmhouses.filter(location__slug=location)
+            # convert URL format to meta title
+            selected_location = location.replace("_", " ")
+
+            location_obj = Location.objects.filter(
+                meta_title__iexact=selected_location,
+                is_active=True
+            ).first()
+
+            if location_obj:
+                farmhouses = farmhouses.filter(location=location_obj)
 
         # 💰 Price sort
         sort = request.GET.get("sort")
@@ -255,7 +339,7 @@ class FarmhouseListAPI(APIView):
         })
 
 
-# ------------------ FARMHOUSE DETAIL API ------------------
+# ------------------ FARMHOUSE DETAIL API -----------------------------------
 
 
 class FarmhouseDetailAPI(APIView):
@@ -460,6 +544,7 @@ def BlogDetail(request):
 #             "selected_location": selected_location
 #         }
 
+
 #         # store in redis cache (5 minutes)
 #         cache.set(cache_key, data, 60 * 5)
 
@@ -475,6 +560,13 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import AllowAny
 
 from .serializers import HomePopupSerializer
+# from django.db.models import Q
+# from django.core.cache import cache
+# from rest_framework.views import APIView
+# from rest_framework.response import Response
+# from rest_framework.authentication import BasicAuthentication
+# from rest_framework.permissions import AllowAny
+
 class HomeAPIView(APIView):
 
     authentication_classes = [BasicAuthentication]
@@ -508,6 +600,7 @@ class HomeAPIView(APIView):
 
         location_meta = None
 
+        # ✅ LOCATION FILTER
         if selected_location:
 
             location_obj = Location.objects.filter(
@@ -525,6 +618,7 @@ class HomeAPIView(APIView):
                     "meta_keywords": location_obj.meta_keywords
                 }
 
+        # ✅ SEARCH FILTER
         if search:
             farmhouses = farmhouses.filter(
                 Q(title__icontains=search) |
@@ -573,12 +667,12 @@ class HomeAPIView(APIView):
             "latest_blogs": BlogSerializer(
                 latest_blogs, many=True, context={"request": request}
             ).data,
-
         }
 
         cache.set(cache_key, data, 60 * 5)
 
         return Response(data)
+
     
 class AboutAPIView(APIView):
     authentication_classes = [BasicAuthentication]

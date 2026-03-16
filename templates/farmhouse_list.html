@@ -48,7 +48,7 @@
 
   <select
     id="locationSelect"
-    name="location"
+    
     class="w-full appearance-none border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm bg-white 
            focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
            transition cursor-pointer">x``
@@ -80,7 +80,9 @@
                 
                 </div> {% endcomment %}
                 <div class="relative">
-                    <select name="sort" onchange="this.form.submit()"
+                    {% comment %} <select name="sort" onchange="this.form.submit()" {% endcomment %}
+                    <select id="sortSelect"
+    class="appearance-none border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer">
                         class="appearance-none border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer">
                         <option value="">Sort By Price</option>
                         <option value="low_to_high" {% if is_low_to_high %}selected{% endif %}>Low to High</option>
@@ -133,7 +135,20 @@ async function loadFarmhouses(reset=false) {
     try {
 
         // ⭐ get URL params
+        {% comment %} const params = new URLSearchParams(window.location.search);
+        params.set("page", currentPage); {% endcomment %}
+
+
         const params = new URLSearchParams(window.location.search);
+
+        // detect location from URL path
+        const pathParts = window.location.pathname.split("/");
+        const locationSlug = pathParts[2];
+
+        if (locationSlug) {
+            params.set("location", locationSlug);
+        }
+
         params.set("page", currentPage);
 
         const res = await axios.get(`/api/farmhouses/?${params.toString()}`);
@@ -149,7 +164,7 @@ async function loadFarmhouses(reset=false) {
 
             locations.forEach(loc => {
                 locationSelect.innerHTML += `
-                    <option value="${loc.slug}">
+                    <option value="${loc.meta_title.replaceAll(' ','_')}">
                         ${loc.name}
                     </option>`;
             });
@@ -206,6 +221,7 @@ async function loadFarmhouses(reset=false) {
                         </span>
 
                         <span class="flex items-center gap-1">
+
                             <i data-lucide="snowflake" class="w-4 h-4"></i>
                             ${f.ac_bedrooms} AC
                         </span>
@@ -279,23 +295,63 @@ document.getElementById("loadMoreBtn").addEventListener("click", function () {
 });
 
 // ⭐ location filter
+{% comment %} document.addEventListener("change", function(e){
+    if (e.target.id === "locationSelect") {
+
+        const value = e.target.value;
+
+        if (value) {
+            window.location.href = `/farmhouses/${value}/`;
+        } else {
+            window.location.href = `/farmhouses/`;
+        }
+    }
+}); {% endcomment %}
+
+// ⭐ initial load
+loadFarmhouses(true);
+
+
+
+
 document.addEventListener("change", function(e){
     if (e.target.id === "locationSelect") {
 
         const value = e.target.value;
 
         if (value) {
-            window.location.href = `/farmhouses/?location=${value}`;
+            window.location.href = `/farmhouses/${value}/`;
         } else {
             window.location.href = `/farmhouses/`;
         }
     }
 });
 
-// ⭐ initial load
-loadFarmhouses(true);
+
+document.getElementById("sortSelect").addEventListener("change", function(){
+
+    const sort = this.value;
+
+    const pathParts = window.location.pathname.split("/");
+    const locationSlug = pathParts[2];
+
+    let url = "/farmhouses/";
+
+    if(locationSlug){
+        url += locationSlug + "/";
+    }
+
+    if(sort){
+        url += "?sort=" + sort;
+    }
+
+    window.location.href = url;
+
+});
 
 </script>
+
+
 
 {% comment %} <script>
 async function loadFarmhouses() {

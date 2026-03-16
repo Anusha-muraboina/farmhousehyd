@@ -1,4 +1,3 @@
-from django.shortcuts import render
 
 # Create your views here.
 # Create your views here.
@@ -11,13 +10,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
-# def superadmin_required(view_func):
-#     return user_passes_test(
-#         lambda u: u.is_authenticated and u.is_superuser
-#     )(view_func)
+
 from django.http import HttpResponseForbidden
 from functools import wraps
-from django.http import HttpResponseForbidden
 from django.views.decorators.http import require_POST
 # def superadmin_required(view_func):
 
@@ -2499,3 +2494,54 @@ def seo_delete(request, pk):
     seo = get_object_or_404(PageSEO, pk=pk)
     seo.delete()
     return redirect("seo_list")
+
+
+
+
+
+# from django.shortcuts import render, redirect, get_object_or_404
+# from .models import HomePopup
+# from .forms import HomePopupForm
+
+
+# LIST
+def popup_list(request):
+    popups = HomePopup.objects.all()
+    return render(request, "superadmin/popup/list.html", {
+        "popups": popups
+    })
+
+
+# CREATE
+def popup_create(request):
+    form = HomePopupForm(request.POST or None, request.FILES or None)
+
+    if form.is_valid():
+        form.save()
+        return redirect("popup-list")
+
+    return render(request, "superadmin/popup/form.html", {
+        "form": form
+    })
+
+
+# UPDATE
+def popup_update(request, pk):
+    popup = get_object_or_404(HomePopup, pk=pk)
+
+    form = HomePopupForm(request.POST or None, request.FILES or None, instance=popup)
+
+    if form.is_valid():
+        form.save()
+        return redirect("popup-list")
+
+    return render(request, "superadmin/popup/form.html", {
+        "form": form
+    })
+
+
+# DELETE (no template)
+def popup_delete(request, pk):
+    popup = get_object_or_404(HomePopup, pk=pk)
+    popup.delete()
+    return redirect("popup-list")

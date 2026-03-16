@@ -1,0 +1,50 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="card shadow-sm">
+
+<div class="card-header bg-white">
+    <h5 class="mb-0">{{ title }}</h5>
+</div>
+
+<div class="card-body">
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<!-- IMAGE -->
+<div class="mb-3">
+<label class="form-label fw-semibold">Popup Image</label>
+{{ form.image }}
+</div>
+
+{% if form.instance.image %}
+<div class="mb-3">
+<img src="{{ form.instance.image.url }}" width="200" class="rounded border">
+</div>
+{% endif %}
+
+<!-- STATUS -->
+<div class="form-check mb-3">
+{{ form.is_active }}
+<label class="form-check-label">
+Active Popup
+</label>
+</div>
+
+<!-- BUTTONS -->
+<button type="submit" class="btn btn-warning text-white">
+Save
+</button>
+
+<a href="{% url 'popup-list' %}" class="btn btn-secondary">
+Cancel
+</a>
+
+</form>
+
+</div>
+
+</div>
+
+{% endblock %}

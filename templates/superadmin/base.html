@@ -220,6 +220,49 @@ class="{% if request.resolver_match.url_name == 'banner-list' %}active-parent{% 
 </a>
 
 
+
+
+
+
+
+<!-- POPUP -->
+<a onclick="toggleMenu('popupMenu',this)"
+class="{% if request.resolver_match.url_name in 'popup-list popup-create popup-update' %}active-parent{% endif %}">
+
+<div class="menu-left">
+<i class="fa-solid fa-window-restore"></i>
+<span class="menu-text">Popup</span>;
+</div>
+
+<i class="fa-solid fa-chevron-down arrow"></i>
+
+</a>
+
+<div id="popupMenu"
+class="submenu {% if request.resolver_match.url_name in 'popup-list popup-create popup-update' %}{% else %}d-none{% endif %}">
+
+<!-- ALL POPUPS -->
+<a href="{% url 'popup-list' %}"
+class="{% if request.resolver_match.url_name == 'popup-list' %}active{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-list"></i>
+<span class="menu-text">All Popups</span>
+</div>
+</a>
+
+<!-- ADD POPUP -->
+<a href="{% url 'popup-create' %}"
+class="{% if request.resolver_match.url_name == 'popup-create' %}active{% endif %}">
+<div class="menu-left">
+<i class="fa-solid fa-plus"></i>
+<span class="menu-text">Add Popup</span>
+</div>
+</a>
+
+</div>
+
+
+
 <a href="{% url 'amenity-list' %}"
 class="{% if request.resolver_match.url_name == 'amenity-list' %}active-parent{% endif %}">
 <div class="menu-left">

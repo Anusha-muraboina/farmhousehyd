@@ -34,6 +34,7 @@ urlpatterns = [
     # path("", HomeAPIView.as_view(), name="home"),
 # 
     # location page
-    path("<str:location>/", HomeAPIView.as_view(), name="home-location"),
+    path("<str:location>/", home_page, name="home-location"),
+    path("farmhouses/<str:location>/", Farmhouses, name="farmhouses-location"),
     
 ]
