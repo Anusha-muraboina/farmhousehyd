@@ -448,6 +448,7 @@ def farmhouse_edit(request, id):
         "pricing_form": pricing_form,
         "farmhouse": farmhouse
     })
+    
 from booking.models import Invoice
 @superadmin_required
 def admin_view_invoice(request, booking_id):

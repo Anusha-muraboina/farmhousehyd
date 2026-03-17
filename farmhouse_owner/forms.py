@@ -87,6 +87,8 @@ class FarmhouseForm(forms.ModelForm):
             
             
            "map_embed": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+           
+
             # "guest_count": forms.NumberInput(attrs={
             #     "class": "form-control"
             # }),

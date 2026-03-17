@@ -166,12 +166,6 @@ margin:0;
 
 <div class="invoice">
 
-<div style="text-align:right; margin-bottom:15px; margin-top:15px;">
-<button onclick="window.print()" class="print-btn">
-🖨 Print Invoice
-</button>
-</div>
-
 <!-- HEADER -->
 
 <div class="header">
@@ -288,6 +282,34 @@ Booking Status: {{ booking.status }}
 
 </table>
 
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin:15px 0;">
+
+    <button onclick="window.print()" class="print-btn">
+         Print Invoice
+    </button>
+
+    <button onclick="shareInvoice()" class="print-btn">
+         Share Invoice
+    </button>
+
+</div>
+
+<script>
+function shareInvoice() {
+    const url = window.location.origin + "{% url 'owner_view_invoice' booking.booking_id %}";
+
+    if (navigator.share) {
+        navigator.share({
+            title: "Invoice",
+            text: "View your invoice",
+            url: url
+        });
+    } else {
+        alert("Sharing not supported");
+    }
+}
+</script>
 <!-- FOOTER -->
 
 <div class="footer">

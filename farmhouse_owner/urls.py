@@ -94,6 +94,6 @@ urlpatterns = [
 
 
     path("admin/calc-booking-price/", owner_calculate_booking_price,  name="owner_calc_booking_price" ),
-    
+    path( "owner/invoice/<str:booking_id>/", owner_view_invoice, name="owner_view_invoice"),
 
 ]

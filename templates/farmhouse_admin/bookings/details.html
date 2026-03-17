@@ -188,15 +188,16 @@ Farmhouse
 </div>
 
 
+
+
+
 <!-- QUICK STATUS (OWNER SAFE VERSION) -->
 <div class="col-lg-6">
 <div class="card border-0 shadow-sm border-warning">
 <div class="card-body">
-
 <h4 class="mb-3 fw-bold">
 Update Booking Status
 </h4>
-
 <form method="post">
 {% csrf_token %}
 
@@ -269,6 +270,16 @@ Update Booking
 </div>
 
 </div>
+
+
+<div class="mt-4">
+       <a href="{% url 'owner_view_invoice' booking.booking_id %}"
+        class="btn btn-danger text-white mt-8">
+        <i class="fa-solid fa-file-invoice"></i>
+        Invoice
+        </a>
+        </div>
+
 
 </div>
 
