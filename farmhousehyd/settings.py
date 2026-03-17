@@ -160,7 +160,6 @@ WSGI_APPLICATION = 'farmhousehyd.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-
         "NAME": "farmhouse_hyd",        # DB NAME
         "USER": "farmhouse_user",       # DB USER
         "PASSWORD": "Farmhouse@2026!",  # DB PASSWORD
@@ -175,9 +174,9 @@ DATABASES = {
 
 
 
-
 TIME_ZONE = "Asia/Kolkata"
 USE_TZ = True
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

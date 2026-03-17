@@ -180,51 +180,73 @@ def Farmhouses(request, location=None):
 
 
 
-
-
-def Farmhouse_detail(request,location_slug, slug):
+def Farmhouse_detail(request, location_slug, slug):
 
     farmhouse = get_object_or_404(
-        # Farmhouse,
-        
         Farmhouse.objects.select_related("location"),
         location__slug=location_slug,
         slug=slug,
         is_active=True
     )
-    location = farmhouse.location
-        # ✅ Get SEO for locations page
-    # page_seo = PageSEO.objects.filter(page="locations").first()
 
     context = {
         "farmhouse": farmhouse,
-        "slug": slug,   # ✅ slug added
+        "slug": slug,
         "location_slug": location_slug,
 
-        # ⭐ Dynamic SEO
-        # "meta_title": location.meta_title or f"{farmhouse.title} | Farmhouse Hyd",
-        # "meta_description": location.meta_description or farmhouse.short_description,
-        # "meta_keywords": location.meta_keywords,
-        
-        "meta_title": (
-            location.meta_title
-            # or (page_seo.meta_title if page_seo else "")
-            or f"{farmhouse.title} | Farmhouse Hyd"
-        ),
+        # ✅ USE FARMHOUSE SEO (NOT LOCATION)
+        "meta_title": farmhouse.meta_title or f"{farmhouse.title} | Farmhouse Hyd",
 
-        "meta_description": (
-            location.meta_description
-            # or (page_seo.meta_description if page_seo else "")
-            or farmhouse.short_description
-        ),
+        "meta_description": farmhouse.meta_description or farmhouse.short_description,
 
-        "meta_keywords": (
-            location.meta_keywords
-            # or (page_seo.meta_keywords if page_seo else "")
-        ),
+        "meta_keywords": farmhouse.meta_keywords,
     }
 
     return render(request, "farmhouse_detail.html", context)
+
+# def Farmhouse_detail(request,location_slug, slug):
+
+#     farmhouse = get_object_or_404(
+#         # Farmhouse,
+        
+#         Farmhouse.objects.select_related("location"),
+#         location__slug=location_slug,
+#         slug=slug,
+#         is_active=True
+#     )
+#     location = farmhouse.location
+#         # ✅ Get SEO for locations page
+#     # page_seo = PageSEO.objects.filter(page="locations").first()
+
+#     context = {
+#         "farmhouse": farmhouse,
+#         "slug": slug,   # ✅ slug added
+#         "location_slug": location_slug,
+
+#         # ⭐ Dynamic SEO
+#         "meta_title": location.meta_title or f"{farmhouse.title} | Farmhouse Hyd",
+#         "meta_description": location.meta_description or farmhouse.short_description,
+#         "meta_keywords": location.meta_keywords,
+        
+#         "meta_title": (
+#             location.meta_title
+#             # or (page_seo.meta_title if page_seo else "")
+#             or f"{farmhouse.title} | Farmhouse Hyd"
+#         ),
+
+#         "meta_description": (
+#             location.meta_description
+#             # or (page_seo.meta_description if page_seo else "")
+#             or farmhouse.short_description
+#         ),
+
+#         "meta_keywords": (
+#             location.meta_keywords
+#             # or (page_seo.meta_keywords if page_seo else "")
+#         ),
+#     }
+
+#     return render(request, "farmhouse_detail.html", context)
 
 
 
