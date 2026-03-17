@@ -572,13 +572,21 @@ class HomeAPIView(APIView):
     authentication_classes = [BasicAuthentication]
     permission_classes = [AllowAny]
 
-    def get(self, request, location=None):
+    # def get(self, request, location=None):
 
+    #     search = request.GET.get("search")
+
+    #     selected_location = None
+
+    #     # convert URL underscore → space
+    #     if location:
+    #         selected_location = location.replace("_", " ")
+    def get(self, request):
+        location = request.GET.get("location")
         search = request.GET.get("search")
 
         selected_location = None
 
-        # convert URL underscore → space
         if location:
             selected_location = location.replace("_", " ")
 
