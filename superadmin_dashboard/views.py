@@ -1445,12 +1445,17 @@ import json
 @superadmin_required
 @require_POST
 def admin_calculate_booking_price(request):
+
     data = json.loads(request.body)
+
     farmhouse_id = data.get("farmhouse")
     check_in = data.get("check_in")
     check_out = data.get("check_out")
     extra_guest_count = int(data.get("extra_guest_count", 0))
     coupon_id = data.get("coupon")
+    admin_discount = Decimal(str(data.get("admin_discount", 0)))
+    
+    advance_amount = Decimal(str(data.get("advance_amount", 0)))
 
     if not farmhouse_id or not check_in or not check_out:
         return JsonResponse({"total": 0})
@@ -1467,48 +1472,170 @@ def admin_calculate_booking_price(request):
     subtotal = Decimal("0.00")
 
     while start < end:
-
-        # ⭐ SALE FIRST
         if pricing.sale_price and pricing.sale_price > 0:
             subtotal += pricing.sale_price
-
         elif start.weekday() in [5, 6]:
             subtotal += pricing.weekend_price
-
         else:
             subtotal += pricing.normal_day_price
 
         start += timedelta(days=1)
 
-    ###################################
     # EXTRA GUEST
-    ###################################
-
     subtotal += extra_guest_count * pricing.extra_guest_price
 
-    ###################################
+    # =========================
     # COUPON
-    ###################################
-
-    discount = Decimal("0.00")
+    # =========================
+    coupon_discount = Decimal("0.00")
 
     if coupon_id:
+        coupon = Coupon.objects.filter(id=coupon_id).first()
+        if coupon and coupon.is_active and subtotal >= coupon.min_booking_amount:
+            coupon_discount = coupon.calculate_discount(subtotal)
 
-        coupon = Coupon.objects.filter(
-            id=coupon_id,
-            is_active=True
-        ).first()
+    # =========================
+    # ADMIN DISCOUNT (%)  ✅ ALWAYS RUN
+    # =========================
+    admin_percent = admin_discount or Decimal("0.00")
 
-        if coupon and subtotal >= coupon.min_booking_amount:
-            discount = coupon.calculate_discount(subtotal)
+    admin_discount_amount = (
+        subtotal * admin_percent / Decimal("100")
+    ).quantize(Decimal("0.01"))
 
-    total = subtotal - discount
+    # =========================
+    # TOTAL DISCOUNT ✅ ALWAYS RUN
+    # =========================
+    total_discount = coupon_discount + admin_discount_amount
 
+    if total_discount > subtotal:
+        total_discount = subtotal
+
+
+
+    total = subtotal - total_discount
+    # =========================
+    # ADVANCE & REMAINING
+    # =========================
+    if advance_amount > total:
+        advance_amount = total
+
+    remaining_amount = total - advance_amount
     return JsonResponse({
         "subtotal": float(subtotal),
-        "discount": float(discount),
-        "total": float(total)
+        "coupon_discount": float(coupon_discount),
+        "admin_discount": float(admin_discount_amount),
+        "admin_percent": float(admin_percent),
+        "total": float(total),
+    "advance_paid": float(advance_amount),
+    "remaining": float(remaining_amount)
     })
+
+# @superadmin_required
+# @require_POST
+# def admin_calculate_booking_price(request):
+#     data = json.loads(request.body)
+#     farmhouse_id = data.get("farmhouse")
+#     check_in = data.get("check_in")
+#     check_out = data.get("check_out")
+#     extra_guest_count = int(data.get("extra_guest_count", 0))
+#     coupon_id = data.get("coupon")
+#     admin_discount = Decimal(str(data.get("admin_discount", 0)))
+#     if not farmhouse_id or not check_in or not check_out:
+#         return JsonResponse({"total": 0})
+
+#     try:
+#         farmhouse = Farmhouse.objects.select_related("pricing").get(id=farmhouse_id)
+#         pricing = farmhouse.pricing
+#     except:
+#         return JsonResponse({"total": 0})
+
+#     start = datetime.strptime(check_in, "%Y-%m-%d")
+#     end = datetime.strptime(check_out, "%Y-%m-%d")
+
+#     subtotal = Decimal("0.00")
+
+#     while start < end:
+
+#         # ⭐ SALE FIRST
+#         if pricing.sale_price and pricing.sale_price > 0:
+#             subtotal += pricing.sale_price
+
+#         elif start.weekday() in [5, 6]:
+#             subtotal += pricing.weekend_price
+
+#         else:
+#             subtotal += pricing.normal_day_price
+
+#         start += timedelta(days=1)
+
+#     ###################################
+#     # EXTRA GUEST
+#     ###################################
+
+#     subtotal += extra_guest_count * pricing.extra_guest_price
+
+#     ###################################
+#     # COUPON
+#     ###################################
+#     coupon_discount = Decimal("0.00")
+
+#     if coupon_id:
+#         coupon = Coupon.objects.filter(id=coupon_id).first()
+#         if coupon and coupon.is_active and subtotal >= coupon.min_booking_amount:
+#             coupon_discount = coupon.calculate_discount(subtotal)
+
+
+
+#         # =========================
+#         # ADMIN DISCOUNT (%)
+#         # =========================
+#         admin_percent = admin_discount or Decimal("0.00")
+
+#         admin_discount_amount = (
+#             subtotal * admin_percent / Decimal("100")
+#         ).quantize(Decimal("0.01"))
+
+#         # =========================
+#         # TOTAL DISCOUNT
+#         # =========================
+#         total_discount = coupon_discount + admin_discount_amount
+        
+#     # ✅ ADD ADMIN DISCOUNT
+#     # total_discount = coupon_discount + admin_discount
+
+#     if total_discount > subtotal:
+#         total_discount = subtotal
+
+#     total = subtotal - total_discount
+
+#     # discount = Decimal("0.00")
+
+#     # if coupon_id:
+
+#     #     coupon = Coupon.objects.filter(
+#     #         id=coupon_id,
+#     #         is_active=True
+#     #     ).first()
+
+#     #     if coupon and subtotal >= coupon.min_booking_amount:
+#     #         discount = coupon.calculate_discount(subtotal)
+
+#     # total = subtotal - discount
+
+#     return JsonResponse({
+        
+    
+#     "subtotal": float(subtotal),
+#     "discount": float(total_discount),
+#     "total": float(total),
+#     "coupon_discount": float(coupon_discount),
+#     "admin_discount": float(admin_discount_amount),
+#     "admin_percent": float(admin_percent)
+#         # "subtotal": float(subtotal),
+#         # "discount": float(discount),
+#         # "total": float(total)
+#     })
 
 from decimal import Decimal
 from datetime import datetime, timedelta
@@ -1563,22 +1690,83 @@ def admin_booking_create(request):
             ########################################
             # COUPON
             ########################################
-            discount = Decimal("0.00")
+            # discount = Decimal("0.00")
+
+            # if booking.coupon_applied:
+            #     coupon = booking.coupon_applied
+
+            #     if coupon.is_active and subtotal >= coupon.min_booking_amount:
+            #         discount = coupon.calculate_discount(subtotal)
+
+
+            # =========================
+            # COUPON DISCOUNT
+            # =========================
+            coupon_discount = Decimal("0.00")
 
             if booking.coupon_applied:
                 coupon = booking.coupon_applied
 
                 if coupon.is_active and subtotal >= coupon.min_booking_amount:
-                    discount = coupon.calculate_discount(subtotal)
+                    coupon_discount = coupon.calculate_discount(subtotal)
 
+          
+            # =========================
+            # ADMIN DISCOUNT (%)
+            # =========================
+            admin_percent = booking.admin_discount or Decimal("0.00")
+
+            admin_discount_amount = (
+                subtotal * admin_percent / Decimal("100")
+            ).quantize(Decimal("0.01"))
+
+            # =========================
+            # TOTAL DISCOUNT
+            # =========================
+            total_discount = coupon_discount + admin_discount_amount
+            # admin_discount = booking.admin_discount or Decimal("0.00")
+
+            # =========================
+            # TOTAL DISCOUNT
+            # =========================
+            # total_discount = coupon_discount + admin_discount
+
+            # SAFETY CHECK
+            if total_discount > subtotal:
+                total_discount = subtotal
+
+            # =========================
+            # FINAL CALCULATION
+            # =========================
+            booking.sub_total = subtotal
+            booking.disc_price = total_discount
+            booking.tax_price = Decimal("0.00")
+            # booking.total_amount = subtotal - total_discount
+            # booking.remaining_amount = booking.total_amount
+            
+            
+            booking.total_amount = subtotal - total_discount
+
+            # =========================
+            # ADVANCE LOGIC ✅
+            # =========================
+            advance = booking.advance_amount or Decimal("0.00")
+
+            # prevent overpay
+            if advance > booking.total_amount:
+                advance = booking.total_amount
+
+            booking.remaining_amount = booking.total_amount - advance
+            
+            
             ########################################
             # FINAL AMOUNTS
             ########################################
-            booking.sub_total = subtotal
-            booking.disc_price = discount
-            booking.tax_price = Decimal("0.00")   # add GST if needed
-            booking.total_amount = subtotal - discount
-            booking.remaining_amount = booking.total_amount
+            # booking.sub_total = subtotal
+            # booking.disc_price = discount
+            # booking.tax_price = Decimal("0.00")   # add GST if needed
+            # booking.total_amount = subtotal - discount
+            # booking.remaining_amount = booking.total_amount
 
             ########################################
             # PREVENT DOUBLE BOOKING
@@ -1603,14 +1791,12 @@ def admin_booking_create(request):
             ########################################
             with transaction.atomic():
                 booking.save()
-
+                
                 transaction.on_commit(
                     lambda: booking.send_booking_email("pending", request)
                 )
-
             messages.success(request, "Booking created successfully!")
             return redirect("admin-bookings")
-
     else:
         form = AdminBookingForm()
 

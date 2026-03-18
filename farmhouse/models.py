@@ -17,28 +17,6 @@ class Banner(models.Model):
 
 from django.db import models
 
-
-class HomePopup(models.Model):
-
-    image = models.ImageField(
-        upload_to="popup/",
-        help_text="Upload popup banner image"
-    )
-
-    is_active = models.BooleanField(
-        default=True
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-    class Meta:
-        ordering = ["-created_at"]
-
-    def __str__(self):
-        return "Homepage Popup"
-
 class Location(models.Model):
     name = models.CharField(max_length=100)  # Gachibowli, Moinabad
     slug = models.SlugField(unique=True)
@@ -319,6 +297,49 @@ class FarmhouseImage(models.Model):
 
     def __str__(self):
         return self.farmhouse.title
+
+
+
+
+
+
+
+
+class HomePopup(models.Model):
+
+    image = models.ImageField(
+        upload_to="popup/",
+        help_text="Upload popup banner image"
+    )
+    location = models.ForeignKey(
+        Location,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="popups"
+    )
+
+    farmhouse = models.ForeignKey(
+        Farmhouse,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="popups"
+    )
+
+    is_active = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return "Homepage Popup"
 
 
 

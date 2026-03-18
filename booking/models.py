@@ -103,7 +103,18 @@ class Booking(models.Model):
         null=True,
         blank=True
     )
-
+    admin_discount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal("0.00"),
+        help_text="Manual discount by admin"
+    )
+    advance_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal("0.00"),
+        help_text="Manual advance amount paid"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
 

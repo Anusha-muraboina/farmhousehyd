@@ -129,7 +129,17 @@ href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
                                   {{ form.coupon_applied.label_tag }}
                         {{ form.coupon_applied }}
+                        <hr>
+                      
+<label>Admin Discount (%)</label>
+{{ form.admin_discount }}
+<hr>
 
+
+<div class="mb-3">
+    <label class="form-label">Advance Paid (₹)</label>
+    {{ form.advance_amount }}
+</div>
     {% comment %} <div class="card-body">
 
         <h4 class="fw-bold">Live Price</h4>
@@ -158,9 +168,27 @@ href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
             Subtotal: ₹ <span id="subtotal">0</span>
         </h6>
 
+
         <h6 class="text-danger">
+    Coupon Discount: ₹ <span id="coupon_discount">0</span>
+</h6>
+
+    <h6 class="text-warning">
+        Admin Discount: ₹ <span id="admin_discount_display">0</span>
+        (<span id="admin_percent_display">0</span>%)
+    </h6>
+
+<h6>
+    Advance Paid: ₹ <span id="advance_paid">0</span>
+</h6>
+
+<h6 class="text-danger">
+    Remaining: ₹ <span id="remaining_amount">0</span>
+</h6>
+
+        {% comment %} <h6 class="text-danger">
             Discount: ₹ <span id="discount">0</span>
-        </h6>
+        </h6> {% endcomment %}
 
         <h6 class="text-success fw-bold">
             Total: ₹ <span id="total">0</span>
@@ -345,6 +373,12 @@ const checkin = document.getElementById("id_check_in");
 const checkout = document.getElementById("id_check_out");
 const extraGuests = document.getElementById("id_extra_guest_count");
 const coupon = document.getElementById("id_coupon_applied");
+const adminDiscount = document.getElementById("id_admin_discount");
+
+const advanceAmount = document.getElementById("id_advance_amount");
+
+
+
 
 function calculatePrice(){
 
@@ -367,15 +401,34 @@ function calculatePrice(){
             check_in: checkin.value,
             check_out: checkout.value,
             extra_guest_count: extraGuests?.value || 0,
-            coupon: coupon?.value || null
+            coupon: coupon?.value || null,
+            admin_discount: adminDiscount?.value || 0,
+            advance_amount: advanceAmount?.value || 0
         })
     })
     .then(res => res.json())
     .then(data => {
 
+            document.getElementById("subtotal").innerText = data.subtotal ?? 0;
+
+            document.getElementById("coupon_discount").innerText = data.coupon_discount ?? 0;
+
+            document.getElementById("admin_discount_display").innerText = data.admin_discount ?? 0;
+
+            document.getElementById("admin_percent_display").innerText = data.admin_percent ?? 0;
+
+            document.getElementById("total").innerText = data.total ?? 0;
+
+            document.getElementById("advance_paid").innerText = data.advance_paid ?? 0;
+            document.getElementById("remaining_amount").innerText = data.remaining ?? 0;
+
+
+        {% comment %} document.getElementById("admin_discount_display").innerText = data.admin_discount ?? 0;
         document.getElementById("subtotal").innerText = data.subtotal ?? 0;
-        document.getElementById("discount").innerText = data.discount ?? 0;
-        document.getElementById("total").innerText = data.total ?? 0;
+        document.getElementById("admin_discount_display").innerText = data.admin_discount ?? 0;
+
+        document.getElementById("admin_percent_display").innerText = data.admin_percent ?? 0;
+        document.getElementById("total").innerText = data.total ?? 0; {% endcomment %}
 
     });
 
@@ -385,8 +438,10 @@ function calculatePrice(){
 // 🔥 AUTO TRIGGERS
 /////////////////////////////////////////////////////
 
-[farmhouse, checkin, checkout, extraGuests, coupon]
+[farmhouse, checkin, checkout, extraGuests, coupon , adminDiscount , advanceAmount]
 .forEach(el=>{
+    {% comment %} el?.addEventListener("change", calculatePrice); {% endcomment %}
+    el?.addEventListener("input", calculatePrice);
     el?.addEventListener("change", calculatePrice);
 });
 

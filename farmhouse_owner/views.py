@@ -1258,23 +1258,78 @@ def owner_booking_create(request):
             ########################################
             # COUPON
             ########################################
-            discount = Decimal("0.00")
+            # discount = Decimal("0.00")
+
+            # if booking.coupon_applied:
+            #     coupon = booking.coupon_applied
+
+            #     if coupon.is_active and subtotal >= coupon.min_booking_amount:
+            #         discount = coupon.calculate_discount(subtotal)
+
+
+
+
+            # =========================
+            # COUPON DISCOUNT
+            # =========================
+            coupon_discount = Decimal("0.00")
 
             if booking.coupon_applied:
                 coupon = booking.coupon_applied
 
                 if coupon.is_active and subtotal >= coupon.min_booking_amount:
-                    discount = coupon.calculate_discount(subtotal)
+                    coupon_discount = coupon.calculate_discount(subtotal)
+
+          
+            # =========================
+            # ADMIN DISCOUNT (%)
+            # =========================
+            admin_percent = booking.admin_discount or Decimal("0.00")
+
+            admin_discount_amount = (
+                subtotal * admin_percent / Decimal("100")
+            ).quantize(Decimal("0.01"))
+
+            # =========================
+            # TOTAL DISCOUNT
+            # =========================
+            total_discount = coupon_discount + admin_discount_amount
+            # admin_discount = booking.admin_discount or Decimal("0.00")
+
+            # =========================
+            # TOTAL DISCOUNT
+            # =========================
+            # total_discount = coupon_discount + admin_discount
+
+            # SAFETY CHECK
+            if total_discount > subtotal:
+                total_discount = subtotal
+
 
             ########################################
             # FINAL AMOUNTS
             ########################################
             booking.sub_total = subtotal
-            booking.disc_price = discount
+            booking.disc_price = total_discount
             booking.tax_price = Decimal("0.00")   # add GST if needed
-            booking.total_amount = subtotal - discount
-            booking.remaining_amount = booking.total_amount
+            # booking.total_amount = subtotal - discount
+            # booking.remaining_amount = booking.total_amount
 
+
+            booking.total_amount = subtotal - total_discount
+
+            # =========================
+            # ADVANCE LOGIC ✅
+            # =========================
+            advance = booking.advance_amount or Decimal("0.00")
+
+            # prevent overpay
+            if advance > booking.total_amount:
+                advance = booking.total_amount
+
+            booking.remaining_amount = booking.total_amount - advance
+            
+            
             ########################################
             # PREVENT DOUBLE BOOKING
             ########################################
@@ -1402,6 +1457,10 @@ def owner_calculate_booking_price(request):
     extra_guest_count = int(data.get("extra_guest_count", 0))
     coupon_id = data.get("coupon")
 
+    admin_discount = Decimal(str(data.get("admin_discount", 0)))
+    
+    advance_amount = Decimal(str(data.get("advance_amount", 0)))
+
     if not farmhouse_id or not check_in or not check_out:
         return JsonResponse({"total": 0})
 
@@ -1440,24 +1499,69 @@ def owner_calculate_booking_price(request):
     # COUPON
     ###################################
 
-    discount = Decimal("0.00")
+    # discount = Decimal("0.00")
+
+    # if coupon_id:
+
+    #     coupon = Coupon.objects.filter(
+    #         id=coupon_id,
+    #         is_active=True
+    #     ).first()
+
+    #     if coupon and subtotal >= coupon.min_booking_amount:
+    #         discount = coupon.calculate_discount(subtotal)
+
+    # total = subtotal - discount
+    
+        # =========================
+    # COUPON
+    # =========================
+    coupon_discount = Decimal("0.00")
 
     if coupon_id:
+        coupon = Coupon.objects.filter(id=coupon_id).first()
+        if coupon and coupon.is_active and subtotal >= coupon.min_booking_amount:
+            coupon_discount = coupon.calculate_discount(subtotal)
 
-        coupon = Coupon.objects.filter(
-            id=coupon_id,
-            is_active=True
-        ).first()
+    # =========================
+    # ADMIN DISCOUNT (%)  ✅ ALWAYS RUN
+    # =========================
+    admin_percent = admin_discount or Decimal("0.00")
 
-        if coupon and subtotal >= coupon.min_booking_amount:
-            discount = coupon.calculate_discount(subtotal)
+    admin_discount_amount = (
+        subtotal * admin_percent / Decimal("100")
+    ).quantize(Decimal("0.01"))
 
-    total = subtotal - discount
+    # =========================
+    # TOTAL DISCOUNT ✅ ALWAYS RUN
+    # =========================
+    total_discount = coupon_discount + admin_discount_amount
 
+    if total_discount > subtotal:
+        total_discount = subtotal
+
+
+
+    total = subtotal - total_discount
+    # =========================
+    # ADVANCE & REMAINING
+    # =========================
+    if advance_amount > total:
+        advance_amount = total
+
+    remaining_amount = total - advance_amount
+    
     return JsonResponse({
+        # "subtotal": float(subtotal),
+        # "discount": float(discount),
+        # "total": float(total)
         "subtotal": float(subtotal),
-        "discount": float(discount),
-        "total": float(total)
+        "coupon_discount": float(coupon_discount),
+        "admin_discount": float(admin_discount_amount),
+        "admin_percent": float(admin_percent),
+        "total": float(total),
+    "advance_paid": float(advance_amount),
+    "remaining": float(remaining_amount)
     })
 
 

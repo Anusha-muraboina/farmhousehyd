@@ -188,6 +188,8 @@ def Farmhouse_detail(request, location_slug, slug):
         slug=slug,
         is_active=True
     )
+    
+
 
     context = {
         "farmhouse": farmhouse,

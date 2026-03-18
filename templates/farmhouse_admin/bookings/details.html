@@ -75,7 +75,32 @@ bg-info
 </span>
 </p>
 
-<p>
+
+
+
+
+      <p><b>Advance Paid:</b>
+
+    {% if booking.advance_amount and booking.advance_amount > 0 %}
+        ₹{{ booking.advance_amount }} <small>(Manual)</small>
+    {% else %}
+        ₹{{ booking.get_advance_paid }} <small>(Auto 30%)</small>
+    {% endif %}
+
+</p>
+
+<p><b>Remaining:</b>
+
+    {% if booking.advance_amount and booking.advance_amount > 0 %}
+        ₹{{ booking.remaining_amount }}
+    {% else %}
+        ₹{{ booking.get_remaining_amount }}
+    {% endif %}
+
+</p>
+
+
+{% comment %} <p>
 <b>Advance Paid:</b>
 ₹{{ booking.get_advance_paid }}
 </p>
@@ -85,7 +110,7 @@ bg-info
 <span class="text-danger fw-semibold">
 ₹{{ booking.get_remaining_amount }}
 </span>
-</p>
+</p> {% endcomment %}
 
 <p>
 <b>Payment Method:</b>

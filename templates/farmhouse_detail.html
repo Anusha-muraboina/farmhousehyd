@@ -31,7 +31,6 @@
 <div id="app" style="display:none;"></div>
 <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
 
-
 <style>
     .acc-header {
         border: 2px solid #170239;
@@ -173,7 +172,7 @@
         margin-bottom: 6px;
     }
 
-    /* Scrollbar width */
+/* Scrollbar width */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -239,9 +238,6 @@ height:300px;
 </div>
 
 
-
-
-<!-- GALLERY MODAL -->
 <!-- GALLERY MODAL -->
 <div id="galleryModal"
      class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center">
@@ -2693,7 +2689,6 @@ Remaining: ₹${finalTotal - payNow}
                 const payload = {
 
                     farmhouse: farmhouse.id,
-
                     guest_name: guest_name.value,
                     guest_phone: guest_phone.value,
                     guest_email: guest_email.value,
@@ -2703,7 +2698,7 @@ Remaining: ₹${finalTotal - payNow}
 
                     check_in: check_in.value,
                     check_out: check_out.value,
-                    
+
                     use_wallet: walletApplied,
                     coupon_applied: couponId || null,
                     payment_method:
@@ -2724,7 +2719,6 @@ Remaining: ₹${finalTotal - payNow}
                 ////////////////////////////////////////////////
 
                 if (res.data.redirect_url) {
-
                     window.location.href = res.data.redirect_url;
                     return;
                 }
