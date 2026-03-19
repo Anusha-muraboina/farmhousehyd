@@ -1216,4 +1216,4 @@ class HomePopupForm(forms.ModelForm):
 
     class Meta:
         model = HomePopup
-        fields = ["image", "is_active"]
+        fields = ["image", "farmhouse", "location","is_active" ]

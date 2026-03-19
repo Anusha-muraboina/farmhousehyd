@@ -238,6 +238,34 @@ height:300px;
 </div>
 
 
+<!-- POPUP MODAL -->
+<div id="popupModal"
+     class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center">
+
+    <div class="relative bg-white rounded-2xl overflow-hidden shadow-2xl max-w-lg w-full mx-4">
+
+        <!-- CLOSE BUTTON -->
+        <button onclick="closePopup()"
+                class="absolute top-2 right-3 text-black text-2xl font-bold z-50">
+            ✕
+        </button>
+
+        <!-- IMAGE -->
+        <img id="popupImage"
+             src=""
+             class="w-full h-auto object-cover">
+
+        <!-- OPTIONAL LINK -->
+        <a id="popupLink"
+           href="#"
+           class="block text-center py-3 bg-orange-500 text-white font-semibold hidden">
+           View Offer
+        </a>
+
+    </div>
+
+</div>
+
 <!-- GALLERY MODAL -->
 <div id="galleryModal"
      class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center">
@@ -342,6 +370,9 @@ height:300px;
 
         farmhouse = res.data.farmhouse;
         similarFarmhouses = res.data.similar_farmhouses || [];
+
+        const popup = res.data.popup;   // ⭐ IMPORTANT
+        showPopup(popup, slug); 
         buildUI();
         initDescriptionToggle();
         initPaymentSelection();
@@ -3038,6 +3069,58 @@ document.querySelectorAll(".mobile-thumb")[index]
 .classList.add("border-orange-500");
 
 } {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////
+// POPUP LOGIC
+//////////////////////////////////////////////////
+
+function showPopup(popup, slug) {
+
+    if (!popup || !popup.image) return;
+
+    // ✅ UNIQUE KEY (per farmhouse)
+    const popupKey = "popup_farmhouse_" + slug;
+
+    // ✅ SHOW ONLY ONCE
+    if (localStorage.getItem(popupKey)) {
+        return;
+    }
+
+    // SET IMAGE
+    document.getElementById("popupImage").src = popup.image;
+
+    // OPTIONAL LINK
+    const link = document.getElementById("popupLink");
+
+    if (popup.link) {
+        link.href = popup.link;
+        link.classList.remove("hidden");
+    } else {
+        link.classList.add("hidden");
+    }
+
+    // SHOW POPUP
+    document.getElementById("popupModal").classList.remove("hidden");
+
+    // SAVE IN LOCAL STORAGE
+    localStorage.setItem(popupKey, "shown");
+}
+
+function closePopup() {
+    document.getElementById("popupModal").classList.add("hidden");
+}
 
 
 

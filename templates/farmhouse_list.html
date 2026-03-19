@@ -23,6 +23,23 @@
     </div> {% endcomment %}
 
 
+    <!-- POPUP -->
+<div id="popupModal"
+     class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center">
+
+    <div class="bg-white rounded-xl overflow-hidden relative max-w-md w-full">
+
+        <button onclick="closePopup()"
+                class="absolute top-2 right-3 text-xl font-bold">
+            ✕
+        </button>
+
+        <img id="popupImage" class="w-full">
+
+    </div>
+</div>
+
+
 <section class="md:py-16 py-4 bg-gray-50">
     <div class="md:px-12 px-4 mx-auto">
         <form id="filterForm" method="GET"
@@ -157,6 +174,8 @@ async function loadFarmhouses(reset=false) {
         const locations = res.data.locations;
         const hasNext = res.data.has_next;
 
+        const popup = res.data.popup; 
+
         // ⭐ populate locations (only first load)
         if (currentPage === 1) {
 
@@ -175,6 +194,12 @@ async function loadFarmhouses(reset=false) {
             }
 
             container.innerHTML = "";
+
+                        // ⭐ SHOW POPUP
+            const pathParts = window.location.pathname.split("/");
+            const locationSlug = pathParts[2] || "all";
+
+            showLocationPopup(popup, locationSlug);
         }
 
         let html = "";
@@ -348,6 +373,50 @@ document.getElementById("sortSelect").addEventListener("change", function(){
     window.location.href = url;
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////
+// LOCATION POPUP
+//////////////////////////////////////////////////
+
+function showLocationPopup(popup, locationSlug) {
+
+    if (!popup || !popup.image) return;
+
+    const key = "popup_location_" + locationSlug;
+
+    // ✅ only once per location
+    if (localStorage.getItem(key)) return;
+
+    document.getElementById("popupImage").src = popup.image;
+
+    document.getElementById("popupModal")
+        .classList.remove("hidden");
+
+    localStorage.setItem(key, "shown");
+}
+
+function closePopup() {
+    document.getElementById("popupModal")
+        .classList.add("hidden");
+}
+
+
 
 </script>
 

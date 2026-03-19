@@ -34,13 +34,18 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-                "farmhouseshyderabad.com",
-                "www.farmhouseshyderabad.com",
-                "http://3.110.215.192" , 
-                'localhost',
-                '127.0.0.1',
-                 ]
+# ALLOWED_HOSTS = [
+#                 "farmhouseshyderabad.com",
+#                 "www.farmhouseshyderabad.com",
+#                 "http://3.110.215.192" , 
+#                 'localhost',
+#                 '127.0.0.1',
+#                 'https://50f6-2404-1f00-8047-a926-91b2-382c-1175-f2a.ngrok-free.app',
+#                  ]
+
+
+ALLOWED_HOSTS = ["*"]
+
 
 
 # Application definition
@@ -290,6 +295,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
     "http://3.110.215.192",
     "https://farmhouseshyderabad.com",
+    "https://50f6-2404-1f00-8047-a926-91b2-382c-1175-f2a.ngrok-free.app",
     
     
 ]
@@ -299,6 +305,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8000",
     "http://3.110.215.192",
     "https://farmhouseshyderabad.com",
+    "https://50f6-2404-1f00-8047-a926-91b2-382c-1175-f2a.ngrok-free.app",
 
 ]
 

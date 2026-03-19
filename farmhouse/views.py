@@ -316,7 +316,7 @@ class FarmhouseListAPI(APIView):
         location = request.GET.get("location")
         # if location:
         #     farmhouses = farmhouses.filter(location__slug=location)
-        
+        popup = None   # ✅ ADD
         if location:
             # convert URL format to meta title
             selected_location = location.replace("_", " ")
@@ -328,6 +328,11 @@ class FarmhouseListAPI(APIView):
 
             if location_obj:
                 farmhouses = farmhouses.filter(location=location_obj)
+                                # ✅ LOCATION BASED POPUP
+                popup = HomePopup.objects.filter(
+                    location=location_obj,
+                    is_active=True
+                ).first()
 
         # 💰 Price sort
         sort = request.GET.get("sort")
@@ -359,7 +364,11 @@ class FarmhouseListAPI(APIView):
             "farmhouses": serializer.data,
             "locations": location_serializer.data ,
             "has_next": page_obj.has_next(),
-            "page": page
+            "page": page ,
+                # ✅ ADD THIS
+            "popup": HomePopupSerializer(
+                popup, context={"request": request}
+            ).data if popup else None
         })
 
 
@@ -399,14 +408,33 @@ class FarmhouseDetailAPI(APIView):
             "amenities",
             "facilities"
         )[:3]
+        #  ---------------- POPUP LOGIC ----------------
 
+        popup = None
+
+        # 1️ Farmhouse-specific popup (HIGH PRIORITY)
+        popup = HomePopup.objects.filter(
+            farmhouse=farmhouse,
+            is_active=True
+        ).first()
+
+        # 2️ Location-based popup (FALLBACK)
+        if not popup:
+            popup = HomePopup.objects.filter(
+                location=farmhouse.location,
+                is_active=True
+            ).first()
         return Response({
             "farmhouse": FarmhouseSerializer(
                 farmhouse, context={"request": request}
             ).data,
             "similar_farmhouses": FarmhouseSerializer(
                 similar, many=True, context={"request": request}
-            ).data
+            ).data,
+                 # ✅ SEND POPUP
+            "popup": HomePopupSerializer(
+                popup, context={"request": request}
+            ).data if popup else None
         })
 
 
