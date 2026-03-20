@@ -105,6 +105,7 @@ urlpatterns = [
     path("coupon-usage/", views.coupon_usage_list, name="coupon_usage_list"),
 
     path("users/", views.admin_user_list, name="admin_user_list"),
+    path('users/<int:user_id>/', views.admin_user_detail, name='admin_user_detail'),
     path("users/add/", views.admin_user_add, name="admin_user_add"),
     path("users/edit/<int:id>/", views.admin_user_edit, name="admin_user_edit"),
     path("users/delete/<int:id>/", views.admin_user_delete, name="admin_user_delete"),

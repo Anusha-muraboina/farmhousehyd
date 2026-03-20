@@ -1,0 +1,115 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<h3 class="fw-bold">{{ user.username }}</h3>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <p><b>Email:</b> {{ user.email }}</p>
+        <p><b>Phone:</b> {{ user.phone }}</p>
+    </div>
+
+    <div class="col-md-4">
+        <p><b>Total Bookings:</b> {{ summary.total_bookings|default:0 }}</p>
+        <p><b>Total Spent:</b> ₹{{ summary.total_spent|default:0 }}</p>
+        <p><b>pending :</b> ₹{{ summary.total_spent|default:0 }}</p>
+        <p><b>confirmed:</b> ₹{{ summary.total_spent|default:0 }}</p>
+        
+
+    </div>
+
+
+    
+    <div class="col-md-4">
+        <p><b>Wallet Used:</b> ₹{{ summary.total_wallet|default:0 }}</p>
+        <p><b>Address:</b> {{ latest_booking.address|default:"N/A" }}</p>
+    </div>
+</div>
+
+
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <h5 class="mb-3">Bookings</h5>
+
+        <div style="overflow-x:auto;">
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Farmhouse</th>
+                        <th>Guest</th>
+                        <th>Dates</th>
+                        <th>Amount</th>
+                        <th>Wallet</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for b in bookings %}
+                    <tr>
+                        <td>{{ b.booking_id }}</td>
+
+                        <td>
+                            {{ b.farmhouse.name }}
+                        </td>
+
+                        <td>
+                            {{ b.guest_name }} <br>
+                            <small>{{ b.guest_phone }}</small>
+                        </td>
+
+                        <td>
+                            {{ b.check_in }} <br>
+                            <small>to {{ b.check_out }}</small>
+                        </td>
+
+                        <td>₹{{ b.total_amount }}</td>
+
+                        <td>₹{{ b.wallet_used }}</td>
+
+                        <td>
+                            {% if b.payment_status == "paid" %}
+                                <span class="badge bg-success">Paid</span>
+                            {% elif b.payment_status == "partial" %}
+                                <span class="badge bg-warning text-dark">Partial</span>
+                            {% elif b.payment_status == "failed" %}
+                                <span class="badge bg-danger">Failed</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Pending</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if b.status == "confirmed" %}
+                                <span class="badge bg-success">Confirmed</span>
+                            {% elif b.status == "cancelled" %}
+                                <span class="badge bg-danger">Cancelled</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Pending</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ b.address|default:"N/A" }}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock %}
+
+

@@ -71,6 +71,7 @@ class Booking(models.Model):
         blank=True,
         help_text="Example: 10:00 AM"
     )
+    address= models.TextField(null=True ,blank=True)
     special_requests = models.TextField(blank=True)
     wallet_used = models.DecimalField( max_digits=10, decimal_places=2, blank=True,null=True, default=0, help_text="Amount used from wallet for this booking")
     sub_total = models.DecimalField(max_digits=10, decimal_places=2)

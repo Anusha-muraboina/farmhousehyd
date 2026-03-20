@@ -139,6 +139,7 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             "bedrooms",
             "ac_bedrooms",
             "halls",
+            "breakfast_dinner_available",
             "amenities",
             "thingstocarry",
             "properyrules",

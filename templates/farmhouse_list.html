@@ -219,11 +219,77 @@ async function loadFarmhouses(reset=false) {
             html += `
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition">
 
-                <div class="relative h-56">
+                {% comment %} <div class="relative h-56">
                     <img src="${image}" class="w-full h-full object-cover">
-                </div>
+                </div> {% endcomment %}
 
-                <div class="p-5">
+
+
+
+
+
+
+
+<div class="relative h-56 overflow-hidden">
+
+    <!-- SLIDER -->
+    <div class="slider flex transition-transform duration-500"
+         id="slider-${f.id}">
+
+        ${
+            (f.images && f.images.length > 0)
+            ? f.images.map(img => `
+                <img src="${img.image}" 
+                     class="w-full h-56 object-cover flex-shrink-0">
+              `).join("")
+            : `<img src="${f.primary_image}"
+                     class="w-full h-56 object-cover">`
+        }
+
+    </div>
+
+    <!-- DOTS -->
+    ${
+        (f.images && f.images.length > 1)
+        ? `
+        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+            ${f.images.map((_, index) => `
+                <span 
+                    id="dot-${f.id}-${index}"
+                    class="w-2 h-2 rounded-full bg-white/50 cursor-pointer"
+                    onclick="goToSlide(${f.id}, ${index})">
+                </span>
+            `).join("")}
+        </div>
+        `
+        : ""
+    }
+
+    <!-- ARROWS -->
+    ${
+        (f.images && f.images.length > 1)
+        ? `
+        <button onclick="slidePrev(${f.id})"
+            class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white px-2 py-1 rounded">
+            ‹
+        </button>
+
+        <button onclick="slideNext(${f.id})"
+            class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white px-2 py-1 rounded">
+            ›
+        </button>
+        `
+        : ""
+    }
+
+</div>
+
+
+
+
+
+
+                <div class="p-5           ">
 
                     <p class="text-xl font-bold mb-1">${f.title}</p>
 
@@ -251,6 +317,15 @@ async function loadFarmhouses(reset=false) {
                             ${f.ac_bedrooms} AC
                         </span>
 
+
+                    ${ f.breakfast_dinner_available ? `
+                        <span class="flex items-center gap-1">
+
+                            <i data-lucide="utensils" class="w-4 h-4"></i>
+                            Incl Breakfast & Dinner
+                        </span>
+
+                    ` : "" }
                     </div>
 
                     <div class="flex justify-between items-center border-t pt-4">
@@ -311,6 +386,17 @@ async function loadFarmhouses(reset=false) {
         console.error(err);
         container.innerHTML = `<p class="text-red-500">Failed to load farmhouses</p>`;
     }
+
+
+    setTimeout(() => {
+    document.querySelectorAll("[id^='slider-']").forEach(slider => {
+        const id = slider.id.split("-")[1];
+        sliders[id] = 0;
+        updateDots(id, slider.children.length);
+    });
+}, 100);
+
+
 }
 
 // ⭐ load more click
@@ -421,163 +507,64 @@ function closePopup() {
 </script>
 
 
+<script>
 
-{% comment %} <script>
-async function loadFarmhouses() {
+const sliders = {};
 
-    const container = document.getElementById("farmhouse-container");
-    const locationSelect = document.getElementById("locationSelect");
+function updateDots(id, total) {
+    for (let i = 0; i < total; i++) {
+        const dot = document.getElementById(`dot-${id}-${i}`);
+        if (!dot) continue;
 
-    container.innerHTML = "Loading farmhouses...";
-
-    try {
-
-        // ⭐ read query params
-        const params = new URLSearchParams(window.location.search);
-        const query = params.toString();
-
-        const res = await axios.get(`/api/farmhouses/?${query}`);
-
-        const farmhouses = res.data.farmhouses;
-        const locations = res.data.locations;
-
-        // ⭐ populate location dropdown
-        locationSelect.innerHTML = `<option value="">All Locations</option>`;
-        locations.forEach(loc => {
-            locationSelect.innerHTML += `
-                <option value="${loc.slug}">
-                    ${loc.name}
-                </option>`;
-        });
-
-        // ⭐ keep selected value
-        const currentLocation = params.get("location");
-        if (currentLocation) {
-            locationSelect.value = currentLocation;
+        if (i === sliders[id]) {
+            dot.classList.remove("bg-white/50");
+            dot.classList.add("bg-white");
+        } else {
+            dot.classList.remove("bg-white");
+            dot.classList.add("bg-white/50");
         }
-
-        // ⭐ render farmhouses
-        let html = "";
-
-        farmhouses.forEach(f => {
-
-            const image = f.primary_image ||
-            "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80";
-
-            const sale = Number(f.pricing?.sale_price || 0);
-            const weekday = Number(f.pricing?.normal_day_price || 0);
-            const weekend = Number(f.pricing?.weekend_price || 0);
-
-            let displayPrice = sale > 0 ? sale : Math.min(weekday, weekend);
-            let originalPrice = sale > 0 ? Math.min(weekday, weekend) : 0;
-
-            html += `
-            <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition">
-
-                <div class="relative h-56">
-                    <img src="${image}" class="w-full h-full object-cover">
-                </div>
-
-                <div class="p-5">
-
-                    <p class="text-xl font-bold mb-1">${f.title}</p>
-
-                    <p class="text-gray-500 text-sm mb-2 break-words w-full">${f.address || ""}</p>
-
-                    <p class="text-sm text-gray-600 mb-3">
-                        ${(f.short_description || "").substring(0,90)}...
-                    </p>
-
-                        <div class="flex gap-4 text-sm text-gray-700 mb-3">
-
-                        <span class="flex items-center gap-1">
-                            <i data-lucide="bed" class="w-4 h-4"></i>
-                            ${f.bedrooms} Beds
-                        </span>
-
-                        <span class="flex items-center gap-1">
-                            <i data-lucide="home" class="w-4 h-4"></i>
-                            ${f.halls} Halls
-                        </span>
-
-                        <span class="flex items-center gap-1">
-                            <i data-lucide="snowflake" class="w-4 h-4"></i>
-                            ${f.ac_bedrooms} AC
-                        </span>
-
-                    </div>
-                   
-
-                    <div class="flex justify-between items-center border-t pt-4">
-
-
-
-
-
-
-<div class="flex flex-col ">
-
-    ${
-        originalPrice > 0
-        ? `<span class="text-xs text-gray-400 line-through">
-              ₹${originalPrice.toLocaleString()}
-           </span>`
-        : ""
-    }
-
-    <span class="text-lg font-bold text-green-600">
-        ₹${displayPrice.toLocaleString()} / night
-    </span>
-
-    ${
-        sale > 0
-        ? `<span class="text-xs text-red-500 font-semibold">
-               Limited Time Deal
-           </span>`
-        : `<span class="text-xs text-gray-500">
-              Weekday ₹${weekday.toLocaleString()} • Weekend ₹${weekend.toLocaleString()}
-           </span>`
-    }
-
-</div>
-
-
-
-
-
-                        <a href="/farmhouse/${f.slug}/${f.location.slug}/"
-                           class="bg-orange-500 text-white px-2 md:px-4 py-2 rounded-lg text-sm hover:bg-orange-600">
-                           Know More 
-                        </a>
-
-                    </div>
-                </div>
-            </div>
-            `;
-        });
-        container.innerHTML = html;
-        lucide.createIcons();
-
-    } catch (err) {
-        console.error(err);
-        container.innerHTML = `<p class="text-red-500">Failed to load farmhouses</p>`;
     }
 }
 
-// ⭐ filter when location changes
-document.addEventListener("change", function(e){
-    if (e.target.id === "locationSelect") {
-        const value = e.target.value;
-        if (value) {
-            window.location.href = `/farmhouses/?location=${value}`;
-        } else {
-            window.location.href = `/farmhouses/`;
-        }
-    }
-});
+function slideNext(id) {
+    const slider = document.getElementById(`slider-${id}`);
+    const total = slider.children.length;
 
-loadFarmhouses();
-</script> {% endcomment %}
+    if (!sliders[id]) sliders[id] = 0;
+
+    sliders[id] = (sliders[id] + 1) % total;
+
+    slider.style.transform = `translateX(-${sliders[id] * 100}%)`;
+
+    updateDots(id, total);
+}
+
+function slidePrev(id) {
+    const slider = document.getElementById(`slider-${id}`);
+    const total = slider.children.length;
+
+    if (!sliders[id]) sliders[id] = 0;
+
+    sliders[id] = (sliders[id] - 1 + total) % total;
+
+    slider.style.transform = `translateX(-${sliders[id] * 100}%)`;
+
+    updateDots(id, total);
+}
+
+function goToSlide(id, index) {
+    const slider = document.getElementById(`slider-${id}`);
+    const total = slider.children.length;
+
+    sliders[id] = index;
+
+    slider.style.transform = `translateX(-${index * 100}%)`;
+
+    updateDots(id, total);
+}
+
+</script>
+
 
 {% endblock %}
 

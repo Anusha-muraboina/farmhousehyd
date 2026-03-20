@@ -108,15 +108,13 @@ class Farmhouse(models.Model):
     
     
     address = models.CharField(max_length=300)
-
     distance_km = models.PositiveIntegerField(
         help_text="Distance from city in KM (e.g. 21)"
     )
-    
     halls = models.PositiveIntegerField(default=1)
     bedrooms = models.PositiveIntegerField(default=4)
     ac_bedrooms = models.PositiveIntegerField(default=4)
-
+    breakfast_dinner_available = models.BooleanField(default=False)
     amenities = models.ManyToManyField(
         Amenity,
         blank=True,

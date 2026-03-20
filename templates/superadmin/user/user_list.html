@@ -85,6 +85,10 @@
                                    class="btn btn-sm btn-outline-primary">
                                     Edit
                                 </a>
+    <a href="{% url 'admin_user_detail' u.id %}" 
+       class="btn btn-sm btn-dark">
+        View
+    </a>
 
                                 <a href="{% url 'admin_user_delete' u.id %}"
                                    class="btn btn-sm btn-outline-danger"
