@@ -87,9 +87,9 @@ class Farmhouse(models.Model):
     
     user = models.ForeignKey( settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
         related_name="farmhouses",
-        limit_choices_to={
-            "is_staff": True
-        },
+        # limit_choices_to={
+        #     "is_staff": True
+        # },
         null=True,blank=True
     )
     title = models.CharField(max_length=200)
@@ -120,6 +120,7 @@ class Farmhouse(models.Model):
         blank=True,
         related_name='farmhouses'
     )
+    
     facilities = models.ManyToManyField(
         FarmhouseFacilities,
         blank=True,
@@ -164,7 +165,7 @@ class Farmhouse(models.Model):
     null=True,
     help_text="Paste Google Maps embed iframe"
     )
-    
+    is_deleted = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

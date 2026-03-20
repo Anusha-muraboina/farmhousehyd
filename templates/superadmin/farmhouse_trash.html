@@ -1,0 +1,42 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+
+
+<h4>Trash</h4>
+
+<table class="table">
+    <tr>
+        <th>Title</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for f in farmhouses %}
+    <tr>
+        <td>{{ f.title }}</td>
+        <td>
+
+            <form method="post" action="{% url 'farmhouse-restore' f.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button class="btn btn-success btn-sm">Restore</button>
+            </form>
+
+            <form method="post" action="{% url 'farmhouse-delete-permanent' f.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm"
+                        onclick="return confirm('Delete permanently?')">
+                    Delete Permanently
+                </button>
+            </form>
+
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="2" class="text-center">Trash is empty</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+{% endblock %}

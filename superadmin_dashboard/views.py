@@ -349,8 +349,9 @@ def farmhouse_list(request):
 
     query = request.GET.get("q", "").strip()
 
-    farmhouses = Farmhouse.objects.select_related("user").all()
-
+    # farmhouses = Farmhouse.objects.select_related("user").all()
+    farmhouses = Farmhouse.objects.select_related("user").filter(is_deleted=False)
+    
     if query:
         farmhouses = farmhouses.filter(
             Q(title__icontains=query) |
@@ -483,6 +484,25 @@ def admin_view_invoice(request, booking_id):
 #     return redirect("superadmin-farmhouses")
 
 
+# @superadmin_required
+# @require_POST
+# def farmhouse_delete(request, id):
+
+#     farmhouse = get_object_or_404(Farmhouse, id=id)
+
+#     confirm_slug = request.POST.get("confirm_slug")
+
+#     if confirm_slug != farmhouse.slug:
+#         messages.error(request, "Slug does not match. Deletion cancelled.")
+#         return redirect("superadmin-farmhouses")
+
+#     farmhouse.delete()
+
+#     messages.success(request, "Farmhouse deleted successfully.")
+
+#     return redirect("superadmin-farmhouses")
+
+
 @superadmin_required
 @require_POST
 def farmhouse_delete(request, id):
@@ -492,14 +512,58 @@ def farmhouse_delete(request, id):
     confirm_slug = request.POST.get("confirm_slug")
 
     if confirm_slug != farmhouse.slug:
-        messages.error(request, "Slug does not match. Deletion cancelled.")
+        messages.error(request, "Slug does not match.")
         return redirect("superadmin-farmhouses")
+
+    farmhouse.is_deleted = True
+    farmhouse.save()
+
+    messages.success(request, "Moved to Trash")
+
+    return redirect("superadmin-farmhouses")
+
+
+
+
+
+
+
+
+@superadmin_required
+def farmhouse_trash(request):
+
+    farmhouses = Farmhouse.objects.filter(is_deleted=True)
+
+    return render(request, "superadmin/farmhouse_trash.html", {
+        "farmhouses": farmhouses
+    })
+    
+    
+@superadmin_required
+@require_POST
+def farmhouse_restore(request, id):
+
+    farmhouse = get_object_or_404(Farmhouse, id=id, is_deleted=True)
+
+    farmhouse.is_deleted = False
+    farmhouse.save()
+
+    messages.success(request, "Restored successfully")
+
+    return redirect("farmhouse-trash")
+
+@superadmin_required
+@require_POST
+def farmhouse_delete_permanent(request, id):
+
+    farmhouse = get_object_or_404(Farmhouse, id=id, is_deleted=True)
 
     farmhouse.delete()
 
-    messages.success(request, "Farmhouse deleted successfully.")
+    messages.success(request, "Permanently deleted")
 
-    return redirect("superadmin-farmhouses")
+    return redirect("farmhouse-trash")
+
 # ===========================================================
 
 
@@ -1233,7 +1297,7 @@ def is_farmhouse_staff(user):
     """
     return (
         user.is_authenticated and
-        user.is_staff and
+        # user.is_staff and
         user.farmhouse_user
     )
 

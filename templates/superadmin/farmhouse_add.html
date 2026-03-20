@@ -299,6 +299,27 @@ AC Bedrooms
 </div>
 
 
+
+
+<div class="mb-4">
+
+    <label class="custom-label mb-2">
+        Food Availability
+        <span class="label-hint d-block">
+            Enable if breakfast & dinner are provided
+        </span>
+    </label>
+
+    <div class="form-check form-switch">
+        {{ form.breakfast_dinner_available }}
+        <label class="form-check-label ms-2" for="{{ form.breakfast_dinner_available.id_for_label }}">
+            Include Breakfast & Dinner
+        </label>
+    </div>
+
+</div>
+
+
 <div class="mb-4">
 <label class="custom-label">
 map_embed

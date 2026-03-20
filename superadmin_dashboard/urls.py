@@ -11,7 +11,15 @@ urlpatterns = [
     path("farmhouses/edit/<int:id>/", views.farmhouse_edit, name="superadmin-farmhouse-edit"),
     path("farmhouses/delete/<int:id>/", views.farmhouse_delete, name="superadmin-farmhouse-delete"),
     
+  # 🗑 Trash Page
+    path('farmhouses/trash/', views.farmhouse_trash, name='farmhouse-trash'),
 
+    # ♻️ Restore
+    path('farmhouses/restore/<int:id>/', views.farmhouse_restore, name='farmhouse-restore'),
+
+    # ❌ Permanent Delete
+    path('farmhouses/delete-permanent/<int:id>/', views.farmhouse_delete_permanent, name='farmhouse-delete-permanent'),
+    
     path("banners/", views.banner_list, name="banner-list"),
     path("banners/add/", views.banner_create, name="banner-add"),
     path("banners/<int:pk>/edit/", views.banner_update, name="banner-edit"),

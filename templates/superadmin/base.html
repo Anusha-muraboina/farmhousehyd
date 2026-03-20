@@ -219,10 +219,17 @@ class="{% if request.resolver_match.url_name == 'banner-list' %}active-parent{% 
 </div>
 </a>
 
+{% comment %} <a href="{% url 'farmhouse-trash' %}" class="btn btn-warning">
+    🗑 Trash
+</a> {% endcomment %}
 
 
-
-
+<a href="{% url 'farmhouse-trash' %}">
+<div class="menu-left">
+<i class="fa-solid fa-image"></i>
+<span class="menu-text">Trash</span>
+</div>
+</a>
 
 
 <!-- POPUP -->
@@ -231,7 +238,7 @@ class="{% if request.resolver_match.url_name in 'popup-list popup-create popup-u
 
 <div class="menu-left">
 <i class="fa-solid fa-window-restore"></i>
-<span class="menu-text">Popup</span>;
+<span class="menu-text">Popup</span>
 </div>
 
 <i class="fa-solid fa-chevron-down arrow"></i>
@@ -286,7 +293,6 @@ class="{% if request.resolver_match.url_name == 'location-list' %}active-parent{
         <i class="fa-solid fa-screwdriver-wrench"></i>
         <span class="menu-text">Facilities</span>
     </div>
-
 </a>
 
 <!-- PAYMENT POLICY -->

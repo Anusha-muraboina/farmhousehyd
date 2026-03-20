@@ -77,8 +77,8 @@ class FarmhouseAdmin(admin.ModelAdmin):
         if db_field.name == "user":
             kwargs["queryset"] = User.objects.filter(
                 farmhouse_user=True,
-                is_staff= True,
-                 is_superuser=False,
+                # is_staff= True,
+                # is_superuser=False,
             )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
