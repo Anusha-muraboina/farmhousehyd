@@ -12,14 +12,10 @@
     <div class="col-md-4">
         <p><b>Total Bookings:</b> {{ summary.total_bookings|default:0 }}</p>
         <p><b>Total Spent:</b> ₹{{ summary.total_spent|default:0 }}</p>
-        <p><b>pending :</b> ₹{{ summary.total_spent|default:0 }}</p>
-        <p><b>confirmed:</b> ₹{{ summary.total_spent|default:0 }}</p>
-        
-
+        <p><b>Pending:</b> ₹{{ summary.total_pending|default:0 }}</p>
+        <p><b>Confirmed:</b> ₹{{ summary.total_confirmed|default:0 }}</p>
     </div>
 
-
-    
     <div class="col-md-4">
         <p><b>Wallet Used:</b> ₹{{ summary.total_wallet|default:0 }}</p>
         <p><b>Address:</b> {{ latest_booking.address|default:"N/A" }}</p>

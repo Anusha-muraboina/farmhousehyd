@@ -224,12 +224,7 @@ class="{% if request.resolver_match.url_name == 'banner-list' %}active-parent{% 
 </a> {% endcomment %}
 
 
-<a href="{% url 'farmhouse-trash' %}">
-<div class="menu-left">
-<i class="fa-solid fa-image"></i>
-<span class="menu-text">Trash</span>
-</div>
-</a>
+
 
 
 <!-- POPUP -->
@@ -338,6 +333,13 @@ class="{% if request.resolver_match.url_name == 'superadmin-farmhouses' %}active
 </div>
 </a>
 
+
+<a href="{% url 'farmhouse-trash' %}">
+<div class="menu-left">
+<i class="fa-solid fa-image"></i>
+<span class="menu-text">Trash</span>
+</div>
+</a>
 
 <!-- THINGS -->
 <a onclick="toggleMenu('thingsMenu',this)"

@@ -290,22 +290,24 @@ class="location-bar md:flex md:flex-wrap md:justify-center gap-3 md:gap-5  px-2"
     <!-- Heading -->
     <div class="text-center mb-2 md:mb-10">
       {% comment %} <h2 class="text-primary font-medium mb-2">Find Best Farmhouses</h2> {% endcomment %}
-      <p class="font-display text-xl md:text-4xl md:text-5xl font-bold">
+      <h2 class="font-display text-xl md:text-4xl md:text-5xl font-bold">
         Ultimate Stay Experience
-      </p>
+      </h2>
     </div>
+
+
 
     <!-- FARMHOUSE GRID -->
     <div id="farmhouseGrid"
          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     </div>
-                <div class="text-center mt-4 md:mt-8">
-                    <a href="{% url 'farmhouses' %}{% if request.GET.location %}?location={{ request.GET.location }}{% endif %}"
-                        class="bg-primary text-white px-8 py-3 rounded-full font-medium hover:bg-primary-dark transition-colors inline-flex items-center gap-2">
-                        <i data-lucide="loader" class="w-5 h-5"></i>
-                        See All
-                    </a>
-                </div>
+          <div class="text-center mt-4 md:mt-8">
+              <a href="{% url 'farmhouses' %}{% if request.GET.location %}?location={{ request.GET.location }}{% endif %}"
+                  class="bg-primary text-white px-8 py-3 rounded-full font-medium hover:bg-primary-dark transition-colors inline-flex items-center gap-2">
+                  <i data-lucide="loader" class="w-5 h-5"></i>
+                  See All
+              </a>
+          </div>
   </div>
 </section>
 

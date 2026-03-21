@@ -31,18 +31,15 @@ class StaticSitemap(Sitemap):
 # FARMHOUSE DETAIL PAGES
 ####################################################
 class FarmhouseSitemap(Sitemap):
-    changefreq = "weekly"
-    priority = 0.9
 
-    def items(self):
-        return Farmhouse.objects.filter(is_active=True)
-
-    def lastmod(self, obj):
-        return getattr(obj, "updated_at", None)
+    # def items(self):
+    #     return Farmhouse.objects.filter(is_active=True, is_deleted=False)
 
     def location(self, obj):
-        return reverse("farmhouse_detail", args=[obj.slug])
-
+        return reverse(
+            "farmhouse_detail",
+            args=[obj.slug, obj.location.slug]
+        )
 
 ####################################################
 # BLOG DETAIL PAGES
@@ -51,8 +48,8 @@ class BlogSitemap(Sitemap):
     changefreq = "weekly"
     priority = 0.9
 
-    def items(self):
-        return Blog.objects.filter(is_published=True)
+    # def items(self):
+    #     return Blog.objects.filter(is_published=True)
 
     def lastmod(self, obj):
         return getattr(obj, "updated_at", obj.published_at)

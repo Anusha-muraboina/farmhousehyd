@@ -2816,7 +2816,30 @@ from django.contrib.auth import get_user_model
 from django.db.models import Sum, Count
 from booking.models import Booking
 
-User = get_user_model()
+# User = get_user_model()
+
+# def admin_user_detail(request, user_id):
+#     user = User.objects.get(id=user_id)
+
+#     bookings = Booking.objects.filter(user=user).select_related('farmhouse')
+
+#     summary = bookings.aggregate(
+#         total_bookings=Count('id'),
+#         total_spent=Sum('total_amount'),
+#         total_wallet=Sum('wallet_used')
+#     )
+
+#     latest_booking = bookings.first()  # latest because ordering = -created_at
+
+#     return render(request, 'superadmin/user/user_detail.html', {
+#         'user': user,
+#         'bookings': bookings,
+#         'summary': summary,
+#         'latest_booking': latest_booking
+#     })
+
+
+from django.db.models import Sum, Count, Q
 
 def admin_user_detail(request, user_id):
     user = User.objects.get(id=user_id)
@@ -2826,10 +2849,14 @@ def admin_user_detail(request, user_id):
     summary = bookings.aggregate(
         total_bookings=Count('id'),
         total_spent=Sum('total_amount'),
-        total_wallet=Sum('wallet_used')
+        total_wallet=Sum('wallet_used'),
+
+        # ✅ NEW
+        total_confirmed=Sum('total_amount', filter=Q(status="confirmed")),
+        total_pending=Sum('total_amount', filter=Q(status="pending")),
     )
 
-    latest_booking = bookings.first()  # latest because ordering = -created_at
+    latest_booking = bookings.first()
 
     return render(request, 'superadmin/user/user_detail.html', {
         'user': user,

@@ -1,7 +1,7 @@
 # from django.db import models
 
 # # Create your models here.
-
+from django.urls import reverse
 from django.db import models
 from django.core.exceptions import ValidationError
 class Banner(models.Model):
@@ -202,6 +202,12 @@ class Farmhouse(models.Model):
                 "slug": obj.location.slug
             }
         return None
+    
+    def get_absolute_url(self):
+        return reverse(
+            "farmhouse_detail",
+            args=[self.slug, self.location.slug]
+        )
     def __str__(self):
         return self.title
 

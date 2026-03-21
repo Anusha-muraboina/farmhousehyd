@@ -285,11 +285,7 @@ async function loadFarmhouses(reset=false) {
 </div>
 
 
-
-
-
-
-                <div class="p-5           ">
+                <div class="p-5"  >
 
                     <p class="text-xl font-bold mb-1">${f.title}</p>
 
@@ -299,33 +295,27 @@ async function loadFarmhouses(reset=false) {
                         ${(f.short_description || "").substring(0,90)}...
                     </p>
 
-                    <div class="flex gap-4 text-sm text-gray-700 mb-3">
-
+                    <div class="flex flex-wrap gap-3 text-sm text-gray-700 mb-3">
                         <span class="flex items-center gap-1">
                             <i data-lucide="bed" class="w-4 h-4"></i>
                             ${f.bedrooms} Beds
                         </span>
-
                         <span class="flex items-center gap-1">
                             <i data-lucide="home" class="w-4 h-4"></i>
                             ${f.halls} Halls
                         </span>
-
                         <span class="flex items-center gap-1">
-
                             <i data-lucide="snowflake" class="w-4 h-4"></i>
                             ${f.ac_bedrooms} AC
                         </span>
 
-
                     ${ f.breakfast_dinner_available ? `
                         <span class="flex items-center gap-1">
-
                             <i data-lucide="utensils" class="w-4 h-4"></i>
                             Incl Breakfast & Dinner
                         </span>
-
                     ` : "" }
+
                     </div>
 
                     <div class="flex justify-between items-center border-t pt-4">
