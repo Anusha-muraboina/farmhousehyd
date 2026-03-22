@@ -309,12 +309,63 @@ async function loadFarmhouses(reset=false) {
                             ${f.ac_bedrooms} AC
                         </span>
 
-                    ${ f.breakfast_dinner_available ? `
+                    {% comment %} ${ f.breakfast_dinner_available ? `
                         <span class="flex items-center gap-1">
                             <i data-lucide="utensils" class="w-4 h-4"></i>
                             Incl Breakfast & Dinner
                         </span>
-                    ` : "" }
+                    ` : "" } {% endcomment %}
+
+
+
+
+
+${ f.breakfast_dinner_available ? `
+<div class="relative group flex items-center gap-1 cursor-pointer">
+
+    <!-- Eye Icon -->
+    <i data-lucide="eye" class="w-4 h-4 text-green-600"></i>
+    <span class="text-xs text-green-600">Incl Breakfast & Dinner</span>
+
+    <!-- Tooltip -->
+    <div class="absolute bottom-full mb-2 hidden group-hover:block 
+                bg-black text-white text-xs rounded px-3 py-2 w-64 z-10 shadow-lg">
+
+        <!-- Morning -->
+        <div class="flex items-start gap-2 mb-2">
+            <i data-lucide="sun" class="w-4 h-4 text-yellow-400"></i>
+            <div>
+                <p class="font-semibold">Morning</p>
+                <p>Idli, Dosa, Tea/Coffee</p>
+            </div>
+        </div>
+
+        <!-- Afternoon -->
+        <div class="flex items-start gap-2 mb-2">
+            <i data-lucide="sun-dim" class="w-4 h-4 text-orange-400"></i>
+            <div>
+                <p class="font-semibold">Afternoon</p>
+                <p>Rice, Dal, Curry, Roti</p>
+            </div>
+        </div>
+
+        <!-- Dinner -->
+        <div class="flex items-start gap-2">
+            <i data-lucide="moon" class="w-4 h-4 text-blue-400"></i>
+            <div>
+                <p class="font-semibold">Dinner</p>
+                <p>Chicken Curry / Paneer, Chapati</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+` : "" }
+
+
+
+
 
                     </div>
 

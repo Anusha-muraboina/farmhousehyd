@@ -334,12 +334,12 @@ class="{% if request.resolver_match.url_name == 'superadmin-farmhouses' %}active
 </a>
 
 
-<a href="{% url 'farmhouse-trash' %}">
+{% comment %} <a href="{% url 'farmhouse-trash' %}">
 <div class="menu-left">
 <i class="fa-solid fa-image"></i>
 <span class="menu-text">Trash</span>
 </div>
-</a>
+</a> {% endcomment %}
 
 <!-- THINGS -->
 <a onclick="toggleMenu('thingsMenu',this)"

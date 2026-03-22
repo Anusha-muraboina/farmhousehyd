@@ -8,10 +8,8 @@ Disallow: /login/
 Disallow: /register/
 Disallow: /forgot-password/
 
-Disallow: /blogs/blogs/
-Disallow: /contact/contact/
+Allow: /blogs/blogs/
+Allow: /contact/contact/
 
-Allow: /farmhouses/
-Allow: /blogs/
 
 Sitemap: https://farmhouseshyderabad.com/sitemap.xml

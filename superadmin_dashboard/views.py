@@ -525,20 +525,57 @@ def farmhouse_delete(request, id):
 
 
 
+from django.conf import settings
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.contrib import messages
+import json
+
+# from .models import Farmhouse
 
 
+# ===============================
+# 🔐 VERIFY PIN
+# ===============================
+@csrf_exempt
+@superadmin_required
+def verify_trash_pin(request):
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        pin = data.get("pin")
+
+        if pin == settings.ADMIN_TRASH_PIN:
+            request.session["trash_access"] = True
+            request.session.modified = True
+            return JsonResponse({"success": True})
+
+        return JsonResponse({"success": False})
+
+    return JsonResponse({"error": "Invalid request"})
 
 
+# ===============================
+# 🗑 TRASH VIEW (PROTECTED)
+# ===============================
 @superadmin_required
 def farmhouse_trash(request):
+
+    if not request.session.get("trash_access"):
+        return redirect("superadmin-farmhouses")
 
     farmhouses = Farmhouse.objects.filter(is_deleted=True)
 
     return render(request, "superadmin/farmhouse_trash.html", {
         "farmhouses": farmhouses
     })
-    
-    
+
+
+# ===============================
+# ♻️ RESTORE
+# ===============================
 @superadmin_required
 @require_POST
 def farmhouse_restore(request, id):
@@ -552,6 +589,10 @@ def farmhouse_restore(request, id):
 
     return redirect("farmhouse-trash")
 
+
+# ===============================
+# ❌ PERMANENT DELETE
+# ===============================
 @superadmin_required
 @require_POST
 def farmhouse_delete_permanent(request, id):
@@ -563,6 +604,42 @@ def farmhouse_delete_permanent(request, id):
     messages.success(request, "Permanently deleted")
 
     return redirect("farmhouse-trash")
+
+
+# @superadmin_required
+# def farmhouse_trash(request):
+
+#     farmhouses = Farmhouse.objects.filter(is_deleted=True)
+
+#     return render(request, "superadmin/farmhouse_trash.html", {
+#         "farmhouses": farmhouses
+#     })
+    
+    
+# @superadmin_required
+# @require_POST
+# def farmhouse_restore(request, id):
+
+#     farmhouse = get_object_or_404(Farmhouse, id=id, is_deleted=True)
+
+#     farmhouse.is_deleted = False
+#     farmhouse.save()
+
+#     messages.success(request, "Restored successfully")
+
+#     return redirect("farmhouse-trash")
+
+# @superadmin_required
+# @require_POST
+# def farmhouse_delete_permanent(request, id):
+
+#     farmhouse = get_object_or_404(Farmhouse, id=id, is_deleted=True)
+
+#     farmhouse.delete()
+
+#     messages.success(request, "Permanently deleted")
+
+#     return redirect("farmhouse-trash")
 
 # ===========================================================
 
