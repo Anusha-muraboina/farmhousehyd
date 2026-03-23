@@ -510,6 +510,7 @@ let farmhousesList = [];
 /* ================= API CALL ================= */
 axios.get("/api/home/", {
   params: {
+    limit: 6,
     location: locationParam,
     search: searchParam
   }

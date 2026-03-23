@@ -689,7 +689,11 @@ class HomeAPIView(APIView):
             is_published=True
         ).order_by("-published_at")[:3]
 
-        farmhouses = farmhouses.order_by("-created_at")[:6]
+        farmhouses = farmhouses.order_by("-created_at")
+        
+        # ✅ LIMIT ONLY WHEN NO SEARCH & NO LOCATION
+        if not search and not selected_location:
+            farmhouses = farmhouses[:6]
 
         data = {
 
