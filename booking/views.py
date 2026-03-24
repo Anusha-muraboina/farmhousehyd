@@ -651,9 +651,9 @@ def booking_success_page(request, booking_id):
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from booking.models import Invoice
+from booking.models import Booking, Invoice
 
-
-@login_required
+# @login_required
 def view_invoice(request, booking_id):
     invoice = get_object_or_404(
         Invoice.objects.select_related(
@@ -663,7 +663,7 @@ def view_invoice(request, booking_id):
         booking__booking_id=booking_id,
         booking__user=request.user
     )
-
+    
     return render(
         request,
         "emails/invoice.html",

@@ -1932,7 +1932,11 @@ def admin_booking_create(request):
             ########################################
             with transaction.atomic():
                 booking.save()
-                
+                                # ✅ CREATE INVOICE
+                Invoice.objects.create(
+                    user=booking.user,
+                    booking=booking
+                )
                 transaction.on_commit(
                     lambda: booking.send_booking_email("pending", request)
                 )

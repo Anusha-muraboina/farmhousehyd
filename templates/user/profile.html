@@ -243,6 +243,7 @@ axios.defaults.withCredentials = true;
 </script>
 
 
+
 <script>
 
 axios.defaults.withCredentials = true;
@@ -268,13 +269,13 @@ email.value = res.data.email;
 phone.value = res.data.phone;
 
 
-// ⭐ wallet balance
+//  wallet balance
 document.getElementById("wallet_balance").innerText =
 "₹" + res.data.wallet_balance;
 
 
 
-// ⭐ wallet expiry + days left
+//  wallet expiry + days left
 const expiry = res.data.wallet_end_date;
 const days = res.data.wallet_days_left;
 const status = res.data.wallet_status;
