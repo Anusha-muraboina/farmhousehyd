@@ -35,6 +35,15 @@ class Wallet(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     def is_expired(self):
         return self.wallet_end_date and timezone.now().date() > self.wallet_end_date
+    
+    def days_left(self):
+        if not self.wallet_end_date:
+            return None
+
+        today = timezone.now().date()
+        diff = (self.wallet_end_date - today).days
+
+        return diff
     def __str__(self):
         return f"{self.user.username} - ₹{self.balance}"
     

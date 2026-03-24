@@ -91,13 +91,16 @@ class ResetPasswordSerializer(serializers.Serializer):
 
 
 
-
+from django.utils import timezone
 from rest_framework import serializers
 from .models import User
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     wallet_balance = serializers.SerializerMethodField()
+    wallet_end_date = serializers.SerializerMethodField()
+    wallet_days_left = serializers.SerializerMethodField()
+    wallet_status = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -107,7 +110,10 @@ class ProfileSerializer(serializers.ModelSerializer):
             "username",
             "phone",
             "wallet_balance",
-          
+            
+            "wallet_end_date",
+            "wallet_days_left",
+            "wallet_status",
         ]
 
         read_only_fields = ["email"]  
@@ -118,6 +124,42 @@ class ProfileSerializer(serializers.ModelSerializer):
             return obj.wallet.balance
 
         return 0
+    
+
+
+    # ✅ EXPIRY DATE
+    def get_wallet_end_date(self, obj):
+        if hasattr(obj, "wallet") and obj.wallet.wallet_end_date:
+            return obj.wallet.wallet_end_date
+        return None
+
+    # ✅ DAYS LEFT
+    def get_wallet_days_left(self, obj):
+        if hasattr(obj, "wallet") and obj.wallet.wallet_end_date:
+            today = timezone.now().date()
+            diff = (obj.wallet.wallet_end_date - today).days
+            return diff
+        return None
+
+
+
+
+
+
+    # ✅ STATUS (BEST FOR UI)
+    def get_wallet_status(self, obj):
+        if hasattr(obj, "wallet") and obj.wallet.wallet_end_date:
+            today = timezone.now().date()
+            diff = (obj.wallet.wallet_end_date - today).days
+
+            if diff < 0:
+                return "expired"
+            elif diff == 0:
+                return "today"
+            else:
+                return "active"
+
+        return "no_wallet"
 
 # serializers.py
 from rest_framework import serializers
