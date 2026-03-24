@@ -100,7 +100,7 @@ ROOT_URLCONF = 'farmhousehyd.urls'
 
 AUTH_USER_MODEL = "user.User"
 
-
+# SITE_URL = "https://farmhouseshyderabad.com"
 
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = "Lax"

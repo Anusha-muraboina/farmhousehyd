@@ -687,47 +687,6 @@ class AdminUserForm(forms.ModelForm):
         return user
     
     
-# class AdminUserForm(forms.ModelForm):
-#     password = forms.CharField(
-#         required=False,
-#         widget=forms.PasswordInput(attrs={
-#             "class": "form-control",
-#             "placeholder": "Leave blank to keep current password"
-#         })
-#     )
-
-#     class Meta:
-#         model = User
-#         fields = [
-#             "username",
-#             "email",
-#             "phone",
-#             "password",
-#             "is_staff",
-#             "farmhouse_user",
-#             "is_active",
-#         ]
-
-#         widgets = {
-#             "username": forms.TextInput(attrs={"class": "form-control"}),
-#             "email": forms.EmailInput(attrs={"class": "form-control"}),
-#             "phone": forms.TextInput(attrs={"class": "form-control"}),
-#             "is_staff": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-#             "farmhouse_user": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-#             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-#         }
-
-#     def save(self, commit=True):
-#         user = super().save(commit=False)
-
-#         if self.cleaned_data.get("password"):
-#             user.set_password(self.cleaned_data["password"])
-
-#         if commit:
-#             user.save()
-
-#         return user
-
 
 
 from contact.models import ContactInfo
@@ -751,80 +710,6 @@ class ContactInfoForm(forms.ModelForm):
         }
 
 
-
-
-
-# from django import forms
-# from booking.models import Booking
-
-
-# class AdminBookingForm(forms.ModelForm):
-
-#     class Meta:
-#         model = Booking
-
-#         exclude = [
-#             "booking_id",
-#             "transaction_id",
-#             "payment_id",
-#             "confirmation_email_sent_at",
-#             "cancelled_at",
-#             "created_at",
-#         ]
-
-#         widgets = {
-#             "check_in": forms.DateInput(attrs={"type": "date"}),
-#             "check_out": forms.DateInput(attrs={"type": "date"}),
-#         }
-
-# from django import forms
-# from booking.models import Booking
-
-
-# class AdminBookingForm(forms.ModelForm):
-
-#     class Meta:
-#         model = Booking
-
-#         exclude = [
-#             "booking_id",
-#             "transaction_id",
-#             "payment_id",
-#             "confirmation_email_sent_at",
-#             "cancelled_at",
-#             "created_at",
-#         ]
-#         widgets = {
-#             "check_in": forms.DateInput(
-#                 attrs={"class": "form-control"}
-#             ),
-#             "check_out": forms.DateInput(
-#                 attrs={"class": "form-control"}
-#             ),
-#         }
-
-#         # widgets = {
-#         #     "check_in": forms.DateInput(
-#         #         attrs={"type": "date", "class": "form-control"}
-#         #     ),
-#         #     "check_out": forms.DateInput(
-#         #         attrs={"type": "date", "class": "form-control"}
-#         #     ),
-#         # }
-
-#     ###################################
-#     # AUTO APPLY BOOTSTRAP
-#     ###################################
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-
-#         for field_name, field in self.fields.items():
-
-#             if not isinstance(field.widget, forms.CheckboxInput):
-#                 field.widget.attrs["class"] = "form-control"
-
-#             else:
-#                 field.widget.attrs["class"] = "form-check-input"
 
 
 
@@ -894,27 +779,6 @@ from django import forms
 from booking.models import BlockedDate
 
 
-# class BlockedDateForm(forms.ModelForm):
-
-#     class Meta:
-#         model = BlockedDate
-#         fields = "__all__"
-
-#         widgets = {
-#             "start_date": forms.TextInput(attrs={"class":"form-control"}),
-#             "end_date": forms.TextInput(attrs={"class":"form-control"}),
-#             "reason": forms.TextInput(attrs={"class":"form-control"}),
-#         }
-
-#     ##################################
-#     # BOOTSTRAP AUTO
-#     ##################################
-
-#     def __init__(self,*args,**kwargs):
-#         super().__init__(*args,**kwargs)
-
-#         for field in self.fields.values():
-#             field.widget.attrs["class"] = "form-control"
 
 
 
@@ -929,90 +793,6 @@ from booking.models import BlockedDate, Booking
 
 from datetime import date, timedelta
 from django.core.exceptions import ValidationError
-
-
-# class BlockedDateForm(forms.ModelForm):
-
-#     class Meta:
-#         model = BlockedDate
-#         fields = "__all__"
-
-#         widgets = {
-#             "farmhouse": forms.Select(attrs={"class": "form-select"}),
-#             "start_date": forms.TextInput(attrs={"class": "form-control", "readonly": "readonly"}),
-#             "end_date": forms.TextInput(attrs={"class": "form-control", "readonly": "readonly"}),
-#             "reason": forms.TextInput(attrs={"class": "form-control"}),
-#         }
-
-
-#     def clean(self):
-#         cleaned_data = super().clean()
-
-#         farmhouse = cleaned_data.get("farmhouse")
-#         start_date = cleaned_data.get("start_date")
-#         end_date = cleaned_data.get("end_date")
-
-#         if not farmhouse or not start_date or not end_date:
-#             return cleaned_data
-
-#         ##################################
-#         # 1️⃣ End must be AFTER start
-#         ##################################
-#         if end_date <= start_date:
-#             raise ValidationError("End date must be greater than start date.")
-
-#         ##################################
-#         # 2️⃣ Prevent past blocking
-#         ##################################
-#         if start_date < date.today():
-#             raise ValidationError("You cannot block past dates.")
-
-#         ##################################
-#         # ⭐ Convert to NIGHT RANGE
-#         ##################################
-#         new_start = start_date
-#         new_end = end_date - timedelta(days=1)
-
-#         ##################################
-#         # 3️⃣ BLOCKED DATE OVERLAP (NIGHT BASED)
-#         ##################################
-#         # blocked_qs = BlockedDate.objects.filter(farmhouse=farmhouse)
-
-#         # if self.instance.pk:
-#         #     blocked_qs = blocked_qs.exclude(pk=self.instance.pk)
-
-#         # for block in blocked_qs:
-#         #     block_start = block.start_date
-#         #     block_end = block.end_date - timedelta(days=1)
-
-#         #     # overlap if night ranges intersect
-#         #     if not (new_end < block_start or new_start > block_end):
-#         #         raise ValidationError("These dates overlap with an existing blocked range.")
-#         blocked_qs = BlockedDate.objects.filter(farmhouse=farmhouse)
-
-#         if self.instance.pk:
-#             blocked_qs = blocked_qs.exclude(pk=self.instance.pk)
-
-#         for block in blocked_qs:
-#             if start_date < block.end_date and end_date > block.start_date:
-#                 raise ValidationError("These dates overlap with an existing blocked range.")
-
-#         ##################################
-#         # 4️⃣ BOOKING OVERLAP (NIGHT BASED)
-#         ##################################
-#         booking_qs = Booking.objects.filter(
-#             farmhouse=farmhouse,
-#             status__in=["pending", "confirmed"]
-#         )
-
-#         for booking in booking_qs:
-#             book_start = booking.check_in
-#             book_end = booking.check_out - timedelta(days=1)
-
-#             if not (new_end < book_start or new_start > book_end):
-#                 raise ValidationError("These dates overlap with a booking.")
-
-#         return cleaned_data
 
 
 from django import forms

@@ -302,7 +302,13 @@ height:300px;
 
 </div>
 
-
+<script>
+    const loggedInUser = {
+        is_authenticated: {{ request.user.is_authenticated|yesno:"true,false" }},
+        name: "{{ request.user.username|default:'' }}",
+        email: "{{ request.user.email|default:'' }}"
+    };
+</script>
 <script>
 
     function safeImage(url) {
@@ -386,6 +392,17 @@ height:300px;
 
         loader.style.display = "none";
         app.style.display = "block";
+
+
+
+        if (loggedInUser.is_authenticated) {
+
+            document.getElementById("guest_name").value = loggedInUser.name;
+            document.getElementById("guest_email").value = loggedInUser.email;
+
+            // optional: disable editing
+            document.getElementById("guest_email").readOnly = true;
+        }
     }
 
     //////////////////////////////////////////////////
@@ -402,6 +419,16 @@ height:300px;
         const allowPayAtFarmhouse = policy ? policy.allow_pay_at_farmhouse : true;
         const allowPartialPayment = policy ? policy.allow_partial_payment : true;
         const allowFullPayment = true; // ALWAYS TRUE
+
+
+
+     
+    const loggedInUser = {
+        is_authenticated: {{ request.user.is_authenticated|yesno:"true,false" }},
+        name: "{{ request.user.username|default:'' }}",
+        email: "{{ request.user.email|default:'' }}"
+    };
+
 
 
         app.innerHTML = `
@@ -823,7 +850,7 @@ class="acc-body hidden">
 
 {% comment %}  {% endcomment %}
 <!-- WALLET -->
-{% comment %} <div class="mt-4 mb-4 border rounded-xl p-4 bg-green-50">
+<div class="mt-4 mb-4 border rounded-xl p-4 bg-green-50">
 
 <label class="flex items-center justify-between">
 
@@ -845,7 +872,7 @@ Apply Wallet
 
 </label>
 
-</div> {% endcomment %}
+</div> 
 
 
 
@@ -2031,7 +2058,7 @@ alert("Please login to submit review");
 
 
 
- let mobileZoom = 1;
+let mobileZoom = 1;
 
 function zoomInMobile(){
 
@@ -2205,12 +2232,6 @@ Please select an earlier checkout date.`
 
 
 
-
-
-
-
-
-
         coupon.addEventListener("blur", applyCoupon);
 
     }
@@ -2306,35 +2327,50 @@ Please select an earlier checkout date.`
             start.setDate(start.getDate() + 1);
 
 
-
-
-            {% comment %} const day = start.getDay();
-
-            // Sunday = 0, Saturday = 6
-            subTotal += (day === 0 || day === 6)
-                ? weekend
-                : normal;
-
-            start.setDate(start.getDate() + 1); {% endcomment %}
         }
 
-        // extra guest price
-        {% comment %} subTotal += Number(extra_guest_count.value || 0) * extra;
 
-        finalTotal = Math.max(subTotal - couponDiscount, 0); {% endcomment %}
         // extra guests
         subTotal += Number(extra_guest_count.value || 0) * extra;
 
-        finalTotal = Math.max(subTotal - couponDiscount, 0);
-        if(walletApplied){
+        //////////////////////////////////////////////////
+        // ✅ FIX: DEFINE THIS (YOU MISSED)
+        //////////////////////////////////////////////////
+        let totalAfterCoupon = Math.max(subTotal - couponDiscount, 0);
 
-        const walletUse = Math.min(walletBalance, finalTotal);
+        //////////////////////////////////////////////////
+        // WALLET
+        //////////////////////////////////////////////////
+        let walletUsed = 0;
 
-        finalTotal -= walletUse;
-
+        if (walletApplied) {
+            walletUsed = Math.min(walletBalance, totalAfterCoupon);
         }
+
+        //////////////////////////////////////////////////
+        // FINAL TOTAL
+        //////////////////////////////////////////////////
+        finalTotal = Math.max(totalAfterCoupon - walletUsed, 0);
+
+        //////////////////////////////////////////////////
+        // UPDATE UI
+        //////////////////////////////////////////////////
+        const walletEl = document.getElementById("wallet_used");
+        if (walletEl) {
+            walletEl.innerText = walletUsed.toFixed(2);
+        }
+
+        //////////////////////////////////////////////////
+        // DEBUG
+        //////////////////////////////////////////////////
         console.log("Subtotal:", subTotal);
+        console.log("Coupon:", couponDiscount);
+        console.log("After Coupon:", totalAfterCoupon);
+        console.log("Wallet Used:", walletUsed);
         console.log("Final:", finalTotal);
+
+
+
 
         // ⭐ ADD THIS (you forgot earlier)
         fillReview();
@@ -2458,7 +2494,10 @@ function fillReview() {
     <span>- ₹${Number(couponDiscount).toLocaleString()}</span>
 </div>
 
-<div class="flex justify-between font-medium">
+{% comment %} <p><b>Wallet Used:</b> ₹<span id="wallet_used">0</span></p> {% endcomment %}
+
+
+<div class="flex justify-between font-medium ">
     <span>Advance Paid</span>
     <span>₹${Number(advance).toLocaleString()}</span>
 </div>
@@ -2466,7 +2505,7 @@ function fillReview() {
 <span>Wallet Used</span>
 <span>- ₹${walletUse.toLocaleString()}</span>
 </div>
-<div class="flex justify-between text-red-600 font-medium">
+<div class="flex justify-between text-red-600 font-medium ">
     <span>Remaining</span>
     <span>₹${Number(remaining).toLocaleString()}</span>
 </div>
@@ -2729,7 +2768,7 @@ Remaining: ₹${finalTotal - payNow}
 
                     check_in: check_in.value,
                     check_out: check_out.value,
-
+                    
                     use_wallet: walletApplied,
                     coupon_applied: couponId || null,
                     payment_method:

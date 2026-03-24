@@ -10,6 +10,15 @@ from .models import BlockedDate
 
 
 class BookingSerializer(serializers.ModelSerializer):
+    user_email = serializers.CharField(
+        source="user.email",
+        read_only=True
+    )
+
+    user_name = serializers.CharField(
+        source="user.username",
+        read_only=True
+    )
     class Meta:
         model = Booking
         fields = "__all__"
@@ -25,6 +34,8 @@ class BookingSerializer(serializers.ModelSerializer):
             "sub_total",
             "total_amount", 
             "wallet_used",
+             "user_email",
+            "user_name",
         ]
 
     ###################################

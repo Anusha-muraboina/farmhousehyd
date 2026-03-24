@@ -43,55 +43,35 @@ def add_wallet_credit(user, amount, description="Admin wallet credit"):
 # APPLY WALLET TO BOOKING
 ###########################################################
 
+
+
+
+from django.db import transaction
+
+@transaction.atomic
 def apply_wallet_to_booking(booking):
-    """
-    Deduct wallet balance for a booking
-    """
+    wallet = Wallet.objects.select_for_update().filter(user=booking.user).first()
 
-    wallet = Wallet.objects.filter(user=booking.user).first()
-
-    if not wallet:
-        return booking
-
-    if wallet.balance <= 0:
+    if not wallet or wallet.balance <= 0:
         return booking
 
     wallet_used = Decimal("0.00")
 
-    #######################################################
-    # FULL WALLET PAYMENT
-    #######################################################
-
     if wallet.balance >= booking.total_amount:
-
         wallet_used = booking.total_amount
-        wallet.balance -= booking.total_amount
+        wallet.balance -= wallet_used
 
         booking.total_amount = Decimal("0.00")
         booking.remaining_amount = Decimal("0.00")
 
-    #######################################################
-    # PARTIAL WALLET PAYMENT
-    #######################################################
-
     else:
-
         wallet_used = wallet.balance
-
-        booking.total_amount -= wallet.balance
+        booking.total_amount -= wallet_used
         booking.remaining_amount = booking.total_amount
 
         wallet.balance = Decimal("0.00")
 
-    #######################################################
-    # SAVE WALLET
-    #######################################################
-
     wallet.save()
-
-    #######################################################
-    # SAVE WALLET HISTORY
-    #######################################################
 
     WalletHistory.objects.create(
         user=booking.user,
@@ -100,14 +80,86 @@ def apply_wallet_to_booking(booking):
         description=f"Wallet used for booking {booking.booking_id}"
     )
 
-    #######################################################
-    # SAVE BOOKING
-    #######################################################
-
     booking.wallet_used = wallet_used
     booking.save()
 
     return booking
+
+
+
+
+
+
+
+
+
+
+
+# def apply_wallet_to_booking(booking):
+#     """
+#     Deduct wallet balance for a booking
+#     """
+
+#     wallet = Wallet.objects.filter(user=booking.user).first()
+
+#     if not wallet:
+#         return booking
+
+#     if wallet.balance <= 0:
+#         return booking
+
+#     wallet_used = Decimal("0.00")
+
+#     #######################################################
+#     # FULL WALLET PAYMENT
+#     #######################################################
+
+#     if wallet.balance >= booking.total_amount:
+
+#         wallet_used = booking.total_amount
+#         wallet.balance -= booking.total_amount
+
+#         booking.total_amount = Decimal("0.00")
+#         booking.remaining_amount = Decimal("0.00")
+
+#     #######################################################
+#     # PARTIAL WALLET PAYMENT
+#     #######################################################
+
+#     else:
+
+#         wallet_used = wallet.balance
+
+#         booking.total_amount -= wallet.balance
+#         booking.remaining_amount = booking.total_amount
+
+#         wallet.balance = Decimal("0.00")
+
+#     #######################################################
+#     # SAVE WALLET
+#     #######################################################
+
+#     wallet.save()
+
+#     #######################################################
+#     # SAVE WALLET HISTORY
+#     #######################################################
+
+#     WalletHistory.objects.create(
+#         user=booking.user,
+#         amount=wallet_used,
+#         transaction_type="debit",
+#         description=f"Wallet used for booking {booking.booking_id}"
+#     )
+
+#     #######################################################
+#     # SAVE BOOKING
+#     #######################################################
+
+#     booking.wallet_used = wallet_used
+#     booking.save()
+
+#     return booking
 
 
 from django.http import JsonResponse

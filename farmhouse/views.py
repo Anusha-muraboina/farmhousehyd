@@ -682,18 +682,32 @@ class HomeAPIView(APIView):
         if search:
             farmhouses = farmhouses.filter(
                 Q(title__icontains=search) |
-                Q(location__name__icontains=search)
+                Q(location__name__icontains=search) |
+                        Q(short_description__icontains=search) |
+        Q(description__icontains=search)
             )
+
 
         latest_blogs = Blog.objects.filter(
             is_published=True
         ).order_by("-published_at")[:3]
 
-        farmhouses = farmhouses.order_by("-created_at")
+        # farmhouses = farmhouses.order_by("-created_at")[:6]
+        
+        
+        
+                # ✅ LIMITED (FOR UI GRID)
+        limited_farmhouses = farmhouses.order_by("-created_at")[:6]
+
+        # ✅ FULL DATA (FOR SEARCH DROPDOWN)
+        all_farmhouses = Farmhouse.objects.filter(is_active=True)
+
+        # if not search:
+        #    farmhouses = farmhouses[:6]
         
         # ✅ LIMIT ONLY WHEN NO SEARCH & NO LOCATION
-        if not search and not selected_location:
-            farmhouses = farmhouses[:6]
+        # if not search and not selected_location:
+        #     farmhouses = farmhouses[:6]
 
         data = {
 
@@ -712,8 +726,19 @@ class HomeAPIView(APIView):
                 locations, many=True
             ).data,
 
+            # "farmhouses": FarmhouseSerializer(
+            #     farmhouses, many=True, context={"request": request}
+            # ).data,
+            
+            
+             # ✅ FOR GRID (LIMITED)
             "farmhouses": FarmhouseSerializer(
-                farmhouses, many=True, context={"request": request}
+                limited_farmhouses, many=True, context={"request": request}
+            ).data,
+
+            # ✅ FOR SEARCH DROPDOWN (FULL)
+            "all_farmhouses": FarmhouseSerializer(
+                all_farmhouses, many=True, context={"request": request}
             ).data,
 
             "services": ChooseServicesSerializer(
@@ -731,6 +756,7 @@ class HomeAPIView(APIView):
             "latest_blogs": BlogSerializer(
                 latest_blogs, many=True, context={"request": request}
             ).data,
+            
         }
 
         cache.set(cache_key, data, 60 * 5)

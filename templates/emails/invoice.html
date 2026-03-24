@@ -263,7 +263,51 @@ Booking Status: {{ booking.status }}
 <td class="amount">₹{{ booking.tax_price }}</td>
 </tr>
 
+
+
+
+
 <tr>
+<td>Wallet Used</td>
+<td class="amount" style="color:#16a34a">
+- ₹{{ booking.wallet_used }}
+</td>
+</tr>
+
+
+<!-- ADVANCE PAID -->
+<tr>
+<td>Advance Paid</td>
+<td class="amount">
+
+{% if booking.advance_amount and booking.advance_amount > 0 %}
+    ₹{{ booking.advance_amount }}
+{% else %}
+    ₹{{ booking.get_advance_paid }}
+{% endif %}
+
+</td>
+</tr>
+
+
+
+<!-- REMAINING -->
+<tr>
+<td style="color:#dc2626">Remaining Amount</td>
+<td class="amount" style="color:#dc2626">
+
+{% if booking.advance_amount and booking.advance_amount > 0 %}
+    ₹{{ booking.remaining_amount }}
+{% else %}
+    ₹{{ booking.get_remaining_amount }}
+{% endif %}
+
+</td>
+</tr>
+
+
+
+{% comment %} <tr>
 <td>Advance Paid</td>
 <td class="amount">₹{{ booking.advance_paid }}</td>
 </tr>
@@ -273,7 +317,7 @@ Booking Status: {{ booking.status }}
 <td class="amount" style="color:#dc2626">
 ₹{{ booking.remaining_amount }}
 </td>
-</tr>
+</tr> {% endcomment %}
 
 <tr class="total">
 <td>Total Amount</td>

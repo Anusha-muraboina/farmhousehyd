@@ -218,9 +218,10 @@ class="max-w-full max-h-[70vh] object-contain rounded-lg">
       </form> {% endcomment %}
 
       <!-- SEARCH -->
-<form action="/farmhouses/" method="GET"
+{% comment %} <form action="/farmhouses/" method="GET"
+      class="bg-white rounded-full shadow-xl px-2 md:px-4 py-2 max-w-xl mx-auto relative"> {% endcomment %}
+<form id="searchForm" action="/farmhouses/" method="GET"
       class="bg-white rounded-full shadow-xl px-2 md:px-4 py-2 max-w-xl mx-auto relative">
-
   <div class="flex gap-3 items-center">
 
     <!-- SEARCH INPUT -->
@@ -302,8 +303,10 @@ class="location-bar md:flex md:flex-wrap md:justify-center gap-3 md:gap-5  px-2"
          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     </div>
           <div class="text-center mt-4 md:mt-8">
-              <a href="{% url 'farmhouses' %}{% if request.GET.location %}?location={{ request.GET.location }}{% endif %}"
-                  class="bg-primary text-white px-8 py-3 rounded-full font-medium hover:bg-primary-dark transition-colors inline-flex items-center gap-2">
+              {% comment %} <a href="{% url 'farmhouses' %}{% if request.GET.location %}?location={{ request.GET.location }}{% endif %}" {% endcomment %}
+                  
+              <a href="{% url 'farmhouses' %}{% if request.GET.search %}search={{ request.GET.search }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}"
+              class="bg-primary text-white px-8 py-3 rounded-full font-medium hover:bg-primary-dark transition-colors inline-flex items-center gap-2">
                   <i data-lucide="loader" class="w-5 h-5"></i>
                   See All
               </a>
@@ -510,7 +513,6 @@ let farmhousesList = [];
 /* ================= API CALL ================= */
 axios.get("/api/home/", {
   params: {
-    limit: 6,
     location: locationParam,
     search: searchParam
   }
@@ -522,7 +524,7 @@ axios.get("/api/home/", {
 
 
   locationsList = data.locations || [];
-  farmhousesList = data.farmhouses || [];
+  farmhousesList = data.all_farmhouses  || [];
   /* ================= BANNERS ================= */
   const slider = document.getElementById("slider");
   slider.innerHTML = `<div class="absolute inset-0 bg-bloack border-t"></div>`;
@@ -578,7 +580,7 @@ data.locations.forEach(loc => {
   bar.innerHTML += `
     <div class="wood-item">
       <span class="rope"></span>
-      <a href="/${loc.meta_title.replaceAll(' ','_')}/"
+      <a href="/farmhouses/${loc.meta_title.replaceAll(' ','_')}/"
          class="block plank ${activeClass}">
         ${loc.name}
       </a>
@@ -670,7 +672,7 @@ function showDefaultLocations(){
   locationsList.slice(0,6).forEach(loc => {
 
     dropdown.innerHTML += `
-      <a href="/${loc.meta_title.replaceAll(' ','_')}/"
+      <a href="/farmhouses/${loc.meta_title.replaceAll(' ','_')}/"
          class="block px-4 py-2 hover:bg-gray-100 text-black">
          <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
      
@@ -685,7 +687,7 @@ function showDefaultLocations(){
 
 searchInput.addEventListener("focus", showDefaultLocations);
 
-searchInput.addEventListener("input", function(){
+{% comment %} searchInput.addEventListener("input", function(){
 
   const value = this.value.toLowerCase().trim();
 
@@ -707,7 +709,7 @@ searchInput.addEventListener("input", function(){
   locationMatches.forEach(loc => {
 
     dropdown.innerHTML += `
-      <a href="/${loc.meta_title.replaceAll(' ','_')}/"
+      <a href="/farmhouses/${loc.meta_title.replaceAll(' ','_')}/"
          class="block px-4 py-2 hover:bg-gray-100 text-black">
            <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i>
      
@@ -731,6 +733,53 @@ searchInput.addEventListener("input", function(){
 
   dropdown.classList.remove("hidden");
 
+}); {% endcomment %}
+
+
+searchInput.addEventListener("input", function(){
+
+  const value = this.value.toLowerCase().trim();
+
+  dropdown.innerHTML = "";
+
+  if(value === ""){
+      showDefaultLocations();
+      return;
+  }
+
+  // ✅ LOCATION MATCH
+  const locationMatches = locationsList.filter(loc =>
+      loc.name.toLowerCase().includes(value)
+  );
+
+  // ✅ FARMHOUSE MATCH (IMPROVED)
+  const farmhouseMatches = farmhousesList.filter(f =>
+      f.title.toLowerCase().includes(value) ||
+      (f.location?.name || "").toLowerCase().includes(value) ||
+      (f.short_description || "").toLowerCase().includes(value)
+  );
+
+  // ✅ SHOW LOCATIONS
+  locationMatches.forEach(loc => {
+    dropdown.innerHTML += `
+      <a href="/farmhouses/${loc.meta_title.replaceAll(' ','_')}/"
+         class="block px-4 py-2 hover:bg-gray-100 text-black">
+          ${loc.name}
+      </a>
+    `;
+  });
+
+  // ✅ SHOW FARMHOUSES (LIMIT 5)
+  farmhouseMatches.slice(0,5).forEach(f => {
+    dropdown.innerHTML += `
+      <a href="/farmhouse/${f.slug}/${f.location.slug}/"
+         class="block px-4 py-2 hover:bg-gray-100 text-black">
+          ${f.title}
+      </a>
+    `;
+  });
+
+  dropdown.classList.remove("hidden");
 });
 
 document.addEventListener("click", function(e){
@@ -740,6 +789,15 @@ document.addEventListener("click", function(e){
   }
 
 });
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1203,7 +1261,46 @@ function closeHomePopup(){
 
 
 
+const searchForm = document.getElementById("searchForm");
 
+searchForm.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    const searchValue = document.getElementById("searchInput").value.trim().toLowerCase();
+
+    if(!searchValue){
+        return;
+    }
+
+    // find matching location
+    const matchedLocation = locationsList.find(loc =>
+        loc.name.toLowerCase().includes(searchValue)
+    );
+
+    //////////////////////////////////////////////////
+    // ✅ IF LOCATION FOUND → SEO URL
+    //////////////////////////////////////////////////
+    if (matchedLocation) {
+
+        const url = "/farmhouses/" +
+            matchedLocation.meta_title.replaceAll(" ", "_") +
+            "/";
+
+        window.location.href = url;
+
+    }
+
+    //////////////////////////////////////////////////
+    // ❌ IF NOT LOCATION → NORMAL SEARCH
+    //////////////////////////////////////////////////
+    else {
+
+        window.location.href = "/farmhouses/?search=" + searchValue;
+
+    }
+
+});
 
 </script>
 

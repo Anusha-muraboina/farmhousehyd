@@ -200,10 +200,12 @@ class Booking(models.Model):
 
         invoice_url = None
 
-        if hasattr(self, "invoice") and request:
-            invoice_url = request.build_absolute_uri(
-                self.invoice.get_absolute_url()
-            )
+
+        try:
+            invoice_path = reverse("view_invoice", args=[self.booking_id])
+            invoice_url = f"http://127.0.0.1:8000{invoice_path}"   # 👉 change manually when needed
+        except:
+            invoice_url = None
 
         context = {
             "booking": self,
@@ -494,11 +496,11 @@ class OrderCancelComment(models.Model):
 
     comment = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    def get_absolute_url(self):
-        return reverse(
-            "view_invoice",
-            args=[self.booking.booking_id]
-        )
+    # def get_absolute_url(self):
+    #     return reverse(
+    #         "view_invoice",
+    #         args=[self.booking.booking_id]
+    #     )
     def __str__(self):
         return f"Cancellation - {self.booking.booking_id}"
 

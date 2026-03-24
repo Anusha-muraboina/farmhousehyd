@@ -340,7 +340,10 @@ class CreateBookingAPI(APIView):
         # SAVE BOOKING
         ###################################
 
-        serializer = BookingSerializer(data=data)
+        serializer = BookingSerializer(data=data , 
+                                   context={"request": request}    
+                                       
+                                       )
 
         # if not serializer.is_valid():
         #     return Response(serializer.errors, status=400)
@@ -359,13 +362,18 @@ class CreateBookingAPI(APIView):
             status="pending", 
             coupon_applied=coupon_obj,
         )
+        # ✅ FIXED WALLET FLAG
+        use_wallet = str(request.data.get("use_wallet")).lower() in ["true", "1"]
 
-
-        use_wallet = data.get("use_wallet") in [True, "true", "1", 1]
-
+        # ✅ APPLY WALLET
         if use_wallet:
             apply_wallet_to_booking(booking)
             booking.refresh_from_db()
+        # use_wallet = data.get("use_wallet") in [True, "true", "1", 1]
+
+        # if use_wallet:
+        #     apply_wallet_to_booking(booking)
+        #     booking.refresh_from_db()
        ###################################
         # APPLY WALLET
         ###################################
@@ -473,6 +481,7 @@ class CreateBookingAPI(APIView):
         booking.save()
 
         return Response({
+            "user": user,
             "key": settings.RAZORPAY_KEY_ID,
             "amount": amount,
             "order_id": order["id"],
