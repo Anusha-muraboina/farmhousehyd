@@ -203,7 +203,7 @@ class Booking(models.Model):
 
         try:
             invoice_path = reverse("view_invoice", args=[self.booking_id])
-            invoice_url = f"http://127.0.0.1:8000{invoice_path}"   # 👉 change manually when needed
+            invoice_url = f"https://farmhouseshyderabad.com{invoice_path}"   # 👉 change manually when needed
         except:
             invoice_url = None
 
