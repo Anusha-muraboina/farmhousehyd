@@ -18,8 +18,25 @@ class Wallet(models.Model):
         decimal_places=2,
         default=0
     )
+    
+        # ✅ NEW FIELDS
+    # start_date = models.DateTimeField(
+    #     auto_now_add=True,
+    #     help_text="Wallet activation date"
+    # )
+
+    # expiry_date = models.DateTimeField(
+    #     null=True,
+    #     blank=True,
+    #     help_text="Wallet expiry date"
+    # )
+    wallet_start_date = models.DateField()
+    wallet_end_date = models.DateField()
 
     created_at = models.DateTimeField(auto_now_add=True)
+    def is_expired(self):
+        from django.utils import timezone
+        return self.wallet_end_date and timezone.now() > self.wallet_end_date
 
     def __str__(self):
         return f"{self.user.username} - ₹{self.balance}"
@@ -57,3 +74,7 @@ class WalletHistory(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.transaction_type} - ₹{self.amount}"
+    
+    
+    
+    

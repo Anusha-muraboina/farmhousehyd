@@ -10,6 +10,12 @@ class User(AbstractUser):
         default=10, null=True ,blank=True,
         help_text="Maximum farmhouses allowed for farmhouse owners"
     )
+    
+    note = models.TextField(
+    blank=True,
+    null=True,
+    help_text="Add any notes about this user"
+    )
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
     def __str__(self):

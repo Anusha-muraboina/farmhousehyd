@@ -648,6 +648,7 @@ class AdminUserForm(forms.ModelForm):
             "password",
             "is_staff",
             "farmhouse_user",
+            "note",
             'assignedpermission',
             "is_active",
             "farmhouse_limit",
@@ -661,6 +662,12 @@ class AdminUserForm(forms.ModelForm):
             "farmhouse_user": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "assignedpermission": forms.CheckboxInput(attrs={
                 "class": "form-check-input"
+            }),
+                   # ✅ FIXED NOTE FIELD
+            "note": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 3,
+                "placeholder": "Enter admin notes"
             }),
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "farmhouse_limit": forms.NumberInput(attrs={
