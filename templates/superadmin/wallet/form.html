@@ -1,0 +1,67 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+  <!-- HEADER -->
+  <div class="mb-4">
+    <h3 class="fw-bold">Wallet Form</h3>
+    <p class="text-muted">Create or update wallet details</p>
+  </div>
+
+  <!-- CARD -->
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-4">
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="row g-3">
+
+          <!-- USER -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">User</label>
+            {{ form.user }}
+          </div>
+
+          <!-- BALANCE -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Balance</label>
+            {{ form.balance }}
+          </div>
+
+          <!-- START DATE -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Start Date</label>
+            {{ form.wallet_start_date }}
+          </div>
+
+          <!-- END DATE -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">End Date</label>
+            {{ form.wallet_end_date }}
+          </div>
+
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="mt-4 d-flex justify-content-end gap-2">
+
+          <a href="{% url 'wallet_list' %}" class="btn btn-light border">
+            Cancel
+          </a>
+
+          <button type="submit" class="btn btn-primary shadow-sm">
+             Save Wallet
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

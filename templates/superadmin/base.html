@@ -219,6 +219,10 @@ class="{% if request.resolver_match.url_name == 'banner-list' %}active-parent{% 
 </div>
 </a>
 
+
+
+
+ {% comment %} <a href="{% url 'wallet_list' %}">Wallets</a> {% endcomment %}
 {% comment %} <a href="{% url 'farmhouse-trash' %}" class="btn btn-warning">
     🗑 Trash
 </a> {% endcomment %}
@@ -492,6 +496,16 @@ class="{% if request.resolver_match.url_name == 'blocked-dates-create' %}active{
 </a>
 
 </div>
+
+
+<a href="{% url 'wallet_list' %}">
+<div class="menu-left">
+<i class="fa-solid fa-wallet"></i>
+<span class="menu-text">Wallet</span>
+</div>
+</a>
+
+
 
 <!-- BLOGS -->
 <a onclick="toggleMenu('blogMenu',this)"

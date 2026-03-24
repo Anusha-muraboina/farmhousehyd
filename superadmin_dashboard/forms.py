@@ -1005,3 +1005,31 @@ class HomePopupForm(forms.ModelForm):
     class Meta:
         model = HomePopup
         fields = ["image", "farmhouse", "location","is_active" ]
+        
+        
+        
+        
+# forms.py
+from django import forms
+from wallet.models import Wallet
+
+
+class WalletForm(forms.ModelForm):
+    class Meta:
+        model = Wallet
+        fields = ["user", "balance", "wallet_start_date", "wallet_end_date"]
+
+        widgets = {
+            "user": forms.Select(attrs={"class": "form-control"}),
+            "balance": forms.NumberInput(attrs={"class": "form-control"}),
+
+            "wallet_start_date": forms.DateInput(attrs={
+                "type": "date",
+                "class": "form-control"
+            }),
+
+            "wallet_end_date": forms.DateInput(attrs={
+                "type": "date",
+                "class": "form-control"
+            }),
+        }

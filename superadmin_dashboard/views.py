@@ -2941,3 +2941,50 @@ def admin_user_detail(request, user_id):
         'summary': summary,
         'latest_booking': latest_booking
     })
+    
+    
+# views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from wallet.models import Wallet
+from .forms import WalletForm
+
+
+# LIST
+def wallet_list(request):
+    wallets = Wallet.objects.select_related("user").all().order_by("-created_at")
+    return render(request, "superadmin/wallet/list.html", {"wallets": wallets})
+
+
+# CREATE
+def wallet_create(request):
+    form = WalletForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Wallet created successfully ✅")
+        return redirect("wallet_list")
+
+    return render(request, "superadmin/wallet/form.html", {"form": form})
+
+
+# UPDATE
+def wallet_update(request, pk):
+    wallet = get_object_or_404(Wallet, pk=pk)
+    form = WalletForm(request.POST or None, instance=wallet)
+
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Wallet updated successfully ✅")
+        return redirect("wallet_list")
+
+    return render(request, "admin/wallet_form.html", {"form": form})
+
+
+# DELETE (NO TEMPLATE)
+def wallet_delete(request, pk):
+    wallet = get_object_or_404(Wallet, pk=pk)
+    wallet.delete()
+
+    messages.success(request, "Wallet deleted successfully ✅")
+    return redirect("wallet_list")

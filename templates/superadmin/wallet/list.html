@@ -1,0 +1,113 @@
+{% extends "superadmin/base.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold">💰 Wallet Management</h3>
+
+    <a href="{% url 'wallet_create' %}" class="btn btn-primary shadow-sm">
+      + Add Wallet
+    </a>
+  </div>
+
+  <!-- MESSAGES -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- CARD -->
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body">
+
+      <div class="table-responsive">
+        <table class="table align-middle table-hover">
+
+          <thead class="table-light">
+            <tr>
+              <th>User</th>
+              <th>Balance</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Status</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for w in wallets %}
+            <tr>
+
+              <!-- USER -->
+              <td>
+                <div class="fw-semibold">{{ w.user.username }}</div>
+                <small class="text-muted">{{ w.user.email }}</small>
+              </td>
+
+              <!-- BALANCE -->
+              <td>
+                <span class="fw-bold text-success">
+                  ₹{{ w.balance }}
+                </span>
+              </td>
+
+              <!-- START -->
+              <td>{{ w.wallet_start_date|date:"M d, Y" }}</td>
+
+              <!-- END -->
+              <td>{{ w.wallet_end_date|date:"M d, Y" }}</td>
+
+              <!-- STATUS -->
+              <td>
+                {% if w.is_expired %}
+                  <span class="badge bg-danger px-3 py-2">
+                    Expired
+                  </span>
+                {% else %}
+                  <span class="badge bg-success px-3 py-2">
+                    Active
+                  </span>
+                {% endif %}
+              </td>
+
+              <!-- ACTIONS -->
+              <td class="text-end">
+
+                <a href="{% url 'wallet_update' w.id %}"
+                   class="btn btn-sm btn-warning me-2">
+                  ✏️ Edit
+                </a>
+
+                <a href="{% url 'wallet_delete' w.id %}"
+                   onclick="return confirm('Delete wallet for {{ w.user.username }}?')"
+                   class="btn btn-sm btn-danger">
+                  🗑 Delete
+                </a>
+
+              </td>
+
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">
+                No wallets found
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

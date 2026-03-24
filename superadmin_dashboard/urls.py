@@ -203,5 +203,12 @@ urlpatterns = [
     path("popup/create/", views.popup_create, name="popup-create"),
     path("popup/<int:pk>/edit/", views.popup_update, name="popup-update"),
     path("popup/<int:pk>/delete/", views.popup_delete, name="popup-delete"),
+    
+    
+    path("wallets/", views.wallet_list, name="wallet_list"),
+    path("wallets/create/", views.wallet_create, name="wallet_create"),
+    path("wallets/<int:pk>/edit/", views.wallet_update, name="wallet_update"),
+    path("wallets/<int:pk>/delete/", views.wallet_delete, name="wallet_delete"),
+    
 
 ]
