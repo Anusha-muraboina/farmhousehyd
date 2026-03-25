@@ -754,6 +754,13 @@ class AdminBookingForm(forms.ModelForm):
     ###################################
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        if "user" in self.fields:
+            self.fields["user"].queryset = User.objects.filter(
+                is_staff=False,
+                is_superuser=False,
+                is_active=True
+            )
 
         for field_name, field in self.fields.items():
 
@@ -765,6 +772,7 @@ class AdminBookingForm(forms.ModelForm):
 
             else:
                 field.widget.attrs["class"] = "form-control"
+
 
         ##################################################
         # ⭐ MAKE DATE FIELDS READONLY (BEST PRACTICE)

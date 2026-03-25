@@ -228,8 +228,8 @@ class FarmhousePaymentPolicyForm(forms.ModelForm):
 #         # if user and not user.is_superuser:
 #         #     self.fields["farmhouse"].queryset = Farmhouse.objects.filter(user=user)
         
-        
-        
+from django.contrib.auth import get_user_model   
+User = get_user_model()
 
 class ownerBookingForm(forms.ModelForm):
 
@@ -273,6 +273,15 @@ class ownerBookingForm(forms.ModelForm):
                 is_active=True
             )
             
+                ###################################
+            # ✅ FILTER ONLY NORMAL USERS 🔥
+            ###################################
+        if "user" in self.fields:
+            self.fields["user"].queryset = User.objects.filter(
+                is_staff=False,
+            is_superuser=False
+            )
+
         for field_name, field in self.fields.items():
 
             if isinstance(field.widget, forms.CheckboxInput):
