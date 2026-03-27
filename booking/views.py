@@ -182,6 +182,23 @@ class CreateBookingAPI(APIView):
                 status=400
             )
 
+        ###################################
+        # ❌ CHECK BLOCKED DATES ALSO
+        ###################################
+        blocked_conflict = BlockedDate.objects.filter(
+            farmhouse_id=farmhouse_id,
+            start_date__lt=end,
+            end_date__gt=start
+        ).exists()
+
+        if blocked_conflict:
+            return Response(
+                {"error": "These dates are blocked"},
+                status=400
+            )
+
+
+
         sub_total = Decimal("0.00")
 
         while start < end:
@@ -960,27 +977,27 @@ def vivaan_receive_booking(request):
 
 
 
-def sync_to_vivaan(booking):
-    permission_classes = [AllowAny]
-    authentication_classes = []
+# def sync_to_vivaan(booking):
+#     permission_classes = [AllowAny]
+#     authentication_classes = []
 
-    # ✅ ONLY FOR VIVAAN
-    if booking.farmhouse.slug != "vivaan":
-        return
+#     # ✅ ONLY FOR VIVAAN
+#     if booking.farmhouse.slug != "vivaan":
+#         return
 
-    import requests
+#     import requests
 
-    try:
-        requests.post(
-            "https://vivaanfarmhouse.com/api/vivaan/receive-booking/",
-            json={
-                "check_in": str(booking.check_in),
-                "check_out": str(booking.check_out),
-            },
-            timeout=3
-        )
-    except Exception as e:
-        print("Vivaan sync error:", e)
+#     try:
+#         requests.post(
+#             "https://vivaanfarmhouse.com/api/vivaan/receive-booking/",
+#             json={
+#                 "check_in": str(booking.check_in),
+#                 "check_out": str(booking.check_out),
+#             },
+#             timeout=3
+#         )
+#     except Exception as e:
+#         print("Vivaan sync error:", e)
         
         
 # from rest_framework.decorators import api_view
@@ -1031,7 +1048,7 @@ def blocked_dates_api_vivaan(request, farmhouse_id):
 
         try:
             res = requests.get(
-                "http://127.0.0.1:9000/api/vivaan/blocked-dates/",
+                "https://vivaanfarmhouse.com/api/vivaan/blocked-dates/",
                 timeout=3
             )
 
