@@ -48,6 +48,12 @@ urlpatterns = [
     ),
     
     path("verify-payment/", VerifyPaymentAPI.as_view(), name="verify_payment"),
+    
+    
+    
+    
+    path("api/vivaan/receive-booking/", views.vivaan_receive_booking),
+    path("api/blocked-dates/<int:farmhouse_id>/", views.blocked_dates_api_vivaan),
 
 
 ]

@@ -362,6 +362,8 @@ class CreateBookingAPI(APIView):
             status="pending", 
             coupon_applied=coupon_obj,
         )
+        
+        sync_to_vivaan(booking)
         # ✅ FIXED WALLET FLAG
         use_wallet = str(request.data.get("use_wallet")).lower() in ["true", "1"]
 
@@ -828,3 +830,228 @@ class VerifyPaymentAPI(APIView):
         booking.save()
 
         return Response({"message": "Payment verified"})
+
+
+
+
+
+
+
+# @api_view(["POST"])
+# def vivaan_receive_booking(request):
+
+#     from datetime import datetime, timedelta
+
+#     data = request.data
+
+#     check_in = datetime.strptime(data["check_in"], "%Y-%m-%d").date()
+#     check_out = datetime.strptime(data["check_out"], "%Y-%m-%d").date()
+
+#     end_date = check_out - timedelta(days=1)
+
+#     exists = BlockedDate.objects.filter(
+#         start_date=check_in,
+#         end_date=end_date
+#     ).exists()
+
+#     if not exists:
+#         BlockedDate.objects.create(
+#             farmhouse=Farmhouse.objects.first(),  # ✅ single farmhouse
+#             start_date=check_in,
+#             end_date=end_date,
+#             reason=f"Vivaan booking"
+#         )
+
+#     return Response({"status": "ok"})
+
+
+# from rest_framework.decorators import api_view
+# from rest_framework.response import Response
+# from datetime import datetime, timedelta
+# from farmhouse.models import Farmhouse
+# from .models import BlockedDate
+
+@api_view(["POST"])
+def vivaan_receive_booking(request):
+
+    data = request.data
+
+    slug = data.get("farmhouse_slug")
+
+    farmhouse = Farmhouse.objects.get(slug=slug)  # ✅ dynamic
+
+    check_in = datetime.strptime(data["check_in"], "%Y-%m-%d").date()
+    check_out = datetime.strptime(data["check_out"], "%Y-%m-%d").date()
+
+    end_date = check_out - timedelta(days=1)
+
+    exists = BlockedDate.objects.filter(
+        farmhouse=farmhouse,
+        start_date=check_in,
+        end_date=end_date
+    ).exists()
+
+    if not exists:
+        BlockedDate.objects.create(
+            farmhouse=farmhouse,
+            start_date=check_in,
+            end_date=end_date,
+            reason="Vivaan booking"
+        )
+
+    return Response({"status": "ok"})
+
+
+
+def sync_to_vivaan(booking):
+
+    # ✅ ONLY FOR VIVAAN
+    if booking.farmhouse.slug != "vivaan-farmhouse":
+        return
+
+    import requests
+
+    try:
+        requests.post(
+            "https://vivaanfarmhouse.com/api/vivaan/receive-booking/",
+            json={
+                "check_in": str(booking.check_in),
+                "check_out": str(booking.check_out),
+            },
+            timeout=3
+        )
+    except Exception as e:
+        print("Vivaan sync error:", e)
+        
+        
+        
+
+@api_view(["POST"])
+def vivaan_receive_booking(request):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    data = request.data
+
+    slug = data.get("farmhouse_slug")
+
+    farmhouse = Farmhouse.objects.get(slug=slug)  # ✅ dynamic
+
+    check_in = datetime.strptime(data["check_in"], "%Y-%m-%d").date()
+    check_out = datetime.strptime(data["check_out"], "%Y-%m-%d").date()
+
+    end_date = check_out - timedelta(days=1)
+
+    exists = BlockedDate.objects.filter(
+        farmhouse=farmhouse,
+        start_date=check_in,
+        end_date=end_date
+    ).exists()
+
+    if not exists:
+        BlockedDate.objects.create(
+            farmhouse=farmhouse,
+            start_date=check_in,
+            end_date=end_date,
+            reason="Vivaan booking"
+        )
+
+    return Response({"status": "ok"})
+
+
+
+def sync_to_vivaan(booking):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    # ✅ ONLY FOR VIVAAN
+    if booking.farmhouse.slug != "vivaan":
+        return
+
+    import requests
+
+    try:
+        requests.post(
+            "https://vivaanfarmhouse.com/api/vivaan/receive-booking/",
+            json={
+                "check_in": str(booking.check_in),
+                "check_out": str(booking.check_out),
+            },
+            timeout=3
+        )
+    except Exception as e:
+        print("Vivaan sync error:", e)
+        
+        
+# from rest_framework.decorators import api_view
+# from rest_framework.response import Response
+# from datetime import timedelta
+@api_view(["GET"])
+def blocked_dates_api_vivaan(request, farmhouse_id):
+
+    disabled_dates = set()
+
+    ###################################
+    # ✅ LOCAL BOOKINGS
+    ###################################
+    bookings = Booking.objects.filter(
+        farmhouse_id=farmhouse_id,
+        status="confirmed"
+    )
+
+    for booking in bookings:
+        current = booking.check_in
+        while current < booking.check_out:
+            disabled_dates.add(current.strftime("%Y-%m-%d"))
+            current += timedelta(days=1)
+
+    ###################################
+    # ✅ LOCAL BLOCKED
+    ###################################
+    blocks = BlockedDate.objects.filter(
+        farmhouse_id=farmhouse_id
+    )
+
+    for block in blocks:
+        current = block.start_date
+        while current <= block.end_date:
+            disabled_dates.add(current.strftime("%Y-%m-%d"))
+            current += timedelta(days=1)
+
+    ###################################
+    # 🔥 VIVAAN SYNC (FIXED)
+    ###################################
+    import requests
+    from datetime import datetime
+    from farmhouse.models import Farmhouse
+
+    farmhouse = Farmhouse.objects.get(id=farmhouse_id)
+
+    if farmhouse.slug == "vivaan-farmhouse":
+
+        try:
+            res = requests.get(
+                "http://127.0.0.1:9000/api/vivaan/blocked-dates/",
+                timeout=3
+            )
+
+            if res.status_code == 200:
+                data = res.json()
+
+                for item in data:
+                    start = datetime.strptime(item["from"], "%Y-%m-%d").date()
+                    end = datetime.strptime(item["to"], "%Y-%m-%d").date()
+
+                    current = start
+
+                    while current <= end:
+                        disabled_dates.add(current.strftime("%Y-%m-%d"))
+                        current += timedelta(days=1)
+
+        except Exception as e:
+            print("Vivaan fetch error:", e)
+
+    ###################################
+    return Response({
+        "disabled_dates": sorted(list(disabled_dates))
+    })
