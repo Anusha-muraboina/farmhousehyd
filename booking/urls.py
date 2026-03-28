@@ -51,9 +51,12 @@ urlpatterns = [
     
     
     
+    path('api/vivaan/receive-booking-from-vivaan/', 
+     views.receive_booking_from_vivaan, name='receive-from-vivaan'),
     
-    path("api/vivaan/receive-booking/", views.vivaan_receive_booking),
-    path("api/blocked-dates/<int:farmhouse_id>/", views.blocked_dates_api_vivaan),
+    # path('api/blocked-dates/', views.farmhouse_blocked_dates_api, name='blocked-dates'),
+    # path("api/vivaan/receive-booking/", views.vivaan_receive_booking),
+    # path("api/blocked-dates/<int:farmhouse_id>/", views.blocked_dates_api_vivaan),
 
 
 ]

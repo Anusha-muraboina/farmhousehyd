@@ -3793,3 +3793,162 @@ toggleBtn.addEventListener("click", () => {
 </script>
 
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+    async function initFlatpickr() {
+
+        const res = await axios.get(
+            `/bookings/blocked-dates/${farmhouse.id}/`
+        );
+
+        const blockedRanges = res.data;
+
+        blockedCheckinDates = [];
+
+        blockedRanges.forEach(range => {
+
+            let start = new Date(range.from);
+            let end = new Date(range.to);
+
+            while (start <= end) {
+
+                blockedCheckinDates.push(
+                    start.toISOString().split("T")[0]
+                );
+
+                start.setDate(start.getDate() + 1);
+            }
+
+        });
+
+        //////////////////////////////////////////////////
+        // CHECK-IN
+        //////////////////////////////////////////////////
+
+        flatpickr("#check_in", {
+
+            minDate: "today",
+            disable: blockedCheckinDates,
+            dateFormat: "Y-m-d",
+            disableMobile: true,
+            onChange: function (selectedDates) {
+
+                if (!selectedDates.length) return;
+
+                let nextDay = new Date(selectedDates[0]);
+                nextDay.setDate(nextDay.getDate() + 1);
+
+                checkoutPicker.set("minDate", nextDay);
+
+                // 🔥 CLEAR OLD VALUE
+                document.getElementById("check_out").value = "";
+
+            }
+
+        });
+
+        //////////////////////////////////////////////////
+        // CHECKOUT ⭐⭐⭐ MOST IMPORTANT
+        //////////////////////////////////////////////////
+
+        checkoutPicker = flatpickr("#check_out", {
+
+            minDate: new Date().fp_incr(1),
+            dateFormat: "Y-m-d",
+            disableMobile: true,   // ⭐ force flatpickr
+
+            onChange: function (selectedDates) {
+
+                if (!selectedDates.length) return;
+
+                const checkInDate = new Date(check_in.value);
+                const checkOutDate = new Date(selectedDates[0]);
+
+                let cursor = new Date(checkInDate);
+                cursor.setDate(cursor.getDate() + 1);
+
+                while (cursor < checkOutDate) {
+
+                    let formatted =
+                        cursor.toISOString().split("T")[0];
+
+                    if (blockedCheckinDates.includes(formatted)) {
+
+                        // Convert to readable format (DD-MM-YYYY)
+                        {% comment %} const blockedNight =
+                            new Date(formatted).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "long",
+                                year: "numeric"
+                            }); {% endcomment %}
+
+                        const attemptedCheckout =
+                            new Date(checkOutDate).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "long",
+                                year: "numeric"
+                            });
+
+                        alert(
+                            `Checkout on ${attemptedCheckout} is not possible.
+Please select an earlier checkout date.`
+                        );
+                        // 🔥 CLEAR INVALID DATE
+                        checkoutPicker.clear();
+
+                        return;
+                    }
+
+                    cursor.setDate(cursor.getDate() + 1);
+                }
+
+                calculateTotal();
+
+            }
+
+        });
+
+    } 
