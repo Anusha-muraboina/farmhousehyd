@@ -170,7 +170,8 @@ class CreateBookingAPI(APIView):
 
         overlap = Booking.objects.filter(
             farmhouse_id=farmhouse_id,
-            status__in=[ "confirmed"],  # important
+            status="confirmed",
+            # status__in=[ "confirmed"],  # important
             # status="confirmed",
             check_in__lt=end,
             check_out__gt=start
@@ -1000,8 +1001,8 @@ def sync_booking_to_vivaan(booking):
     # if not booking.room_category or booking.room_category.slug != "vivaan-farmhouse":
     #     return
 
-    # ✅ ONLY CONFIRMED BOOKINGS
-    if booking.status != "confirmed":
+    # ✅ ONLY CONFIRMED BOOKINGS (OR PENDING PAY AT FARMHOUSE)
+    if booking.status != "confirmed" and not (booking.status == "pending" and booking.payment_method == "farmhouse"):
         return
 
     # ✅ FIXED FIELD (IMPORTANT)
@@ -1009,8 +1010,10 @@ def sync_booking_to_vivaan(booking):
         return
 
     try:
+        from django.conf import settings
+        webhook_url = "http://127.0.0.1:8000/api/vivaan/receive-booking/" if getattr(settings, 'DEBUG', False) else "https://vivaanfarmhouse.com/api/vivaan/receive-booking/"
         requests.post(
-            "https://vivaanfarmhouse.com/api/vivaan/receive-booking/",
+            webhook_url,
             json={
                 "check_in": str(booking.check_in),
                 "check_out": str(booking.check_out),
@@ -1033,10 +1036,13 @@ def receive_booking_from_vivaan(request):
         data = request.data
         check_in = datetime.strptime(data["check_in"], "%Y-%m-%d").date()
         check_out = datetime.strptime(data["check_out"], "%Y-%m-%d").date()
-        end_date = check_out - timedelta(days=1)
+        # end_date = check_out - timedelta(days=1)
+        # We store check_out as end_date (non-inclusive) to match ICAL/Booking patterns
+        end_date = check_out
 
-        if not BlockedDate.objects.filter(start_date=check_in, end_date=end_date).exists():
+        if not BlockedDate.objects.filter(farmhouse_id=65, start_date=check_in, end_date=end_date).exists():
             BlockedDate.objects.create(
+                farmhouse_id=65,  # Important: ID for Vivaan Farmhouse
                 start_date=check_in,
                 end_date=end_date,
                 reason="Booking from Vivaan Farmhouse website"
@@ -1066,8 +1072,9 @@ def blocked_dates_api(request, farmhouse_id):
 
     # Confirmed Bookings for this farmhouse
     bookings = Booking.objects.filter(
-        farmhouse_id=farmhouse_id,
-        status="confirmed"
+        # Q(status="confirmed") | Q(status="pending", payment_method="farmhouse"),
+        farmhouse_id=farmhouse_id ,
+        status="confirmed", 
     )
     for booking in bookings:
         blocked_ranges.append({
@@ -1080,8 +1087,10 @@ def blocked_dates_api(request, farmhouse_id):
         farmhouse = Farmhouse.objects.get(id=farmhouse_id)
         if farmhouse.slug == "vivaan-farmhouse":
             try:
+                from django.conf import settings
+                external_url = "http://127.0.0.1:8000/api/blocked-dates/" if getattr(settings, 'DEBUG', False) else "https://vivaanfarmhouse.com/api/blocked-dates/"
                 res = requests.get(
-                    "https://vivaanfarmhouse.com/api/vivaan/blocked-dates/",
+                    external_url,
                     timeout=5
                 )
                 if res.status_code == 200:
