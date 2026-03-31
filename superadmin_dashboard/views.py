@@ -450,6 +450,24 @@ def farmhouse_edit(request, id):
         "farmhouse": farmhouse
     })
     
+    
+    
+from django.http import JsonResponse
+
+@superadmin_required
+def delete_farmhouse_image(request, id):
+    image = get_object_or_404(FarmhouseImage, id=id)
+
+    # delete image file from storage
+    image.image.delete(save=False)
+
+    image.delete()
+
+    return JsonResponse({"success": True})
+
+
+
+    
 from booking.models import Invoice
 @superadmin_required
 def admin_view_invoice(request, booking_id):
@@ -995,50 +1013,120 @@ def blog_list(request):
 #         "categories": categories,
 #         "tags": tags
 #     })
+
+# @superadmin_required
+# def blog_add(request):
+
+#     categories = BlogCategory.objects.filter(is_active=True)
+#     tags = BlogTag.objects.all()
+
+#     if request.method == "POST":
+#         form = BlogForm(request.POST, request.FILES)
+
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, "Blog created successfully")
+#             return redirect("blog_list")
+#     else:
+#         form = BlogForm()
+
+#     return render(request, "superadmin/blog/blog_form.html", {
+#         "form": form,
+#         "categories": categories,
+#         "tags": tags
+#     })
+# @superadmin_required
+# def blog_edit(request, pk):
+
+#     blog = get_object_or_404(Blog, pk=pk)
+#     categories = BlogCategory.objects.filter(is_active=True)
+#     tags = BlogTag.objects.all()
+
+#     if request.method == "POST":
+#         form = BlogForm(request.POST, request.FILES, instance=blog)
+
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, "Blog updated successfully")
+#             return redirect("blog_list")
+#     else:
+#         form = BlogForm(instance=blog)
+
+#     return render(request, "superadmin/blog/blog_form.html", {
+#         "form": form,
+#         "categories": categories,
+#         "tags": tags
+#     })
+
+from django.utils.text import slugify
+from django.utils import timezone
+from django.utils import timezone
+from django.utils.text import slugify
+from django.contrib import messages
+
 @superadmin_required
 def blog_add(request):
-
-    categories = BlogCategory.objects.filter(is_active=True)
-    tags = BlogTag.objects.all()
-
     if request.method == "POST":
         form = BlogForm(request.POST, request.FILES)
 
         if form.is_valid():
-            form.save()
-            messages.success(request, "Blog created successfully")
-            return redirect("blog_list")
+            blog = form.save(commit=False)
+
+            # Generate slug
+            slug = slugify(blog.title)
+
+            # ❌ CHECK DUPLICATE
+            if Blog.objects.filter(slug=slug).exists():
+                form.add_error("title", "A blog with this title already exists. Please use a different title.")
+            else:
+                blog.slug = slug
+                blog.views = 0
+                blog.published_at = timezone.now()
+
+                blog.save()
+                form.save_m2m()
+
+                messages.success(request, "Blog created successfully")
+                return redirect("blog_list")
+
+        else:
+            print(form.errors)
+
     else:
         form = BlogForm()
 
     return render(request, "superadmin/blog/blog_form.html", {
         "form": form,
-        "categories": categories,
-        "tags": tags
+        "blog": None
     })
+    
 @superadmin_required
 def blog_edit(request, pk):
-
     blog = get_object_or_404(Blog, pk=pk)
-    categories = BlogCategory.objects.filter(is_active=True)
-    tags = BlogTag.objects.all()
 
     if request.method == "POST":
         form = BlogForm(request.POST, request.FILES, instance=blog)
 
         if form.is_valid():
-            form.save()
+            blog = form.save(commit=False)
+
+            from django.utils.text import slugify
+            blog.slug = slugify(blog.title)
+
+            blog.save()
+            form.save_m2m()
+
             messages.success(request, "Blog updated successfully")
             return redirect("blog_list")
+        else:
+            print(form.errors)
     else:
         form = BlogForm(instance=blog)
 
     return render(request, "superadmin/blog/blog_form.html", {
         "form": form,
-        "categories": categories,
-        "tags": tags
+        "blog": blog
     })
-
 
 
 @superadmin_required
@@ -2320,6 +2408,7 @@ def blocked_dates_create(request):
             blocked_ranges.append({
                 "from": b.start_date.strftime("%Y-%m-%d"),
                 "to": b.end_date.strftime("%Y-%m-%d")
+                # "to": (b.end_date - timedelta(days=1)).strftime("%Y-%m-%d")
             })
 
         # BOOKINGS (exclusive end)
@@ -2330,7 +2419,9 @@ def blocked_dates_create(request):
         for booking in bookings:
             blocked_ranges.append({
                 "from": booking.check_in.strftime("%Y-%m-%d"),
-                "to": booking.check_out.strftime("%Y-%m-%d")
+                # "to": booking.check_out.strftime("%Y-%m-%d")
+                "to": (booking.check_out - timedelta(days=1)).strftime("%Y-%m-%d")
+                # "to": (booking.check_out - timedelta(days=1)).strftime("%Y-%m-%d")
             })
 
         return JsonResponse(blocked_ranges, safe=False)

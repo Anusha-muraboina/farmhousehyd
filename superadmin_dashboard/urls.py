@@ -10,7 +10,7 @@ urlpatterns = [
     path("farmhouses/add/", views.farmhouse_add, name="superadmin-farmhouse-add"),
     path("farmhouses/edit/<int:id>/", views.farmhouse_edit, name="superadmin-farmhouse-edit"),
     path("farmhouses/delete/<int:id>/", views.farmhouse_delete, name="superadmin-farmhouse-delete"),
-    
+    path('delete-image/<int:id>/', views.delete_farmhouse_image, name='delete_farmhouse_image'),
 #   # 🗑 Trash Page
 #     path('farmhouses/trash/', views.farmhouse_trash, name='farmhouse-trash'),
 
@@ -157,10 +157,10 @@ urlpatterns = [
     path("admin/bookings/<int:pk>/edit/",views.admin_booking_update,name="admin-booking-update"),
     path( "admin/bookings/<int:pk>/cancel/", views.admin_booking_cancel, name="admin-booking-cancel"),
     
-    path("admin/blocked-dates/",views.blocked_dates_list,name="blocked-dates"),
-    path( "admin/blocked-dates/create/", views.blocked_dates_create, name="blocked-dates-create"),
-    path("admin/blocked-dates/<int:pk>/edit/",views.blocked_dates_update,name="blocked-dates-update"),
-    path("admin/blocked-dates/<int:pk>/delete/",views.blocked_dates_delete,name="blocked-dates-delete"),
+    # path("admin/blocked-dates/",views.blocked_dates_list,name="blocked-dates"),
+    # path( "admin/blocked-dates/create/", views.blocked_dates_create, name="blocked-dates-create"),
+    # path("admin/blocked-dates/<int:pk>/edit/",views.blocked_dates_update,name="blocked-dates-update"),
+    # path("admin/blocked-dates/<int:pk>/delete/",views.blocked_dates_delete,name="blocked-dates-delete"),
     
     path("admin/blocked-dates/",views.blocked_dates_list,name="blocked-dates"),
     path( "admin/blocked-dates/create/", views.blocked_dates_create, name="blocked-dates-create" ),

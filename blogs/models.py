@@ -76,10 +76,10 @@ class Blog(models.Model):
         "Content",
         config_name="default"
     )
-    views = models.PositiveIntegerField(default=0)
+    views = models.PositiveIntegerField(default=0, blank=True)
     read_time = models.PositiveIntegerField(
         help_text="Read time in minutes (e.g. 3)",
-        default=3
+        default=3 , blank=True
     )
 
 

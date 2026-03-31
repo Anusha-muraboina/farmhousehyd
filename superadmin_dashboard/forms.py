@@ -886,13 +886,30 @@ class BlockedDateForm(forms.ModelForm):
 from django import forms
 from blogs.models import Blog
 
+# class BlogForm(forms.ModelForm):
+#     class Meta:
+#         model = Blog
+#         fields = "__all__"
+
+
+from django import forms
+from blogs.models import Blog
+
 class BlogForm(forms.ModelForm):
     class Meta:
         model = Blog
-        fields = "__all__"
+        exclude = ["views", "published_at", "slug", "created_at", "updated_at"]
 
-
-
+        widgets = {
+            "title": forms.TextInput(attrs={"class": "form-control"}),
+            "category": forms.Select(attrs={"class": "form-select"}),
+            "tags": forms.SelectMultiple(attrs={"class": "form-select"}),
+            "short_description": forms.Textarea(attrs={"class": "form-control"}),
+            "read_time": forms.NumberInput(attrs={"class": "form-control"}),
+            "meta_title": forms.TextInput(attrs={"class": "form-control"}),
+            "meta_description": forms.Textarea(attrs={"class": "form-control"}),
+            "meta_keywords": forms.TextInput(attrs={"class": "form-control"}),
+        }
 # locations
 
 

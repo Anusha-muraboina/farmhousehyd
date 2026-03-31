@@ -1056,13 +1056,70 @@ def receive_booking_from_vivaan(request):
     
 
 
+# @api_view(["GET"])
+# @authentication_classes([])
+# @permission_classes([AllowAny])
+# def blocked_dates_api(request, farmhouse_id):
+#     blocked_ranges = []
+
+#     # Admin Blocked Dates
+#     admin_blocks = BlockedDate.objects.filter(farmhouse_id=farmhouse_id)
+#     for b in admin_blocks:
+#         blocked_ranges.append({
+#             "from": b.start_date,
+#             "to": b.end_date - timedelta(days=1)
+#         })
+
+#     # Confirmed Bookings for this farmhouse
+#     bookings = Booking.objects.filter(
+#         # Q(status="confirmed") | Q(status="pending", payment_method="farmhouse"),
+#         farmhouse_id=farmhouse_id ,
+#         status="confirmed", 
+#     )
+#     for booking in bookings:
+#         blocked_ranges.append({
+#             "from": booking.check_in,
+#             "to": booking.check_out - timedelta(days=1)
+#         })
+
+#     # Extra: If this is Vivaan Farmhouse, try to fetch latest from Vivaan site
+#     try:
+#         farmhouse = Farmhouse.objects.get(id=farmhouse_id)
+#         if farmhouse.slug == "vivaan-farmhouse":
+#             try:
+#                 from django.conf import settings
+#                 external_url = "https://vivaanfarmhouse.com/api/blocked-dates/" if getattr(settings, 'DEBUG', False) else "https://vivaanfarmhouse.com/api/blocked-dates/"
+#                 res = requests.get(
+#                     external_url,
+#                     timeout=5
+#                 )
+#                 if res.status_code == 200:
+#                     data = res.json()
+#                     for item in data.get("disabled_dates", []):
+#                         d = datetime.strptime(item, "%Y-%m-%d").date()
+#                         blocked_ranges.append({"from": d, "to": d})
+#             except:
+#                 pass  # silent if Vivaan is down
+#     except:
+#         pass
+
+#     return Response(blocked_ranges)
+
+
+
+
+
+
+
+
+
 @api_view(["GET"])
 @authentication_classes([])
 @permission_classes([AllowAny])
 def blocked_dates_api(request, farmhouse_id):
     blocked_ranges = []
 
-    # Admin Blocked Dates
+    # 1. ADMIN BLOCKED
     admin_blocks = BlockedDate.objects.filter(farmhouse_id=farmhouse_id)
     for b in admin_blocks:
         blocked_ranges.append({
@@ -1070,11 +1127,10 @@ def blocked_dates_api(request, farmhouse_id):
             "to": b.end_date - timedelta(days=1)
         })
 
-    # Confirmed Bookings for this farmhouse
+    # 2. BOOKINGS
     bookings = Booking.objects.filter(
-        # Q(status="confirmed") | Q(status="pending", payment_method="farmhouse"),
-        farmhouse_id=farmhouse_id ,
-        status="confirmed", 
+        farmhouse_id=farmhouse_id,
+        status="confirmed",
     )
     for booking in bookings:
         blocked_ranges.append({
@@ -1082,54 +1138,31 @@ def blocked_dates_api(request, farmhouse_id):
             "to": booking.check_out - timedelta(days=1)
         })
 
-    # Extra: If this is Vivaan Farmhouse, try to fetch latest from Vivaan site
+    # 3. 🔥 SYNC FROM VIVAAN (FIXED)
     try:
         farmhouse = Farmhouse.objects.get(id=farmhouse_id)
+
         if farmhouse.slug == "vivaan-farmhouse":
             try:
-                from django.conf import settings
-                external_url = "http://127.0.0.1:8000/api/blocked-dates/" if getattr(settings, 'DEBUG', False) else "https://vivaanfarmhouse.com/api/blocked-dates/"
-                res = requests.get(
-                    external_url,
-                    timeout=5
-                )
+                external_url = "https://vivaanfarmhouse.com/api/blocked-dates/"
+
+                res = requests.get(external_url, timeout=5)
+
                 if res.status_code == 200:
                     data = res.json()
+
                     for item in data.get("disabled_dates", []):
                         d = datetime.strptime(item, "%Y-%m-%d").date()
-                        blocked_ranges.append({"from": d, "to": d})
-            except:
-                pass  # silent if Vivaan is down
-    except:
-        pass
+
+                        blocked_ranges.append({
+                            "from": d,
+                            "to": d
+                        })
+
+            except Exception as e:
+                print("Sync error:", e)
+
+    except Exception as e:
+        print("Farmhouse error:", e)
 
     return Response(blocked_ranges)
-    
-# @api_view(["GET"])
-# @permission_classes([AllowAny])
-# def farmhouse_blocked_dates_api(request):
-#     """
-#     Returns all disabled dates for the calendar.
-#     Used by Flatpickr on booking pages.
-#     """
-#     disabled_dates = set()
-
-#     # 1. Confirmed Bookings (All farmhouses)
-#     bookings = Booking.objects.filter(status="confirmed")
-#     for booking in bookings:
-#         current = booking.check_in
-#         while current < booking.check_out:
-#             disabled_dates.add(current.strftime("%Y-%m-%d"))
-#             current += timedelta(days=1)
-
-#     # 2. Manually Blocked Dates (including synced from Vivaan)
-#     blocks = BlockedDate.objects.all()
-#     for block in blocks:
-#         current = block.start_date
-#         while current <= block.end_date:
-#             disabled_dates.add(current.strftime("%Y-%m-%d"))
-#             current += timedelta(days=1)
-
-#     return Response({
-#         "disabled_dates": sorted(list(disabled_dates))
-#     })

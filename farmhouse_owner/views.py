@@ -811,6 +811,17 @@ from farmhouse_owner.forms import BlockedDateForm
 #         {"blocked": blocked}
 #     )
 
+
+
+
+
+
+
+
+
+
+
+
 @owner_required
 def owner_blocked_dates_list(request):
 
@@ -881,6 +892,39 @@ from datetime import timedelta
 
 from django.http import JsonResponse
 from booking.models import BlockedDate, Booking
+# def owner_blocked_ranges(request):
+#     farmhouse_id = request.GET.get("farmhouse")
+
+#     if not farmhouse_id:
+#         return JsonResponse([], safe=False)
+
+#     blocked_ranges = []
+
+#     blocks = BlockedDate.objects.filter(
+#         farmhouse_id=farmhouse_id,
+#         farmhouse__user=request.user
+#     )
+
+#     for b in blocks:
+#         blocked_ranges.append({
+#             "from": b.start_date.strftime("%Y-%m-%d"),
+#             "to": b.end_date.strftime("%Y-%m-%d")   # checkout date
+#         })
+
+#     bookings = Booking.objects.filter(
+#         farmhouse_id=farmhouse_id,
+#         status__in=["pending","confirmed"]
+#     )
+
+#     for booking in bookings:
+#         blocked_ranges.append({
+#             "from": booking.check_in.strftime("%Y-%m-%d"),
+#             "to": booking.check_out.strftime("%Y-%m-%d")
+#         })
+
+#     return JsonResponse(blocked_ranges, safe=False)
+
+
 def owner_blocked_ranges(request):
     farmhouse_id = request.GET.get("farmhouse")
 
@@ -889,6 +933,9 @@ def owner_blocked_ranges(request):
 
     blocked_ranges = []
 
+    ########################################
+    # ADMIN BLOCKED
+    ########################################
     blocks = BlockedDate.objects.filter(
         farmhouse_id=farmhouse_id,
         farmhouse__user=request.user
@@ -897,18 +944,21 @@ def owner_blocked_ranges(request):
     for b in blocks:
         blocked_ranges.append({
             "from": b.start_date.strftime("%Y-%m-%d"),
-            "to": b.end_date.strftime("%Y-%m-%d")   # checkout date
+            "to": (b.end_date - timedelta(days=1)).strftime("%Y-%m-%d")
         })
 
+    ########################################
+    # BOOKINGS
+    ########################################
     bookings = Booking.objects.filter(
         farmhouse_id=farmhouse_id,
-        status__in=["pending","confirmed"]
+        status__in=["pending", "confirmed"]
     )
 
     for booking in bookings:
         blocked_ranges.append({
             "from": booking.check_in.strftime("%Y-%m-%d"),
-            "to": booking.check_out.strftime("%Y-%m-%d")
+            "to": (booking.check_out - timedelta(days=1)).strftime("%Y-%m-%d")
         })
 
     return JsonResponse(blocked_ranges, safe=False)

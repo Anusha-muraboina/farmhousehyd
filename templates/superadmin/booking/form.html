@@ -385,9 +385,9 @@ document.addEventListener("DOMContentLoaded", function(){
             ////////////////////////////////////////////////////
 
             checkoutPicker = flatpickr(checkOut,{
-                minDate:new Date().fp_incr(1),
+                {% comment %} minDate:new Date().fp_incr(1), {% endcomment %}
                 dateFormat:"Y-m-d",
-                disable: blocked
+                {% comment %} disable: blocked {% endcomment %}
             });
 
         });

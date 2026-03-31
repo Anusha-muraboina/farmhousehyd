@@ -318,20 +318,41 @@ document.addEventListener("DOMContentLoaded", function(){
 
         if(!farmhouseId) return;
 
-        {% comment %} fetch(`/bookings/blocked-dates/${farmhouseId}/`) {% endcomment %}
-    fetch(`?farmhouse_id=${farmhouseId}`, {
-    headers: {
-        "X-Requested-With": "XMLHttpRequest"
-    }
-})
+     fetch(`/bookings/blocked-dates/${farmhouseId}/`) 
+
         .then(res => res.json())
         .then(data => {
 
-            const blocked = data.map(d => ({
+            {% comment %} const blocked = data.map(d => ({
                 from: d.from,
                 to: d.to
-            }));
+            })); {% endcomment %}
+            let blockedDates = [];
 
+            data.forEach(range => {
+
+                let start = new Date(range.from);
+                let end = new Date(range.to);
+
+
+
+                while (start <= end) {
+
+                    let current = start.getFullYear() + "-" +
+                                String(start.getMonth()+1).padStart(2,'0') + "-" +
+                                String(start.getDate()).padStart(2,'0');
+
+                    blockedDates.push(current);
+
+                    start.setDate(start.getDate() + 1);
+                }
+
+                {% comment %} while (start <= end) {
+                    blockedDates.push(start.toISOString().split("T")[0]);
+                    start.setDate(start.getDate() + 1);
+                } {% endcomment %}
+
+            });
             // destroy old
             checkinPicker.destroy();
             checkoutPicker.destroy();
@@ -343,7 +364,14 @@ document.addEventListener("DOMContentLoaded", function(){
             checkinPicker = flatpickr(checkIn,{
                 minDate:"today",
                 dateFormat:"Y-m-d",
-                disable: blocked,
+                {% comment %} disable: blocked, {% endcomment %}
+
+                disable: [
+                    function(date){
+                        let d = date.toISOString().split("T")[0];
+                        return blockedDates.includes(d);
+                    }
+                ],
 
                 onChange:function(selectedDates){
 
@@ -362,7 +390,7 @@ document.addEventListener("DOMContentLoaded", function(){
             ////////////////////////////////////////////////////
 
             checkoutPicker = flatpickr(checkOut,{
-                minDate:new Date().fp_incr(1),
+                {% comment %} minDate:new Date().fp_incr(1), {% endcomment %}
                 dateFormat:"Y-m-d",
                 {% comment %} disable: blocked {% endcomment %}
             });
