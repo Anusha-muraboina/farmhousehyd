@@ -616,10 +616,12 @@ from rest_framework.response import Response
 from django.db.models import Q
 from django.core.paginator import Paginator
 from .serializers import *
+from rest_framework.permissions import AllowAny
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def owner_booking_list_api(request):
-
+    # permission_classes = [AllowAny]
+    # authentication_classes = []
     ###################################
     # BASE QUERY
     ###################################
@@ -701,7 +703,7 @@ def owner_booking_list_api(request):
 
 
 @api_view(["GET", "POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def owner_booking_detail_api(request, pk):
 
     booking = get_object_or_404(
