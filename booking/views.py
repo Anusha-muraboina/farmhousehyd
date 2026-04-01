@@ -1138,7 +1138,7 @@ def blocked_dates_api(request, farmhouse_id):
             "to": booking.check_out - timedelta(days=1)
         })
 
-    # 3. 🔥 SYNC FROM VIVAAN (FIXED)
+    # 3.  SYNC FROM VIVAAN (FIXED)
     try:
         farmhouse = Farmhouse.objects.get(id=farmhouse_id)
 

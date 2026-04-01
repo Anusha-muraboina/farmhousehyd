@@ -1,111 +1,170 @@
 {% extends "superadmin/base.html" %}
 {% block content %}
 
-<h3 class="fw-bold">{{ user.username }}</h3>
+<style>
+/* ===== STATS CARDS ===== */
+.stat-card {
+    border-radius: 12px;
+    padding: 18px;
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+.stat-title {
+    font-size: 13px;
+    opacity: 0.9;
+}
+.stat-value {
+    font-size: 22px;
+    font-weight: bold;
+}
 
-<div class="row mb-4">
-    <div class="col-md-4">
-        <p><b>Email:</b> {{ user.email }}</p>
-        <p><b>Phone:</b> {{ user.phone }}</p>
-    </div>
+/* Colors */
+.bg-blue { background: #3b82f6; }
+.bg-green { background: #16a34a; }
+.bg-orange { background: #f59e0b; }
+.bg-purple { background: #7c3aed; }
 
-    <div class="col-md-4">
-        <p><b>Total Bookings:</b> {{ summary.total_bookings|default:0 }}</p>
-        <p><b>Total Spent:</b> ₹{{ summary.total_spent|default:0 }}</p>
-        <p><b>Pending:</b> ₹{{ summary.total_pending|default:0 }}</p>
-        <p><b>Confirmed:</b> ₹{{ summary.total_confirmed|default:0 }}</p>
-    </div>
+/* ===== CARDS ===== */
+.custom-card {
+    border-radius: 12px;
+    padding: 18px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
 
-    <div class="col-md-4">
-        <p><b>Wallet Used:</b> ₹{{ summary.total_wallet|default:0 }}</p>
-        <p><b>Address:</b> {{ latest_booking.address|default:"N/A" }}</p>
-    </div>
-</div>
+/* ===== TABLE ===== */
+.table th {
+    font-size: 13px;
+    color: #6b7280;
+}
+.table td {
+    vertical-align: middle;
+}
+</style>
 
+<!-- ================= TOP 4 CARDS ================= -->
+<div class="row g-3 mb-4">
 
-
-<div class="card shadow-sm">
-    <div class="card-body">
-
-        <h5 class="mb-3">Bookings</h5>
-
-        <div style="overflow-x:auto;">
-            <table class="table table-hover align-middle">
-
-                <thead class="table-light">
-                    <tr>
-                        <th>Booking ID</th>
-                        <th>Farmhouse</th>
-                        <th>Guest</th>
-                        <th>Dates</th>
-                        <th>Amount</th>
-                        <th>Wallet</th>
-                        <th>Payment</th>
-                        <th>Status</th>
-                        <th>Address</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% for b in bookings %}
-                    <tr>
-                        <td>{{ b.booking_id }}</td>
-
-                        <td>
-                            {{ b.farmhouse.name }}
-                        </td>
-
-                        <td>
-                            {{ b.guest_name }} <br>
-                            <small>{{ b.guest_phone }}</small>
-                        </td>
-
-                        <td>
-                            {{ b.check_in }} <br>
-                            <small>to {{ b.check_out }}</small>
-                        </td>
-
-                        <td>₹{{ b.total_amount }}</td>
-
-                        <td>₹{{ b.wallet_used }}</td>
-
-                        <td>
-                            {% if b.payment_status == "paid" %}
-                                <span class="badge bg-success">Paid</span>
-                            {% elif b.payment_status == "partial" %}
-                                <span class="badge bg-warning text-dark">Partial</span>
-                            {% elif b.payment_status == "failed" %}
-                                <span class="badge bg-danger">Failed</span>
-                            {% else %}
-                                <span class="badge bg-secondary">Pending</span>
-                            {% endif %}
-                        </td>
-
-                        <td>
-                            {% if b.status == "confirmed" %}
-                                <span class="badge bg-success">Confirmed</span>
-                            {% elif b.status == "cancelled" %}
-                                <span class="badge bg-danger">Cancelled</span>
-                            {% else %}
-                                <span class="badge bg-secondary">Pending</span>
-                            {% endif %}
-                        </td>
-
-                        <td>
-                            {{ b.address|default:"N/A" }}
-                        </td>
-
-                    </tr>
-                    {% endfor %}
-                </tbody>
-
-            </table>
+    <div class="col-md-3">
+        <div class="stat-card bg-blue">
+            <div class="stat-title">Total Bookings</div>
+            <div class="stat-value">{{ summary.total_bookings|default:0 }}</div>
         </div>
+    </div>
 
+    <div class="col-md-3">
+        <div class="stat-card bg-green">
+            <div class="stat-title">Total Spent</div>
+            <div class="stat-value">₹{{ summary.total_spent|default:0 }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card bg-orange">
+            <div class="stat-title">Pending Amount</div>
+            <div class="stat-value">₹{{ summary.total_pending|default:0 }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card bg-purple">
+            <div class="stat-title">Confirmed Amount</div>
+            <div class="stat-value">₹{{ summary.total_confirmed|default:0 }}</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ================= USER DETAILS ================= -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="custom-card">
+            <h5 class="fw-bold mb-3">{{ user.username }}</h5>
+
+            <p><b>Email:</b> {{ user.email }}</p>
+            <p><b>Phone:</b> {{ user.phone }}</p>
+            <p><b>Wallet Used:</b> ₹{{ summary.total_wallet|default:0 }}</p>
+            <p><b>Address:</b> {{ latest_booking.address|default:"N/A" }}</p>
+        </div>
     </div>
 </div>
 
+<!-- ================= BOOKINGS TABLE ================= -->
+<div class="custom-card">
+    <h5 class="fw-bold mb-3">Bookings</h5>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Farmhouse</th>
+                    <th>Guest</th>
+                    <th>Dates</th>
+                    <th>Amount</th>
+                    <th>Wallet</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+
+                    <td><b>#{{ b.booking_id }}</b></td>
+
+                    <td>{{ b.farmhouse.name }}</td>
+
+                    <td>
+                        {{ b.guest_name }} <br>
+                        <small class="text-muted">{{ b.guest_phone }}</small>
+                    </td>
+
+                    <td>
+                        {{ b.check_in }} <br>
+                        <small class="text-muted">to {{ b.check_out }}</small>
+                    </td>
+
+                    <td>₹{{ b.total_amount }}</td>
+
+                    <td>₹{{ b.wallet_used }}</td>
+
+                    <td>
+                        {% if b.payment_status == "paid" %}
+                            <span class="badge bg-success">Paid</span>
+                        {% elif b.payment_status == "partial" %}
+                            <span class="badge bg-warning text-dark">Partial</span>
+                        {% elif b.payment_status == "failed" %}
+                            <span class="badge bg-danger">Failed</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Pending</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if b.status == "confirmed" %}
+                            <span class="badge bg-success">Confirmed</span>
+                        {% elif b.status == "cancelled" %}
+                            <span class="badge bg-danger">Cancelled</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Pending</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted">
+                        No bookings found
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
 
 {% endblock %}
-
-

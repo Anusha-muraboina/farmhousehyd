@@ -37,12 +37,13 @@ DEBUG = True
 ALLOWED_HOSTS = [
                 "farmhouseshyderabad.com",
                 "www.farmhouseshyderabad.com",
-                "http://3.110.215.192" , 
+                # "http://3.110.215.192" , 
                 'localhost',
                 '127.0.0.1',
                 "vivaanfarmhouse.com",
                 "www.vivaanfarmhouse.com",
                 '13.205.98.67',
+                
                  ]
 
 ADMIN_TRASH_PIN = "1234"

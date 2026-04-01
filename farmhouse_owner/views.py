@@ -601,6 +601,142 @@ def owner_booking_detail(request, pk):
 
 
 
+
+
+
+
+
+
+
+
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.db.models import Q
+from django.core.paginator import Paginator
+from .serializers import *
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def owner_booking_list_api(request):
+
+    ###################################
+    # BASE QUERY
+    ###################################
+    # bookings = Booking.objects.filter(
+    #     farmhouse__user=request.user
+    # ).select_related("farmhouse").order_by("-created_at")
+    
+    
+    ###################################
+    # BASE QUERY (ONLY VIVAAN FARMHOUSE)
+    ###################################
+    bookings = Booking.objects.filter(
+        # farmhouse__user=request.user,
+        farmhouse__slug="vivaan-farmhouse"   # 👈 ADD HERE
+    ).select_related("farmhouse").order_by("-created_at")
+    
+    
+    ###################################
+    # 🔢 COUNTS (TOP CARDS)
+    ###################################
+    pending_count = bookings.filter(status="pending").count()
+    confirmed_count = bookings.filter(status="confirmed").count()
+    cancelled_count = bookings.filter(status="cancelled").count()
+    paid_count = bookings.filter(payment_status="paid").count()
+
+    ###################################
+    # SEARCH
+    ###################################
+    search = request.GET.get("search")
+    if search:
+        bookings = bookings.filter(
+            Q(guest_name__icontains=search) |
+            Q(guest_email__icontains=search) |
+            Q(booking_id__icontains=search)
+        )
+
+    ###################################
+    # STATUS FILTER
+    ###################################
+    status = request.GET.get("status")
+    if status:
+        bookings = bookings.filter(status=status)
+
+    ###################################
+    # PAYMENT FILTER
+    ###################################
+    payment_status = request.GET.get("payment_status")
+    if payment_status:
+        bookings = bookings.filter(payment_status=payment_status)
+
+    ###################################
+    # PAGINATION
+    ###################################
+    page = int(request.GET.get("page", 1))
+    paginator = Paginator(bookings, 10)
+    page_obj = paginator.get_page(page)
+
+    serializer = BookingSerializer(page_obj, many=True)
+
+    return Response({
+        "results": serializer.data,
+
+        "pagination": {
+            "current_page": page,
+            "total_pages": paginator.num_pages,
+            "total_items": paginator.count,
+        },
+
+        "counts": {
+            "pending": pending_count,
+            "confirmed": confirmed_count,
+            "cancelled": cancelled_count,
+            "paid": paid_count,
+        }
+    })
+
+
+
+
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def owner_booking_detail_api(request, pk):
+
+    booking = get_object_or_404(
+        Booking.objects.select_related("farmhouse"),
+        pk=pk,
+        # farmhouse__user=request.user
+    )
+
+    ###################################
+    # UPDATE
+    ###################################
+    if request.method == "POST":
+        booking.status = request.data.get("status", booking.status)
+        booking.payment_status = request.data.get("payment_status", booking.payment_status)
+        booking.save()
+
+        return Response({
+            "message": "Booking updated successfully"
+        })
+
+    ###################################
+    # GET DETAIL
+    ###################################
+    serializer = BookingSerializer(booking)
+
+    return Response(serializer.data)
+
+
+
+
+
+
+
+
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
@@ -614,7 +750,7 @@ def owner_contact_list(request):
 
     # Owner farmhouses
     farmhouses = Farmhouse.objects.filter(user=request.user)
-
+    
     # Messages only for owner farmhouses
     messages_qs = ContactMessage.objects.filter(
         farmhouse__in=farmhouses

@@ -36,6 +36,10 @@ urlpatterns = [
     path("owner/bookings/<int:pk>/edit/",owner_booking_update,name="owner-booking-update"),
     path( "owner/bookings/<int:pk>/cancel/", owner_booking_cancel, name="owner-booking-cancel"),
     
+    path("owner/bookings/lists/", owner_booking_list_api ,name="owner_booking_list_api"),
+    path("owner/bookings/detail/<int:pk>/", owner_booking_detail_api ,name="owner_booking_detail_api"),
+    
+    
     
     path( "messages/", owner_contact_list, name="owner_contact_list"),
 
