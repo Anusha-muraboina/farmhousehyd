@@ -165,13 +165,27 @@ class FarmhouseSerializer(serializers.ModelSerializer):
     def get_primary_image(self, obj):
         request = self.context.get("request")
 
-        # ✅ get primary image from related images
+        # ✅ Try primary image first
         image = obj.images.filter(is_primary=True).first()
+
+        # ✅ If no primary → take first image
+        if not image:
+            image = obj.images.first()
 
         if image and request:
             return request.build_absolute_uri(image.image.url)
 
         return None
+    # def get_primary_image(self, obj):
+    #     request = self.context.get("request")
+
+    #     # ✅ get primary image from related images
+    #     image = obj.images.filter(is_primary=True).first()
+
+    #     if image and request:
+    #         return request.build_absolute_uri(image.image.url)
+
+    #     return None
     def get_location(self, obj):
         if obj.location:
             return {
@@ -237,6 +251,7 @@ class BlogSerializer(serializers.ModelSerializer):
             "short_description",
             "published_at",
             "read_time"
+             
         ]
     def get_image(self, obj):
         request = self.context.get("request")

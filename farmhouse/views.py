@@ -277,7 +277,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-
+from django.db.models import Prefetch
 from .models import Farmhouse, Location
 from .serializers import FarmhouseSerializer, LocationSerializer ,ThingstocarrySerializer
 from django.db.models import Q, F
@@ -297,7 +297,14 @@ class FarmhouseListAPI(APIView):
         farmhouses = Farmhouse.objects.filter(
             is_active=True
         ).select_related("location","payment_policy").prefetch_related(
-            "images", "amenities"
+            # "images",
+                Prefetch(
+        "images",
+        queryset=FarmhouseImage.objects.order_by("-is_primary")  # ✅ KEY FIX
+    ),
+            
+            
+            "amenities"
         ).order_by(
             F("Slot_position").asc(nulls_last=True)
         )

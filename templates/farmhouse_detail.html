@@ -166,7 +166,12 @@
     .farmhouse-content ul {
         padding-left: 20px;
         margin-bottom: 16px;
+          list-style-type: disc;
+         
     }
+.farmhouse-content li::marker {
+    color: #EA580C;  /* ✅ bullet color */
+}
 
     .farmhouse-content li {
         margin-bottom: 6px;
@@ -223,6 +228,41 @@ height:300px;
 }
 
 }
+
+
+{% comment %} /* ⭐ FIX CALENDAR CELL */
+.flatpickr-day {
+    height: 60px !important;
+    max-width: 60px;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+}
+
+/* DATE NUMBER */
+.flatpickr-day span.day-number {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* PRICE TEXT */
+.day-price {
+    font-size: 11px;
+    color: #16a34a;
+    margin-top: 2px;
+}
+
+
+/* DISABLED DATES */
+.flatpickr-day.flatpickr-disabled .day-price {
+    color: #ccc;
+    text-decoration: line-through;
+} {% endcomment %}
+
+
+
 </style>
 
 
@@ -2120,6 +2160,53 @@ async function initFlatpickr() {
             dateFormat: "Y-m-d",
             disableMobile: true,
 
+
+            //////////////////////////////////////////////////
+            // ⭐ ADD THIS BLOCK
+            //////////////////////////////////////////////////
+            {% comment %} onDayCreate: function(dObj, dStr, fp, dayElem) {
+
+                const date = dayElem.dateObj;
+
+                let sale = Number(farmhouse.pricing.sale_price || 0);
+                let normal = Number(farmhouse.pricing.normal_day_price || 0);
+                let weekend = Number(farmhouse.pricing.weekend_price || 0);
+
+                let price = 0;
+
+                if (sale > 0) {
+                    price = sale;
+                } else {
+                    let day = date.getDay();
+                    price = (day === 0 || day === 6) ? weekend : normal;
+                }
+
+                //////////////////////////////////////////////////
+                // ⭐ CLEAN STRUCTURE (IMPORTANT)
+                //////////////////////////////////////////////////
+
+                // Clear existing content
+                dayElem.innerHTML = "";
+
+                // DATE
+                const dateEl = document.createElement("span");
+                dateEl.className = "day-number";
+                dateEl.innerText = date.getDate();
+
+                // PRICE
+                const priceEl = document.createElement("span");
+                priceEl.className = "day-price";
+                priceEl.innerText = "₹" + price;
+
+                // Append properly
+                dayElem.appendChild(dateEl);
+                dayElem.appendChild(priceEl);
+            }, {% endcomment %}
+
+
+
+
+
             onChange: function (selectedDates) {
                 if (!selectedDates.length) return;
 
@@ -2136,6 +2223,62 @@ async function initFlatpickr() {
             minDate: new Date().fp_incr(1),
             dateFormat: "Y-m-d",
             disableMobile: true,
+
+
+
+
+
+
+
+
+
+        //////////////////////////////////////////////////
+        // ⭐ ADD THIS (IMPORTANT)
+        //////////////////////////////////////////////////
+        {% comment %} onDayCreate: function(dObj, dStr, fp, dayElem) {
+
+            const date = dayElem.dateObj;
+
+            let sale = Number(farmhouse.pricing.sale_price || 0);
+            let normal = Number(farmhouse.pricing.normal_day_price || 0);
+            let weekend = Number(farmhouse.pricing.weekend_price || 0);
+
+            let price = 0;
+
+            if (sale > 0) {
+                price = sale;
+            } else {
+                let day = date.getDay();
+                price = (day === 0 || day === 6) ? weekend : normal;
+            }
+
+            //////////////////////////////////////////////////
+            // ⭐ SAME STRUCTURE AS CHECK-IN
+            //////////////////////////////////////////////////
+
+            dayElem.innerHTML = "";
+
+            // DATE (circle only here)
+            const dateEl = document.createElement("span");
+            dateEl.className = "day-number";
+            dateEl.innerText = date.getDate();
+
+            // PRICE (below)
+            const priceEl = document.createElement("span");
+            priceEl.className = "day-price";
+            priceEl.innerText = "₹" + price;
+
+            dayElem.appendChild(dateEl);
+            dayElem.appendChild(priceEl);
+        },
+ {% endcomment %}
+
+
+
+
+
+
+
 
             onChange: function (selectedDates) {
                 if (!selectedDates.length) return;

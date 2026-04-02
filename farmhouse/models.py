@@ -243,6 +243,35 @@ class Farmhouse(models.Model):
         super().save(*args, **kwargs)
 
 
+class FarmhouseOfferPricing(models.Model):
+    farmhouse = models.ForeignKey(
+        Farmhouse,
+        on_delete=models.CASCADE,
+        related_name="offers"
+    )
+
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    is_sale = models.BooleanField(default=True)
+
+    title = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Example: New Year Offer"
+    )
+
+    def __str__(self):
+        return f"{self.farmhouse.title} - {self.title}"
+
+
+
 
 class FarmhousePricing(models.Model):
     DAY_TYPE_CHOICES = (
@@ -302,10 +331,6 @@ class FarmhouseImage(models.Model):
 
     def __str__(self):
         return self.farmhouse.title
-
-
-
-
 
 
 

@@ -199,7 +199,12 @@ async function loadFarmhouses(reset=false) {
             const pathParts = window.location.pathname.split("/");
             const locationSlug = pathParts[2] || "all";
 
-            showLocationPopup(popup, locationSlug);
+            {% comment %} showLocationPopup(popup, locationSlug); {% endcomment %}
+
+            // ✅ show popup ONLY when location exists
+            if (locationSlug) {
+                showLocationPopup(popup, locationSlug.toLowerCase().trim());
+            }
         }
 
         let html = "";
@@ -537,7 +542,7 @@ document.getElementById("sortSelect").addEventListener("change", function(){
 // LOCATION POPUP
 //////////////////////////////////////////////////
 
-function showLocationPopup(popup, locationSlug) {
+{% comment %} function showLocationPopup(popup, locationSlug) {
 
     if (!popup || !popup.image) return;
 
@@ -552,8 +557,24 @@ function showLocationPopup(popup, locationSlug) {
         .classList.remove("hidden");
 
     localStorage.setItem(key, "shown");
-}
+} {% endcomment %}
+function showLocationPopup(popup, locationSlug) {
 
+    if (!popup || !popup.image) return;
+
+    const key = "popup_location_" + locationSlug;
+
+    // ✅ already shown → stop
+    if (localStorage.getItem(key)) return;
+
+    // ✅ show popup
+    document.getElementById("popupImage").src = popup.image;
+    document.getElementById("popupModal")
+        .classList.remove("hidden");
+
+    // ✅ mark as shown
+    localStorage.setItem(key, "shown");
+}
 function closePopup() {
     document.getElementById("popupModal")
         .classList.add("hidden");
