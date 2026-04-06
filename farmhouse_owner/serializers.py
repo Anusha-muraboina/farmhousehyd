@@ -9,6 +9,7 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = [
+            
             "id",
             "booking_id",
             "farmhouse_name",
@@ -22,4 +23,5 @@ class BookingSerializer(serializers.ModelSerializer):
             "status",
             "payment_status",
             "created_at",
+            
         ]

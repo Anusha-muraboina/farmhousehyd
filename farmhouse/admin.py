@@ -7,7 +7,7 @@ from .models import *
 
 User = get_user_model()
 
-
+admin.site.register(FarmhouseOfferPricing)
 class FarmhousePricingInline(admin.StackedInline):
     model = FarmhousePricing
     can_delete = False

@@ -8,19 +8,21 @@ from booking.models import BlockedDate ,Booking
 from django import forms
 from farmhouse.models import Farmhouse 
 from booking.models import FarmhousePaymentPolicy
+
 INPUT_CLASS = (
     "w-full px-4 py-3 border border-gray-300 rounded-xl "
     "bg-white text-gray-800 "
     "focus:outline-none focus:ring-2 focus:ring-orange-400 "
     "focus:border-orange-400 transition"
 )
-
 TEXTAREA_CLASS = (
     "w-full px-4 py-3 border border-gray-300 rounded-xl "
     "bg-white text-gray-800 resize-none "
     "focus:outline-none focus:ring-2 focus:ring-orange-400 "
     "focus:border-orange-400 transition"
 )
+
+
 # form-control-lg
 INPUT_CLASS = "form-control "
 TEXTAREA_CLASS = "form-control "
@@ -274,7 +276,7 @@ class ownerBookingForm(forms.ModelForm):
             )
             
                 ###################################
-            # ✅ FILTER ONLY NORMAL USERS 🔥
+            # ✅ FILTER ONLY NORMAL USERS 
             ###################################
         if "user" in self.fields:
             self.fields["user"].queryset = User.objects.filter(
@@ -307,3 +309,27 @@ class ownerBookingForm(forms.ModelForm):
             "placeholder": "Select check-out"
         })
 
+
+
+
+
+from farmhouse.models import FarmhouseOfferPricing
+
+class FarmhouseOfferForm(forms.ModelForm):
+    class Meta:
+        model = FarmhouseOfferPricing
+        fields = ["farmhouse", "title", "start_date", "end_date", "price"]
+
+        widgets = {
+            "farmhouse": forms.Select(attrs={"class": "form-select"}),
+            "title": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter offer title"
+            }),
+            "start_date": forms.HiddenInput(),   # 👈 hidden
+            "end_date": forms.HiddenInput(),     # 👈 hidden
+            "price": forms.NumberInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter price"
+            }),
+        }

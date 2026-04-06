@@ -978,7 +978,7 @@ if (blogs.length > 1) {
   }
 
   data.farmhouses.forEach(f => {
-    const sale = Number(f.pricing?.sale_price || 0);
+    {% comment %} const sale = Number(f.pricing?.sale_price || 0);
     const weekday = Number(f.pricing?.normal_day_price || 0);
     const weekend = Number(f.pricing?.weekend_price || 0);
 
@@ -990,7 +990,32 @@ if (blogs.length > 1) {
         originalPrice = Math.min(weekday, weekend);
     } else {
         displayPrice = Math.min(weekday, weekend);
+    } {% endcomment %}
+
+
+
+   
+    const weekday = Number(f.pricing?.normal_day_price || 0);
+    const weekend = Number(f.pricing?.weekend_price || 0);
+
+    // ✅ ORIGINAL PRICE
+    let originalPrice = Math.min(weekday, weekend);
+
+    // ✅ DEFAULT PRICE
+    let displayPrice = originalPrice;
+
+    // ✅ APPLY OFFER (IMPORTANT FIX)
+    if (f.current_offer && f.current_offer.price) {
+
+        const offerPrice = Number(f.current_offer.price);
+
+        if (offerPrice > 0) {
+            displayPrice = offerPrice;
+        }
     }
+
+
+
     const amenitiesHTML = f.amenities.map(a => `
       <span class="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full text-xs">
         <i data-lucide="${a.icon_class}" class="w-4 h-4 text-primary"></i>
@@ -1040,7 +1065,7 @@ if (blogs.length > 1) {
 
 <div class="flex items-center justify-between pt-4 border-t">
 
-  <div class="flex flex-col">
+  {% comment %} <div class="flex flex-col">
 
     ${
       originalPrice > 0
@@ -1054,8 +1079,8 @@ if (blogs.length > 1) {
         ₹${displayPrice.toLocaleString()} / night
     </span>
 
-    ${
-      sale > 0
+${
+  (f.current_offer && f.current_offer.price)
       ? `<span class="text-xs text-red-500 font-semibold">
            Limited Time Deal
          </span>`
@@ -1064,7 +1089,32 @@ if (blogs.length > 1) {
          </span>`
     }
 
+  </div> {% endcomment %}
+
+
+
+  <div class="flex flex-col">
+
+    <span class="text-xl font-bold text-green-600">
+        ₹${
+            (f.current_offer && f.current_offer.price)
+            ? Number(f.current_offer.price).toLocaleString()
+            : Math.min(weekday, weekend).toLocaleString()
+        } / night
+    </span>
+
+    ${
+      (f.current_offer && f.current_offer.price)
+      ? `<span class="text-xs text-red-500 font-semibold">
+           ${f.current_offer.title || "Offer"} 🎉
+         </span>`
+      : `<span class="text-xs text-gray-500">
+           Weekday ₹${weekday.toLocaleString()} • Weekend ₹${weekend.toLocaleString()}
+         </span>`
+    }
+
   </div>
+
 
   <a href="/farmhouse/${f.slug}/${f.location.slug}/"
      class="bg-primary text-white px-1  md:px-4 py-2 rounded-lg text-sm md:font-medium hover:bg-primary-dark transition">

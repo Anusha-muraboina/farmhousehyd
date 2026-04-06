@@ -214,12 +214,31 @@ async function loadFarmhouses(reset=false) {
             const image = f.primary_image ||
             "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80";
 
-            const sale = Number(f.pricing?.sale_price || 0);
+            {% comment %} const sale = Number(f.pricing?.sale_price || 0);
             const weekday = Number(f.pricing?.normal_day_price || 0);
             const weekend = Number(f.pricing?.weekend_price || 0);
 
             let displayPrice = sale > 0 ? sale : Math.min(weekday, weekend);
-            let originalPrice = sale > 0 ? Math.min(weekday, weekend) : 0;
+            let originalPrice = sale > 0 ? Math.min(weekday, weekend) : 0; {% endcomment %}
+
+            const weekday = Number(f.pricing?.normal_day_price || 0);
+            const weekend = Number(f.pricing?.weekend_price || 0);
+
+            // ✅ ORIGINAL PRICE
+            let originalPrice = Math.min(weekday, weekend);
+
+            // ✅ DEFAULT
+            let displayPrice = originalPrice;
+
+            // ✅ APPLY OFFER
+            if (f.current_offer && f.current_offer.price) {
+
+                const offerPrice = Number(f.current_offer.price);
+
+                if (offerPrice > 0) {
+                    displayPrice = offerPrice;
+                }
+            }
 
             html += `
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition">
@@ -376,7 +395,39 @@ ${ f.breakfast_dinner_available ? `
 
                     <div class="flex justify-between items-center border-t pt-4">
 
-                        <div class="flex flex-col">
+
+
+
+                      <div class="flex flex-col">
+
+    ${
+        (f.current_offer && f.current_offer.price)
+        ? `<span class="text-xs text-gray-400 line-through">
+              ₹${originalPrice.toLocaleString()}
+           </span>`
+        : ""
+    }
+
+    <span class="text-lg font-bold text-green-600">
+        ₹${displayPrice.toLocaleString()} / night
+    </span>
+
+    ${
+        (f.current_offer && f.current_offer.price)
+        ? `<span class="text-xs text-red-500 font-semibold">
+               ${f.current_offer.title || "Offer"} 
+           </span>`
+        : `<span class="text-xs text-gray-500">
+              Weekday ₹${weekday.toLocaleString()} • Weekend ₹${weekend.toLocaleString()}
+           </span>`
+    }
+
+</div>
+
+
+
+
+                        {% comment %} <div class="flex flex-col">
 
                             ${
                                 originalPrice > 0
@@ -390,17 +441,17 @@ ${ f.breakfast_dinner_available ? `
                                 ₹${displayPrice.toLocaleString()} / night
                             </span>
 
-                            ${
-                                sale > 0
-                                ? `<span class="text-xs text-red-500 font-semibold">
-                                       Limited Time Deal
-                                   </span>`
-                                : `<span class="text-xs text-gray-500">
-                                      Weekday ₹${weekday.toLocaleString()} • Weekend ₹${weekend.toLocaleString()}
-                                   </span>`
-                            }
+                      ${
+        (f.current_offer && f.current_offer.price)
+        ? `<span class="text-xs text-red-500 font-semibold">
+               ${f.current_offer.title || "Offer"} 
+           </span>`
+        : `<span class="text-xs text-gray-500">
+              Weekday ₹${weekday.toLocaleString()} • Weekend ₹${weekend.toLocaleString()}
+           </span>`
+    }
 
-                        </div>
+                        </div> {% endcomment %}
 
                        <a href="/farmhouse/${f.slug}/${f.location.slug}/"
                            class="bg-orange-500 text-white px-2 md:px-4 py-2 rounded-lg text-sm hover:bg-orange-600">

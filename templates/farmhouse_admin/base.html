@@ -210,6 +210,9 @@ data-bs-dismiss="offcanvas"></button>
 Dashboard
 </a>
 
+
+
+
 <a href="{% url 'owner_blocked-dates' %}">
 <i class="fa-solid fa-tags"></i>
 Blocked Dates
@@ -239,6 +242,14 @@ Messages
 <i class="fa-solid fa-tags"></i>
 Coupons
 </a>
+
+
+<a href="{% url 'owner_offer_list' %}">
+<i class="fa-solid fa-tags"></i>
+offers
+</a> 
+
+
 
 </div>
 
@@ -305,6 +316,15 @@ class="{% if request.resolver_match.url_name in 'owner_coupon_list owner_coupon_
 Coupons
 
 </a>
+
+
+<a href="{% url 'owner_offer_list' %}"
+class="{% if request.resolver_match.url_name in 'owner_offer_list owner_offer_create owner_offer_update' %}active-parent{% endif %}">
+
+<i class="fa-solid fa-tags"></i>
+Offers
+</a>
+
 
 </aside>
 

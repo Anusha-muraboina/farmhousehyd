@@ -376,6 +376,7 @@ def farmhouse_list(request):
     }
 
     return render(request, "superadmin/farmhouses.html", context)
+
 # ===============================
 # ADD
 # ===============================
@@ -1701,14 +1702,18 @@ def admin_calculate_booking_price(request):
     subtotal = Decimal("0.00")
 
     while start < end:
-        if pricing.sale_price and pricing.sale_price > 0:
-            subtotal += pricing.sale_price
-        elif start.weekday() in [5, 6]:
-            subtotal += pricing.weekend_price
-        else:
-            subtotal += pricing.normal_day_price
-
+        subtotal += farmhouse.get_price_by_date(start)
         start += timedelta(days=1)
+
+    # while start < end:
+    #     if pricing.sale_price and pricing.sale_price > 0:
+    #         subtotal += pricing.sale_price
+    #     elif start.weekday() in [5, 6]:
+    #         subtotal += pricing.weekend_price
+    #     else:
+    #         subtotal += pricing.normal_day_price
+
+    #     start += timedelta(days=1)
 
     # EXTRA GUEST
     subtotal += extra_guest_count * pricing.extra_guest_price
@@ -1898,19 +1903,23 @@ def admin_booking_create(request):
 
             subtotal = Decimal("0.00")
 
+            # while start < end:
+
+            #     if pricing.sale_price and pricing.sale_price > 0:
+            #         subtotal += pricing.sale_price
+
+            #     elif start.weekday() in [5, 6]:
+            #         subtotal += pricing.weekend_price
+
+            #     else:
+            #         subtotal += pricing.normal_day_price
+
+            #     start += timedelta(days=1)
+
+
             while start < end:
-
-                if pricing.sale_price and pricing.sale_price > 0:
-                    subtotal += pricing.sale_price
-
-                elif start.weekday() in [5, 6]:
-                    subtotal += pricing.weekend_price
-
-                else:
-                    subtotal += pricing.normal_day_price
-
+                subtotal += farmhouse.get_price_by_date(start)
                 start += timedelta(days=1)
-
             ########################################
             # EXTRA GUEST
             ########################################

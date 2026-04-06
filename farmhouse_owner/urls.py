@@ -99,5 +99,11 @@ urlpatterns = [
 
     path("admin/calc-booking-price/", owner_calculate_booking_price,  name="owner_calc_booking_price" ),
     path( "owner/invoice/<str:booking_id>/", owner_view_invoice, name="owner_view_invoice"),
+    
+    
+    path("offers/", owner_offer_list, name="owner_offer_list"),
+    path("offers/add/", owner_offer_create, name="owner_offer_create"),
+    path("offers/<int:pk>/edit/", owner_offer_update, name="owner_offer_update"),
+    path("offers/<int:pk>/delete/", owner_offer_delete, name="owner_offer_delete"),
 
 ]

@@ -1,6 +1,5 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from decimal import Decimal
 from datetime import datetime
 import razorpay
 from django.conf import settings
@@ -8,7 +7,6 @@ from django.shortcuts import render
 from .models import Booking
 from farmhouse.models import Farmhouse
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
 import json
 from django.contrib.auth import login
 from datetime import timedelta
@@ -17,28 +15,22 @@ from rest_framework.permissions import IsAuthenticated
 from wallet.models import Wallet, WalletHistory
 from django.urls import reverse
 from django.http import JsonResponse
-# from .utils import calculate_booking_cost
+
 from booking.models import *
 from booking.serializers import *
 from rest_framework.authentication import BasicAuthentication
-from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
-
 from rest_framework.authentication import SessionAuthentication
-
-
-import json
 import razorpay
 from decimal import Decimal
-
+from rest_framework.permissions import AllowAny
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
 
 from .serializers import BookingSerializer
 from .models import Booking
@@ -65,13 +57,13 @@ from .models import Booking
 
 
 
-
-
 client = razorpay.Client(
     auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
 )
+
+
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import AllowAny
+
 
 # @api_view(["GET"])
 # @authentication_classes([])
@@ -155,7 +147,7 @@ class CreateBookingAPI(APIView):
         normal_price = pricing.normal_day_price
         weekend_price = pricing.weekend_price
         extra_price = pricing.extra_guest_price
-        sale_price = pricing.sale_price
+        # sale_price = pricing.sale_price
 
 # 
         ###################################
@@ -198,33 +190,28 @@ class CreateBookingAPI(APIView):
                 status=400
             )
 
-
-
         sub_total = Decimal("0.00")
 
-        while start < end:
-            if sale_price and sale_price > 0:
+        current_date = start
 
-                sub_total += sale_price
+        while current_date < end:
 
-            else:
+            # ✅ NEW: OFFER + WEEKEND + NORMAL
+            day_price = farmhouse.get_price_by_date(current_date)
 
-                # Saturday=5, Sunday=6
-                if start.weekday() in [5, 6]:
-                    sub_total += weekend_price
-                else:
-                    sub_total += normal_price
+            sub_total += Decimal(day_price)
 
-            start += timedelta(days=1)
-            # Saturday=5, Sunday=6
-            # if start.weekday() in [5, 6]:
-            #     sub_total += weekend_price
-            # else:
-            #     sub_total += normal_price
+            current_date += timedelta(days=1)
 
-            # start += timedelta(days=1)
 
-        sub_total += extra_guest_count * extra_price
+        # ✅ EXTRA GUEST (PER NIGHT)
+        nights = (end - datetime.strptime(check_in, "%Y-%m-%d")).days
+
+        sub_total += (
+            Decimal(extra_guest_count)
+            * pricing.extra_guest_price
+            * nights
+        )
 
 
         ############################################
@@ -269,18 +256,6 @@ class CreateBookingAPI(APIView):
         discount = Decimal("0.00")
         coupon_obj = None
 
-        # if coupon_code:
-
-        #     coupon = Coupon.objects.filter(
-        #         code__iexact=coupon_code,
-        #         is_active=True
-        #     ).first()
-
-        #     if coupon and coupon.is_valid():
-
-        #         if sub_total >= coupon.min_booking_amount:
-        #             discount = coupon.calculate_discount(sub_total)
-        #             coupon_obj = coupon
         if coupon_id:
 
             coupon_obj = Coupon.objects.filter(
@@ -479,6 +454,13 @@ class CreateBookingAPI(APIView):
         ################################
         # RAZORPAY
         ################################
+        
+        if booking.total_amount <= 0:
+            return Response({"error": "Invalid amount"}, status=400)
+
+        if booking.total_amount < 2:
+            return Response({"error": "Minimum ₹2 required"}, status=400)
+
         payable_amount = booking.total_amount
 
         if booking.payment_method == "partial_razorpay":
@@ -489,8 +471,8 @@ class CreateBookingAPI(APIView):
             amount = int(payable_amount * 100)
         
         else:
-            # amount = int(booking.total_amount * 100)
-            amount = int(booking.total_amount.quantize(Decimal("1"))) * 100
+            amount = int(booking.total_amount * 100)
+            # amount = int(booking.total_amount.quantize(Decimal("1"))) * 100
 
         order = client.order.create({
             "amount": amount,
@@ -502,12 +484,19 @@ class CreateBookingAPI(APIView):
         booking.save()
 
         return Response({
-            "user": user,
+            # "user": user,
+            # "user": user.id,
+            "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "name": user.first_name
+                },
             "key": settings.RAZORPAY_KEY_ID,
             "amount": amount,
             "order_id": order["id"],
             "booking_id": booking.id,
-            "wallet_used": booking.wallet_used
+            # "wallet_used": booking.wallet_used
+            "wallet_used": float(booking.wallet_used or 0)
         })
 
 

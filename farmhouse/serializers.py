@@ -101,7 +101,7 @@ class FarmhousePricingSerializer(serializers.ModelSerializer):
         model = FarmhousePricing
         fields = "__all__"
 
-
+from datetime import date
 class FarmhouseSerializer(serializers.ModelSerializer):
     pricing = FarmhousePricingSerializer(read_only=True)
         # 🔥 THIS IS THE KEY LINE
@@ -121,6 +121,10 @@ class FarmhouseSerializer(serializers.ModelSerializer):
     average_rating = serializers.SerializerMethodField()
     total_reviews = serializers.SerializerMethodField()
     ratings = serializers.SerializerMethodField()
+    
+    
+    dynamic_price = serializers.SerializerMethodField()
+    current_offer = serializers.SerializerMethodField()
     class Meta:
         model = Farmhouse
         fields = [
@@ -155,7 +159,44 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             "total_reviews",
             "ratings",
             
+            "dynamic_price",
+"current_offer",
+            
         ]
+        
+    # def get_dynamic_price(self, obj):
+    #     return obj.get_price_by_date(date.today())
+
+    def get_dynamic_price(self, obj):
+
+        today = date.today()
+
+        offer = obj.offers.filter(
+            start_date__lte=today,
+            end_date__gte=today,
+            is_sale=True
+        ).first()
+
+        if offer:
+            return float(offer.price)
+
+        return 0
+    def get_current_offer(self, obj):
+
+        offer = obj.offers.filter(
+            start_date__lte=date.today(),
+            end_date__gte=date.today()
+        ).first()
+
+        if offer:
+            return {
+                "title": offer.title,
+                "price": offer.price,
+                "start_date": offer.start_date,   # ✅ ADD
+                "end_date": offer.end_date        # ✅ ADD
+            }
+
+        return None
 
     # def get_primary_image(self, obj):
     #     image = obj.images.filter(is_primary=True).first()

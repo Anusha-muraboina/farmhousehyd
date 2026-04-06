@@ -230,10 +230,21 @@ height:300px;
 }
 
 
-{% comment %} /* ⭐ FIX CALENDAR CELL */
+
+
+
+
+
+
+
+{% comment %} .flatpickr-calendar {
+    width: 100% !important;
+    max-width: 420px;   /* desktop */
+} {% endcomment %}
+{% comment %} 
 .flatpickr-day {
-    height: 60px !important;
-    max-width: 60px;
+    height: 65px !important;
+    max-width: 65px;
     display: flex !important;
     flex-direction: column;
     align-items: center;
@@ -241,25 +252,20 @@ height:300px;
     line-height: 1.2;
 }
 
-/* DATE NUMBER */
-.flatpickr-day span.day-number {
+/* DATE */
+.day-number {
     font-size: 14px;
     font-weight: 600;
 }
 
-/* PRICE TEXT */
+/* PRICE BELOW */
 .day-price {
     font-size: 11px;
     color: #16a34a;
     margin-top: 2px;
-}
-
-
-/* DISABLED DATES */
-.flatpickr-day.flatpickr-disabled .day-price {
-    color: #ccc;
-    text-decoration: line-through;
 } {% endcomment %}
+
+
 
 
 
@@ -1408,20 +1414,58 @@ Book Now
                 </p>
             </div>
         </div>
-${farmhouse.pricing.sale_price > 0
+{% comment %} ${farmhouse.dynamic_price > 0
                 ? `
 <div class="flex items-center gap-3 p-4 bg-green-50 rounded-xl border border-green-200 col-span-2">
     <i data-lucide="badge-percent" class="w-6 h-6 text-green-600"></i>
     <div>
-        <p class="text-sm text-gray-500">Sale Price</p>
+        <p class="text-sm text-gray-500">Price</p>
         <p class="font-bold text-2xl text-green-600">
-            ₹${Number(farmhouse.pricing.sale_price).toLocaleString()}
+             ₹${Number(farmhouse.dynamic_price || 0).toLocaleString()}
         </p>
     </div>
 </div>
 `
                 : ""
-            }
+            } {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+${farmhouse.dynamic_price > 0
+    ? `
+<div class="flex items-center gap-3 p-4 bg-green-50 rounded-xl border border-green-200 col-span-2">
+    <i data-lucide="badge-percent" class="w-6 h-6 text-green-600"></i>
+
+    <div>
+        {% comment %} <p class="text-sm text-gray-500">Offer Price</p> {% endcomment %}
+
+        <!-- OFFER PRICE -->
+        <p class="font-bold text-2xl text-green-600">
+            ₹${Number(farmhouse.dynamic_price).toLocaleString()}
+        </p>
+
+        <!-- OFFER TITLE -->
+        <p class="text-xs text-red-500 font-semibold">
+            ${farmhouse.current_offer?.title || "Special Offer"} 
+        </p>
+    </div>
+</div>
+`
+    : ""
+}
+
+
+
+
+
 
         <!-- Weekday Price -->
         <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
@@ -1841,11 +1885,12 @@ Similar Farmhouses
 
 ${similarFarmhouses.map(f => {
 
-const sale = Number(f.pricing?.sale_price || 0);
+{% comment %} const sale = Number(f.pricing?.sale_price || 0); {% endcomment %}
+const displayPrice = Number(f.dynamic_price || 0);
 const weekday = Number(f.pricing?.normal_day_price || 0);
 const weekend = Number(f.pricing?.weekend_price || 0);
 
-let displayPrice = sale > 0 ? sale : Math.min(weekday, weekend);
+{% comment %} let displayPrice = sale > 0 ? sale : Math.min(weekday, weekend); {% endcomment %}
 
 return `
 
@@ -2168,7 +2213,7 @@ async function initFlatpickr() {
 
                 const date = dayElem.dateObj;
 
-                let sale = Number(farmhouse.pricing.sale_price || 0);
+                let sale = Number(farmhouse.dynamic_price || 0);
                 let normal = Number(farmhouse.pricing.normal_day_price || 0);
                 let weekend = Number(farmhouse.pricing.weekend_price || 0);
 
@@ -2201,7 +2246,9 @@ async function initFlatpickr() {
                 // Append properly
                 dayElem.appendChild(dateEl);
                 dayElem.appendChild(priceEl);
-            }, {% endcomment %}
+            },  {% endcomment %}
+
+
 
 
 
@@ -2239,7 +2286,7 @@ async function initFlatpickr() {
 
             const date = dayElem.dateObj;
 
-            let sale = Number(farmhouse.pricing.sale_price || 0);
+            let sale = Number(farmhouse.dynamic_price || 0);
             let normal = Number(farmhouse.pricing.normal_day_price || 0);
             let weekend = Number(farmhouse.pricing.weekend_price || 0);
 
@@ -2270,13 +2317,8 @@ async function initFlatpickr() {
 
             dayElem.appendChild(dateEl);
             dayElem.appendChild(priceEl);
-        },
- {% endcomment %}
-
-
-
-
-
+        }, {% endcomment %}
+ 
 
 
 
@@ -2418,7 +2460,135 @@ async function initFlatpickr() {
     function calculateTotal() {
 
         if (!check_in.value || !check_out.value) return;
-        let sale = Number(farmhouse.pricing.sale_price || 0);
+
+        //////////////////////////////////////////////////
+        // ✅ OFFER PRICE (dynamic_price)
+        //////////////////////////////////////////////////
+        let offerPrice = Number(farmhouse.dynamic_price || 0);
+
+        //////////////////////////////////////////////////
+        // ✅ BASE PRICES
+        //////////////////////////////////////////////////
+        let normal = Number(farmhouse.pricing.normal_day_price || 0);
+        let weekend = Number(farmhouse.pricing.weekend_price || 0);
+        let extra = Number(farmhouse.pricing.extra_guest_price || 0);
+
+        let start = new Date(check_in.value);
+        let end = new Date(check_out.value);
+
+        subTotal = 0;
+
+        //////////////////////////////////////////////////
+        // ✅ LOOP EACH DAY
+        //////////////////////////////////////////////////
+        while (start < end) {
+
+            const day = start.getDay();
+
+            // ✅ BASE PRICE (weekday/weekend)
+            let basePrice =
+                (day === 0 || day === 6)
+                    ? weekend
+                    : normal;
+
+            let priceForDay = basePrice;
+
+            //////////////////////////////////////////////////
+            // ⭐ APPLY OFFER (PRIORITY)
+            //////////////////////////////////////////////////
+
+            // ✅ FIXED OFFER PRICE (your current system)
+            if (offerPrice > 0) {
+                priceForDay = offerPrice;
+            }
+
+            // ✅ FUTURE: % DISCOUNT SUPPORT
+            else if (farmhouse.current_offer?.discount_percent) {
+                priceForDay =
+                    basePrice - (basePrice * farmhouse.current_offer.discount_percent / 100);
+            }
+
+            // ✅ FUTURE: FIXED DISCOUNT
+            else if (farmhouse.current_offer?.discount_amount) {
+                priceForDay =
+                    basePrice - farmhouse.current_offer.discount_amount;
+            }
+
+            //////////////////////////////////////////////////
+            // ✅ SAFETY (no negative values)
+            //////////////////////////////////////////////////
+            priceForDay = Math.max(priceForDay, 0);
+
+            subTotal += priceForDay;
+
+            start.setDate(start.getDate() + 1);
+        }
+
+        //////////////////////////////////////////////////
+        // ✅ EXTRA GUEST (PER NIGHT)
+        //////////////////////////////////////////////////
+        let nights = Math.ceil(
+            (new Date(check_out.value) - new Date(check_in.value)) 
+            / (1000 * 60 * 60 * 24)
+        );
+
+        subTotal += Number(extra_guest_count.value || 0) * extra * nights;
+
+        //////////////////////////////////////////////////
+        // ✅ COUPON
+        //////////////////////////////////////////////////
+        let totalAfterCoupon = Math.max(subTotal - couponDiscount, 0);
+
+        //////////////////////////////////////////////////
+        // ✅ WALLET
+        //////////////////////////////////////////////////
+        let walletUsed = 0;
+
+        if (walletApplied) {
+            walletUsed = Math.min(walletBalance, totalAfterCoupon);
+        }
+
+        //////////////////////////////////////////////////
+        // ✅ FINAL TOTAL
+        //////////////////////////////////////////////////
+        finalTotal = Math.max(totalAfterCoupon - walletUsed, 0);
+
+        //////////////////////////////////////////////////
+        // ✅ UPDATE UI
+        //////////////////////////////////////////////////
+        const walletEl = document.getElementById("wallet_used");
+        if (walletEl) {
+            walletEl.innerText = walletUsed.toFixed(2);
+        }
+
+        //////////////////////////////////////////////////
+        // DEBUG
+        //////////////////////////////////////////////////
+        console.log("Subtotal:", subTotal);
+        console.log("Final:", finalTotal);
+
+        //////////////////////////////////////////////////
+        // UPDATE UI
+        //////////////////////////////////////////////////
+        fillReview();
+        updatePayment();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    {% comment %} function calculateTotal() {
+
+        if (!check_in.value || !check_out.value) return;
+        let sale = Number(farmhouse.dynamic_price || 0); 
         let normal = Number(farmhouse.pricing.normal_day_price || 0);
         let weekend = Number(farmhouse.pricing.weekend_price || 0);
         let extra = Number(farmhouse.pricing.extra_guest_price || 0);
@@ -2501,7 +2671,7 @@ async function initFlatpickr() {
         // ⭐ ADD THIS (you forgot earlier)
         fillReview();
         updatePayment();
-    }
+    } {% endcomment %}
 
 //////////////////////////////////////////////////
 

@@ -178,23 +178,42 @@ class Farmhouse(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+    # def get_price_by_date(self, date):
+    #     """
+    #     date → datetime.date
+    #     """
+    #     pricing = self.pricing
+
+    # #  SALE PRICE ALWAYS WINS
+    #     if pricing.sale_price and pricing.sale_price > 0:
+    #         return pricing.sale_price
+
+    #     weekday = date.weekday()  # Monday=0, Sunday=6
+
+    #     if weekday >= 5:  # Saturday, Sunday
+    #         return self.pricing.weekend_price
+
+    #     return self.pricing.normal_day_price
     def get_price_by_date(self, date):
-        """
-        date → datetime.date
-        """
+
+        # ✅ 1. CHECK OFFER FIRST
+        offer = self.offers.filter(
+            start_date__lte=date,
+            end_date__gte=date
+        ).order_by("-is_sale", "price").first()
+
+        if offer:
+            return offer.price
+
+        # ✅ 2. FALLBACK TO NORMAL PRICING
         pricing = self.pricing
 
-    #  SALE PRICE ALWAYS WINS
-        if pricing.sale_price and pricing.sale_price > 0:
-            return pricing.sale_price
+        weekday = date.weekday()
 
-        weekday = date.weekday()  # Monday=0, Sunday=6
+        if weekday >= 5:
+            return pricing.weekend_price
 
-        if weekday >= 5:  # Saturday, Sunday
-            return self.pricing.weekend_price
-
-        return self.pricing.normal_day_price
-    
+        return pricing.normal_day_price
     def get_location(self, obj):
         if obj.location:
             return {
@@ -313,7 +332,6 @@ class FarmhousePricing(models.Model):
 
     def __str__(self):
         return f"{self.farmhouse.title} Pricing"
-
 
 
 

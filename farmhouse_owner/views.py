@@ -1362,11 +1362,6 @@ def owner_payment_policy_delete(request, pk):
 
 
 
-
-
-
-
-
 @owner_required
 def owner_booking_create(request):
 
@@ -1425,18 +1420,24 @@ def owner_booking_create(request):
 
             subtotal = Decimal("0.00")
 
+
             while start < end:
-
-                if pricing.sale_price and pricing.sale_price > 0:
-                    subtotal += pricing.sale_price
-
-                elif start.weekday() in [5, 6]:
-                    subtotal += pricing.weekend_price
-
-                else:
-                    subtotal += pricing.normal_day_price
-
+                subtotal += farmhouse.get_price_by_date(start)
                 start += timedelta(days=1)
+                
+                
+            # while start < end:
+
+            #     if pricing.sale_price and pricing.sale_price > 0:
+            #         subtotal += pricing.sale_price
+
+            #     elif start.weekday() in [5, 6]:
+            #         subtotal += pricing.weekend_price
+
+            #     else:
+            #         subtotal += pricing.normal_day_price
+
+            #     start += timedelta(days=1)
 
             ########################################
             # EXTRA GUEST
@@ -1563,7 +1564,7 @@ def owner_booking_create(request):
 
 @owner_required
 def owner_booking_update(request, pk):
-
+    
     booking = get_object_or_404(Booking, pk=pk , farmhouse__user=request.user)
 
     old_status = booking.status
@@ -1587,12 +1588,12 @@ def owner_booking_update(request, pk):
                         request
                     )
                 )
-
+                
             messages.success(
                 request,
                 "Booking updated!"
             )
-
+            
             return redirect("admin-bookings")
 
     else:
@@ -1607,7 +1608,6 @@ def owner_booking_update(request, pk):
 
 @owner_required
 def owner_booking_cancel(request, pk):
-
     booking = get_object_or_404(Booking, pk=pk , farmhouse__user=request.user)
 
     try:
@@ -1617,9 +1617,7 @@ def owner_booking_cancel(request, pk):
             request,
             "Booking cancelled successfully!"
         )
-
     except Exception as e:
-
         messages.error(request, str(e))
 
     return redirect("owner-bookings")
@@ -1663,19 +1661,26 @@ def owner_calculate_booking_price(request):
 
     subtotal = Decimal("0.00")
 
+
+
     while start < end:
-
-        # ⭐ SALE FIRST
-        if pricing.sale_price and pricing.sale_price > 0:
-            subtotal += pricing.sale_price
-
-        elif start.weekday() in [5, 6]:
-            subtotal += pricing.weekend_price
-
-        else:
-            subtotal += pricing.normal_day_price
-
+        subtotal += farmhouse.get_price_by_date(start)
         start += timedelta(days=1)
+        
+        
+    # while start < end:
+
+    #     # ⭐ SALE FIRST
+    #     if pricing.sale_price and pricing.sale_price > 0:
+    #         subtotal += pricing.sale_price
+
+    #     elif start.weekday() in [5, 6]:
+    #         subtotal += pricing.weekend_price
+
+    #     else:
+    #         subtotal += pricing.normal_day_price
+
+    #     start += timedelta(days=1)
 
     ###################################
     # EXTRA GUEST
@@ -1701,7 +1706,7 @@ def owner_calculate_booking_price(request):
 
     # total = subtotal - discount
     
-        # =========================
+    # =========================
     # COUPON
     # =========================
     coupon_discount = Decimal("0.00")
@@ -1778,3 +1783,68 @@ def owner_view_invoice(request, booking_id):
             "invoice": invoice
         }
     )
+
+
+
+
+
+
+@owner_required
+def owner_offer_list(request):
+    offers = FarmhouseOfferPricing.objects.filter(
+        farmhouse__user=request.user
+    ).order_by("-id")
+
+    return render(request, "farmhouse_admin/offers/list.html", {"offers": offers})
+
+
+@owner_required
+def owner_offer_create(request):
+
+    form = FarmhouseOfferForm(request.POST or None)
+
+    # limit farmhouse to owner
+    form.fields["farmhouse"].queryset = Farmhouse.objects.filter(user=request.user)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Offer created successfully!")
+        return redirect("owner_offer_list")
+
+    return render(request, "farmhouse_admin/offers/form.html", {"form": form})
+
+
+@owner_required
+def owner_offer_update(request, pk):
+
+    offer = get_object_or_404(
+        FarmhouseOfferPricing,
+        pk=pk,
+        farmhouse__user=request.user
+    )
+
+    form = FarmhouseOfferForm(request.POST or None, instance=offer)
+
+    form.fields["farmhouse"].queryset = Farmhouse.objects.filter(user=request.user)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Offer updated!")
+        return redirect("owner_offer_list")
+
+    return render(request, "farmhouse_admin/offers/form.html", {"form": form})
+
+
+@owner_required
+def owner_offer_delete(request, pk):
+
+    offer = get_object_or_404(
+        FarmhouseOfferPricing,
+        pk=pk,
+        farmhouse__user=request.user
+    )
+
+    offer.delete()
+
+    messages.success(request, "Offer deleted!")
+    return redirect("owner_offer_list")

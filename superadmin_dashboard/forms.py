@@ -1058,3 +1058,25 @@ class WalletForm(forms.ModelForm):
                 "class": "form-control"
             }),
         }
+        
+        
+        
+        
+class FarmhouseOfferForm(forms.ModelForm):
+    class Meta:
+        model = FarmhouseOfferPricing
+        fields = ["farmhouse", "title", "start_date", "end_date", "price"]
+
+        widgets = {
+            "farmhouse": forms.Select(attrs={"class": "form-select"}),
+            "title": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter offer title"
+            }),
+            "start_date": forms.HiddenInput(),   # 👈 hidden
+            "end_date": forms.HiddenInput(),     # 👈 hidden
+            "price": forms.NumberInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter price"
+            }),
+        }
