@@ -15,7 +15,7 @@ from rest_framework.permissions import IsAuthenticated
 from wallet.models import Wallet, WalletHistory
 from django.urls import reverse
 from django.http import JsonResponse
-
+from decimal import Decimal, ROUND_HALF_UP
 from booking.models import *
 from booking.serializers import *
 from rest_framework.authentication import BasicAuthentication
@@ -285,11 +285,17 @@ class CreateBookingAPI(APIView):
                 )
 
             discount = coupon_obj.calculate_discount(sub_total)
-
+            discount = Decimal(discount).quantize(
+                Decimal("0.01"),
+                rounding=ROUND_HALF_UP
+            )
         ###################################
         total_amount = max(sub_total - discount, Decimal("0.00"))
         
-
+        total_amount = total_amount.quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
         # ###################################
         # # APPLY WALLET AFTER BOOKING SAVE
         # ###################################
@@ -325,8 +331,10 @@ class CreateBookingAPI(APIView):
         ###################################
 
         data["sub_total"] = sub_total
-        data["disc_price"] = discount
-        data["total_amount"] = total_amount
+        # data["disc_price"] = discount
+        data["disc_price"] = str(discount)   # serializer safe
+        # data["total_amount"] = total_amount
+        data["total_amount"] = str(total_amount)
         # data["wallet_used"] = wallet_used
         data["coupon_applied"] = coupon_obj.id if coupon_obj else None
         ###################################
