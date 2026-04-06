@@ -32,8 +32,8 @@ class StaticSitemap(Sitemap):
 ####################################################
 class FarmhouseSitemap(Sitemap):
 
-    # def items(self):
-    #     return Farmhouse.objects.filter(is_active=True, is_deleted=False)
+    def items(self):
+        return Farmhouse.objects.filter(is_active=True, is_deleted=False)
 
     def location(self, obj):
         return reverse(
@@ -48,8 +48,8 @@ class BlogSitemap(Sitemap):
     changefreq = "weekly"
     priority = 0.9
 
-    # def items(self):
-    #     return Blog.objects.filter(is_published=True)
+    def items(self):
+        return Blog.objects.filter(is_published=True)
 
     def lastmod(self, obj):
         return getattr(obj, "updated_at", obj.published_at)

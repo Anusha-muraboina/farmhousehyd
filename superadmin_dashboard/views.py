@@ -3082,7 +3082,7 @@ def wallet_update(request, pk):
         messages.success(request, "Wallet updated successfully ✅")
         return redirect("wallet_list")
 
-    return render(request, "admin/wallet_form.html", {"form": form})
+    return render(request, "superadmin/wallet_form.html", {"form": form})
 
 
 # DELETE (NO TEMPLATE)
@@ -3092,3 +3092,72 @@ def wallet_delete(request, pk):
 
     messages.success(request, "Wallet deleted successfully ✅")
     return redirect("wallet_list")
+
+
+
+
+
+
+
+@superadmin_required
+def admin_offer_list(request):
+    offers = FarmhouseOfferPricing.objects.all().order_by("-id")
+    # offers = FarmhouseOfferPricing.objects.filter(
+    #     farmhouse__user=request.user
+    # ).order_by("-id")
+
+    return render(request, "superadmin/offers/list.html", {"offers": offers})
+
+
+@superadmin_required
+def admin_offer_create(request):
+
+    form = FarmhouseOfferForm(request.POST or None)
+
+    # limit farmhouse to owner
+    # form.fields["farmhouse"].queryset = Farmhouse.objects.filter(user=request.user)
+    form.fields["farmhouse"].queryset = Farmhouse.objects.all()
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Offer created successfully!")
+        return redirect("owner_offer_list")
+
+    return render(request, "superadmin/offers/form.html", {"form": form})
+
+
+@superadmin_required
+def admin_offer_update(request, pk):
+
+    offer = get_object_or_404(
+        FarmhouseOfferPricing,
+        pk=pk,
+        # farmhouse__user=request.user
+    )
+
+    form = FarmhouseOfferForm(request.POST or None, instance=offer)
+
+    # form.fields["farmhouse"].queryset = Farmhouse.objects.filter(user=request.user)
+    form.fields["farmhouse"].queryset = Farmhouse.objects.all()
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Offer updated!")
+        return redirect("admin_offer_list")
+
+    return render(request, "superadmin/offers/form.html", {"form": form})
+
+@superadmin_required
+def admin_offer_delete(request, pk):
+
+    offer = get_object_or_404(
+        FarmhouseOfferPricing,
+        pk=pk,
+        # farmhouse__user=request.user
+    )
+
+    offer.delete()
+
+    messages.success(request, "Offer deleted!")
+    return redirect("admin_offer_list")
+

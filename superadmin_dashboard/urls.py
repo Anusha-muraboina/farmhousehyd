@@ -210,5 +210,13 @@ urlpatterns = [
     path("wallets/<int:pk>/edit/", views.wallet_update, name="wallet_update"),
     path("wallets/<int:pk>/delete/", views.wallet_delete, name="wallet_delete"),
     
+    
+    
+    path("admin_offers/", views.admin_offer_list, name="admin_offer_list"),
+    path("admin_offers/add/", views.admin_offer_create, name="admin_offer_create"),
+    path("admin_offers/<int:pk>/edit/", views.admin_offer_update, name="admin_offer_update"),
+    path("admin_offers/<int:pk>/delete/", views.admin_offer_delete, name="admin_offer_delete"),
+    
+
 
 ]
