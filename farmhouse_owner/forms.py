@@ -8,7 +8,7 @@ from booking.models import BlockedDate ,Booking
 from django import forms
 from farmhouse.models import Farmhouse 
 from booking.models import FarmhousePaymentPolicy
-
+import json
 INPUT_CLASS = (
     "w-full px-4 py-3 border border-gray-300 rounded-xl "
     "bg-white text-gray-800 "
@@ -56,7 +56,14 @@ class FarmhouseImageForm(forms.ModelForm):
         }
         
 class FarmhouseForm(forms.ModelForm):
-
+    weekend_days = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": "[5,6] (Sat, Sun)"
+        }),
+        help_text="Enter like [5,6] for Sat & Sun"
+    )
     class Meta:
         model = Farmhouse
         exclude = ("user", "slug", "created_at")
@@ -126,6 +133,9 @@ class FarmhouseForm(forms.ModelForm):
                 "class": "form-check-input"
             }),
             
+            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "is_featured": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            
                         # ✅ Slot Position
             "Slot_position": forms.NumberInput(attrs={
                 "class": "form-control",
@@ -141,7 +151,24 @@ class FarmhouseForm(forms.ModelForm):
             ),
             
         }
+    def clean_weekend_days(self):
+        data = self.cleaned_data.get("weekend_days")
 
+        if not data:
+            return [5, 6]  # default
+
+        try:
+            parsed = json.loads(data)
+
+            if not isinstance(parsed, list):
+                raise forms.ValidationError("Must be a list like [5,6]")
+
+            return [int(x) for x in parsed]
+
+        except Exception:
+            raise forms.ValidationError("Invalid format. Example: [5,6]")
+        
+        
 
 from django import forms
 from coupon.models import Coupon

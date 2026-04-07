@@ -154,6 +154,11 @@ class Farmhouse(models.Model):
         max_digits=10,
         decimal_places=2
     )
+    weekend_days = models.JSONField(
+    default=list,
+    blank=True,
+    help_text="Example: [5,6] for Fri & Sat"
+    )
     
     Slot_position = models.PositiveIntegerField(blank=True,null=True)
     meta_title = models.CharField(max_length=255,blank=True,help_text="SEO title for search engines")
@@ -208,12 +213,20 @@ class Farmhouse(models.Model):
         # ✅ 2. FALLBACK TO NORMAL PRICING
         pricing = self.pricing
 
-        weekday = date.weekday()
+        day = date.weekday()
+        weekend_days = self.weekend_days or [5,6]  # default
 
-        if weekday >= 5:
+        if day in weekend_days:
             return pricing.weekend_price
 
         return pricing.normal_day_price
+        # weekday = date.weekday()
+        # if weekday >= 5:
+        #     return pricing.weekend_price
+
+        # return pricing.normal_day_price
+    
+    
     def get_location(self, obj):
         if obj.location:
             return {

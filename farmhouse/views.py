@@ -458,156 +458,6 @@ def BlogDetail(request):
 
 
 
-# class HomeAPIView(APIView):
-#     authentication_classes = [BasicAuthentication]
-#     permission_classes = [AllowAny]
-
-#     def get(self, request):
-#         banners = Banner.objects.filter(is_active=True).order_by("Slot_position")
-#         locations = Location.objects.filter(is_active=True)
-#         farmhouses = Farmhouse.objects.filter(is_active=True)
-#         # farmhouses = Farmhouse.objects.filter(is_active=True).order_by("slot_position")
-#         services = Choos_Services.objects.filter(is_active = True)
-#         ourfacility = OurFacility.objects.filter(is_active = True)
-#         know_whoweare = AboutWhoWeAre.objects.filter(is_active = True)
-#         selected_location = request.GET.get("location")
-
-
-#         search = request.GET.get("search")
-
-#         # location filter
-#         if selected_location:
-#             farmhouses = farmhouses.filter(location__slug=selected_location)
-
-
-
-#                # create unique cache key based on filters
-#         cache_key = f"home_page_data_{selected_location}_{search}"
-
-#         cached_data = cache.get(cache_key)
-
-#         if cached_data:
-#             return Response(cached_data)
-
-#         # search filter
-#         if search:
-            
-#             farmhouses = farmhouses.filter(
-#                 Q(title__icontains=search) |
-#                 Q(location__name__icontains=search)
-#             )
-
-#         # if selected_location:
-#         #     farmhouses = farmhouses.filter(location__slug=selected_location)
-
-#         latest_blogs = Blog.objects.filter(
-#             is_published=True
-#         ).order_by("-published_at")[:3]
-
-#         farmhouses = farmhouses.order_by("-created_at")[:9]
-
-#         return Response({
-#             "banners": BannerSerializer(banners, many=True , context={"request": request}).data,
-#             "locations": LocationSerializer(locations, many=True).data,
-#             "farmhouses": FarmhouseSerializer(farmhouses, many=True , context={"request": request}).data,
-#             "services" : ChooseServicesSerializer(services ,many=True , context={"request": request}).data,
-#             "ourfacility" : OurFacilitySerializer(ourfacility ,many= True , context={"request": request}).data,
-#             "know_whoweare" : AboutWhoWeAreSerializer(know_whoweare,many = True , context={"request": request}).data,
-#             "latest_blogs": BlogSerializer(latest_blogs, many=True , context={"request": request}).data,
-#             "selected_location": selected_location
-#         })
-        
-        
-
-# from django.core.cache import cache
-# from farmhouse.serializers import HomePopupSerializer
-
-# class HomeAPIView(APIView):
-#     authentication_classes = [BasicAuthentication]
-#     permission_classes = [AllowAny]
-
-#     def get(self, request):
-
-
-#         selected_location = request.GET.get("location")
-#         search = request.GET.get("search")
-
-#         # create unique cache key based on filters
-#         cache_key = f"home_page_data_{selected_location}_{search}"
-
-#         cached_data = cache.get(cache_key)
-
-#         if cached_data:
-#             return Response(cached_data)
-
-#         banners = Banner.objects.filter(is_active=True).order_by("Slot_position")
-#         locations = Location.objects.filter(is_active=True)
-#         farmhouses = Farmhouse.objects.filter(is_active=True)
-#         services = Choos_Services.objects.filter(is_active=True)
-#         ourfacility = OurFacility.objects.filter(is_active=True)
-#         know_whoweare = AboutWhoWeAre.objects.filter(is_active=True)
-        
-#         popup = HomePopup.objects.filter(is_active=True).first()
-        
-#         # location filter
-#         if selected_location:
-#             farmhouses = farmhouses.filter(location__slug=selected_location)
-
-#         # search filter
-#         if search:
-#             farmhouses = farmhouses.filter(
-#                 Q(title__icontains=search) |
-#                 Q(location__name__icontains=search)
-#             )
-
-#         latest_blogs = Blog.objects.filter(
-#             is_published=True
-#         ).order_by("-published_at")[:3]
-
-#         farmhouses = farmhouses.order_by("-created_at")[:6]
-
-#         data = {
-#            "popup": HomePopupSerializer(
-#                 popup,
-#                 context={"request": request}
-#             ).data if popup else None,
-
-#             "banners": BannerSerializer(
-#                 banners, many=True, context={"request": request}
-#             ).data,
-
-#             "locations": LocationSerializer(
-#                 locations, many=True
-#             ).data,
-
-#             "farmhouses": FarmhouseSerializer(
-#                 farmhouses, many=True, context={"request": request}
-#             ).data,
-
-#             "services": ChooseServicesSerializer(
-#                 services, many=True, context={"request": request}
-#             ).data,
-
-#             "ourfacility": OurFacilitySerializer(
-#                 ourfacility, many=True, context={"request": request}
-#             ).data,
-
-#             "know_whoweare": AboutWhoWeAreSerializer(
-#                 know_whoweare, many=True, context={"request": request}
-#             ).data,
-
-#             "latest_blogs": BlogSerializer(
-#                 latest_blogs, many=True, context={"request": request}
-#             ).data,
-
-#             "selected_location": selected_location
-#         }
-
-
-#         # store in redis cache (5 minutes)
-#         cache.set(cache_key, data, 60 * 5)
-
-#         return Response(data)
 
 
 from django.db.models import Q
@@ -804,3 +654,153 @@ class AboutAPIView(APIView):
 
 
 
+# class HomeAPIView(APIView):
+#     authentication_classes = [BasicAuthentication]
+#     permission_classes = [AllowAny]
+
+#     def get(self, request):
+#         banners = Banner.objects.filter(is_active=True).order_by("Slot_position")
+#         locations = Location.objects.filter(is_active=True)
+#         farmhouses = Farmhouse.objects.filter(is_active=True)
+#         # farmhouses = Farmhouse.objects.filter(is_active=True).order_by("slot_position")
+#         services = Choos_Services.objects.filter(is_active = True)
+#         ourfacility = OurFacility.objects.filter(is_active = True)
+#         know_whoweare = AboutWhoWeAre.objects.filter(is_active = True)
+#         selected_location = request.GET.get("location")
+
+
+#         search = request.GET.get("search")
+
+#         # location filter
+#         if selected_location:
+#             farmhouses = farmhouses.filter(location__slug=selected_location)
+
+
+
+#                # create unique cache key based on filters
+#         cache_key = f"home_page_data_{selected_location}_{search}"
+
+#         cached_data = cache.get(cache_key)
+
+#         if cached_data:
+#             return Response(cached_data)
+
+#         # search filter
+#         if search:
+            
+#             farmhouses = farmhouses.filter(
+#                 Q(title__icontains=search) |
+#                 Q(location__name__icontains=search)
+#             )
+
+#         # if selected_location:
+#         #     farmhouses = farmhouses.filter(location__slug=selected_location)
+
+#         latest_blogs = Blog.objects.filter(
+#             is_published=True
+#         ).order_by("-published_at")[:3]
+
+#         farmhouses = farmhouses.order_by("-created_at")[:9]
+
+#         return Response({
+#             "banners": BannerSerializer(banners, many=True , context={"request": request}).data,
+#             "locations": LocationSerializer(locations, many=True).data,
+#             "farmhouses": FarmhouseSerializer(farmhouses, many=True , context={"request": request}).data,
+#             "services" : ChooseServicesSerializer(services ,many=True , context={"request": request}).data,
+#             "ourfacility" : OurFacilitySerializer(ourfacility ,many= True , context={"request": request}).data,
+#             "know_whoweare" : AboutWhoWeAreSerializer(know_whoweare,many = True , context={"request": request}).data,
+#             "latest_blogs": BlogSerializer(latest_blogs, many=True , context={"request": request}).data,
+#             "selected_location": selected_location
+#         })
+        
+        
+
+# from django.core.cache import cache
+# from farmhouse.serializers import HomePopupSerializer
+
+# class HomeAPIView(APIView):
+#     authentication_classes = [BasicAuthentication]
+#     permission_classes = [AllowAny]
+
+#     def get(self, request):
+
+
+#         selected_location = request.GET.get("location")
+#         search = request.GET.get("search")
+
+#         # create unique cache key based on filters
+#         cache_key = f"home_page_data_{selected_location}_{search}"
+
+#         cached_data = cache.get(cache_key)
+
+#         if cached_data:
+#             return Response(cached_data)
+
+#         banners = Banner.objects.filter(is_active=True).order_by("Slot_position")
+#         locations = Location.objects.filter(is_active=True)
+#         farmhouses = Farmhouse.objects.filter(is_active=True)
+#         services = Choos_Services.objects.filter(is_active=True)
+#         ourfacility = OurFacility.objects.filter(is_active=True)
+#         know_whoweare = AboutWhoWeAre.objects.filter(is_active=True)
+        
+#         popup = HomePopup.objects.filter(is_active=True).first()
+        
+#         # location filter
+#         if selected_location:
+#             farmhouses = farmhouses.filter(location__slug=selected_location)
+
+#         # search filter
+#         if search:
+#             farmhouses = farmhouses.filter(
+#                 Q(title__icontains=search) |
+#                 Q(location__name__icontains=search)
+#             )
+
+#         latest_blogs = Blog.objects.filter(
+#             is_published=True
+#         ).order_by("-published_at")[:3]
+
+#         farmhouses = farmhouses.order_by("-created_at")[:6]
+
+#         data = {
+#            "popup": HomePopupSerializer(
+#                 popup,
+#                 context={"request": request}
+#             ).data if popup else None,
+
+#             "banners": BannerSerializer(
+#                 banners, many=True, context={"request": request}
+#             ).data,
+
+#             "locations": LocationSerializer(
+#                 locations, many=True
+#             ).data,
+
+#             "farmhouses": FarmhouseSerializer(
+#                 farmhouses, many=True, context={"request": request}
+#             ).data,
+
+#             "services": ChooseServicesSerializer(
+#                 services, many=True, context={"request": request}
+#             ).data,
+
+#             "ourfacility": OurFacilitySerializer(
+#                 ourfacility, many=True, context={"request": request}
+#             ).data,
+
+#             "know_whoweare": AboutWhoWeAreSerializer(
+#                 know_whoweare, many=True, context={"request": request}
+#             ).data,
+
+#             "latest_blogs": BlogSerializer(
+#                 latest_blogs, many=True, context={"request": request}
+#             ).data,
+
+#             "selected_location": selected_location
+#         }
+
+
+#         # store in redis cache (5 minutes)
+#         cache.set(cache_key, data, 60 * 5)
+
+#         return Response(data)

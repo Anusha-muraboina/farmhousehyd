@@ -42,7 +42,8 @@ class LocationAdmin(admin.ModelAdmin):
 
 @admin.register(Farmhouse)
 class FarmhouseAdmin(admin.ModelAdmin):
-    list_display = ('title', 'location', 'user', 'price_per_day','check_in_time', 'check_out_time', 'Slot_position', 'breakfast_dinner_available' ,'map_embed','is_active', 'is_featured')
+    list_display = ('title', 'location', 'user', 'price_per_day','check_in_time', 'check_out_time', 'weekend_days',
+                    'Slot_position', 'breakfast_dinner_available' ,'map_embed','is_active', 'is_featured')
     list_filter = ('is_active', 'is_featured', 'location', 'user')
     search_fields = ('title', 'address', 'user__username', 'user__email')
     prepopulated_fields = {'slug': ('title',)}
@@ -52,10 +53,10 @@ class FarmhouseAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Basic Information', {
-            'fields': ('title', 'slug', 'user', 'location', 'address',  'breakfast_dinner_available'  ,'guest_count','extra_guest_count' , 'Slot_position','map_embed' ,'check_in_time', 'check_out_time', 'distance_km')
+            'fields': ('title', 'slug', 'user', 'location', 'address',  'breakfast_dinner_available'  ,'guest_count','extra_guest_count' , 'Slot_position','map_embed' ,'check_in_time', 'check_out_time', 'distance_km','weekend_days')
         }),
         ('Property Details', {
-            'fields': ('halls', 'bedrooms', 'ac_bedrooms', 'amenities','facilities',  'properyrules','thingstocarry')
+            'fields': ('halls', 'bedrooms', 'ac_bedrooms', 'amenities','facilities', 'properyrules','thingstocarry')
         }),
         ('Description', {
             'fields': ('short_description', 'description')
@@ -63,8 +64,7 @@ class FarmhouseAdmin(admin.ModelAdmin):
         ('Pricing & Status', {
             'fields': ('price_per_day', 'free_cancellation', 'is_active', 'is_featured')
         }),
-        
-                # ⭐ NEW SEO SECTION
+        # ⭐ NEW SEO SECTION
         ('SEO Settings', {
             'fields': ('meta_title', 'meta_description', 'meta_keywords'),
             'description': 'Meta tags used for search engines (Google SEO)'
@@ -72,7 +72,7 @@ class FarmhouseAdmin(admin.ModelAdmin):
 
     )
 
-    # ✅ ONLY farmhouse_user = True USERS
+    # ✅ ONLY farmhouse_user = True USERS   
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "user":
             kwargs["queryset"] = User.objects.filter(

@@ -306,13 +306,32 @@ Rules guests must follow inside the farmhouse.
 <label>Default Price Per Day</label>
 {{ form.price_per_day }}
 </div>
+<div class="col-md-4">
+<label> Days</label>
+{{ form.weekend_days }}
+</div>
 
-<div class="col-md-6 d-flex align-items-end">
+<div class="col-md-12 d-flex align-items-end">
 
-<div class="form-check">
+<div class="form-check me-4">
 {{ form.free_cancellation }}
 <label class="ms-2">Free Cancellation</label>
 </div>
+
+
+<div class="form-check me-4">
+{{ form.is_featured }}
+<label class="ms-2">Featured Farmhouse</label>
+</div>
+
+<div class="form-check">
+
+{{ form.is_active }}
+<label class="ms-2">Active Listing</label>
+</div>
+
+
+
 
 </div>
 

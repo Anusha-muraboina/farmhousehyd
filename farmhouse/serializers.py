@@ -181,22 +181,33 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             return float(offer.price)
 
         return 0
+    
     def get_current_offer(self, obj):
 
-        offer = obj.offers.filter(
-            start_date__lte=date.today(),
-            end_date__gte=date.today()
-        ).first()
+        offers = obj.offers.all().values(
+            "title",
+            "price",
+            "start_date",
+            "end_date"
+        )
 
-        if offer:
-            return {
-                "title": offer.title,
-                "price": offer.price,
-                "start_date": offer.start_date,   # ✅ ADD
-                "end_date": offer.end_date        # ✅ ADD
-            }
+        return list(offers)
+    # def get_current_offer(self, obj):
 
-        return None
+    #     offer = obj.offers.filter(
+    #         start_date__lte=date.today(),
+    #         end_date__gte=date.today()
+    #     ).first()
+
+    #     if offer:
+    #         return {
+    #             "title": offer.title,
+    #             "price": offer.price,
+    #             "start_date": offer.start_date,   # ✅ ADD
+    #             "end_date": offer.end_date        # ✅ ADD
+    #         }
+
+    #     return None
 
     # def get_primary_image(self, obj):
     #     image = obj.images.filter(is_primary=True).first()

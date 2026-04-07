@@ -50,7 +50,7 @@ class FarmhousePaymentPolicyForm(forms.ModelForm):
 #             "description": forms.Textarea(attrs={"rows": 5}),
 #             "short_description": forms.Textarea(attrs={"rows": 3}),
 #         }
-
+import json
 from django import forms
 # from .models import Farmhouse, FarmhousePricing
 
@@ -80,6 +80,14 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class FarmhouseForm(forms.ModelForm):
+    weekend_days = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": "[5,6] (Sat, Sun)"
+        }),
+        help_text="Enter like [5,6] for Sat & Sun"
+    )
 
     class Meta:
         model = Farmhouse
@@ -117,6 +125,7 @@ class FarmhouseForm(forms.ModelForm):
             
             
             
+            
                         # ✅ ADD THESE
             "guest_count": forms.NumberInput(attrs={"class": "form-control"}),
             "extra_guest_count": forms.NumberInput(attrs={"class": "form-control"}),
@@ -148,7 +157,25 @@ class FarmhouseForm(forms.ModelForm):
         self.fields["user"].queryset = User.objects.filter(farmhouse_user=True)
         
         
-        
+        ################################################
+    # ✅ CONVERT STRING → JSON LIST
+    ################################################
+    def clean_weekend_days(self):
+        data = self.cleaned_data.get("weekend_days")
+
+        if not data:
+            return [5, 6]  # default
+
+        try:
+            parsed = json.loads(data)
+
+            if not isinstance(parsed, list):
+                raise forms.ValidationError("Must be a list like [5,6]")
+
+            return [int(x) for x in parsed]
+
+        except Exception:
+            raise forms.ValidationError("Invalid format. Example: [5,6]")
         
         
         

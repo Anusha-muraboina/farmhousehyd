@@ -231,8 +231,85 @@ height:300px;
 
 
 
+/* CALENDAR */
+.flatpickr-calendar {
+    width: 100% !important;
+    max-width: 320px;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    padding: 8px;
+    font-family: "Inter", sans-serif;
+}
 
+/* GRID */
+.flatpickr-days {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
 
+/* DAY CELL */
+.flatpickr-day {
+    width: 100% !important;
+    height: 52px !important;
+
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+    margin: 0 !important;
+
+    background: white;
+    border: 1px solid #f3f4f6;
+
+    transition: all 0.2s ease;
+}
+
+.flatpickr-day:hover {
+    background: #fff7ed;
+}
+
+/* SELECTED */
+.flatpickr-day.selected {
+    background: #f97316 !important;
+    color: white !important;
+}
+
+/* TODAY */
+.flatpickr-day.today {
+    border: 1.5px solid #f97316;
+}
+
+/* DISABLED */
+.flatpickr-day.flatpickr-disabled {
+    color: #d1d5db;
+    background: #fafafa;
+}
+
+/* DATE */
+.day-number {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+/* PRICE */
+.day-price {
+    font-size: 8px;
+    margin-top: 2px;
+    line-height: 1;
+}
+
+.day-price.offer {
+    color: #16a34a;
+    font-weight: 700;
+}
+
+.day-price.normal {
+    color: #374151;
+}
 
 
 
@@ -2252,10 +2329,85 @@ async function initFlatpickr() {
             },  {% endcomment %}
 
 
+onDayCreate: function(dObj, dStr, fp, dayElem) {
 
+    const date = dayElem.dateObj;
 
+    //////////////////////////////////////////////////
+    // ✅ BASE PRICES
+    //////////////////////////////////////////////////
+    let weekday = Number(farmhouse.pricing.normal_day_price || 0);
+    let weekend = Number(farmhouse.pricing.weekend_price || 0);
 
+    //////////////////////////////////////////////////
+    // ✅ OFFERS ARRAY
+    //////////////////////////////////////////////////
+    let offers = farmhouse.current_offer || [];
 
+    let isOfferDate = false;
+    let offerPrice = 0;
+
+    //////////////////////////////////////////////////
+    // ✅ NORMALIZE FUNCTION
+    //////////////////////////////////////////////////
+    function normalize(d){
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+
+    let today = normalize(date);
+
+    //////////////////////////////////////////////////
+    // ✅ LOOP OFFERS (FIXED SCOPE)
+    //////////////////////////////////////////////////
+    for (let i = 0; i < offers.length; i++) {
+
+        let o = offers[i];
+
+        let offerStart = normalize(new Date(o.start_date));
+        let offerEnd = normalize(new Date(o.end_date));
+
+        if (today >= offerStart && today <= offerEnd) {
+            isOfferDate = true;
+            offerPrice = Number(o.price);
+            break; // stop once matched
+        }
+    }
+
+    //////////////////////////////////////////////////
+    // ✅ WEEKEND LOGIC
+    //////////////////////////////////////////////////
+    let weekendDays = (farmhouse.weekend_days && farmhouse.weekend_days.length)
+        ? farmhouse.weekend_days
+        : [5,6];
+
+    let day = date.getDay();
+    let isWeekend = weekendDays.includes(day);
+
+    //////////////////////////////////////////////////
+    // ✅ FINAL PRICE
+    //////////////////////////////////////////////////
+    let price = isOfferDate
+        ? offerPrice
+        : (isWeekend ? weekend : weekday);
+
+    //////////////////////////////////////////////////
+    // ✅ UI
+    //////////////////////////////////////////////////
+    dayElem.innerHTML = "";
+
+    const dateEl = document.createElement("div");
+    dateEl.className = "day-number";
+    dateEl.innerText = date.getDate();
+
+    const priceEl = document.createElement("div");
+    priceEl.className = "day-price";
+    priceEl.innerText = "₹" + price;
+
+    priceEl.classList.add(isOfferDate ? "offer" : "normal");
+
+    dayElem.appendChild(dateEl);
+    dayElem.appendChild(priceEl);
+},
 
             onChange: function (selectedDates) {
                 if (!selectedDates.length) return;
@@ -2321,9 +2473,86 @@ async function initFlatpickr() {
             dayElem.appendChild(dateEl);
             dayElem.appendChild(priceEl);
         }, {% endcomment %}
- 
 
+onDayCreate: function(dObj, dStr, fp, dayElem) {
 
+    const date = dayElem.dateObj;
+
+    //////////////////////////////////////////////////
+    // ✅ BASE PRICES
+    //////////////////////////////////////////////////
+    let weekday = Number(farmhouse.pricing.normal_day_price || 0);
+    let weekend = Number(farmhouse.pricing.weekend_price || 0);
+
+    //////////////////////////////////////////////////
+    // ✅ OFFERS ARRAY
+    //////////////////////////////////////////////////
+    let offers = farmhouse.current_offer || [];
+
+    let isOfferDate = false;
+    let offerPrice = 0;
+
+    //////////////////////////////////////////////////
+    // ✅ NORMALIZE FUNCTION
+    //////////////////////////////////////////////////
+    function normalize(d){
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+
+    let today = normalize(date);
+
+    //////////////////////////////////////////////////
+    // ✅ LOOP OFFERS (FIXED SCOPE)
+    //////////////////////////////////////////////////
+    for (let i = 0; i < offers.length; i++) {
+
+        let o = offers[i];
+
+        let offerStart = normalize(new Date(o.start_date));
+        let offerEnd = normalize(new Date(o.end_date));
+
+        if (today >= offerStart && today <= offerEnd) {
+            isOfferDate = true;
+            offerPrice = Number(o.price);
+            break; // stop once matched
+        }
+    }
+
+    //////////////////////////////////////////////////
+    // ✅ WEEKEND LOGIC
+    //////////////////////////////////////////////////
+    let weekendDays = (farmhouse.weekend_days && farmhouse.weekend_days.length)
+        ? farmhouse.weekend_days
+        : [5,6];
+
+    let day = date.getDay();
+    let isWeekend = weekendDays.includes(day);
+
+    //////////////////////////////////////////////////
+    // ✅ FINAL PRICE
+    //////////////////////////////////////////////////
+    let price = isOfferDate
+        ? offerPrice
+        : (isWeekend ? weekend : weekday);
+
+    //////////////////////////////////////////////////
+    // ✅ UI
+    //////////////////////////////////////////////////
+    dayElem.innerHTML = "";
+
+    const dateEl = document.createElement("div");
+    dateEl.className = "day-number";
+    dateEl.innerText = date.getDate();
+
+    const priceEl = document.createElement("div");
+    priceEl.className = "day-price";
+    priceEl.innerText = "₹" + price;
+
+    priceEl.classList.add(isOfferDate ? "offer" : "normal");
+
+    dayElem.appendChild(dateEl);
+    dayElem.appendChild(priceEl);
+},
 
             onChange: function (selectedDates) {
                 if (!selectedDates.length) return;
@@ -2460,123 +2689,126 @@ async function initFlatpickr() {
     //////////////////////////////////////////////////
     // PRICE CALCULATION
     //////////////////////////////////////////////////
-    function calculateTotal() {
+function calculateTotal() {
 
-        if (!check_in.value || !check_out.value) return;
+    if (!check_in.value || !check_out.value) return;
 
-        //////////////////////////////////////////////////
-        // ✅ OFFER PRICE (dynamic_price)
-        //////////////////////////////////////////////////
-        let offerPrice = Number(farmhouse.dynamic_price || 0);
+    //////////////////////////////////////////////////
+    // ✅ BASE PRICES
+    //////////////////////////////////////////////////
+    let normal = Number(farmhouse.pricing.normal_day_price || 0);
+    let weekend = Number(farmhouse.pricing.weekend_price || 0);
+    let extra = Number(farmhouse.pricing.extra_guest_price || 0);
 
-        //////////////////////////////////////////////////
-        // ✅ BASE PRICES
-        //////////////////////////////////////////////////
-        let normal = Number(farmhouse.pricing.normal_day_price || 0);
-        let weekend = Number(farmhouse.pricing.weekend_price || 0);
-        let extra = Number(farmhouse.pricing.extra_guest_price || 0);
+    //////////////////////////////////////////////////
+    // ✅ OFFERS ARRAY
+    //////////////////////////////////////////////////
+    let offers = farmhouse.current_offer || [];
 
-        let start = new Date(check_in.value);
-        let end = new Date(check_out.value);
+    let start = new Date(check_in.value);
+    let end = new Date(check_out.value);
 
-        subTotal = 0;
+    subTotal = 0;
 
-        //////////////////////////////////////////////////
-        // ✅ LOOP EACH DAY
-        //////////////////////////////////////////////////
-        while (start < end) {
-
-            const day = start.getDay();
-
-            // ✅ BASE PRICE (weekday/weekend)
-            let basePrice =
-                (day === 0 || day === 6)
-                    ? weekend
-                    : normal;
-
-            let priceForDay = basePrice;
-
-            //////////////////////////////////////////////////
-            // ⭐ APPLY OFFER (PRIORITY)
-            //////////////////////////////////////////////////
-
-            // ✅ FIXED OFFER PRICE (your current system)
-            if (offerPrice > 0) {
-                priceForDay = offerPrice;
-            }
-
-            // ✅ FUTURE: % DISCOUNT SUPPORT
-            else if (farmhouse.current_offer?.discount_percent) {
-                priceForDay =
-                    basePrice - (basePrice * farmhouse.current_offer.discount_percent / 100);
-            }
-
-            // ✅ FUTURE: FIXED DISCOUNT
-            else if (farmhouse.current_offer?.discount_amount) {
-                priceForDay =
-                    basePrice - farmhouse.current_offer.discount_amount;
-            }
-
-            //////////////////////////////////////////////////
-            // ✅ SAFETY (no negative values)
-            //////////////////////////////////////////////////
-            priceForDay = Math.max(priceForDay, 0);
-
-            subTotal += priceForDay;
-
-            start.setDate(start.getDate() + 1);
-        }
-
-        //////////////////////////////////////////////////
-        // ✅ EXTRA GUEST (PER NIGHT)
-        //////////////////////////////////////////////////
-        let nights = Math.ceil(
-            (new Date(check_out.value) - new Date(check_in.value)) 
-            / (1000 * 60 * 60 * 24)
-        );
-
-        subTotal += Number(extra_guest_count.value || 0) * extra * nights;
-
-        //////////////////////////////////////////////////
-        // ✅ COUPON
-        //////////////////////////////////////////////////
-        let totalAfterCoupon = Math.max(subTotal - couponDiscount, 0);
-
-        //////////////////////////////////////////////////
-        // ✅ WALLET
-        //////////////////////////////////////////////////
-        let walletUsed = 0;
-
-        if (walletApplied) {
-            walletUsed = Math.min(walletBalance, totalAfterCoupon);
-        }
-
-        //////////////////////////////////////////////////
-        // ✅ FINAL TOTAL
-        //////////////////////////////////////////////////
-        finalTotal = Math.max(totalAfterCoupon - walletUsed, 0);
-
-        //////////////////////////////////////////////////
-        // ✅ UPDATE UI
-        //////////////////////////////////////////////////
-        const walletEl = document.getElementById("wallet_used");
-        if (walletEl) {
-            walletEl.innerText = walletUsed.toFixed(2);
-        }
-
-        //////////////////////////////////////////////////
-        // DEBUG
-        //////////////////////////////////////////////////
-        console.log("Subtotal:", subTotal);
-        console.log("Final:", finalTotal);
-
-        //////////////////////////////////////////////////
-        // UPDATE UI
-        //////////////////////////////////////////////////
-        fillReview();
-        updatePayment();
+    //////////////////////////////////////////////////
+    // ✅ NORMALIZE FUNCTION
+    //////////////////////////////////////////////////
+    function normalize(d){
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
     }
 
+    //////////////////////////////////////////////////
+    // ✅ LOOP EACH DAY
+    //////////////////////////////////////////////////
+    while (start < end) {
+
+        let today = normalize(start);
+
+        let isOfferDate = false;
+        let offerPrice = 0;
+
+        //////////////////////////////////////////////////
+        // 🔥 CHECK OFFERS PROPERLY
+        //////////////////////////////////////////////////
+        for (let i = 0; i < offers.length; i++) {
+
+            let o = offers[i];
+
+            let offerStart = normalize(new Date(o.start_date));
+            let offerEnd = normalize(new Date(o.end_date));
+
+            if (today >= offerStart && today <= offerEnd) {
+                isOfferDate = true;
+                offerPrice = Number(o.price);
+                break;
+            }
+        }
+
+        //////////////////////////////////////////////////
+        // ✅ WEEKEND LOGIC (DYNAMIC)
+        //////////////////////////////////////////////////
+        let weekendDays = (farmhouse.weekend_days && farmhouse.weekend_days.length)
+            ? farmhouse.weekend_days
+            : [5,6];
+
+        let day = start.getDay();
+        let isWeekend = weekendDays.includes(day);
+
+        let basePrice = isWeekend ? weekend : normal;
+
+        //////////////////////////////////////////////////
+        // ✅ FINAL PRICE
+        //////////////////////////////////////////////////
+        let priceForDay = isOfferDate ? offerPrice : basePrice;
+
+        subTotal += priceForDay;
+
+        start.setDate(start.getDate() + 1);
+    }
+
+    //////////////////////////////////////////////////
+    // ✅ EXTRA GUEST
+    //////////////////////////////////////////////////
+    let nights = Math.ceil(
+        (new Date(check_out.value) - new Date(check_in.value)) 
+        / (1000 * 60 * 60 * 24)
+    );
+
+    subTotal += Number(extra_guest_count.value || 0) * extra * nights;
+
+    //////////////////////////////////////////////////
+    // ✅ COUPON
+    //////////////////////////////////////////////////
+    let totalAfterCoupon = Math.max(subTotal - couponDiscount, 0);
+
+    //////////////////////////////////////////////////
+    // ✅ WALLET
+    //////////////////////////////////////////////////
+    let walletUsed = 0;
+
+    if (walletApplied) {
+        walletUsed = Math.min(walletBalance, totalAfterCoupon);
+    }
+
+    //////////////////////////////////////////////////
+    // ✅ FINAL TOTAL
+    //////////////////////////////////////////////////
+    finalTotal = Math.max(totalAfterCoupon - walletUsed, 0);
+
+    //////////////////////////////////////////////////
+    // ✅ UI UPDATE
+    //////////////////////////////////////////////////
+    const walletEl = document.getElementById("wallet_used");
+    if (walletEl) {
+        walletEl.innerText = walletUsed.toFixed(2);
+    }
+
+    console.log("Subtotal:", subTotal);
+    console.log("Final:", finalTotal);
+
+    fillReview();
+    updatePayment();
+}
 
 
 
