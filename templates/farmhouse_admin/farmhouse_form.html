@@ -333,6 +333,8 @@ Rules guests must follow inside the farmhouse.
 
 
 
+
+
 </div>
 
 </div>
@@ -360,9 +362,12 @@ accept="image/*"
 
 >
 
+
+
+
 <small class="text-muted">
 Upload multiple images. First image will be primary.
-</small>
+</small> 
 
 </div>
 
@@ -380,11 +385,34 @@ Upload multiple images. First image will be primary.
 
 <img
 src="{{ img.image.url }}"
-class="img-fluid rounded shadow-sm">
+ style="width:40px; height:40px; object-fit:cover;" class="rounded shadow-sm">
+
+
+            <!-- Checkbox -->
+            <div class="form-check">
+                <input 
+                    type="checkbox" 
+                    name="primary_image" 
+                    value="{{ img.id }}"
+                    class="form-check-input"
+                    {% if img.is_primary %}checked{% endif %}
+                >
+                <label class="form-check-label">
+                    Is Primary
+                </label>
+            </div>x``
+
+
+
 
 </div>
 
 {% endfor %}
+
+
+
+
+
 
 </div>
 

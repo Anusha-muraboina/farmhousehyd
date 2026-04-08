@@ -1848,3 +1848,94 @@ def owner_offer_delete(request, pk):
 
     messages.success(request, "Offer deleted!")
     return redirect("owner_offer_list")
+
+
+
+from django.http import JsonResponse
+from datetime import timedelta
+from booking.models import Booking, BlockedDate
+
+########################################
+# OWNER CALENDAR
+########################################
+@owner_required
+def owner_farmhouse_calendar(request, pk):
+
+    farmhouse = get_object_or_404(
+        Farmhouse,
+        pk=pk,
+        user=request.user
+    )
+
+    return render(
+        request,
+        "farmhouse_admin/calendar.html",
+        {"farmhouse": farmhouse}
+    )
+
+
+########################################
+# PUBLIC CALENDAR (NO LOGIN)
+########################################
+def public_calendar(request, slug):
+
+    farmhouse = get_object_or_404(
+        Farmhouse,
+        slug=slug,
+        is_active=True
+    )
+
+    return render(
+        request,
+        "farmhouse_admin/calendar.html",   # ✅ separate template
+        {"farmhouse": farmhouse}
+    )
+
+
+########################################
+# API: BOOKED + BLOCKED
+########################################
+def get_blocked_dates(request, slug):
+
+    farmhouse = get_object_or_404(Farmhouse, slug=slug)
+
+    result = []
+
+    #################################
+    # BOOKINGS
+    #################################
+    bookings = Booking.objects.filter(
+        farmhouse=farmhouse,
+        status__in=["confirmed", "pending"]
+    )
+
+    for booking in bookings:
+        start = booking.check_in
+        end = booking.check_out - timedelta(days=1)
+
+        while start <= end:
+            result.append({
+                "date": start.strftime("%Y-%m-%d"),
+                "type": "booked"
+            })
+            start += timedelta(days=1)
+
+    #################################
+    # BLOCKED
+    #################################
+    blocks = BlockedDate.objects.filter(farmhouse=farmhouse)
+
+    for b in blocks:
+        start = b.start_date
+        end = b.end_date
+
+        while start <= end:
+            result.append({
+                "date": start.strftime("%Y-%m-%d"),
+                "type": "blocked"
+            })
+            start += timedelta(days=1)
+
+    return JsonResponse(result, safe=False)
+
+

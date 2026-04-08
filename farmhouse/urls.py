@@ -37,4 +37,7 @@ urlpatterns = [
     path("<str:location>/", home_page, name="home-location"),
     path("farmhouses/<str:location>/", Farmhouses, name="farmhouses-location"),
     
+    
+    
+  
 ]

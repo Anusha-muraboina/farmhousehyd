@@ -398,24 +398,24 @@ ${ f.breakfast_dinner_available ? `
 
 
 
-                      <div class="flex flex-col">
+<div class="flex flex-col">
 
-    ${
-        (f.current_offer && f.current_offer.price)
+    {% comment %} ${
+        Number(f.dynamic_price) > 0
         ? `<span class="text-xs text-gray-400 line-through">
               ₹${originalPrice.toLocaleString()}
            </span>`
         : ""
-    }
+    } {% endcomment %}
 
     <span class="text-lg font-bold text-green-600">
-        ₹${displayPrice.toLocaleString()} / night
+        ₹${Number(f.dynamic_price || displayPrice).toLocaleString()} / night
     </span>
 
     ${
-        (f.current_offer && f.current_offer.price)
+        Number(f.dynamic_price) > 0
         ? `<span class="text-xs text-red-500 font-semibold">
-               ${f.current_offer.title || "Offer"} 
+               ${f.dynamic_price?.title || "Offer Price"} 
            </span>`
         : `<span class="text-xs text-gray-500">
               Weekday ₹${weekday.toLocaleString()} • Weekend ₹${weekend.toLocaleString()}

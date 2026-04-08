@@ -27,6 +27,7 @@ from cms.serializers import *
 from cms.models import PageSEO
 
 
+
 # def home(request):
 #     # return HttpResponse("Hello, this is Blog Page")
 #     return render(request , "home.html")

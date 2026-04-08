@@ -1963,9 +1963,50 @@ Similar Farmhouses
 ${similarFarmhouses.map(f => {
 
 {% comment %} const sale = Number(f.pricing?.sale_price || 0); {% endcomment %}
-const displayPrice = Number(f.dynamic_price || 0);
+{% comment %} const displayPrice = Number(f.dynamic_price || 0);
+const weekday = Number(f.pricing?.normal_day_price || 0);
+const weekend = Number(f.pricing?.weekend_price || 0); {% endcomment %}
+
+
+
 const weekday = Number(f.pricing?.normal_day_price || 0);
 const weekend = Number(f.pricing?.weekend_price || 0);
+
+// ✅ FIX: handle offer properly
+let offers = f.current_offer
+    ? (Array.isArray(f.current_offer)
+        ? f.current_offer
+        : [f.current_offer])
+    : [];
+
+let offerPrice = 0;
+
+// check today offer
+let today = new Date();
+today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+for (let i = 0; i < offers.length; i++) {
+
+    let o = offers[i];
+
+    let start = new Date(o.start_date);
+    let end = new Date(o.end_date);
+
+    start = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    end = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+    if (today >= start && today <= end) {
+        offerPrice = Number(o.price || o.offer_price);
+        break;
+    }
+}
+
+// ✅ FINAL PRICE
+let displayPrice = offerPrice > 0
+    ? offerPrice
+    : Math.min(weekday, weekend);
+
+
 
 {% comment %} let displayPrice = sale > 0 ? sale : Math.min(weekday, weekend); {% endcomment %}
 

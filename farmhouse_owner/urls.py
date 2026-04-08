@@ -105,5 +105,44 @@ urlpatterns = [
     path("offers/add/", owner_offer_create, name="owner_offer_create"),
     path("offers/<int:pk>/edit/", owner_offer_update, name="owner_offer_update"),
     path("offers/<int:pk>/delete/", owner_offer_delete, name="owner_offer_delete"),
+    
+    
+    # urls.py
+
+
+
+
+
+
+    # OWNER
+    path(
+        "owner/farmhouse/<int:pk>/calendar/",
+        owner_farmhouse_calendar,
+        name="owner_farmhouse_calendar"
+    ),
+
+    # PUBLIC SHARE
+    path(
+        "calendar/<slug:slug>/",
+        public_calendar,
+        name="public_calendar"
+    ),
+
+    # API (IMPORTANT)
+    path(
+        "bookings/blocked-dates/<slug:slug>/",
+        get_blocked_dates,
+        name="blocked_dates"
+    ),
+
+
+
+
+
+
+
+
+
+
 
 ]
