@@ -253,15 +253,24 @@ CKEDITOR_CONFIGS = {
 }
 
 
-
+CKEDITOR_5_UPLOAD_PATH = "uploads/"
 CKEDITOR_5_CONFIGS = {
     "default": {
         "toolbar": [
             "heading", "|",
             "bold", "italic", "link", "bulletedList", "numberedList", "|",
             "blockQuote", "insertTable", "imageUpload", "|",
-            "undo", "redo"
+            "undo", "redo",
+            "imageUpload", "blockQuote", "undo", "redo"
         ],
+        
+        "image": {
+            "toolbar": [
+                "imageTextAlternative",
+                "imageStyle:full",
+                "imageStyle:side"
+            ]
+        },
     }
 }
 # Internationalization
@@ -351,7 +360,7 @@ AWS_DEFAULT_ACL = None
 AWS_S3_VERIFY = True
 
 AWS_QUERYSTRING_AUTH = False   # Optional: avoid signed URLs
-AWS_DEFAULT_ACL = 'public-read'  # Optional: control file visibility
+# AWS_DEFAULT_ACL = 'public-read'  # Optional: control file visibility
 
 # Custom domain (Amazon S3 URL or your CloudFront if you have one)
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
@@ -370,7 +379,9 @@ STORAGES = {
     },
 }
 
-
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=86400",
+}
 
 # MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/'
 
