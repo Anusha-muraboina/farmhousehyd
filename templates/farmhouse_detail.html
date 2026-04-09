@@ -1973,7 +1973,10 @@ Similar Farmhouses
 ${similarFarmhouses.map(f => {
 
 {% comment %} const sale = Number(f.pricing?.sale_price || 0); {% endcomment %}
-const displayPrice = Number(f.dynamic_price || 0);
+{% comment %} const displayPrice = Number(f.dynamic_price || 0);
+const weekday = Number(f.pricing?.normal_day_price || 0);
+const weekend = Number(f.pricing?.weekend_price || 0); {% endcomment %}
+
 const weekday = Number(f.pricing?.normal_day_price || 0);
 const weekend = Number(f.pricing?.weekend_price || 0);
 
@@ -2034,13 +2037,50 @@ return `
         <div class="flex items-center justify-between">
 
             <div>
-                <p class="text-xl font-bold text-green-600">
+
+
+
+
+               ${f.dynamic_price > 0 ? `
+
+            <!-- ✅ OFFER PRICE -->
+            <p class="text-xl font-bold text-green-600">
+                ₹${Number(f.dynamic_price).toLocaleString()} / night
+            </p>
+
+            <p class="text-xs text-red-500 font-semibold">
+                ${f.current_offer?.title || "Special Offer"}
+            </p>
+
+        ` : `
+
+            <!-- ❌ NO OFFER → SHOW BOTH -->
+            {% comment %} <p class="text-sm text-gray-500">
+                Weekday ₹${weekday.toLocaleString()}
+            </p> {% endcomment %}
+
+            <p class="text-sm text-gray-500">
+                Weekend ₹${weekend.toLocaleString()} • Weekday ₹${weekday.toLocaleString()}
+            </p>
+
+        `}
+
+
+
+
+
+
+
+
+
+
+                {% comment %} <p class="text-xl font-bold text-green-600">
                     ₹${displayPrice.toLocaleString()} / night
                 </p>
 
                 <p class="text-xs text-gray-500">
                     Weekday ₹${weekday.toLocaleString()} • Weekend ₹${weekend.toLocaleString()}
-                </p>
+                </p> {% endcomment %}
             </div>
 
             <a href="/farmhouse/${f.slug}/${f.location.slug}/"
