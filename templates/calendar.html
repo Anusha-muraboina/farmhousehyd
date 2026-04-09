@@ -188,7 +188,7 @@ async function loadCalendar(){
 
     try {
         const res = await fetch(
-            `/bookings/blocked-dates/{{ farmhouse.slug }}/?year=${year}&month=${month}`
+            `/calendar/data/{{ farmhouse.slug }}/?year=${year}&month=${month}`
         );
 
         const data = await res.json();

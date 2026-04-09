@@ -866,53 +866,6 @@ def public_calendar(request, slug):
     )
 
 
-########################################
-# API: BOOKED + BLOCKED
-########################################
-# def get_blocked_dates(request, slug):
-
-#     farmhouse = get_object_or_404(Farmhouse, slug=slug)
-
-#     result = []
-
-#     #################################
-#     # BOOKINGS
-#     #################################
-#     bookings = Booking.objects.filter(
-#         farmhouse=farmhouse,
-#         status__in=["confirmed", "pending"]
-#     )
-
-#     for booking in bookings:
-#         start = booking.check_in
-#         end = booking.check_out - timedelta(days=1)
-
-#         while start <= end:
-#             result.append({
-#                 "date": start.strftime("%Y-%m-%d"),
-#                 "type": "booked"
-#             })
-#             start += timedelta(days=1)
-
-#     #################################
-#     # BLOCKED
-#     #################################
-#     blocks = BlockedDate.objects.filter(farmhouse=farmhouse)
-
-#     for b in blocks:
-#         start = b.start_date
-#         # end = b.end_date
-#         end = b.end_date - timedelta(days=1)
-        
-#         while start <= end:
-#             result.append({
-#                 "date": start.strftime("%Y-%m-%d"),
-#                 "type": "blocked"
-#             })
-#             start += timedelta(days=1)
-
-#     return JsonResponse(result, safe=False)
-
 from django.http import JsonResponse
 from datetime import timedelta, date
 from django.shortcuts import get_object_or_404
@@ -922,7 +875,7 @@ from django.shortcuts import get_object_or_404
 import calendar
 from datetime import date
 
-def get_blocked_dates(request, slug):
+def get_calendar_data(request, slug):
 
     farmhouse = get_object_or_404(Farmhouse, slug=slug)
 
@@ -963,9 +916,13 @@ def get_blocked_dates(request, slug):
     #################################
     # BOOKINGS
     #################################
+    # bookings = Booking.objects.filter(
+    #     farmhouse=farmhouse,
+    #     status__in="confirmed"   )
+    
     bookings = Booking.objects.filter(
-        farmhouse=farmhouse,
-        status__in=["confirmed", "pending"]
+    farmhouse=farmhouse,
+    status="confirmed"
     )
 
     for booking in bookings:

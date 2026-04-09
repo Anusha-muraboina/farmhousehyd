@@ -54,11 +54,11 @@ urlpatterns = [
     ),
 
     # API (IMPORTANT)
-    path(
-        "bookings/blocked-dates/<slug:slug>/",
-        get_blocked_dates,
-        name="blocked_dates"
-    ),
+    # path(
+    #     "bookings/blocked-dates/<slug:slug>/",
+    #     get_calendar_data,
+    #     name="blocked_dates"
+    # ),
 
-  
+    path("calendar/data/<slug:slug>/", get_calendar_data, name="calendar_data")
 ]
