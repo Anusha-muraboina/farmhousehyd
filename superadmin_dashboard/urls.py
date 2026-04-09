@@ -217,6 +217,33 @@ urlpatterns = [
     path("admin_offers/<int:pk>/edit/", views.admin_offer_update, name="admin_offer_update"),
     path("admin_offers/<int:pk>/delete/", views.admin_offer_delete, name="admin_offer_delete"),
     
+    
+    
+    
+
+    # OWNER
+    # path(
+    #     "admin/farmhouse/<int:pk>/calendar/",
+    #     views.superadmin_farmhouse_calendar,
+    #     name="owner_farmhouse_calendar"
+    # ),
+
+    # PUBLIC SHARE
+    # path(
+    #     "calendar/<slug:slug>/",
+    #     views.superadmin_public_calendar,
+    #     name="public_calendar"
+    # ),
+
+    # # API (IMPORTANT)
+    # path(
+    #     "bookings/blocked-dates/<slug:slug>/",
+    #     views.superadmin_get_blocked_dates,
+    #     name="blocked_dates"
+    # ),
+
+
+
 
 
 ]

@@ -39,5 +39,26 @@ urlpatterns = [
     
     
     
+    # OWNER
+    path(
+        "owner/farmhouse/<int:pk>/calendar/",
+        owner_farmhouse_calendar,
+        name="owner_farmhouse_calendar"
+    ),
+
+    # PUBLIC SHARE
+    path(
+        "calendar/<slug:slug>/",
+        public_calendar,
+        name="public_calendar"
+    ),
+
+    # API (IMPORTANT)
+    path(
+        "bookings/blocked-dates/<slug:slug>/",
+        get_blocked_dates,
+        name="blocked_dates"
+    ),
+
   
 ]

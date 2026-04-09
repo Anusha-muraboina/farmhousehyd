@@ -7,9 +7,18 @@
         body {
             font-family: Arial;
             background: #f9fafb;
-            padding: 20px;
+            padding:5px 20px;
         }
+:root {
+    --primary: #f97316;        /* main orange */
+    --primary-dark: #ea580c;   /* hover */
+}
 
+/* 🔥 HEADINGS */
+h2, h3, #monthYear {
+    color: var(--primary);
+    font-weight: 700;
+}
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -73,7 +82,7 @@
         button {
             margin-top: 20px;
             padding: 8px 14px;
-            background: #6366f1;
+            background: var(--primary);
             color: white;
             border: none;
             border-radius: 6px;
@@ -84,7 +93,7 @@
 
 <body>
 
-<h2>{{ farmhouse.title }}</h2>
+<h3>{{ farmhouse.title }}</h3>
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
     <button onclick="prevMonth()">⬅ Prev</button>
     <h3 id="monthYear"></h3>
@@ -109,7 +118,7 @@ function shareCalendar(){
 <script>
 function shareCalendar(){
 
-    const url = `${window.location.origin}/farmhouse_admin/calendar/{{ farmhouse.slug }}/`;
+    const url = `${window.location.origin}/calendar/{{ farmhouse.slug }}/`;
 
     // 🔥 TRY MODERN API
     if (navigator.clipboard && window.isSecureContext) {
@@ -132,7 +141,11 @@ function fallbackCopy(text) {
 
     alert("✅ Link copied (fallback)!");
 }
+
 </script>
+
+
+
 <script>
 
 let currentDate = new Date();
@@ -155,21 +168,30 @@ function prevMonth(){
     loadCalendar();
 }
 
+{% comment %} async function loadCalendar(){
+    try {
+        const res = await fetch(`/bookings/blocked-dates/{{ farmhouse.slug }}/`);
+        const data = await res.json();
+        renderCalendar(data);
+    } catch (e){
+        console.error("Error:", e);
+        renderCalendar([]);
+    }
+} {% endcomment %}
+
+
 
 async function loadCalendar(){
 
+    let year = currentDate.getFullYear();
+    let month = currentDate.getMonth() + 1;
+
     try {
-        const res = await fetch(`/farmhouse_admin/bookings/blocked-dates/{{ farmhouse.slug }}/`);
-
-        if(!res.ok){
-            renderCalendar([]);
-            return;
-        }
-
-    
+        const res = await fetch(
+            `/bookings/blocked-dates/{{ farmhouse.slug }}/?year=${year}&month=${month}`
+        );
 
         const data = await res.json();
-
         renderCalendar(data);
 
     } catch (e){
@@ -177,6 +199,7 @@ async function loadCalendar(){
         renderCalendar([]);
     }
 }
+
 
 function renderCalendar(data){
 
@@ -203,51 +226,64 @@ function renderCalendar(data){
                       String(dateObj.getMonth()+1).padStart(2,'0') + "-" +
                       String(dateObj.getDate()).padStart(2,'0');
 
-        let found = data.find(d => d?.date === dateStr);
-
-        let weekdayPrice = {{ farmhouse.pricing.normal_day_price|default:0 }};
-        let weekendPrice = {{ farmhouse.pricing.weekend_price|default:0 }};
-
-        let isWeekend = (dateObj.getDay() === 0 || dateObj.getDay() === 6);
-        let price = isWeekend ? weekendPrice : weekdayPrice;
+        let found = data.filter(d => d?.date === dateStr);
 
         let statusClass = "";
         let label = "";
+        let price = null;
+        let isOffer = false;
 
-        if(found){
-            if(found.type === "booked"){
+        if(found.length){
+
+            // ✅ PRIORITY
+            if(found.some(f => f.type === "booked")){
                 statusClass = "booked disabled";
                 label = "❌ Booked";
             }
-            else if(found.type === "blocked"){
+            else if(found.some(f => f.type === "blocked")){
                 statusClass = "blocked disabled";
                 label = "🚫 Blocked";
+            }
+
+            // ✅ PRICE
+            let priceObj = found.find(f => f.price !== undefined);
+
+            if(priceObj){
+                price = priceObj.price;
+                isOffer = priceObj.is_offer;
             }
         }
 
         let div = document.createElement("div");
         div.className = `day-box ${statusClass}`;
 
+        let priceDisplay = "";
+
+        if(label){
+            priceDisplay = label;
+        }
+        else if(price === null || price === undefined){
+            priceDisplay = "";   // ✅ FIX ₹null
+        }
+        else if(isOffer){
+            priceDisplay = `🔥 ₹${price}`;
+        }
+        else {
+            priceDisplay = `₹${price}`;
+        }
+
         div.innerHTML = `
             <div class="date">${day}</div>
-            <div class="price">
-                ${label ? label : "₹" + price}
-            </div>
+            <div class="price">${priceDisplay}</div>
         `;
 
         grid.appendChild(div);
     }
 }
 
-// 🔥 LOAD ON PAGE
 document.addEventListener("DOMContentLoaded", loadCalendar);
 
 </script>
-
-
-
-
-
 
 </body>
 </html>

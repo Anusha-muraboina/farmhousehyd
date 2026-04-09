@@ -805,3 +805,194 @@ class AboutAPIView(APIView):
 #         cache.set(cache_key, data, 60 * 5)
 
 #         return Response(data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from django.http import JsonResponse
+from datetime import timedelta
+from booking.models import Booking, BlockedDate
+
+########################################
+# OWNER CALENDAR
+########################################
+# @owner_required
+def owner_farmhouse_calendar(request, pk):
+
+    farmhouse = get_object_or_404(
+        Farmhouse,
+        pk=pk,
+        # user=request.user
+    )
+
+    return render(
+        request,
+        "calendar.html",
+        {"farmhouse": farmhouse}
+    )
+
+
+########################################
+# PUBLIC CALENDAR (NO LOGIN)
+########################################
+def public_calendar(request, slug):
+
+    farmhouse = get_object_or_404(
+        Farmhouse,
+        slug=slug,
+        is_active=True
+    )
+
+    return render(
+        request,
+        "calendar.html",   # ✅ separate template
+        {"farmhouse": farmhouse}
+    )
+
+
+########################################
+# API: BOOKED + BLOCKED
+########################################
+# def get_blocked_dates(request, slug):
+
+#     farmhouse = get_object_or_404(Farmhouse, slug=slug)
+
+#     result = []
+
+#     #################################
+#     # BOOKINGS
+#     #################################
+#     bookings = Booking.objects.filter(
+#         farmhouse=farmhouse,
+#         status__in=["confirmed", "pending"]
+#     )
+
+#     for booking in bookings:
+#         start = booking.check_in
+#         end = booking.check_out - timedelta(days=1)
+
+#         while start <= end:
+#             result.append({
+#                 "date": start.strftime("%Y-%m-%d"),
+#                 "type": "booked"
+#             })
+#             start += timedelta(days=1)
+
+#     #################################
+#     # BLOCKED
+#     #################################
+#     blocks = BlockedDate.objects.filter(farmhouse=farmhouse)
+
+#     for b in blocks:
+#         start = b.start_date
+#         # end = b.end_date
+#         end = b.end_date - timedelta(days=1)
+        
+#         while start <= end:
+#             result.append({
+#                 "date": start.strftime("%Y-%m-%d"),
+#                 "type": "blocked"
+#             })
+#             start += timedelta(days=1)
+
+#     return JsonResponse(result, safe=False)
+
+from django.http import JsonResponse
+from datetime import timedelta, date
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from datetime import timedelta, date
+from django.shortcuts import get_object_or_404
+import calendar
+from datetime import date
+
+def get_blocked_dates(request, slug):
+
+    farmhouse = get_object_or_404(Farmhouse, slug=slug)
+
+    result = []
+
+    # ✅ GET MONTH FROM FRONTEND
+    year = int(request.GET.get("year", date.today().year))
+    month = int(request.GET.get("month", date.today().month))
+
+    # ✅ FULL MONTH RANGE
+    start_date = date(year, month, 1)
+    last_day = calendar.monthrange(year, month)[1]
+    end_date = date(year, month, last_day)
+
+    current = start_date
+
+    #################################
+    # LOOP FULL MONTH
+    #################################
+    while current <= end_date:
+
+        offer = farmhouse.offers.filter(
+            start_date__lte=current,
+            end_date__gte=current
+        ).first()
+
+        price = farmhouse.get_price_by_date(current)
+
+        result.append({
+            "date": current.strftime("%Y-%m-%d"),
+            "price": float(price) if price else None,
+            "is_offer": bool(offer),
+            "type": "available"
+        })
+
+        current += timedelta(days=1)
+
+    #################################
+    # BOOKINGS
+    #################################
+    bookings = Booking.objects.filter(
+        farmhouse=farmhouse,
+        status__in=["confirmed", "pending"]
+    )
+
+    for booking in bookings:
+        start = booking.check_in
+        end = booking.check_out - timedelta(days=1)
+
+        while start <= end:
+            result.append({
+                "date": start.strftime("%Y-%m-%d"),
+                "type": "booked"
+            })
+            start += timedelta(days=1)
+
+    #################################
+    # BLOCKED
+    #################################
+    blocks = BlockedDate.objects.filter(farmhouse=farmhouse)
+
+    for b in blocks:
+        start = b.start_date
+        end = b.end_date - timedelta(days=1)
+
+        while start <= end:
+            result.append({
+                "date": start.strftime("%Y-%m-%d"),
+                "type": "blocked"
+            })
+            start += timedelta(days=1)
+
+    return JsonResponse(result, safe=False)
