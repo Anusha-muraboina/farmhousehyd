@@ -25,16 +25,22 @@ from .models import Rating
 class RatingSerializer(serializers.ModelSerializer):
 
     user_name = serializers.CharField(source="user.username", read_only=True)
+    user_image = serializers.SerializerMethodField()
 
     class Meta:
         model = Rating
         fields = [
             "id",
             "user_name",
+            "user_image",
             "rating",
             "review",
             "created_at"
         ]
+    def get_user_image(self, obj):
+        if obj.user.image:
+            return obj.user.image.url
+        return None
         
 
 class RatingFarmhouseSerializer(serializers.ModelSerializer):

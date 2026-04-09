@@ -101,7 +101,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     wallet_end_date = serializers.SerializerMethodField()
     wallet_days_left = serializers.SerializerMethodField()
     wallet_status = serializers.SerializerMethodField()
-
+    image_url = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = [
@@ -109,6 +109,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             "email",
             "username",
             "phone",
+            "image",
+             "image_url", 
             "wallet_balance",
             
             "wallet_end_date",
@@ -125,7 +127,10 @@ class ProfileSerializer(serializers.ModelSerializer):
 
         return 0
     
-
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.url
+        return None
 
     # ✅ EXPIRY DATE
     def get_wallet_end_date(self, obj):

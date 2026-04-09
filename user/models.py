@@ -10,6 +10,12 @@ class User(AbstractUser):
         default=10, null=True ,blank=True,
         help_text="Maximum farmhouses allowed for farmhouse owners"
     )
+    image = models.ImageField(
+        upload_to="users/profile/",
+        null=True,
+        blank=True,
+        default="users/profile/default.png"
+    )
     
     note = models.TextField(
     blank=True,
