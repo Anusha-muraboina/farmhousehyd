@@ -62,7 +62,7 @@ d="M12 6v12m-3-9h6m6 3a9 9 0 11-18 0 9 9 0 0118 0z" />
 </div>
  {% endcomment %}
 
-<div class="relative w-20 h-20">
+{% comment %} <div class="relative w-20 h-20">
 
     <!-- Hidden file input -->
     <input type="file" id="image" class="hidden" accept="image/*">
@@ -72,11 +72,25 @@ d="M12 6v12m-3-9h6m6 3a9 9 0 11-18 0 9 9 0 0118 0z" />
         class="w-20 h-20 rounded-full bg-orange-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg overflow-hidden cursor-pointer">
     </div>
 
-</div>
-
- {% comment %} <div id="profileAvatar"
-     class="w-20 h-20 rounded-full bg-orange-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg overflow-hidden">
 </div> {% endcomment %}
+
+<div class="relative w-20 h-20 group cursor-pointer" id="avatarContainer">
+
+    <!-- Hidden file input -->
+    <input type="file" id="image" class="hidden" accept="image/*">
+
+    <!-- Avatar -->
+    <div id="profileAvatar"
+        class="w-20 h-20 rounded-full bg-orange-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg overflow-hidden">
+    </div>
+
+    <!-- Edit Icon -->
+    <div
+        class="absolute bottom-0 right-0 bg-black bg-opacity-70 text-white p-1 rounded-full text-xs flex items-center justify-center">
+        ✏️
+    </div>
+
+</div>
 
 
 <div>
@@ -461,7 +475,7 @@ box.classList.remove("hidden");
 
 
 
-document.getElementById("profileAvatar").addEventListener("click", function () {
+document.getElementById("avatarContainer").addEventListener("click", function () {
     document.getElementById("image").click();
 });
 
