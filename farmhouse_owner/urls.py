@@ -38,7 +38,7 @@ urlpatterns = [
     
     path("owner/bookings/lists/", owner_booking_list_api ,name="owner_booking_list_api"),
     path("owner/bookings/detail/<int:pk>/", owner_booking_detail_api ,name="owner_booking_detail_api"),
-    
+    path("owner/bookings/<int:pk>/update/",owner_booking_update_api,name="owner_booking_update_api"),
     
     
     path( "messages/", owner_contact_list, name="owner_contact_list"),

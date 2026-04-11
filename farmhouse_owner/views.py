@@ -617,6 +617,8 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from .serializers import *
 from rest_framework.permissions import AllowAny
+
+
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def owner_booking_list_api(request):
@@ -733,7 +735,53 @@ def owner_booking_detail_api(request, pk):
 
 
 
+# from rest_framework.decorators import api_view, permission_classes
+# from rest_framework.permissions import IsAuthenticated
+# from rest_framework.response import Response
+# from django.shortcuts import get_object_or_404
+# from django.db import transaction
 
+@api_view(["PUT", "PATCH"])
+@permission_classes([IsAuthenticated])
+def owner_booking_update_api(request, pk):
+
+    booking = get_object_or_404(
+        Booking,
+        pk=pk,
+        farmhouse__user=request.user
+    )
+
+    old_status = booking.status
+
+    data = request.data
+
+    # ✅ UPDATE FIELDS (only if provided)
+    booking.guest_name = data.get("guest_name", booking.guest_name)
+    booking.guest_email = data.get("guest_email", booking.guest_email)
+    booking.guest_phone = data.get("guest_phone", booking.guest_phone)
+
+    booking.check_in = data.get("check_in", booking.check_in)
+    booking.check_out = data.get("check_out", booking.check_out)
+
+    booking.status = data.get("status", booking.status)
+    booking.payment_status = data.get("payment_status", booking.payment_status)
+
+    booking.special_requests = data.get("special_requests", booking.special_requests)
+
+    booking.save()
+
+    # ✅ EMAIL TRIGGER
+    if old_status != booking.status:
+        transaction.on_commit(
+            lambda: booking.send_booking_email(booking.status, request)
+        )
+
+    return Response({
+        "message": "Booking updated successfully",
+        "booking_id": booking.booking_id,
+        "status": booking.status,
+        "payment_status": booking.payment_status
+    })
 
 
 
@@ -1340,7 +1388,6 @@ def owner_payment_policy_update(request, pk):
     })
 
 
-
 def owner_payment_policy_delete(request, pk):
 
     if request.user.is_superuser:
@@ -1618,7 +1665,7 @@ def owner_booking_cancel(request, pk):
             "Booking cancelled successfully!"
         )
     except Exception as e:
-        messages.error(request, str(e))
+        messages.error(request, str(e)) 
 
     return redirect("owner-bookings")
 

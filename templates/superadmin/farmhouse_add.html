@@ -12,11 +12,16 @@
             Create and manage farmhouse listings with pricing, amenities, and images.
         </p>
     </div>
-
-            <a href="{% url 'owner_farmhouse_calendar' farmhouse.id %}"
+{% if farmhouse and farmhouse.id %}
+    <a href="{% url 'owner_farmhouse_calendar' farmhouse.id %}"
+       class="btn btn-success">
+       View Calendar
+    </a>
+{% endif %}
+            {% comment %} <a href="{% url 'owner_farmhouse_calendar' farmhouse.id %}"
    class="btn btn-success">
    View Calendar
-</a>
+</a> {% endcomment %}
     <a href="{% url 'superadmin-farmhouses' %}"
        class="btn btn-light shadow-sm">
         <i class="fa-solid fa-arrow-left me-2"></i>
