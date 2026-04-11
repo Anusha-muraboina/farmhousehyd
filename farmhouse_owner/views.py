@@ -740,47 +740,86 @@ def owner_booking_detail_api(request, pk):
 # from rest_framework.response import Response
 # from django.shortcuts import get_object_or_404
 # from django.db import transaction
+# from rest_framework.decorators import api_view, permission_classes
+# from rest_framework.permissions import IsAuthenticated
+# from rest_framework.response import Response
+# from django.shortcuts import get_object_or_404
+# from django.db import transaction
 
-@api_view(["PUT", "PATCH"])
+@api_view(["PATCH"])
 @permission_classes([IsAuthenticated])
 def owner_booking_update_api(request, pk):
+    """
+    Update booking status & payment for Vivaan Farmhouse
+    """
 
+    # 🔥 ONLY VIVAAN FARMHOUSE
     booking = get_object_or_404(
         Booking,
         pk=pk,
-        farmhouse__user=request.user
+        farmhouse__slug="vivaan-farmhouse"
     )
 
     old_status = booking.status
+    old_payment = booking.payment_status
 
-    data = request.data
+    new_status = request.data.get("status")
+    new_payment = request.data.get("payment_status")
 
-    # ✅ UPDATE FIELDS (only if provided)
-    booking.guest_name = data.get("guest_name", booking.guest_name)
-    booking.guest_email = data.get("guest_email", booking.guest_email)
-    booking.guest_phone = data.get("guest_phone", booking.guest_phone)
+    # ================= VALIDATION =================
 
-    booking.check_in = data.get("check_in", booking.check_in)
-    booking.check_out = data.get("check_out", booking.check_out)
+    VALID_STATUS = ["pending", "confirmed", "cancelled", "completed"]
+    VALID_PAYMENT = ["pending", "partial", "paid", "failed"]
 
-    booking.status = data.get("status", booking.status)
-    booking.payment_status = data.get("payment_status", booking.payment_status)
+    if new_status and new_status not in VALID_STATUS:
+        return Response({
+            "error": f"Invalid status. Allowed: {VALID_STATUS}"
+        }, status=400)
 
-    booking.special_requests = data.get("special_requests", booking.special_requests)
+    if new_payment and new_payment not in VALID_PAYMENT:
+        return Response({
+            "error": f"Invalid payment status. Allowed: {VALID_PAYMENT}"
+        }, status=400)
+
+    # ================= BUSINESS RULES =================
+
+    # ❌ Cannot complete before confirm
+    if new_status == "completed" and booking.status != "confirmed":
+        return Response({
+            "error": "Booking must be confirmed before completing"
+        }, status=400)
+
+    # ❌ Cannot confirm cancelled booking
+    if booking.status == "cancelled" and new_status == "confirmed":
+        return Response({
+            "error": "Cancelled booking cannot be confirmed"
+        }, status=400)
+
+    # ================= UPDATE =================
+
+    if new_status:
+        booking.status = new_status
+
+    if new_payment:
+        booking.payment_status = new_payment
+
+        # 🔥 Auto handle remaining amount
+        if new_payment == "paid":
+            booking.remaining_amount = 0
 
     booking.save()
 
-    # ✅ EMAIL TRIGGER
-    if old_status != booking.status:
-        transaction.on_commit(
-            lambda: booking.send_booking_email(booking.status, request)
-        )
+    # ================= EMAIL =================
+    # ⚠️ Your model already sends email on status change :contentReference[oaicite:0]{index=0}
+    # So we DO NOT duplicate here
 
     return Response({
+        "success": True,
         "message": "Booking updated successfully",
         "booking_id": booking.booking_id,
         "status": booking.status,
-        "payment_status": booking.payment_status
+        "payment_status": booking.payment_status,
+        "remaining_amount": str(booking.remaining_amount)
     })
 
 
