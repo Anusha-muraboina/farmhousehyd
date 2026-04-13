@@ -747,7 +747,7 @@ def owner_booking_detail_api(request, pk):
 # from django.db import transaction
 
 @api_view(["PATCH"])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def owner_booking_update_api(request, pk):
     """
     Update booking status & payment for Vivaan Farmhouse
