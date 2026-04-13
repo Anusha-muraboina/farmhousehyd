@@ -160,7 +160,7 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             "ratings",
             
             "dynamic_price",
-"current_offer",
+            "current_offer",
             
         ]
         

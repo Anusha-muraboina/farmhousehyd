@@ -752,7 +752,6 @@ def owner_booking_update_api(request, pk):
     """
     Update booking status & payment for Vivaan Farmhouse
     """
-
     # 🔥 ONLY VIVAAN FARMHOUSE
     booking = get_object_or_404(
         Booking,
