@@ -434,6 +434,14 @@ height:300px;
 </script>
 <script>
 
+    let offers = [];
+
+
+    async function loadVivaanOffers() {
+        const res = await axios.get("https://vivaanfarmhouse.com/api/vivaan-offers/");
+        offers = res.data;
+    }
+
     function safeImage(url) {
         if (!url || url === "null") {
             return "https://via.placeholder.com/900x600?text=No+Image";
@@ -498,6 +506,12 @@ height:300px;
             await axios.get(`/api/farmhouses/${slug}/`);
 
         farmhouse = res.data.farmhouse;
+
+        if (farmhouse.slug === "vivaan-farmhouse") {
+            await loadVivaanOffers();
+        }
+
+
         similarFarmhouses = res.data.similar_farmhouses || [];
 
         const popup = res.data.popup;   // ⭐ IMPORTANT
@@ -508,6 +522,10 @@ height:300px;
         if (window.lucide) {
             lucide.createIcons();
         }
+
+
+        {% comment %} await loadVivaanOffers(); {% endcomment %}
+
         await initFlatpickr();
         initListeners();
         initSubmit();
@@ -2392,7 +2410,11 @@ onDayCreate: function(dObj, dStr, fp, dayElem) {
     //////////////////////////////////////////////////
     // ✅ OFFERS ARRAY
     //////////////////////////////////////////////////
-    let offers = farmhouse.current_offer || [];
+    {% comment %} let offers = farmhouse.current_offer || [];  {% endcomment %}
+
+    let offersList = offers; // global API data
+
+
 
     let isOfferDate = false;
     let offerPrice = 0;
@@ -2537,7 +2559,12 @@ onDayCreate: function(dObj, dStr, fp, dayElem) {
     //////////////////////////////////////////////////
     // ✅ OFFERS ARRAY
     //////////////////////////////////////////////////
-    let offers = farmhouse.current_offer || [];
+    {% comment %} let offers = farmhouse.current_offer || []; {% endcomment %}
+
+    let offersList = offers; // global API data
+
+
+
 
     let isOfferDate = false;
     let offerPrice = 0;
@@ -2753,7 +2780,9 @@ function calculateTotal() {
     //////////////////////////////////////////////////
     // ✅ OFFERS ARRAY
     //////////////////////////////////////////////////
-    let offers = farmhouse.current_offer || [];
+    {% comment %} let offers = farmhouse.current_offer || [];  {% endcomment %}
+
+    let offersList = offers; // global API data
 
     let start = new Date(check_in.value);
     let end = new Date(check_out.value);

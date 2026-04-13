@@ -953,3 +953,38 @@ def get_calendar_data(request, slug):
             start += timedelta(days=1)
 
     return JsonResponse(result, safe=False)
+
+
+
+# from rest_framework.views import APIView
+# from rest_framework.response import Response
+# from rest_framework.permissions import AllowAny
+# from .models import FarmhouseOfferPricing, Farmhouse
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from farmhouse.models import FarmhouseOfferPricing
+
+class VivaanOfferDatesAPI(APIView):
+
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+
+        offers = FarmhouseOfferPricing.objects.filter(
+            farmhouse__slug="vivaan-farmhouse",
+            is_sale=True
+        )
+
+        offer_dates = {}
+
+        for o in offers:
+            current = o.start_date
+
+            while current <= o.end_date:
+                offer_dates[str(current)] = float(o.price)
+                current += timedelta(days=1)
+
+        return Response(offer_dates)

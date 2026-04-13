@@ -1,6 +1,7 @@
 # urls.py
 from django.urls import path
 from .views import *
+from .views import VivaanOfferDatesAPI
 
 urlpatterns = [
     path('', home_page, name='home'),
@@ -60,5 +61,7 @@ urlpatterns = [
     #     name="blocked_dates"
     # ),
 
-    path("calendar/data/<slug:slug>/", get_calendar_data, name="calendar_data")
+    path("calendar/data/<slug:slug>/", get_calendar_data, name="calendar_data"),
+    
+    path('api/vivaan-hyd-offers/', VivaanOfferDatesAPI.as_view()),
 ]
