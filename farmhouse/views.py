@@ -432,6 +432,51 @@ class FarmhouseDetailAPI(APIView):
                 location=farmhouse.location,
                 is_active=True
             ).first()
+            
+            
+            
+            
+          # ============================
+        # 🔥 MERGE OFFERS (MAIN FIX)
+        # ============================
+        offers_list = []
+
+        # ✅ HYDERABAD DB OFFERS
+        db_offers = farmhouse.offers.filter(is_sale=True)
+
+        for o in db_offers:
+            offers_list.append({
+                "start_date": str(o.start_date),
+                "end_date": str(o.end_date),
+                "price": float(o.price),
+                "source": "hyd"
+            })
+
+        # ✅ VIVAAN API OFFERS
+        if farmhouse.slug == "vivaan-farmhouse":
+            try:
+                res = requests.get(
+                    "https://vivaanfarmhouse.com/api/vivaan-offers/",
+                    timeout=2
+                )
+
+                if res.status_code == 200:
+                    vivaan_data = res.json()
+
+                    for o in vivaan_data:
+                        offers_list.append({
+                            "start_date": o["start_date"],
+                            "end_date": o["end_date"],
+                            "price": float(o["price"]),
+                            "source": "vivaan"
+                        })
+
+            except Exception as e:
+                print("Vivaan API Error:", e)    
+            
+        
+        
+        
         return Response({
             "farmhouse": FarmhouseSerializer(
                 farmhouse, context={"request": request}
@@ -442,7 +487,10 @@ class FarmhouseDetailAPI(APIView):
                  # ✅ SEND POPUP
             "popup": HomePopupSerializer(
                 popup, context={"request": request}
-            ).data if popup else None
+            ).data if popup else None ,
+            
+                        # 🔥 IMPORTANT
+            "current_offer": offers_list
         })
 
 
@@ -948,7 +996,7 @@ def get_calendar_data(request, slug):
         while start <= end:
             result.append({
                 "date": start.strftime("%Y-%m-%d"),
-                "type": "blocked"
+                "type": "blocked"   
             })
             start += timedelta(days=1)
 

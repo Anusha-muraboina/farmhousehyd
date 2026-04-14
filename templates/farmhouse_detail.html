@@ -434,14 +434,6 @@ height:300px;
 </script>
 <script>
 
-    let offers = [];
-
-
-    async function loadVivaanOffers() {
-        const res = await axios.get("https://vivaanfarmhouse.com/api/vivaan-offers/");
-        offers = res.data;
-    }
-
     function safeImage(url) {
         if (!url || url === "null") {
             return "https://via.placeholder.com/900x600?text=No+Image";
@@ -506,13 +498,9 @@ height:300px;
             await axios.get(`/api/farmhouses/${slug}/`);
 
         farmhouse = res.data.farmhouse;
-
-        if (farmhouse.slug === "vivaan-farmhouse") {
-            await loadVivaanOffers();
-        }
-
-
         similarFarmhouses = res.data.similar_farmhouses || [];
+
+        window.currentOffers = res.data.current_offer || [];
 
         const popup = res.data.popup;   // ⭐ IMPORTANT
         showPopup(popup, slug); 
@@ -522,10 +510,6 @@ height:300px;
         if (window.lucide) {
             lucide.createIcons();
         }
-
-
-        {% comment %} await loadVivaanOffers(); {% endcomment %}
-
         await initFlatpickr();
         initListeners();
         initSubmit();
@@ -2129,7 +2113,10 @@ return `
 
 
 
-
+function parseLocalDate(dateStr) {
+    const [y, m, d] = dateStr.split("-");
+    return new Date(y, m - 1, d);
+}
 
 
 function openTab(tabId){
@@ -2321,6 +2308,9 @@ document.getElementById("mobileMainImage")
 
 }
 
+
+
+
 async function initFlatpickr() {
     try {
         // ✅ Important: Use farmhouse.id for Vivaan Farmhouse
@@ -2410,11 +2400,9 @@ onDayCreate: function(dObj, dStr, fp, dayElem) {
     //////////////////////////////////////////////////
     // ✅ OFFERS ARRAY
     //////////////////////////////////////////////////
-    {% comment %} let offers = farmhouse.current_offer || [];  {% endcomment %}
+    {% comment %} let offers = farmhouse.current_offer || []; {% endcomment %}
 
-    let offersList = offers; // global API data
-
-
+    let offers = window.currentOffers || [];
 
     let isOfferDate = false;
     let offerPrice = 0;
@@ -2435,8 +2423,8 @@ onDayCreate: function(dObj, dStr, fp, dayElem) {
 
         let o = offers[i];
 
-        let offerStart = normalize(new Date(o.start_date));
-        let offerEnd = normalize(new Date(o.end_date));
+        let offerStart = normalize(parseLocalDate(o.start_date));
+        let offerEnd = normalize(parseLocalDate(o.end_date));
 
         if (today >= offerStart && today <= offerEnd) {
             isOfferDate = true;
@@ -2561,10 +2549,7 @@ onDayCreate: function(dObj, dStr, fp, dayElem) {
     //////////////////////////////////////////////////
     {% comment %} let offers = farmhouse.current_offer || []; {% endcomment %}
 
-    let offersList = offers; // global API data
-
-
-
+    let offers = window.currentOffers || [];
 
     let isOfferDate = false;
     let offerPrice = 0;
@@ -2585,8 +2570,8 @@ onDayCreate: function(dObj, dStr, fp, dayElem) {
 
         let o = offers[i];
 
-        let offerStart = normalize(new Date(o.start_date));
-        let offerEnd = normalize(new Date(o.end_date));
+        let offerStart = normalize(parseLocalDate(o.start_date));
+        let offerEnd = normalize(parseLocalDate(o.end_date));
 
         if (today >= offerStart && today <= offerEnd) {
             isOfferDate = true;
@@ -2780,9 +2765,9 @@ function calculateTotal() {
     //////////////////////////////////////////////////
     // ✅ OFFERS ARRAY
     //////////////////////////////////////////////////
-    {% comment %} let offers = farmhouse.current_offer || [];  {% endcomment %}
+    {% comment %} let offers = farmhouse.current_offer || []; {% endcomment %}
 
-    let offersList = offers; // global API data
+    let offers = window.currentOffers || [];
 
     let start = new Date(check_in.value);
     let end = new Date(check_out.value);
@@ -2813,8 +2798,8 @@ function calculateTotal() {
 
             let o = offers[i];
 
-            let offerStart = normalize(new Date(o.start_date));
-            let offerEnd = normalize(new Date(o.end_date));
+            let offerStart = normalize(parseLocalDate(o.start_date));
+            let offerEnd = normalize(parseLocalDate(o.end_date));
 
             if (today >= offerStart && today <= offerEnd) {
                 isOfferDate = true;

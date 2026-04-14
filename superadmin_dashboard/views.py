@@ -3121,7 +3121,7 @@ def admin_offer_create(request):
     if request.method == "POST" and form.is_valid():
         form.save()
         messages.success(request, "Offer created successfully!")
-        return redirect("owner_offer_list")
+        return redirect("admin_offer_list")
 
     return render(request, "superadmin/offers/form.html", {"form": form})
 

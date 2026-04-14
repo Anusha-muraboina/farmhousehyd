@@ -1,9 +1,11 @@
 # from django.db import models
-
+import requests
 # # Create your models here.
 from django.urls import reverse
 from django.db import models
 from django.core.exceptions import ValidationError
+from datetime import datetime
+import requests
 class Banner(models.Model):
     title = models.CharField(max_length=200 ,null=True ,blank=True)
     image = models.ImageField(upload_to='banners/' , null=True , blank=True)
@@ -199,27 +201,82 @@ class Farmhouse(models.Model):
     #         return self.pricing.weekend_price
 
     #     return self.pricing.normal_day_price
+    
+    
+
     def get_price_by_date(self, date):
 
-        # ✅ 1. CHECK OFFER FIRST
+        # ============================
+        # 🔥 ONLY VIVAAN API (FOR VIVAAN)
+        # ============================
+        if self.slug == "vivaan-farmhouse":
+            try:
+                res = requests.get(
+                    "https://vivaanfarmhouse.com/api/vivaan-offers/",
+                    timeout=2
+                )
+
+                if res.status_code == 200:
+                    data = res.json()
+
+                    for o in data:
+                        start = datetime.strptime(o["start_date"], "%Y-%m-%d").date()
+                        end = datetime.strptime(o["end_date"], "%Y-%m-%d").date()
+
+                        if start <= date <= end:
+                            return float(o["price"])
+
+            except Exception as e:
+                print("Vivaan API Error:", e)
+
+
+        # ============================
+        # ✅ OTHER FARMHOUSES → DB OFFERS
+        # ============================
         offer = self.offers.filter(
             start_date__lte=date,
-            end_date__gte=date
-        ).order_by("-is_sale", "price").first()
+            end_date__gte=date,
+            is_sale=True
+        ).order_by("price").first()
 
         if offer:
-            return offer.price
+            return float(offer.price)
 
-        # ✅ 2. FALLBACK TO NORMAL PRICING
+
+        # ============================
+        # NORMAL / WEEKEND
+        # ============================
         pricing = self.pricing
 
         day = date.weekday()
-        weekend_days = self.weekend_days or [5,6]  # default
+        weekend_days = self.weekend_days or [5,6]
 
         if day in weekend_days:
-            return pricing.weekend_price
+            return float(pricing.weekend_price)
 
-        return pricing.normal_day_price
+        return float(pricing.normal_day_price)
+    # def get_price_by_date(self, date):
+
+    #     # ✅ 1. CHECK OFFER FIRST
+    #     offer = self.offers.filter(
+    #         start_date__lte=date,
+    #         end_date__gte=date
+    #     ).order_by("-is_sale", "price").first()
+
+    #     if offer:
+    #         return offer.price
+
+    #     # ✅ 2. FALLBACK TO NORMAL PRICING
+    #     pricing = self.pricing
+
+    #     day = date.weekday()
+    #     weekend_days = self.weekend_days or [5,6]  # default
+
+    #     if day in weekend_days:
+    #         return pricing.weekend_price
+
+    #     return pricing.normal_day_price
+    
         # weekday = date.weekday()
         # if weekday >= 5:
         #     return pricing.weekend_price
