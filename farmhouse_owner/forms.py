@@ -360,3 +360,5 @@ class FarmhouseOfferForm(forms.ModelForm):
                 "placeholder": "Enter price"
             }),
         }
+        
+        

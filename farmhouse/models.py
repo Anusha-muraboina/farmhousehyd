@@ -202,15 +202,30 @@ class Farmhouse(models.Model):
 
     #     return self.pricing.normal_day_price
     
-    
-
     def get_price_by_date(self, date):
 
+        offers_list = []
+
         # ============================
-        # 🔥 ONLY VIVAAN API (FOR VIVAAN)
+        # ✅ 1. DB OFFERS (FOR ALL)
+        # ============================
+        db_offers = self.offers.filter(
+            start_date__lte=date,
+            end_date__gte=date,
+            is_sale=True
+        )
+
+        for o in db_offers:
+            offers_list.append(float(o.price))
+
+        # ============================
+        # ✅ 2. VIVAAN API OFFERS
         # ============================
         if self.slug == "vivaan-farmhouse":
             try:
+                import requests
+                from datetime import datetime
+
                 res = requests.get(
                     "https://vivaanfarmhouse.com/api/vivaan-offers/",
                     timeout=2
@@ -224,37 +239,87 @@ class Farmhouse(models.Model):
                         end = datetime.strptime(o["end_date"], "%Y-%m-%d").date()
 
                         if start <= date <= end:
-                            return float(o["price"])
+                            offers_list.append(float(o["price"]))
 
             except Exception as e:
                 print("Vivaan API Error:", e)
 
+        # ============================
+        # ✅ 3. IF ANY OFFER → RETURN LOWEST
+        # ============================
+        if offers_list:
+            return min(offers_list)
 
         # ============================
-        # ✅ OTHER FARMHOUSES → DB OFFERS
-        # ============================
-        offer = self.offers.filter(
-            start_date__lte=date,
-            end_date__gte=date,
-            is_sale=True
-        ).order_by("price").first()
-
-        if offer:
-            return float(offer.price)
-
-
-        # ============================
-        # NORMAL / WEEKEND
+        # ✅ 4. NORMAL / WEEKEND
         # ============================
         pricing = self.pricing
 
         day = date.weekday()
-        weekend_days = self.weekend_days or [5,6]
+        weekend_days = self.weekend_days or [5, 6]
 
         if day in weekend_days:
             return float(pricing.weekend_price)
 
         return float(pricing.normal_day_price)
+
+    # def get_price_by_date(self, date):
+
+    #     # ============================
+    #     # 🔥 ONLY VIVAAN API (FOR VIVAAN)
+    #     # ============================
+    #     if self.slug == "vivaan-farmhouse":
+    #         try:
+    #             res = requests.get(
+    #                 "https://vivaanfarmhouse.com/api/vivaan-offers/",
+    #                 timeout=2
+    #             )
+
+    #             if res.status_code == 200:
+    #                 data = res.json()
+
+    #                 for o in data:
+    #                     start = datetime.strptime(o["start_date"], "%Y-%m-%d").date()
+    #                     end = datetime.strptime(o["end_date"], "%Y-%m-%d").date()
+
+    #                     if start <= date <= end:
+    #                         return float(o["price"])
+
+    #         except Exception as e:
+    #             print("Vivaan API Error:", e)
+
+
+    #     # ============================
+    #     # ✅ OTHER FARMHOUSES → DB OFFERS
+    #     # ============================
+    #     offer = self.offers.filter(
+    #         start_date__lte=date,
+    #         end_date__gte=date,
+    #         is_sale=True
+    #     ).order_by("price").first()
+
+    #     if offer:
+    #         return float(offer.price)
+
+
+    #     # ============================
+    #     # NORMAL / WEEKEND
+    #     # ============================
+    #     pricing = self.pricing
+
+    #     day = date.weekday()
+    #     weekend_days = self.weekend_days or [5,6]
+
+    #     if day in weekend_days:
+    #         return float(pricing.weekend_price)
+
+    #     return float(pricing.normal_day_price)
+    
+    
+    
+    
+    
+    
     # def get_price_by_date(self, date):
 
     #     # ✅ 1. CHECK OFFER FIRST

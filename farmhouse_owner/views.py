@@ -1883,41 +1883,163 @@ def owner_offer_list(request):
     return render(request, "farmhouse_admin/offers/list.html", {"offers": offers})
 
 
+
+
+import requests
+
+
 @owner_required
 def owner_offer_create(request):
 
     form = FarmhouseOfferForm(request.POST or None)
-
-    # limit farmhouse to owner
+    # form.fields["farmhouse"].queryset = Farmhouse.objects.all()
     form.fields["farmhouse"].queryset = Farmhouse.objects.filter(user=request.user)
 
-    if request.method == "POST" and form.is_valid():
-        form.save()
-        messages.success(request, "Offer created successfully!")
-        return redirect("owner_offer_list")
+    selected_farmhouse_id = request.POST.get("farmhouse") or request.GET.get("farmhouse")
 
-    return render(request, "farmhouse_admin/offers/form.html", {"form": form})
+    offer_dates = []
+
+    if selected_farmhouse_id:
+        farmhouse = Farmhouse.objects.get(id=selected_farmhouse_id)
+
+        # ✅ DB OFFERS
+        db_offers = FarmhouseOfferPricing.objects.filter(
+            farmhouse_id=selected_farmhouse_id
+        )
+
+        offer_dates = [
+            {
+                "from": o.start_date.strftime("%Y-%m-%d"),
+                "to": o.end_date.strftime("%Y-%m-%d"),
+                "price": float(o.price),
+                "source": "db"
+            }
+            for o in db_offers
+        ]
+
+        # ✅ IF VIVAAN → ADD API ALSO
+        if farmhouse.slug == "vivaan-farmhouse":
+            try:
+                response = requests.get("https://www.vivaanfarmhouse.com/api/vivaan-offers/")
+                if response.status_code == 200:
+                    api_data = response.json()
+
+                    api_offers = [
+                        {
+                            "from": o["start_date"],
+                            "to": o["end_date"],
+                            "price": float(o["price"]),
+                            "source": "api"
+                        }
+                        for o in api_data
+                    ]
+
+                    # 🔥 MERGE BOTH
+                    offer_dates.extend(api_offers)
+
+            except Exception as e:
+                print("API Error:", e)
+
+    return render(request, "farmhouse_admin/offers/form.html", {
+        "form": form,
+        "offer_dates": offer_dates,
+        "selected_farmhouse_id": selected_farmhouse_id
+    })
+    
+    
+    
 
 
 @owner_required
 def owner_offer_update(request, pk):
 
-    offer = get_object_or_404(
-        FarmhouseOfferPricing,
-        pk=pk,
-        farmhouse__user=request.user
-    )
+    offer = get_object_or_404(FarmhouseOfferPricing, pk=pk)
 
     form = FarmhouseOfferForm(request.POST or None, instance=offer)
-
+    # form.fields["farmhouse"].queryset = Farmhouse.objects.all()
     form.fields["farmhouse"].queryset = Farmhouse.objects.filter(user=request.user)
 
-    if request.method == "POST" and form.is_valid():
-        form.save()
-        messages.success(request, "Offer updated!")
-        return redirect("owner_offer_list")
+    farmhouse = offer.farmhouse
 
-    return render(request, "farmhouse_admin/offers/form.html", {"form": form})
+    offer_dates = []
+
+    # ✅ DB
+    db_offers = FarmhouseOfferPricing.objects.filter(
+        farmhouse=farmhouse
+    ).exclude(pk=offer.pk)
+
+    offer_dates = [
+        {
+            "from": str(o.start_date),
+            "to": str(o.end_date),
+            "price": float(o.price),
+            "source": "db"
+        }
+        for o in db_offers
+    ]
+
+    # ✅ VIVAAN → ADD API
+    if farmhouse.slug == "vivaan-farmhouse":
+        try:
+            response = requests.get("https://www.vivaanfarmhouse.com/api/vivaan-offers/")
+            if response.status_code == 200:
+                api_data = response.json()
+
+                api_offers = [
+                    {
+                        "from": o["start_date"],
+                        "to": o["end_date"],
+                        "price": float(o["price"]),
+                        "source": "api"
+                    }
+                    for o in api_data
+                ]
+
+                offer_dates.extend(api_offers)
+
+        except Exception as e:
+            print("API Error:", e)
+
+    return render(request, "farmhouse_admin/offers/form.html", {
+        "form": form,
+        "offer_dates": offer_dates
+    })
+
+# @owner_required
+# def owner_offer_create(request):
+
+#     form = FarmhouseOfferForm(request.POST or None)
+
+#     # limit farmhouse to owner
+#     form.fields["farmhouse"].queryset = Farmhouse.objects.filter(user=request.user)
+
+#     if request.method == "POST" and form.is_valid():
+#         form.save()
+#         messages.success(request, "Offer created successfully!")
+#         return redirect("owner_offer_list")
+
+#     return render(request, "farmhouse_admin/offers/form.html", {"form": form})
+
+
+# @owner_required
+# def owner_offer_update(request, pk):
+
+#     offer = get_object_or_404(
+#         FarmhouseOfferPricing,
+#         pk=pk,
+#         farmhouse__user=request.user
+#     )
+
+#     form = FarmhouseOfferForm(request.POST or None, instance=offer)
+
+#     form.fields["farmhouse"].queryset = Farmhouse.objects.filter(user=request.user)
+
+#     if request.method == "POST" and form.is_valid():
+#         form.save()
+#         messages.success(request, "Offer updated!")
+#         return redirect("owner_offer_list")
+
+#     return render(request, "farmhouse_admin/offers/form.html", {"form": form})
 
 
 @owner_required

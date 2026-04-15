@@ -190,18 +190,80 @@ class CreateBookingAPI(APIView):
                 status=400
             )
 
-        sub_total = Decimal("0.00")
+        # sub_total = Decimal("0.00")
+        
+        # ================================
+        # 🔥 FETCH VIVAAN API ONCE
+        # ================================
+        vivaan_api_data = []
 
+        if farmhouse.slug == "vivaan-farmhouse":
+            try:
+                res = requests.get(
+                    "https://vivaanfarmhouse.com/api/vivaan-offers/",
+                    timeout=3
+                )
+                if res.status_code == 200:
+                    vivaan_api_data = res.json()
+            except Exception as e:
+                print("Vivaan API Error:", e)
+
+
+        # ================================
+        # 🔥 FINAL PRICE CALCULATION
+        # ================================
+        sub_total = Decimal("0.00")
         current_date = start
 
         while current_date < end:
 
-            # ✅ NEW: OFFER + WEEKEND + NORMAL
-            day_price = farmhouse.get_price_by_date(current_date)
+            day_price = None
+
+            # ✅ 1. API PRICE
+            if farmhouse.slug == "vivaan-farmhouse":
+                for o in vivaan_api_data:
+                    start_api = datetime.strptime(o["start_date"], "%Y-%m-%d").date()
+                    end_api = datetime.strptime(o["end_date"], "%Y-%m-%d").date()
+
+                    if start_api <= current_date.date() <= end_api:
+                        day_price = float(o["price"])
+                        break
+
+            # ✅ 2. DB OFFER
+            if day_price is None:
+                offer = farmhouse.offers.filter(
+                    start_date__lte=current_date,
+                    end_date__gte=current_date,
+                    is_sale=True
+                ).order_by("price").first()
+
+                if offer:
+                    day_price = float(offer.price)
+
+            # ✅ 3. NORMAL / WEEKEND
+            if day_price is None:
+                weekday = current_date.weekday()
+
+                if weekday in (5, 6):
+                    day_price = float(pricing.weekend_price)
+                else:
+                    day_price = float(pricing.normal_day_price)
 
             sub_total += Decimal(day_price)
-
             current_date += timedelta(days=1)
+                
+        
+# without offer price
+        # current_date = start
+
+        # while current_date < end:
+
+        #     # ✅ NEW: OFFER + WEEKEND + NORMAL
+        #     day_price = farmhouse.get_price_by_date(current_date)
+
+        #     sub_total += Decimal(day_price)
+
+        #     current_date += timedelta(days=1)
 
 
         # ✅ EXTRA GUEST (PER NIGHT)

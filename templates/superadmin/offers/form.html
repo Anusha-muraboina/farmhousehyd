@@ -1,93 +1,253 @@
-@ -0,0 +1,92 @@
 {% extends "superadmin/base.html" %}
 {% block content %}
 
-<!-- FLATPICKR CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
+<style>
+body { background: #f5f7fb; }
+
+.card-ui {
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+}
+
+.form-control, .form-select {
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.btn-save {
+    background: #28a745;
+    color: white;
+    border-radius: 10px;
+    padding: 10px 25px;
+}
+
+/* ✅ CLEAN PRICE UI */
+.flatpickr-day {
+    position: relative;
+}
+
+.price-tag {
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    right: 0;
+    font-size: 10px;
+    color: green;
+    font-weight: 600;
+    text-align: center;
+}
+</style>
+<style>
+.flatpickr-day {
+    position: relative;
+    height: 55px !important;
+    line-height: 20px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 5px;
+}
+
+/* Date number */
+.flatpickr-day .day-number {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Price below */
+.price-tag {
+    font-size: 10px;
+    color: #28a745;
+    font-weight: 600;
+    margin-top: 2px;
+}
+</style>
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-7">
 
-            <div class="card shadow border-0 rounded-4">
+            <div class="card-ui">
 
-                <!-- HEADER -->
-                <div class="card-header bg-white border-0">
-                    <h4 class="fw-bold mb-0"> Add / Edit Offer</h4>
-                </div>
+                <h4 class="mb-4">Add / Edit Offer</h4>
 
-                <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
 
-                    <form method="post">
-                        {% csrf_token %}
+                    <div class="mb-3">
+                        <label>Farmhouse</label>
+                        {{ form.farmhouse }}
+                    </div>
 
-                        <!-- FARMHOUSE -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Farmhouse</label>
-                            {{ form.farmhouse }}
-                        </div>
+                    <div class="mb-3">
+                        <label>Offer Title</label>
+                        {{ form.title }}
+                    </div>
 
-                        <!-- TITLE -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Offer Title</label>
-                            {{ form.title }}
-                        </div>
+                    <!-- START DATE -->
+                    <div class="mb-3">
+                        <label>Start Date</label>
+                        <input type="text" id="start_date_picker" class="form-control">
+                    </div>
 
-                        <!-- DATE RANGE PICKER -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Select Date Range</label>
-                            <input type="text" id="date_range" class="form-control">
-                        </div>
+                    <!-- END DATE -->
+                    <div class="mb-3">
+                        <label>End Date</label>
+                        <input type="text" id="end_date_picker" class="form-control">
+                    </div>
 
-                        <!-- HIDDEN FIELDS -->
-                        {{ form.start_date }}
-                        {{ form.end_date }}
+                    {{ form.start_date }}
+                    {{ form.end_date }}
 
-                        <!-- PRICE -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Offer Price (₹)</label>
-                            {{ form.price }}
-                        </div>
+                    <div class="mb-4">
+                        <label>Price</label>
+                        {{ form.price }}
+                    </div>
 
-                        <!-- BUTTONS -->
-                        <div class="d-flex justify-content-between mt-4">
-                            <a href="{% url 'owner_offer_list' %}" class="btn btn-light border px-4">
-                                ← Back
-                            </a>
+                    <button type="submit" class="btn btn-save">Save Offer</button>
 
-                            <button type="submit" class="btn btn-success px-4">
-                                Save Offer
-                            </button>
-                        </div>
+                </form>
 
-                    </form>
-
-                </div>
             </div>
 
         </div>
     </div>
 </div>
 
-<!-- FLATPICKR JS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
+{{ offer_dates|json_script:"offer-data" }}
+
 <script>
-flatpickr("#date_range", {
-    mode: "range",
-    dateFormat: "Y-m-d",
-    minDate: "today",
+// ================= DATA =================
+let offerData = JSON.parse(document.getElementById('offer-data').textContent);
 
-    onChange: function(selectedDates, dateStr, instance) {
-        if (selectedDates.length === 2) {
-            let start = instance.formatDate(selectedDates[0], "Y-m-d");
-            let end = instance.formatDate(selectedDates[1], "Y-m-d");
+// ================= EDIT VALUES =================
+let startDate = "{{ form.instance.start_date|default_if_none:''|date:'Y-m-d' }}";
+let endDate = "{{ form.instance.end_date|default_if_none:''|date:'Y-m-d' }}";
 
-            document.getElementById("id_start_date").value = start;
-            document.getElementById("id_end_date").value = end;
+// ================= DATE FORMAT FIX =================
+function formatDateLocal(date) {
+    let y = date.getFullYear();
+    let m = String(date.getMonth() + 1).padStart(2, '0');
+    let d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+}
+
+// ================= SHOW PRICE =================
+function addPrice(dayElem) {
+
+    let dateObj = dayElem.dateObj;
+
+    let y = dateObj.getFullYear();
+    let m = String(dateObj.getMonth() + 1).padStart(2, '0');
+    let d = String(dateObj.getDate()).padStart(2, '0');
+    let date = `${y}-${m}-${d}`;
+
+    let matchedOffers = offerData.filter(o => {
+        return new Date(date) >= new Date(o.from) &&
+               new Date(date) <= new Date(o.to);
+    });
+
+    if (!dayElem.querySelector(".day-number")) {
+        let dayNumber = dayElem.textContent;
+        dayElem.innerHTML = `<span class="day-number">${dayNumber}</span>`;
+    }
+
+    if (matchedOffers.length > 0) {
+
+    dayElem.classList.add("offer-day");
+
+    // ✅ prevent duplicate rendering
+    if (!dayElem.querySelector(".price-tag")) {
+
+        matchedOffers.forEach(o => {
+
+            let priceTag = document.createElement("div");
+            priceTag.className = "price-tag";
+
+            // ✅ differentiate API vs DB
+            if (o.source === "api") {
+                priceTag.style.color = "blue";   // API
+            } else {
+                priceTag.style.color = "green";  // DB
+            }
+
+            priceTag.innerHTML = "₹" + o.price;
+
+            dayElem.appendChild(priceTag);
+        });
+    }
+}
+
+    {% comment %} if (matchedOffers.length > 0) {
+
+        // ✅ DEFINE best ONCE
+        let best = matchedOffers.sort((a, b) => {
+            return new Date(b.from) - new Date(a.from);
+        })[0];
+
+        dayElem.classList.add("offer-day");
+
+        // ✅ PREVENT DUPLICATE
+        if (!dayElem.querySelector(".price-tag")) {
+
+            let priceTag = document.createElement("div");
+            priceTag.className = "price-tag";
+            priceTag.innerHTML = "₹" + best.price;
+
+            dayElem.appendChild(priceTag);
         }
+    } {% endcomment %}
+}
+
+// ================= START PICKER =================
+let startPicker = flatpickr("#start_date_picker", {
+    dateFormat: "Y-m-d",
+    minDate: startDate ? null : "today",
+    defaultDate: startDate || null,
+
+    onDayCreate: function(dObj, dStr, fp, dayElem) {
+        addPrice(dayElem);
+    },
+
+    onChange: function(selectedDates, dateStr) {
+        document.getElementById("id_start_date").value = dateStr;
+        endPicker.set("minDate", dateStr);
+    }
+});
+
+// ================= END PICKER =================
+let endPicker = flatpickr("#end_date_picker", {
+    dateFormat: "Y-m-d",
+    minDate: startDate || "today",
+    defaultDate: endDate || null,
+
+    onDayCreate: function(dObj, dStr, fp, dayElem) {
+        addPrice(dayElem);
+    },
+
+    onChange: function(selectedDates, dateStr) {
+        document.getElementById("id_end_date").value = dateStr;
     }
 });
 </script>
-
+<script>
+document.getElementById("id_farmhouse").addEventListener("change", function () {
+    let id = this.value;
+    if (id) {
+        window.location.href = "?farmhouse=" + id;
+    }
+});
+</script>
+<script>
+let selectedFarmhouse = "{{ selected_farmhouse_id|default:'' }}";
+if (selectedFarmhouse) {
+    document.getElementById("id_farmhouse").value = selectedFarmhouse;
+}
+</script>
 {% endblock %}
