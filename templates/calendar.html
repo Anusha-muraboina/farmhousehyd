@@ -88,12 +88,42 @@ h2, h3, #monthYear {
             border-radius: 6px;
             cursor: pointer;
         }
+
+        .available {
+    background: #dcfce7;   /* light green */
+    border: 2px solid #22c55e;
+}
     </style>
 </head>
 
 <body>
 
 <h3>{{ farmhouse.title }}</h3>
+
+<div style="display:flex; gap:15px; margin-bottom:15px; flex-wrap:wrap;">
+
+    <div style="display:flex; align-items:center; gap:6px;">
+        <div style="width:15px; height:15px; background:#ef4444; border-radius:4px;"></div>
+        <span>Booked</span>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:6px;">
+        <div style="width:15px; height:15px; background:#9ca3af; border-radius:4px;"></div>
+        <span>Blocked</span>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:6px;">
+        <div style="width:15px; height:15px; background:#22c55e; border-radius:4px;"></div>
+        <span>Available</span>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:6px;">
+        <div style="width:15px; height:15px; background:#facc15; border-radius:4px;"></div>
+        <span>Offer Price</span>
+    </div>
+
+</div>
+
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
     <button onclick="prevMonth()">⬅ Prev</button>
     <h3 id="monthYear"></h3>
