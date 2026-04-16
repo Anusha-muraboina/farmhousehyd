@@ -3129,6 +3129,15 @@ def admin_offer_create(request):
     form = FarmhouseOfferForm(request.POST or None)
     form.fields["farmhouse"].queryset = Farmhouse.objects.all()
 
+
+        # ✅ SAVE LOGIC (IMPORTANT FIX)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect("admin_offer_list")  # or your list page
+        else:
+            print(form.errors)  # debug
+
     selected_farmhouse_id = request.POST.get("farmhouse") or request.GET.get("farmhouse")
 
     offer_dates = []

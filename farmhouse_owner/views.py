@@ -1894,6 +1894,21 @@ def owner_offer_create(request):
     form = FarmhouseOfferForm(request.POST or None)
     # form.fields["farmhouse"].queryset = Farmhouse.objects.all()
     form.fields["farmhouse"].queryset = Farmhouse.objects.filter(user=request.user)
+    
+        # ✅ SAVE LOGIC (MAIN FIX)
+    if request.method == "POST":
+        if form.is_valid():
+
+            # 🔒 SECURITY: ensure owner can only save their farmhouse
+            farmhouse = form.cleaned_data.get("farmhouse")
+            if farmhouse.user != request.user:
+                return redirect("owner_offer_create")
+
+            form.save()
+            return redirect("owner_offer_create")
+
+        else:
+            print(form.errors)
 
     selected_farmhouse_id = request.POST.get("farmhouse") or request.GET.get("farmhouse")
 
