@@ -32,9 +32,22 @@
     {% comment %} <div class="p-3 border-bottom bg-white">
         <input type="text"
                class="form-control"
-               placeholder="🔍 Search farmhouses..."
+               placeholder=" Search farmhouses..."
                style="max-width:280px;">
     </div> {% endcomment %}
+
+{% for field in form %}
+    <div>
+        {{ field.label_tag }}
+        {{ field }}
+
+        {% if field.errors %}
+            <div class="text-red-500 text-sm">
+                {{ field.errors }}
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}
 
 <form method="get" class="d-flex gap-2 p-3 border-bottom bg-white">
    
@@ -109,8 +122,6 @@
        class="btn btn-light btn-sm me-2 shadow-sm">
         <i class="fa-solid fa-pen"></i>
     </a>
-
-
 
 <a href="#" onclick="openTrashWithPin()" class="btn btn-danger">
     🗑 Trash

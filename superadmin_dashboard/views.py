@@ -389,22 +389,29 @@ def farmhouse_add(request):
         pricing_form = FarmhousePricingForm(request.POST)
 
         if form.is_valid() and pricing_form.is_valid():
+            try:
+                farmhouse = form.save()
 
-            farmhouse = form.save()
+                pricing = pricing_form.save(commit=False)
+                pricing.farmhouse = farmhouse
+                pricing.save()
 
-            pricing = pricing_form.save(commit=False)
-            pricing.farmhouse = farmhouse
-            pricing.save()
+                images = request.FILES.getlist("gallery_images")
+                for i, img in enumerate(images):
+                    FarmhouseImage.objects.create(
+                        farmhouse=farmhouse,
+                        image=img,
+                        is_primary=(i == 0)
+                    )
+                    
+                messages.success(request, "Farmhouse added successfully")
+                return redirect("superadmin-farmhouses")
 
-            images = request.FILES.getlist("gallery_images")
-            for i, img in enumerate(images):
-                FarmhouseImage.objects.create(
-                    farmhouse=farmhouse,
-                    image=img,
-                    is_primary=(i == 0)
-                )
+            except ValidationError as e:
+                    # ✅ Show error in UI
+                form.add_error(None, e.message)
 
-            return redirect("superadmin-farmhouses")
+                # return redirect("superadmin-farmhouses")
 
     else:
         form = FarmhouseForm()
