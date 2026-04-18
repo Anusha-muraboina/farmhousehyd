@@ -1,4 +1,5 @@
 {% extends "superadmin/base.html" %}
+{% load tz %}
 {% block content %}
 
 <div class="container-fluid">
@@ -119,7 +120,8 @@
                     </p>
 
                     <p><b>Booked On:</b>
-                        {{ booking.created_at }}
+                        {% comment %} {{ booking.created_at }} {% endcomment %}
+                        {{ booking.created_at_ist|date:"F d, Y, h:i A" }}
                     </p>
 
                 </div>

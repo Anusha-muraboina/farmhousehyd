@@ -93,6 +93,14 @@ h2, h3, #monthYear {
     background: #dcfce7;   /* light green */
     border: 2px solid #22c55e;
 }
+
+
+.offer {
+    background: #fef9c3;   /* light yellow */
+    border: 2px solid #facc15;
+    color: #92400e;
+}
+
     </style>
 </head>
 
@@ -284,6 +292,12 @@ function renderCalendar(data){
             }
         }
 
+
+        // ⭐ APPLY OFFER COLOR (ONLY IF NOT BOOKED/BLOCKED)
+        if(!statusClass && isOffer){
+            statusClass = "offer";
+        }
+        
         let div = document.createElement("div");
         div.className = `day-box ${statusClass}`;
 

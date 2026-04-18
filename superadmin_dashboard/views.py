@@ -1925,7 +1925,8 @@ def admin_booking_create(request):
 
 
             while start < end:
-                subtotal += farmhouse.get_price_by_date(start)
+                # subtotal += farmhouse.get_price_by_date(start)
+                subtotal += Decimal(str(farmhouse.get_price_by_date(start) or 0))
                 start += timedelta(days=1)
             ########################################
             # EXTRA GUEST

@@ -98,6 +98,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'farmhousehyd.urls'
@@ -191,6 +192,9 @@ DATABASES = {
 TIME_ZONE = "Asia/Kolkata"
 USE_TZ = True
 
+
+USE_I18N = True
+USE_L10N = True
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

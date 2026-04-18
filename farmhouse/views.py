@@ -930,6 +930,11 @@ import calendar
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
+from django.http import JsonResponse
+from datetime import timedelta, date, datetime
+from django.shortcuts import get_object_or_404
+import calendar
+import requests
 
 def get_calendar_data(request, slug):
 
@@ -937,7 +942,7 @@ def get_calendar_data(request, slug):
 
     result = {}
 
-    # MONTH
+    # ================= MONTH =================
     year = int(request.GET.get("year", date.today().year))
     month = int(request.GET.get("month", date.today().month))
 
@@ -955,11 +960,27 @@ def get_calendar_data(request, slug):
         result[key] = {
             "date": key,
             "price": float(farmhouse.get_price_by_date(current) or 0),
-            "is_offer": False,
+            "is_offer": False,   # default
             "type": "available"
         }
 
         current += timedelta(days=1)
+
+    # ================= 🟡 OFFERS (DB) =================
+    offers = FarmhouseOfferPricing.objects.filter(farmhouse=farmhouse)
+
+    for offer in offers:
+        start = offer.start_date
+        end = offer.end_date
+
+        while start <= end:
+            key = start.strftime("%Y-%m-%d")
+
+            if key in result and result[key]["type"] == "available":
+                result[key]["is_offer"] = True   # ✅ IMPORTANT
+                result[key]["price"] = float(offer.price)
+
+            start += timedelta(days=1)
 
     # ================= BOOKINGS =================
     bookings = Booking.objects.filter(
@@ -1001,10 +1022,11 @@ def get_calendar_data(request, slug):
 
             if res.status_code == 200:
                 data = res.json()
+
                 disabled_dates = data.get("disabled_dates", [])
+                offer_dates = data.get("offer_dates", [])  # ✅ MUST EXIST
 
-                print("API DATES:", disabled_dates)  # debug
-
+                # 🔴 BLOCKED
                 for d in disabled_dates:
                     try:
                         d_obj = datetime.strptime(d, "%Y-%m-%d").date()
@@ -1014,12 +1036,150 @@ def get_calendar_data(request, slug):
                             result[key]["type"] = "blocked"
 
                     except Exception as e:
-                        print("DATE ERROR:", d, e)
+                        print("BLOCK ERROR:", d, e)
+
+                # 🟡 OFFER
+                for d in offer_dates:
+                    try:
+                        d_obj = datetime.strptime(d, "%Y-%m-%d").date()
+                        key = d_obj.strftime("%Y-%m-%d")
+
+                        if key in result and result[key]["type"] == "available":
+                            result[key]["is_offer"] = True   # ✅ THIS FIXES COLOR
+
+                    except Exception as e:
+                        print("OFFER ERROR:", d, e)
 
         except Exception as e:
             print("API ERROR:", e)
 
     return JsonResponse(list(result.values()), safe=False)
+
+# def get_calendar_data(request, slug):
+
+#     farmhouse = get_object_or_404(Farmhouse, slug=slug)
+
+#     result = {}
+
+#     # MONTH
+#     year = int(request.GET.get("year", date.today().year))
+#     month = int(request.GET.get("month", date.today().month))
+
+#     start_date = date(year, month, 1)
+#     last_day = calendar.monthrange(year, month)[1]
+#     end_date = date(year, month, last_day)
+
+#     current = start_date
+
+#     # ================= DEFAULT =================
+#     while current <= end_date:
+
+#         key = current.strftime("%Y-%m-%d")
+
+#         result[key] = {
+#             "date": key,
+#             "price": float(farmhouse.get_price_by_date(current) or 0),
+#             "is_offer": False,
+#             "type": "available"
+#         }
+
+#         current += timedelta(days=1)
+
+#     # ================= BOOKINGS =================
+#     bookings = Booking.objects.filter(
+#         farmhouse=farmhouse,
+#         status="confirmed"
+#     )
+
+#     for booking in bookings:
+#         start = booking.check_in
+#         end = booking.check_out - timedelta(days=1)
+
+#         while start <= end:
+#             key = start.strftime("%Y-%m-%d")
+#             if key in result:
+#                 result[key]["type"] = "booked"
+#             start += timedelta(days=1)
+
+#     # ================= BLOCKED =================
+#     blocks = BlockedDate.objects.filter(farmhouse=farmhouse)
+
+#     for b in blocks:
+#         start = b.start_date
+#         end = b.end_date - timedelta(days=1)
+
+#         while start <= end:
+#             key = start.strftime("%Y-%m-%d")
+#             if key in result:
+#                 result[key]["type"] = "blocked"
+#             start += timedelta(days=1)
+
+#     # ================= 🔥 API (VIVAAN ONLY) =================
+#     if farmhouse.slug == "vivaan-farmhouse":
+
+#         try:
+#             res = requests.get(
+#                 "https://www.vivaanfarmhouse.com/api/blocked-dates/",
+#                 timeout=5
+#             )
+
+#             if res.status_code == 200:
+#                 data = res.json()
+#                 disabled_dates = data.get("disabled_dates", [])
+
+#                 print("API DATES:", disabled_dates)  # debug
+
+#                 for d in disabled_dates:
+#                     try:
+#                         d_obj = datetime.strptime(d, "%Y-%m-%d").date()
+#                         key = d_obj.strftime("%Y-%m-%d")
+
+#                         if key in result:
+#                             result[key]["type"] = "blocked"
+
+#                     except Exception as e:
+#                         print("DATE ERROR:", d, e)
+
+#         except Exception as e:
+#             print("API ERROR:", e)
+
+#     return JsonResponse(list(result.values()), safe=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # def get_calendar_data(request, slug):
 
