@@ -119,10 +119,9 @@
                         {{ booking.payment_status }}
                     </p>
 
-                    <p><b>Booked On:</b>
-                        {% comment %} {{ booking.created_at }} {% endcomment %}
+                    {% comment %} <p><b>Booked On:</b>
                         {{ booking.created_at_ist|date:"F d, Y, h:i A" }}
-                    </p>
+                    </p> {% endcomment %}
 
                 </div>
             </div>

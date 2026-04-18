@@ -118,15 +118,9 @@ class Booking(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
-
-
     class Meta:
         ordering = ['-created_at']
 
-
-    @property
-    def created_at_ist(self):
-        return timezone.localtime(self.created_at)
     @property
     def advance_paid(self):
 
