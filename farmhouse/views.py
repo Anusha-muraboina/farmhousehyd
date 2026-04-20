@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from .models import *
@@ -6,7 +5,7 @@ from django.db.models import Q
 from blogs.models import Blog
 # Create your views here.
 # views.py
-from django.http import HttpResponse
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -62,7 +61,6 @@ from cms.models import PageSEO
 # views.py
 # def home_page(request):
 #     return render(request, "home.html")
-
 
 # def home_page(request,  location=None):
 
@@ -917,27 +915,16 @@ def public_calendar(request, slug):
 from django.http import JsonResponse
 from datetime import timedelta, date
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from datetime import timedelta, date
-from django.shortcuts import get_object_or_404
-import calendar
-from datetime import date
+
 
 
 import requests
 from datetime import timedelta, date, datetime
 import calendar
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 
-from django.http import JsonResponse
-from datetime import timedelta, date, datetime
-from django.shortcuts import get_object_or_404
-import calendar
-import requests
+
 
 from booking.views import call_external_api ,FARMHOUSE_SERVERS
-
 
 def get_calendar_data(request, slug):
 
