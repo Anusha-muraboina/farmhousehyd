@@ -57,6 +57,73 @@ from .models import Booking
 
 
 
+
+
+FARMHOUSE_SERVERS = {
+    "vivaan-farmhouse": {
+        "urls": [
+            "https://vivaanfarmhouse.com",
+            "http://13.205.98.67"
+           
+        ],
+        "id": 65
+    },
+    "destany-farm-shamshabad": {
+        "urls": [  # replace if you have domain
+            "http://3.6.87.103"
+        ],
+        "id": 72
+    }
+}
+
+
+
+import requests
+import requests
+
+def call_external_api(slug, endpoint):
+    config = FARMHOUSE_SERVERS.get(slug, {})
+    servers = config.get("urls", [])
+
+    for base in servers:
+        try:
+            url = f"{base}{endpoint}"
+            print(f"🔄 Calling: {url}")
+
+            res = requests.get(url, timeout=5)
+
+            if res.status_code == 200:
+                print(f"✅ Success from {base}")
+                return res.json()
+            else:
+                print(f"❌ Failed {base}: {res.status_code}")
+
+        except Exception as e:
+            print(f"❌ Error {base}: {e}")
+
+    return []
+
+# def call_external_api(slug, endpoint):
+#     servers = FARMHOUSE_SERVERS.get(slug, {}).get("urls", [])
+
+#     for base in servers:
+#         try:
+#             res = requests.get(f"{base}{endpoint}", timeout=3)
+#             if res.status_code == 200:
+#                 return res.json()
+#         except:
+#             continue
+
+#     return []
+
+
+
+
+
+
+
+
+
 client = razorpay.Client(
     auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
 )
@@ -197,17 +264,23 @@ class CreateBookingAPI(APIView):
         # ================================
         vivaan_api_data = []
 
-        if farmhouse.slug == "vivaan-farmhouse":
-            try:
-                res = requests.get(
-                    "https://vivaanfarmhouse.com/api/vivaan-offers/",
-                    timeout=3
-                )
-                if res.status_code == 200:
-                    vivaan_api_data = res.json()
-            except Exception as e:
-                print("Vivaan API Error:", e)
+        # if farmhouse.slug == "vivaan-farmhouse":
+        
+        #     try:
+        #         res = requests.get(
+        #             "https://vivaanfarmhouse.com/api/vivaan-offers/",
+        #             timeout=3
+        #         )
+        #         if res.status_code == 200:
+        #             vivaan_api_data = res.json()
+        #     except Exception as e:
+        #         print("Vivaan API Error:", e)
 
+        if farmhouse.slug in FARMHOUSE_SERVERS:
+            vivaan_api_data = call_external_api(
+                farmhouse.slug,
+                "/api/vivaan-offers/"
+            ) or []
 
         # ================================
         # 🔥 FINAL PRICE CALCULATION
@@ -220,7 +293,8 @@ class CreateBookingAPI(APIView):
             day_price = None
 
             # ✅ 1. API PRICE
-            if farmhouse.slug == "vivaan-farmhouse":
+            # if farmhouse.slug == "vivaan-farmhouse":
+            if farmhouse.slug in FARMHOUSE_SERVERS:
                 for o in vivaan_api_data:
                     start_api = datetime.strptime(o["start_date"], "%Y-%m-%d").date()
                     end_api = datetime.strptime(o["end_date"], "%Y-%m-%d").date()
@@ -475,7 +549,7 @@ class CreateBookingAPI(APIView):
         Password: {password}
 
         Login:
-        https://yourdomain.com/login
+        https://farmhouseshyderabad.com/user/login-page/
 
         IMPORTANT:
         Please change your password after login.
@@ -1079,6 +1153,7 @@ def sync_booking_to_vivaan(booking):
                 "booking_id": booking.booking_id,
                 "source": "farmhouse_hyd"
             },
+            
             timeout=8,
             headers={"Content-Type": "application/json"}
         )
@@ -1201,25 +1276,60 @@ def blocked_dates_api(request, farmhouse_id):
     try:
         farmhouse = Farmhouse.objects.get(id=farmhouse_id)
 
-        if farmhouse.slug == "vivaan-farmhouse":
-            try:
-                external_url = "https://vivaanfarmhouse.com/api/blocked-dates/"
+        # if farmhouse.slug == "vivaan-farmhouse":
+        if farmhouse.slug in FARMHOUSE_SERVERS:
+            external_data = call_external_api(
+                farmhouse.slug,
+                "/api/blocked-dates/"
+            )
+            
+                        # ✅ CASE 1: {"disabled_dates": [...]}
+            if isinstance(external_data, dict):
+                dates = external_data.get("disabled_dates", [])
 
-                res = requests.get(external_url, timeout=5)
+                for d in dates:
+                    date_obj = datetime.strptime(d, "%Y-%m-%d").date()
 
-                if res.status_code == 200:
-                    data = res.json()
+                    blocked_ranges.append({
+                        "from": date_obj,
+                        "to": date_obj
+                    })
 
-                    for item in data.get("disabled_dates", []):
-                        d = datetime.strptime(item, "%Y-%m-%d").date()
+            # ✅ CASE 2: [{"from": "...", "to": "..."}]
+            elif isinstance(external_data, list):
+                for item in external_data:
+                    if isinstance(item, dict):
+                        start = item.get("from")
+                        end = item.get("to")
 
-                        blocked_ranges.append({
-                            "from": d,
-                            "to": d
-                        })
+                        if start and end:
+                            start_date = datetime.strptime(start, "%Y-%m-%d").date()
+                            end_date = datetime.strptime(end, "%Y-%m-%d").date()
 
-            except Exception as e:
-                print("Sync error:", e)
+                            blocked_ranges.append({
+                                "from": start_date,
+                                "to": end_date
+                            })
+
+
+            # try:
+            #     external_url = "https://vivaanfarmhouse.com/api/blocked-dates/"
+
+            #     res = requests.get(external_url, timeout=5)
+
+            #     if res.status_code == 200:
+            #         data = res.json()
+
+            #         for item in data.get("disabled_dates", []):
+            #             d = datetime.strptime(item, "%Y-%m-%d").date()
+
+            #             blocked_ranges.append({
+            #                 "from": d,
+            #                 "to": d
+            #             })
+
+            # except Exception as e:
+            #     print("Sync error:", e)
 
     except Exception as e:
         print("Farmhouse error:", e)
