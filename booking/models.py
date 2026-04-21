@@ -27,6 +27,9 @@ from user.models import *
 from django.conf import settings
 from coupon.models import *
 
+from django.utils import timezone
+import pytz
+
 
 
 class Booking(models.Model):
@@ -120,6 +123,15 @@ class Booking(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+
+
+    # @property
+    # def created_at_ist(self):
+    #     if self.created_at:
+    #         ist = pytz.timezone("Asia/Kolkata")
+    #         return self.created_at.astimezone(ist)
+    #     return None
+    
     @property
     def advance_paid(self):
 

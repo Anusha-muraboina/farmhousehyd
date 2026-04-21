@@ -500,6 +500,7 @@ class CreateBookingAPI(APIView):
             coupon_applied=coupon_obj,
         )
         
+        
         # sync_to_vivaan(booking)
         sync_booking_to_vivaan(booking)
         # ✅ FIXED WALLET FLAG

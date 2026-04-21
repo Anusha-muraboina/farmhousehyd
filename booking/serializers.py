@@ -36,6 +36,7 @@ class BookingSerializer(serializers.ModelSerializer):
             "wallet_used",
              "user_email",
             "user_name",
+            "created_at",
         ]
 
     ###################################

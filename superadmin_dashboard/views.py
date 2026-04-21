@@ -10,6 +10,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from django.utils.timezone import get_current_timezone
+
+from collections import defaultdict
+import pytz
+from django.utils import timezone
+import calendar
+
 
 from django.http import HttpResponseForbidden
 from functools import wraps
@@ -225,16 +232,69 @@ def superadmin_dashboard(request):
     #########################################
 
     # Monthly Revenue
-    monthly_data = (
-        paid_bookings
-        .annotate(month=TruncMonth("created_at"))
-        .values("month")
-        .annotate(total=Sum("total_amount"))
-        .order_by("month")
+    # monthly_data = (
+    #     paid_bookings
+    #     .annotate(month=TruncMonth("created_at"))
+    #     .values("month")
+    #     .annotate(total=Sum("total_amount"))
+    #     .order_by("month")
+    # )
+
+    # months = [m["month"].strftime("%b") for m in monthly_data]
+    # revenues = [float(m["total"]) for m in monthly_data]
+
+
+    # IST timezone
+    ist = pytz.timezone("Asia/Kolkata")
+
+    # Dictionary to store month-wise revenue
+    monthly_data_dict = defaultdict(float)
+
+    # Loop through bookings
+    for booking in paid_bookings:
+        if booking.created_at:
+            # Convert UTC → IST
+            ist_date = timezone.localtime(booking.created_at, ist)
+
+            # Get month (Jan, Feb...)
+            month = ist_date.strftime("%b")
+
+            # Add revenue
+            monthly_data_dict[month] += float(booking.total_amount or 0)
+
+    # Sort months properly (Jan → Dec)
+    month_order = list(calendar.month_abbr)
+
+    months = sorted(
+        monthly_data_dict.keys(),
+        key=lambda m: month_order.index(m)
     )
 
-    months = [m["month"].strftime("%b") for m in monthly_data]
-    revenues = [float(m["total"]) for m in monthly_data]
+    revenues = [
+        monthly_data_dict[m] for m in months
+    ]
+
+    # monthly_data = list(
+    #     paid_bookings
+    #     # .annotate(month=TruncMonth("created_at"))
+    #     .annotate(    month=TruncMonth(
+    #     "created_at",
+    #         tzinfo=get_current_timezone()
+    #     ))
+    #     .values("month")
+    #     .annotate(total=Sum("total_amount"))
+    #     .order_by("month")
+    # )
+
+    # months = [
+    #     m["month"].strftime("%b") if m["month"] else ""
+    #     for m in monthly_data
+    # ]
+
+    # revenues = [
+    #     float(m["total"] or 0)
+    #     for m in monthly_data
+    # ]
 
 
     # Booking Status

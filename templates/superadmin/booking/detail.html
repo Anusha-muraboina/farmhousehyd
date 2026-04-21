@@ -119,9 +119,18 @@
                         {{ booking.payment_status }}
                     </p>
 
-                    {% comment %} <p><b>Booked On:</b>
-                        {{ booking.created_at_ist|date:"F d, Y, h:i A" }}
-                    </p> {% endcomment %}
+                    {% comment %} <p><b>Booked On:</b> {% endcomment %}
+                        {% comment %} {{ booking.created_at_ist|date:"F d, Y, h:i A" }} {% endcomment %}
+                        {% comment %} {{ booking.created_at_ist|date:"F d, Y, h:i A" }} {% endcomment %}
+
+                       {% comment %} {{ booking.created_at|localtime|date:"F d, Y, h:i A" }} {% endcomment %}
+
+                    {% comment %} </p> {% endcomment %}
+
+
+                    <p><b>Booked On:</b>
+    {{ booking.created_at|timezone:"Asia/Kolkata"|date:"F d, Y, h:i A" }}
+</p>
 
                 </div>
             </div>
