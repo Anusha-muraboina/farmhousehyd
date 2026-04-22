@@ -623,6 +623,7 @@ from rest_framework.permissions import AllowAny
 @permission_classes([AllowAny])
 def owner_booking_list_api(request):
     # permission_classes = [AllowAny]
+
     # authentication_classes = []
     ###################################
     # BASE QUERY
@@ -635,12 +636,26 @@ def owner_booking_list_api(request):
     ###################################
     # BASE QUERY (ONLY VIVAAN FARMHOUSE)
     ###################################
-    bookings = Booking.objects.filter(
-        # farmhouse__user=request.user,
-        farmhouse__slug="vivaan-farmhouse"   # 👈 ADD HERE
-    ).select_related("farmhouse").order_by("-created_at")
+    # bookings = Booking.objects.filter(
+    #     # farmhouse__user=request.user,
+    #     farmhouse__slug="vivaan-farmhouse"   # 👈 ADD HERE
+    # ).select_related("farmhouse").order_by("-created_at")
     
-    
+        ###################################
+    # 🔥 GET FARMHOUSE FROM REQUEST
+    ###################################
+    slugs = request.GET.get("farmhouse")   # can be single or multiple
+
+    bookings = Booking.objects.select_related("farmhouse").order_by("-created_at")
+
+    ###################################
+    # 🔥 FILTER BY FARMHOUSE
+    ###################################
+    if slugs:
+        slug_list = slugs.split(",")   # support multiple
+        bookings = bookings.filter(farmhouse__slug__in=slug_list)
+
+
     ###################################
     # 🔢 COUNTS (TOP CARDS)
     ###################################
@@ -753,11 +768,27 @@ def owner_booking_update_api(request, pk):
     Update booking status & payment for Vivaan Farmhouse
     """
     # 🔥 ONLY VIVAAN FARMHOUSE
-    booking = get_object_or_404(
-        Booking,
-        pk=pk,
-        farmhouse__slug="vivaan-farmhouse"
-    )
+    # booking = get_object_or_404(
+    #     Booking,
+    #     pk=pk,
+    #     farmhouse__slug="vivaan-farmhouse"
+    # )
+    
+        ###################################
+    # 🔥 GET FARMHOUSE FROM REQUEST
+    ###################################
+    slugs = request.GET.get("farmhouse")  # single or multiple
+
+    queryset = Booking.objects.all()
+
+    if slugs:
+        slug_list = slugs.split(",")
+        queryset = queryset.filter(farmhouse__slug__in=slug_list)
+
+    ###################################
+    # 🔍 GET BOOKING
+    ###################################
+    booking = get_object_or_404(queryset, pk=pk)
 
     old_status = booking.status
     old_payment = booking.payment_status

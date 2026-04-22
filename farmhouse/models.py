@@ -6,6 +6,10 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from datetime import datetime
 import requests
+
+from django.utils.text import slugify
+from django.conf import settings
+
 class Banner(models.Model):
     title = models.CharField(max_length=200 ,null=True ,blank=True)
     image = models.ImageField(upload_to='banners/' , null=True , blank=True)
@@ -15,9 +19,6 @@ class Banner(models.Model):
     
     def __str__(self):
         return self.title  or "banner" 
-
-
-from django.db import models
 
 class Location(models.Model):
     name = models.CharField(max_length=100)  # Gachibowli, Moinabad
@@ -83,8 +84,7 @@ class Propertyrules(models.Model):
 
 
 
-from django.utils.text import slugify
-from django.conf import settings
+
 class Farmhouse(models.Model):
     
     user = models.ForeignKey( settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
@@ -395,7 +395,6 @@ class Farmhouse(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
-
 
 class FarmhouseOfferPricing(models.Model):
     farmhouse = models.ForeignKey(

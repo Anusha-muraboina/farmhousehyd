@@ -18,8 +18,10 @@ from django.template.loader import render_to_string
 from datetime import timedelta
 
 
+from django.core.exceptions import ValidationError
+from datetime import date
+
 # bookings/models.py
-from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from farmhouse.models import Farmhouse
@@ -367,8 +369,6 @@ class Booking(models.Model):
         return f"{self.booking_id} - {self.guest_name}-{self.check_in} - {self.check_out} -{self.farmhouse}"
 
 
-from django.core.exceptions import ValidationError
-from datetime import date
 # models.py
 class BlockedDate(models.Model):
     farmhouse = models.ForeignKey(
