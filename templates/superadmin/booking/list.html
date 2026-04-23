@@ -172,7 +172,42 @@
 </div>
 
 
+<div class="d-flex justify-content-center mt-4">
 
+    <nav>
+        <ul class="pagination">
+
+            {% if bookings.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                   href="?page={{ bookings.previous_page_number }}">
+                   Previous
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in bookings.paginator.page_range %}
+            <li class="page-item {% if bookings.number == num %}active{% endif %}">
+                <a class="page-link"
+                   href="?page={{ num }}">
+                   {{ num }}
+                </a>
+            </li>
+            {% endfor %}
+
+            {% if bookings.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                   href="?page={{ bookings.next_page_number }}">
+                   Next
+                </a>
+            </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+
+</div>
 <!-- ✅✅✅ ULTRA STRONG CSS -->
 <style>
 
