@@ -518,9 +518,9 @@ Upload high-quality images to attract more bookings.
 <span class="upload-sub">
 Drag & drop or click to browse (Recommended: 1600×900)
 </span>
-<input type="file" name="gallery_images" multiple hidden>
+<input type="file" name="gallery_images" multiple hidden id="imageInput">
 </label>
-
+<div id="previewContainer" class="row mt-3"></div>
 
 {% if farmhouse %}
 <div class="row mt-3">
@@ -687,5 +687,35 @@ document.querySelectorAll(".delete-img").forEach(btn => {
     });
 });
 </script>
+<script>
+document.getElementById("imageInput").addEventListener("change", function(event) {
+    let preview = document.getElementById("previewContainer");
+    preview.innerHTML = ""; // clear old previews
 
+    let files = event.target.files;
+
+    for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+
+        if (!file.type.startsWith("image/")) continue;
+
+        let reader = new FileReader();
+
+        reader.onload = function(e) {
+            let col = document.createElement("div");
+            col.className = "col-4 mb-3";
+
+            col.innerHTML = `
+                <img src="${e.target.result}" 
+                     class="img-fluid rounded shadow-sm"
+                     style="height:120px; object-fit:cover;">
+            `;
+
+            preview.appendChild(col);
+        };
+
+        reader.readAsDataURL(file);
+    }
+});
+</script>
 {% endblock %}
