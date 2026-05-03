@@ -499,6 +499,10 @@ from farmhouse.models import Farmhouse
 from booking.models import Booking
 
 
+
+
+
+
 @owner_required
 def owner_booking_list(request):
 
@@ -514,6 +518,13 @@ def owner_booking_list(request):
         # farmhouse__in=farmhouses
          farmhouse__user=request.user 
     ).select_related("farmhouse").order_by("-created_at")
+    
+    
+        # ✅ ADD THIS
+    coupons = Coupon.objects.filter(
+        farmhouse__user=request.user,
+        is_active=True
+    )
   ###################################
     # 🔢 BOOKING COUNTS (FOR TOP CARDS)
     ###################################
@@ -571,6 +582,8 @@ def owner_booking_list(request):
             "confirmed_count": confirmed_count,
             "cancelled_count": cancelled_count,
             "paid_count": paid_count,
+            
+            "coupons": coupons
         }
     )
 
@@ -581,6 +594,11 @@ def owner_booking_detail(request, pk):
         Booking.objects.select_related("farmhouse"),
         pk=pk,
         farmhouse__user=request.user   # 🔥 SECURITY LINE
+    )
+    
+    coupons = Coupon.objects.filter(
+        farmhouse__user=request.user,
+        is_active=True
     )
 
     if request.method == "POST":
@@ -596,7 +614,9 @@ def owner_booking_detail(request, pk):
     return render(
         request,
         "farmhouse_admin/bookings/details.html",
-        {"booking": booking}
+        {"booking": booking ,
+          "coupons": coupons
+          }
     )
 
 
@@ -2193,3 +2213,315 @@ def owner_offer_delete(request, pk):
 #     return JsonResponse(result, safe=False)
 
 
+
+
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.conf import settings
+from user.models import User
+from coupon.models import Coupon
+from django.core.mail import send_mail
+from django.conf import settings
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+
+@owner_required
+def send_booking_coupon(request, booking_id):
+
+    booking = get_object_or_404(
+        Booking,
+        id=booking_id,
+        farmhouse__user=request.user
+    )
+
+    if request.method == "POST":
+
+        coupon_id = request.POST.get("coupon_id")
+
+        coupon = get_object_or_404(Coupon, id=coupon_id)
+
+        # ✅ download link
+        # download_link = request.build_absolute_uri(
+        #     f"/download/{coupon.id}/"
+        # )
+        
+        download_link = request.build_absolute_uri(
+            reverse("download_coupon", args=[coupon.id])
+        )
+
+        # ✅ email
+        subject = "🎁 Your Coupon"
+
+        message = f"""
+Hello {booking.user.username},
+
+Here is your special coupon:
+
+Code: {coupon.code}
+
+Discount:
+{"₹" + str(coupon.discount_value) if coupon.discount_type == "flat"
+ else str(coupon.discount_value) + "% OFF"}
+
+Valid Till: {coupon.end_date}
+
+Download here:
+{download_link}
+
+Thank you!
+"""
+
+        send_mail(
+            subject,
+            message,
+            settings.EMAIL_HOST_USER,
+            [booking.user.email],
+            fail_silently=False,
+        )
+
+        messages.success(request, "Coupon sent successfully!")
+
+        return redirect("admin-bookings")
+    
+    
+    
+
+# @login_required
+# def download_coupon(request, coupon_id):
+
+#     coupon = get_object_or_404(Coupon, id=coupon_id)
+
+#     if not coupon.is_valid():
+#         return HttpResponse("Expired", status=400)
+
+#     content = f"""
+# Coupon Code: {coupon.code}
+# Valid Till: {coupon.end_date}
+# """
+
+#     response = HttpResponse(content, content_type="text/plain")
+#     response["Content-Disposition"] = f'attachment; filename="{coupon.code}.txt"'
+
+#     return response
+
+
+
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
+
+# @login_required
+# def download_coupon(request, coupon_id):
+
+#     coupon = get_object_or_404(Coupon, id=coupon_id)
+
+#     if not coupon.is_valid():
+#         return HttpResponse("Expired", status=400)
+
+#     # ✅ Response as PDF
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = f'attachment; filename="{coupon.code}.pdf"'
+
+#     # ✅ Create PDF
+#     doc = SimpleDocTemplate(response, pagesize=A4)
+#     styles = getSampleStyleSheet()
+
+#     content = []
+
+#     # 🎫 Title
+#     content.append(Paragraph("<b>FARMHOUSE COUPON</b>", styles['Title']))
+#     content.append(Spacer(1, 20))
+
+#     # 🎯 Coupon details
+#     content.append(Paragraph(f"<b>Code:</b> {coupon.code}", styles['Normal']))
+#     content.append(Spacer(1, 10))
+
+#     discount_text = (
+#         f"₹{coupon.discount_value}"
+#         if coupon.discount_type == "flat"
+#         else f"{coupon.discount_value}% OFF"
+#     )
+
+#     content.append(Paragraph(f"<b>Discount:</b> {discount_text}", styles['Normal']))
+#     content.append(Spacer(1, 10))
+
+#     content.append(Paragraph(f"<b>Valid Till:</b> {coupon.end_date}", styles['Normal']))
+#     content.append(Spacer(1, 20))
+
+#     content.append(Paragraph("Use this coupon while booking your farmhouse.", styles['Normal']))
+
+#     # ✅ Build PDF
+#     doc.build(content)
+
+#     return response
+
+
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.http import HttpResponse
+
+
+# @login_required
+# def download_coupon(request, coupon_id):
+
+#     coupon = get_object_or_404(Coupon, id=coupon_id)
+
+#     if not coupon.is_valid():
+#         return HttpResponse("Expired", status=400)
+
+#     template = get_template("emails/coupon_pdf.html")
+#     html = template.render({"coupon": coupon})
+
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = f'attachment; filename="{coupon.code}.pdf"'
+
+#     pisa.CreatePDF(html, dest=response)
+
+#     return response
+
+
+
+
+@login_required
+def download_coupon(request, coupon_id):
+
+    coupon = get_object_or_404(Coupon, id=coupon_id)
+
+    if not coupon.is_valid():
+        return HttpResponse("Coupon expired", status=400)
+
+    template = get_template("emails/coupon_pdf.html")
+
+    html = template.render({
+        "coupon": coupon,
+        "farmhouse": coupon.farmhouse
+    })
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{coupon.code}.pdf"'
+
+    pisa.CreatePDF(html, dest=response)
+
+    return response
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# @login_required
+# def download_coupon(request, coupon_id):
+
+#     coupon = get_object_or_404(Coupon, id=coupon_id)
+
+#     if not coupon.is_valid():
+#         return HttpResponse("Expired", status=400)
+
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = f'attachment; filename="{coupon.code}.pdf"'
+
+#     doc = SimpleDocTemplate(response, pagesize=A4)
+
+#     styles = getSampleStyleSheet()
+
+#     # 🎨 Custom Styles
+#     title_style = ParagraphStyle(
+#         'title',
+#         parent=styles['Title'],
+#         alignment=1,
+#         textColor=colors.HexColor("#ff7a00")
+#     )
+
+#     subtitle_style = ParagraphStyle(
+#         'subtitle',
+#         parent=styles['Normal'],
+#         alignment=1,
+#         fontSize=12,
+#         textColor=colors.grey
+#     )
+
+#     content_style = ParagraphStyle(
+#         'content',
+#         parent=styles['Normal'],
+#         alignment=1,
+#         fontSize=14
+#     )
+
+#     elements = []
+
+#     # 🎫 TITLE
+#     elements.append(Spacer(1, 80))
+#     elements.append(Paragraph("🎫 FARMHOUSE COUPON", title_style))
+#     elements.append(Spacer(1, 10))
+
+#     elements.append(Paragraph("Exclusive Offer Just For You", subtitle_style))
+#     elements.append(Spacer(1, 30))
+
+#     # 🎯 COUPON BOX
+#     discount_text = (
+#         f"₹{coupon.discount_value}"
+#         if coupon.discount_type == "flat"
+#         else f"{coupon.discount_value}% OFF"
+#     )
+
+#     table_data = [
+#         ["COUPON CODE", coupon.code],
+#         ["DISCOUNT", discount_text],
+#         ["VALID TILL", str(coupon.end_date)],
+#     ]
+
+#     table = Table(table_data, colWidths=[200, 200])
+
+#     table.setStyle(TableStyle([
+#         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#ff7a00")),
+#         ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+
+#         ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
+
+#         ("GRID", (0, 0), (-1, -1), 1, colors.grey),
+
+#         ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+
+#         ("FONTNAME", (0, 0), (-1, -1), "Helvetica-Bold"),
+#         ("BOTTOMPADDING", (0, 0), (-1, -1), 12),
+#     ]))
+
+#     elements.append(table)
+#     elements.append(Spacer(1, 40))
+
+#     # 🎉 FOOTER
+#     elements.append(Paragraph("Use this coupon while booking your farmhouse", content_style))
+#     elements.append(Spacer(1, 10))
+
+#     elements.append(Paragraph("Enjoy your stay! 🌿", subtitle_style))
+
+#     doc.build(elements)
+
+#     return response

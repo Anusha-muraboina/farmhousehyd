@@ -208,6 +208,49 @@ Farmhouse
 {{ booking.farmhouse.address }}
 </p>
 
+
+
+<h5 class="mb-3 fw-bold">Assign the coupon to the user </h5>
+<form method="POST"
+      action="{% url 'send_booking_coupon' booking.id %}"
+      class="d-flex align-items-center gap-2 send-coupon-form">
+
+    {% csrf_token %}
+
+    <select name="coupon_id"
+            class="form-select form-select-sm shadow-sm"
+            style="min-width:150px;">
+        <option value="">Select</option>
+        {% for coupon in coupons %}
+            <option value="{{ coupon.id }}">
+                {{ coupon.code }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit"
+            class="btn btn-sm btn-warning text-white fw-semibold shadow-sm">
+     
+        Send
+    </button>
+
+</form>
+<!-- ✅ SEND COUPON FORM (FIXED) -->
+{% comment %} <form method="POST" action="{% url 'send_booking_coupon' booking.id %}">
+    {% csrf_token %}
+
+    <select name="coupon_id">
+        {% for coupon in coupons %}
+            <option value="{{ coupon.id }}">
+                {{ coupon.code }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Send</button>
+</form> {% endcomment %}
+
+
 </div>
 </div>
 </div>
@@ -290,6 +333,9 @@ Update Booking
 
 </form>
 
+
+
+
 </div>
 </div>
 </div>
@@ -312,4 +358,15 @@ Update Booking
 
 </div>
 
+
+<style>
+.send-coupon-form select {
+    border-radius: 8px;
+}
+
+.send-coupon-form button {
+    border-radius: 8px;
+    padding: 6px 14px;
+}
+</style>
 {% endblock %}

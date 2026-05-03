@@ -110,6 +110,14 @@ urlpatterns = [
     path("offers/<int:pk>/delete/", owner_offer_delete, name="owner_offer_delete"),
     
     
+    path(
+    "booking/send-coupon/<int:booking_id>/",
+        send_booking_coupon,
+        name="send_booking_coupon"
+    ),
+     
+    path("download/<int:coupon_id>/", download_coupon, name="download_coupon"),
+        
     # urls.py
 
 

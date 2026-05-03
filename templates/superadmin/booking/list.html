@@ -89,6 +89,7 @@
                         <th>Booking ID</th>
                         <th>Farmhouse</th>
                         <th>Guest</th>
+                        <th>Dates</th>
                         <th>Status</th>
                         <th>Total</th>
                         <th style="min-width:260px;">Actions</th>
@@ -105,7 +106,7 @@
                         {{ booking.booking_id }}
                     </td>
 
-                    <td class="text-warning fw-semibold" style="min-width:180px;">
+                    <td class="text-warning fw-semibold" style="min-width:180px;white-space: normal;">
                         {{ booking.farmhouse.title }}
                     </td>
 
@@ -117,6 +118,13 @@
                             {{ booking.guest_email }}
                         </small>
                     </td>
+
+
+                    <td>
+
+{{booking.check_in}} → {{booking.check_out}}
+
+</td>
 
                     <td style="min-width:140px;">
                         {% if booking.status == "confirmed" %}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+}
+
+/* MAIN TICKET */
+.ticket {
+    width: 650px;
+    margin: auto;
+    border: 1px solid #d1d5db;
+    display: table;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* LEFT SIDE */
+.left {
+    width: 65%;
+    padding: 25px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+/* RIGHT SIDE */
+.right {
+    width: 35%;
+    background: #f9fafb;
+    display: table-cell;
+    text-align: center;
+    border-left: 1px dashed #d1d5db;
+    vertical-align: middle;
+}
+
+/* TITLE */
+.title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* FARMHOUSE */
+.farmhouse {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+/* DISCOUNT */
+.discount {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* VALID */
+.valid {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* CODE */
+.code {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-top: 10px;
+}
+
+/* LABEL */
+.label {
+    font-size: 12px;
+    color: #9ca3af;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="ticket">
+
+    <!-- LEFT CONTENT -->
+    <div class="left">
+
+        <div class="title">FARMHOUSE COUPON</div>
+
+        <div class="farmhouse">
+            {{ farmhouse.title }}<br>
+            {{ farmhouse.address }}
+        </div>
+
+        <div class="discount">
+            {% if coupon.discount_type == "flat" %}
+                ₹{{ coupon.discount_value }} OFF
+            {% else %}
+                {{ coupon.discount_value }}% OFF
+            {% endif %}
+        </div>
+
+        <div class="valid">
+            Valid till: {{ coupon.end_date }}
+        </div>
+
+    </div>
+
+    <!-- RIGHT CONTENT -->
+    <div class="right">
+
+        <div class="label">COUPON CODE</div>
+
+        <div class="code">
+            {{ coupon.code }}
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
