@@ -1557,10 +1557,14 @@ def owner_booking_create(request):
             subtotal = Decimal("0.00")
 
 
+            # while start < end:
+            #     subtotal += farmhouse.get_price_by_date(start)
+            #     start += timedelta(days=1)
+            
             while start < end:
-                subtotal += farmhouse.get_price_by_date(start)
+                price = farmhouse.get_price_by_date(start) or 0
+                subtotal += Decimal(str(price))
                 start += timedelta(days=1)
-                
                 
             # while start < end:
 
@@ -1578,7 +1582,8 @@ def owner_booking_create(request):
             ########################################
             # EXTRA GUEST
             ########################################
-            subtotal += booking.extra_guest_count * pricing.extra_guest_price
+            # subtotal += booking.extra_guest_count * pricing.extra_guest_price
+            subtotal += Decimal(booking.extra_guest_count or 0) * pricing.extra_guest_price
 
             ########################################
             # COUPON
@@ -1641,7 +1646,8 @@ def owner_booking_create(request):
             # booking.remaining_amount = booking.total_amount
 
 
-            booking.total_amount = subtotal - total_discount
+            # booking.total_amount = subtotal - total_discount
+            booking.total_amount = (subtotal - total_discount).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
             # =========================
             # ADVANCE LOGIC ✅
@@ -1652,9 +1658,12 @@ def owner_booking_create(request):
             if advance > booking.total_amount:
                 advance = booking.total_amount
 
-            booking.remaining_amount = booking.total_amount - advance
+            # booking.remaining_amount = booking.total_amount - advance
             
-            
+            booking.remaining_amount = (
+                booking.total_amount - advance
+            ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                        
             ########################################
             # PREVENT DOUBLE BOOKING
             ########################################
@@ -1767,7 +1776,7 @@ from decimal import Decimal
 from datetime import datetime, timedelta
 from django.views.decorators.http import require_POST
 import json
-
+from decimal import ROUND_HALF_UP
 
 @owner_required
 @require_POST
@@ -1799,8 +1808,13 @@ def owner_calculate_booking_price(request):
 
 
 
+    # while start < end:
+    #     subtotal += farmhouse.get_price_by_date(start)
+    #     start += timedelta(days=1)
+    
     while start < end:
-        subtotal += farmhouse.get_price_by_date(start)
+        price = farmhouse.get_price_by_date(start) or 0
+        subtotal += Decimal(str(price))
         start += timedelta(days=1)
         
         
@@ -1871,14 +1885,16 @@ def owner_calculate_booking_price(request):
 
 
 
-    total = subtotal - total_discount
+    # total = subtotal - total_discount
+    total = (subtotal - total_discount).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
     # =========================
     # ADVANCE & REMAINING
     # =========================
     if advance_amount > total:
         advance_amount = total
 
-    remaining_amount = total - advance_amount
+    # remaining_amount = total - advance_amount
+    remaining_amount = (total - advance_amount).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
     
     return JsonResponse({
         # "subtotal": float(subtotal),

@@ -1991,7 +1991,8 @@ def admin_booking_create(request):
             ########################################
             # EXTRA GUEST
             ########################################
-            subtotal += booking.extra_guest_count * pricing.extra_guest_price
+            # subtotal += booking.extra_guest_count * pricing.extra_guest_price
+            
 
             ########################################
             # COUPON

@@ -43,6 +43,7 @@ ALLOWED_HOSTS = [
                 "vivaanfarmhouse.com",
                 "www.vivaanfarmhouse.com",
                 '13.205.98.67',
+                '3.110.215.192',
                 
                 "3.6.87.103",
                 
