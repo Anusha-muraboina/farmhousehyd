@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-
+from .views import admin_send_booking_coupon,download_coupon
 urlpatterns = [
 
     path("dashboard/", views.superadmin_dashboard, name="superadmin-dashboard"),
@@ -218,7 +218,15 @@ urlpatterns = [
     path("admin_offers/<int:pk>/delete/", views.admin_offer_delete, name="admin_offer_delete"),
     
     
+    # path("booking/admin_send-coupon/<int:booking_id>/",admin_send_booking_coupon,name="admin_send_booking_coupon" ),
+    path(
+    "send-coupon/<int:booking_id>/",
+        admin_send_booking_coupon,
+        name="admin_send_booking_coupon"
+    ),
     
+    path("download/<int:coupon_id>/", download_coupon, name="download_coupon"),
+     
     
 
     # OWNER

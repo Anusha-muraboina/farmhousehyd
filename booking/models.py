@@ -214,7 +214,7 @@ class Booking(models.Model):
 
         try:
             invoice_path = reverse("view_invoice", args=[self.booking_id])
-            invoice_url = f"https://farmhouseshyderabad.com{invoice_path}"   # 👉 change manually when needed
+            invoice_url = f"https://farmhouseshyderabad.com{invoice_path}"   # change manually when needed
         except:
             invoice_url = None
 
@@ -250,18 +250,77 @@ class Booking(models.Model):
 
     # ================= SAVE =================
 
+    # def save(self, *args, **kwargs):
+
+    #     is_new = self.pk is None
+    #     old_status = None
+        
+    #     if not is_new:
+    #         old_status = Booking.objects.get(pk=self.pk).status
+            
+    #     if not self.booking_id:
+    #         self.booking_id = "FHH" + ''.join(random.choices(string.digits, k=8))
+    #     super().save(*args, **kwargs)
+    
     def save(self, *args, **kwargs):
 
+        from django.db import transaction
+        import random
+        import string
+
         is_new = self.pk is None
+
+        ########################################
+        # FORCE GENERATE booking_id IF EMPTY
+        ########################################
+        if not self.booking_id:
+
+            # ✅ DETERMINE PREFIX
+            if self.user:
+                if self.user.is_superuser:
+                    prefix = "ADM"
+                elif self.user.is_staff:
+                    prefix = "OWN"
+                else:
+                    prefix = "FHH"
+            else:
+                # 🔥 ADMIN WITHOUT USER
+                prefix = "ADM"
+
+            # 🔥 UNIQUE ID GENERATION
+            while True:
+                number = ''.join(random.choices(string.digits, k=6))
+                booking_id = f"{prefix}{number}"
+
+                if not Booking.objects.filter(booking_id=booking_id).exists():
+                    break
+
+            self.booking_id = booking_id
+
+        ########################################
+        # GET OLD STATUS
+        ########################################
         old_status = None
-        
         if not is_new:
             old_status = Booking.objects.get(pk=self.pk).status
-            
-        if not self.booking_id:
-            self.booking_id = "FHH" + ''.join(random.choices(string.digits, k=8))
+
+        ########################################
+        # SAVE
+        ########################################
         super().save(*args, **kwargs)
 
+        ########################################
+        # EMAIL
+        ########################################
+        if is_new:
+            transaction.on_commit(
+                lambda: self.send_booking_email("pending")
+            )
+
+        elif old_status != self.status:
+            transaction.on_commit(
+                lambda: self.send_booking_email(self.status)
+            )
         ########################################
         # ✅ AUTO BLOCK DATES WHEN CONFIRMED
         ########################################

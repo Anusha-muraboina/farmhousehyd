@@ -2243,7 +2243,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 
 @owner_required
-def send_booking_coupon(request, booking_id):
+def Owner_send_booking_coupon(request, booking_id):
 
     booking = get_object_or_404(
         Booking,

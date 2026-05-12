@@ -1686,6 +1686,7 @@ def admin_booking_list(request):
     if search:
         bookings = bookings.filter(
             Q(guest_name__icontains=search) |
+            Q(guest_phone__icontains=search) |
             Q(guest_email__icontains=search) |
             Q(booking_id__icontains=search)
         )
@@ -1769,7 +1770,8 @@ def admin_calculate_booking_price(request):
     subtotal = Decimal("0.00")
 
     while start < end:
-        subtotal += farmhouse.get_price_by_date(start)
+        # subtotal += farmhouse.get_price_by_date(start)
+        subtotal += Decimal(str(farmhouse.get_price_by_date(start) or 0))
         start += timedelta(days=1)
 
     # while start < end:
@@ -1784,6 +1786,7 @@ def admin_calculate_booking_price(request):
 
     # EXTRA GUEST
     subtotal += extra_guest_count * pricing.extra_guest_price
+    subtotal += Decimal(str(extra_guest_count)) * Decimal(str(pricing.extra_guest_price or 0))
 
     # =========================
     # COUPON
@@ -1958,7 +1961,7 @@ def admin_booking_create(request):
             # DO NOT SAVE YET
             ########################################
             booking = form.save(commit=False)
-
+            booking.user = request.user   # 🔥 MUST ADD THIS
             ########################################
             # GET PRICING
             ########################################
@@ -2200,6 +2203,11 @@ def admin_booking_detail(request, pk):
         ),
         pk=pk
     )
+    
+    coupons = Coupon.objects.filter(
+        # farmhouse__user=request.user,
+        is_active=True
+    )
 
     ###################################
     # STATUS + PAYMENT UPDATE
@@ -2263,7 +2271,7 @@ def admin_booking_detail(request, pk):
     return render(
         request,
         "superadmin/booking/detail.html",
-        {"booking": booking}
+        {"booking": booking ,  "coupons": coupons}
     )
 
 
@@ -3521,4 +3529,167 @@ from booking.models import Booking, BlockedDate
 
 #     return JsonResponse(result, safe=False)
 
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.conf import settings
+from user.models import User
+from coupon.models import Coupon
+from django.core.mail import send_mail
+from django.conf import settings
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 
+# @superadmin_required
+# def admin_send_booking_coupon(request, booking_id):
+
+#     booking = get_object_or_404(
+#         Booking,
+#         id=booking_id,
+#         farmhouse__user=request.user
+#     )
+
+#     if request.method == "POST":
+
+#         coupon_id = request.POST.get("coupon_id")
+
+#         coupon = get_object_or_404(Coupon, id=coupon_id)
+
+#         # ✅ download link
+#         # download_link = request.build_absolute_uri(
+#         #     f"/download/{coupon.id}/"
+#         # )
+        
+#         download_link = request.build_absolute_uri(
+#             reverse("download_coupon", args=[coupon.id])
+#         )
+
+#         # ✅ email
+#         subject = "🎁 Your Coupon"
+
+#         message = f"""
+# Hello {booking.user.username},
+
+# Here is your special coupon:
+
+# Code: {coupon.code}
+
+# Discount:
+# {"₹" + str(coupon.discount_value) if coupon.discount_type == "flat"
+#  else str(coupon.discount_value) + "% OFF"}
+
+# Valid Till: {coupon.end_date}
+
+# Download here:
+# {download_link}
+
+# Thank you!
+# """
+
+#         send_mail(
+#             subject,
+#             message,
+#             settings.EMAIL_HOST_USER,
+#             [booking.user.email],
+#             fail_silently=False,
+#         )
+
+#         messages.success(request, "Coupon sent successfully!")
+
+#         return redirect("admin-bookings")
+    
+    
+from django.urls import reverse
+
+@superadmin_required
+def admin_send_booking_coupon(request, booking_id):
+
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    if request.method == "POST":
+
+        coupon_id = request.POST.get("coupon_id")
+
+        if not coupon_id:
+            messages.error(request, "Please select a coupon.")
+            return redirect("admin-booking-detail", pk=booking.id)
+
+        coupon = get_object_or_404(Coupon, id=coupon_id)
+
+        download_link = request.build_absolute_uri(
+            reverse("download_coupon", args=[coupon.id])
+        )
+
+        discount_text = (
+            f"₹{coupon.discount_value}"
+            if coupon.discount_type == "flat"
+            else f"{coupon.discount_value}% OFF"
+        )
+
+        subject = "🎁 Your Coupon"
+
+        message = f"""
+Hello {booking.user.username if booking.user else booking.guest_name},
+
+Here is your special coupon:
+
+Code: {coupon.code}
+
+Discount: {discount_text}
+
+Valid Till: {coupon.end_date}
+
+Download here:
+{download_link}
+"""
+
+        send_mail(
+            subject,
+            message,
+            settings.EMAIL_HOST_USER,
+            [booking.user.email if booking.user else booking.guest_email],
+            fail_silently=False,
+        )
+
+        messages.success(request, "Coupon sent successfully!")
+
+        return redirect("admin-booking-detail", pk=booking.id)
+    
+
+
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.http import HttpResponse
+from coupon.models import Coupon
+
+
+@login_required
+def download_coupon(request, coupon_id):
+
+    coupon = get_object_or_404(Coupon, id=coupon_id)
+
+    if not coupon.is_valid():
+        return HttpResponse("Coupon expired", status=400)
+
+    template = get_template("emails/coupon_pdf.html")
+
+    html = template.render({
+        "coupon": coupon,
+        "farmhouse": coupon.farmhouse
+    })
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{coupon.code}.pdf"'
+
+    pisa.CreatePDF(html, dest=response)
+
+    return response

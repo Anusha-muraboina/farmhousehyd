@@ -212,7 +212,7 @@ Farmhouse
 
 <h5 class="mb-3 fw-bold">Assign the coupon to the user </h5>
 <form method="POST"
-      action="{% url 'send_booking_coupon' booking.id %}"
+      action="{% url 'Owner_send_booking_coupon' booking.id %}"
       class="d-flex align-items-center gap-2 send-coupon-form">
 
     {% csrf_token %}

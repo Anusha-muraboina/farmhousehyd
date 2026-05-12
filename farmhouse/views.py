@@ -1433,3 +1433,5 @@ class VivaanOfferDatesAPI(APIView):
                 current += timedelta(days=1)
 
         return Response(offer_dates)
+    
+    

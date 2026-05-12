@@ -64,4 +64,7 @@ urlpatterns = [
     path("calendar/data/<slug:slug>/", get_calendar_data, name="calendar_data"),
     
     path('api/vivaan-hyd-offers/', VivaanOfferDatesAPI.as_view()),
+    
+    # path("download/<int:coupon_id>/", download_coupon, name="download_coupon"),
+     
 ]
