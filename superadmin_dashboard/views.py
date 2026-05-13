@@ -1688,7 +1688,8 @@ def admin_booking_list(request):
             Q(guest_name__icontains=search) |
             Q(guest_phone__icontains=search) |
             Q(guest_email__icontains=search) |
-            Q(booking_id__icontains=search)
+            Q(booking_id__icontains=search) |
+            Q(farmhouse__title__icontains=search)
         )
 
     ###################################
