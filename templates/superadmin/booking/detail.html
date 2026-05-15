@@ -100,7 +100,6 @@
     {% endif %}
 
 </p>
-
                     {% comment %} <p><b>Advance Paid:</b>
                         ₹{{ booking.get_advance_paid }}
                     </p>
@@ -132,6 +131,11 @@
     {{ booking.created_at|timezone:"Asia/Kolkata"|date:"F d, Y, h:i A" }}
 </p>
 
+<p><b>Special Requests:</b>
+ {{ booking.special_requests }}
+    
+
+</p>
                 </div>
             </div>
         </div>

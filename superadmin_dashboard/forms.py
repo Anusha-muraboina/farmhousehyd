@@ -774,6 +774,7 @@ class AdminBookingForm(forms.ModelForm):
             # ⭐ NO type="date"
             "check_in": forms.TextInput(),
             "check_out": forms.TextInput(),
+            
         }
 
     ###################################
@@ -788,6 +789,8 @@ class AdminBookingForm(forms.ModelForm):
                 is_superuser=False,
                 is_active=True
             )
+            
+        
 
         for field_name, field in self.fields.items():
 
@@ -813,6 +816,15 @@ class AdminBookingForm(forms.ModelForm):
         self.fields["check_out"].widget.attrs.update({
             "readonly": "readonly",
             "placeholder": "Select check-out"
+        })
+        ##################################################
+        # SPECIAL REQUESTS TEXTAREA ROWS
+        ##################################################
+
+        self.fields["special_requests"].widget = forms.Textarea(attrs={
+            "rows": 3,
+            "class": "form-control",
+            "placeholder": "Enter special requests"
         })
 
 

@@ -3601,7 +3601,8 @@ from django.contrib import messages
     
     
 from django.urls import reverse
-
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 @superadmin_required
 def admin_send_booking_coupon(request, booking_id):
 
@@ -3629,28 +3630,64 @@ def admin_send_booking_coupon(request, booking_id):
 
         subject = "🎁 Your Coupon"
 
-        message = f"""
-Hello {booking.user.username if booking.user else booking.guest_name},
+#         message = f"""
+# Hello {booking.user.username if booking.user else booking.guest_name},
 
-Here is your special coupon:
+# Here is your special coupon:
 
-Code: {coupon.code}
+# Code: {coupon.code}
 
-Discount: {discount_text}
+# Discount: {discount_text}
 
-Valid Till: {coupon.end_date}
+# Valid Till: {coupon.end_date}
 
-Download here:
-{download_link}
-"""
+# Download here:
+# {download_link}
+# """
 
-        send_mail(
-            subject,
-            message,
-            settings.EMAIL_HOST_USER,
-            [booking.user.email if booking.user else booking.guest_email],
-            fail_silently=False,
+#         send_mail(
+#             subject,
+#             message,
+#             settings.EMAIL_HOST_USER,
+#             [booking.user.email if booking.user else booking.guest_email],
+#             fail_silently=False,
+#         )
+
+
+        
+        context = {
+            "booking": booking,
+            "coupon": coupon,
+            "coupon_url": download_link,
+        }
+
+        ##################################################
+        # RENDER HTML
+        ##################################################
+
+        html_content = render_to_string(
+            "emails/coupon_email.html",
+            context
         )
+
+        ##################################################
+        # EMAIL
+        ##################################################
+
+        email = EmailMultiAlternatives(
+            subject=subject,
+            body="Your coupon is attached.",
+            from_email=settings.EMAIL_HOST_USER,
+            to=[booking.user.email],
+        )
+
+        email.attach_alternative(
+            html_content,
+            "text/html"
+        )
+
+        email.send(fail_silently=False)
+
 
         messages.success(request, "Coupon sent successfully!")
 

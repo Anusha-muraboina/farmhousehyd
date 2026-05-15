@@ -335,6 +335,11 @@ class ownerBookingForm(forms.ModelForm):
             "readonly": "readonly",
             "placeholder": "Select check-out"
         })
+        self.fields["special_requests"].widget = forms.Textarea(attrs={
+            "rows": 3,
+            "class": "form-control",
+            "placeholder": "Enter special requests"
+        })
 
 
 

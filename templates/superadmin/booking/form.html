@@ -229,7 +229,7 @@ href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     </div> {% endcomment %}
               
     
-
+{% comment %} 
 <div class=" my-4">
     <div class="">
 
@@ -255,17 +255,114 @@ href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     Remaining: ₹ <span id="remaining_amount">0</span>
 </h6>
 
-        {% comment %} <h6 class="text-danger">
-            Discount: ₹ <span id="discount">0</span>
-        </h6> {% endcomment %}
 
         <h6 class="text-success fw-bold">
             Total: ₹ <span id="total">0</span>
         </h6>
 
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                {{ form.special_requests.label_tag }}
+                                {{ form.special_requests }}
+                            </div>
+
+                          
+                        </div>
+
+        
+
+    </div>
+</div> {% endcomment %}
+
+
+<div class="card border-0 shadow-sm rounded-4 my-4 overflow-hidden">
+
+    <!-- Header -->
+    <div class="bg-dark text-white px-4 py-3">
+        <h5 class="mb-0 fw-semibold">
+            Booking Summary
+        </h5>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body p-4">
+
+        <!-- Price Rows -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted fw-medium">Subtotal</span>
+            <h6 class="mb-0 fw-bold text-dark">
+                ₹ <span id="subtotal">0</span>
+            </h6>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-danger fw-medium">
+                Coupon Discount
+            </span>
+
+            <h6 class="mb-0 fw-bold text-danger">
+                - ₹ <span id="coupon_discount">0</span>
+            </h6>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-warning fw-medium">
+                Admin Discount
+            </span>
+
+            <h6 class="mb-0 fw-bold text-warning">
+                ₹ <span id="admin_discount_display">0</span>
+                <small class="text-muted">
+                    (<span id="admin_percent_display">0</span>%)
+                </small>
+            </h6>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-info fw-medium">
+                Advance Paid
+            </span>
+
+            <h6 class="mb-0 fw-bold text-info">
+                ₹ <span id="advance_paid">0</span>
+            </h6>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <span class="text-danger fw-medium">
+                Remaining Amount
+            </span>
+
+            <h6 class="mb-0 fw-bold text-danger">
+                ₹ <span id="remaining_amount">0</span>
+            </h6>
+        </div>
+
+        <!-- Divider -->
+        <hr>
+
+        <!-- Total -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <span class="fs-5 fw-bold text-dark">
+                Total Amount
+            </span>
+
+            <h4 class="mb-0 fw-bold text-success">
+                ₹ <span id="total">0</span>
+            </h4>
+        </div>
+
+        <!-- Special Requests -->
+        <div class="mt-4">
+            <label class="form-label fw-semibold text-dark">
+                {{ form.special_requests.label }}
+            </label>
+
+            {{ form.special_requests }}
+        </div>
+
     </div>
 </div>
-
 
 
                         {% comment %} {{ form.sub_total.label_tag }}

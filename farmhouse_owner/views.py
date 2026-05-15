@@ -1524,7 +1524,8 @@ def owner_booking_create(request):
                 blocked.append({
                     "from": start_date.strftime("%Y-%m-%d"),
                     # "to": end_date.strftime("%Y-%m-%d"),
-                    "to": booking.check_out - timedelta(days=1)
+                    # "to": booking.check_out - timedelta(days=1)
+                    "to": (booking.check_out - timedelta(days=1)).strftime("%Y-%m-%d")
                 })
 
         return JsonResponse(blocked, safe=False)
@@ -1543,7 +1544,8 @@ def owner_booking_create(request):
             # DO NOT SAVE YET
             ########################################
             booking = form.save(commit=False)
-            booking.user = request.user 
+            # booking.user = request.user 
+            booking.user = form.cleaned_data["user"]
 
             ########################################
             # GET PRICING
@@ -1667,18 +1669,26 @@ def owner_booking_create(request):
             ########################################
             # PREVENT DOUBLE BOOKING
             ########################################
+            # overlap = Booking.objects.filter(
+            #     farmhouse=farmhouse,
+            #     status="confirmed",
+            #     check_in__lt=booking.check_out,
+            #     check_out__gt=booking.check_in
+            # ).exists()
+            
+            
             overlap = Booking.objects.filter(
                 farmhouse=farmhouse,
-                status="confirmed",
+                status="confirmed"
+            ).filter(
                 check_in__lt=booking.check_out,
                 check_out__gt=booking.check_in
             ).exists()
-
             if overlap:
                 messages.error(request, "Selected dates already booked.")
                 return render(
                     request,
-                    "superadmin/booking/form.html",
+                    "farmhouse_admin/bookings/form.html",
                     {"form": form}
                 )
 
@@ -2241,7 +2251,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
-
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 @owner_required
 def Owner_send_booking_coupon(request, booking_id):
 
@@ -2265,36 +2276,75 @@ def Owner_send_booking_coupon(request, booking_id):
         download_link = request.build_absolute_uri(
             reverse("download_coupon", args=[coupon.id])
         )
+        
+        subject = "🎁 Your Exclusive Coupon - Farmhouse Hyd"
+        ##################################################
+        # HTML TEMPLATE CONTEXT
+        ##################################################
+
+        context = {
+            "booking": booking,
+            "coupon": coupon,
+            "coupon_url": download_link,
+        }
+
+        ##################################################
+        # RENDER HTML
+        ##################################################
+
+        html_content = render_to_string(
+            "emails/coupon_email.html",
+            context
+        )
+
+        ##################################################
+        # EMAIL
+        ##################################################
+
+        email = EmailMultiAlternatives(
+            subject=subject,
+            body="Your coupon is attached.",
+            from_email=settings.EMAIL_HOST_USER,
+            to=[booking.user.email],
+        )
+
+        email.attach_alternative(
+            html_content,
+            "text/html"
+        )
+
+        email.send(fail_silently=False)
+
 
         # ✅ email
-        subject = "🎁 Your Coupon"
+        # subject = "🎁 Your Coupon"
 
-        message = f"""
-Hello {booking.user.username},
+#         message = f"""
+# Hello {booking.user.username},
 
-Here is your special coupon:
+# Here is your special coupon:
 
-Code: {coupon.code}
+# Code: {coupon.code}
 
-Discount:
-{"₹" + str(coupon.discount_value) if coupon.discount_type == "flat"
- else str(coupon.discount_value) + "% OFF"}
+# Discount:
+# {"₹" + str(coupon.discount_value) if coupon.discount_type == "flat"
+#  else str(coupon.discount_value) + "% OFF"}
 
-Valid Till: {coupon.end_date}
+# Valid Till: {coupon.end_date}
 
-Download here:
-{download_link}
+# Download here:
+# {download_link}
 
-Thank you!
-"""
+# Thank you!
+# """
 
-        send_mail(
-            subject,
-            message,
-            settings.EMAIL_HOST_USER,
-            [booking.user.email],
-            fail_silently=False,
-        )
+#         send_mail(
+#             subject,
+#             message,
+#             settings.EMAIL_HOST_USER,
+#             [booking.user.email],
+#             fail_silently=False,
+#         )
 
         messages.success(request, "Coupon sent successfully!")
 
