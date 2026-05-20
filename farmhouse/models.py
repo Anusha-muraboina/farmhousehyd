@@ -117,6 +117,11 @@ class Farmhouse(models.Model):
     bedrooms = models.PositiveIntegerField(default=4)
     ac_bedrooms = models.PositiveIntegerField(default=4)
     breakfast_dinner_available = models.BooleanField(default=False)
+    food_menu = models.TextField(
+    blank=True,
+    null=True,
+    help_text="Example: Morning: Idli,Dosa | Afternoon: Meals | Dinner: Chicken Curry"
+    )
     amenities = models.ManyToManyField(
         Amenity,
         blank=True,

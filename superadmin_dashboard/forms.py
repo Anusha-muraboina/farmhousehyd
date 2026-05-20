@@ -145,6 +145,7 @@ class FarmhouseForm(forms.ModelForm):
     "properyrules": forms.CheckboxSelectMultiple(),
     "facilities": forms.CheckboxSelectMultiple(),
     "breakfast_dinner_available": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+    "food_menu": forms.Textarea(attrs={"class": "form-control", "rows": 5}),
     
     
     

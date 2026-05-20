@@ -53,7 +53,7 @@ class FarmhouseAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Basic Information', {
-            'fields': ('title', 'slug', 'user', 'location', 'address',  'breakfast_dinner_available'  ,'guest_count','extra_guest_count' , 'Slot_position','map_embed' ,'check_in_time', 'check_out_time', 'distance_km','weekend_days')
+            'fields': ('title', 'slug', 'user', 'location', 'address',  'breakfast_dinner_available','food_menu' ,'guest_count','extra_guest_count' , 'Slot_position','map_embed' ,'check_in_time', 'check_out_time', 'distance_km','weekend_days')
         }),
         ('Property Details', {
             'fields': ('halls', 'bedrooms', 'ac_bedrooms', 'amenities','facilities', 'properyrules','thingstocarry')
