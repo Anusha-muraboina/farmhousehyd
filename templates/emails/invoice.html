@@ -204,7 +204,7 @@ Email: {{ booking.guest_email }}<br>
 
 Phone: {{ booking.guest_phone }}<br>
 
-Address: {{ booking.farmhouse.address }}
+{% comment %} Address: {{ booking.farmhouse.address }} {% endcomment %}
 
 </div>
 
@@ -218,6 +218,8 @@ Address: {{ booking.farmhouse.address }}
 <div class="info-box">
 
 Farmhouse: <b>{{ booking.farmhouse.title }}</b><br>
+
+Address: {{ booking.farmhouse.address }}
 
 Check-in: {{ booking.check_in }}<br>
 
