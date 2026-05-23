@@ -1535,14 +1535,52 @@ def is_farmhouse_staff(user):
     )
 
 
+# @superadmin_required
+# def admin_user_list(request):
+#     users = User.objects.all().order_by("-id")
+
+#     return render(request, "superadmin/user/user_list.html", {
+#         "users": users
+#     })
+
+
+# from django.db.models import Q
+
 @superadmin_required
 def admin_user_list(request):
+
     users = User.objects.all().order_by("-id")
 
-    return render(request, "superadmin/user/user_list.html", {
-        "users": users
-    })
+    # ================= SEARCH =================
+    search = request.GET.get("search")
 
+    if search:
+        users = users.filter(
+            Q(username__icontains=search) |
+            Q(email__icontains=search) |
+            Q(phone__icontains=search)
+        )
+
+    # ================= FILTER =================
+    role = request.GET.get("role")
+
+    if role == "admin":
+        users = users.filter(is_staff=True, farmhouse_user=False)
+
+    elif role == "farmhouse":
+        users = users.filter(farmhouse_user=True)
+
+    elif role == "normal":
+        users = users.filter(
+            is_staff=False,
+            farmhouse_user=False
+        )
+
+    return render(request, "superadmin/user/user_list.html", {
+        "users": users,
+        "search": search,
+        "role": role,
+    })
 
 @superadmin_required
 def admin_user_add(request):
