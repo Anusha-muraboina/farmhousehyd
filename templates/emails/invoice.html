@@ -219,8 +219,6 @@ Phone: {{ booking.guest_phone }}<br>
 
 Farmhouse: <b>{{ booking.farmhouse.title }}</b><br>
 
-Address: {{ booking.farmhouse.address }}
-
 Check-in: {{ booking.check_in }}<br>
 
 Check-out: {{ booking.check_out }}<br>
@@ -229,7 +227,9 @@ Guests: {{ booking.guest_count }} (+{{ booking.extra_guest_count }} extra)<br>
 
 Payment Status: {{ booking.payment_status }}<br>
 
-Booking Status: {{ booking.status }}
+Booking Status: {{ booking.status }} <br>
+
+Address: {{ booking.farmhouse.address }}
 
 </div>
 
