@@ -349,18 +349,27 @@ ${ f.breakfast_dinner_available ? `
 
     <!-- Eye Icon -->
     <i data-lucide="eye" class="w-4 h-4 text-orange-600"></i>
-    <span class="text-xs text-orange-600">Incl Breakfast</span>
+    <span class="text-xsm text-orange-600">Incl Breakfast</span>
 
     <!-- Tooltip -->
     <div class="absolute top-full mb-2 hidden group-hover:block 
                 bg-black text-white text-xs rounded px-3 py-2 w-64 z-10 shadow-lg">
 
 
-                   <p class="leading-6 whitespace-pre-line">
+                        <div class="flex items-start gap-2 mb-2 w-full min-w-0 overflow-hidden">
+
+    <div class="w-full min-w-0 text-sm leading-5 break-words whitespace-normal">
+        ${f.food_menu}
+    </div>
+
+</div>
+
+
+                   {% comment %} <p class="leading-6 whitespace-pre-line">
 
             ${f.food_menu || "Food Included"}
 
-        </p>
+        </p> {% endcomment %}
         <!-- Morning -->
         {% comment %} <div class="flex items-start gap-2 mb-2">
             <i data-lucide="sun" class="w-4 h-4 text-yellow-400"></i>

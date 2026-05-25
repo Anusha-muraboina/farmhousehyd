@@ -1044,7 +1044,7 @@ if (blogs.length > 1) {
             ${f.short_description}
           </p>
 
-          <div class="flex gap-4 text-sm text-gray-600 mb-4">
+          <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
             <span class="flex items-center gap-1">
               <i data-lucide="bed" class="w-4 h-4 text-primary"></i>
               ${f.bedrooms} Beds
@@ -1069,28 +1069,28 @@ if (blogs.length > 1) {
 
     <!-- Eye Icon -->
     <i data-lucide="eye" class="w-4 h-4 text-orange-600"></i>
-    <span class="text-small text-orange-600">Incl Breakfast</span>
+    <span class="text-xsm text-orange-600">Incl Breakfast</span>
 
     <!-- Tooltip -->
     <div class="absolute top-full mb-2 hidden group-hover:block 
                 bg-black text-white text-xs rounded px-3 py-2 w-64 z-10 shadow-lg">
 
-{% comment %} 
-   <p class="leading-1 whitespace-pre-line">
 
-            ${f.food_menu}
+        <div class="flex items-start gap-2 mb-2 w-full min-w-0 overflow-hidden">
 
-        </p> {% endcomment %}
+    <div class="w-full min-w-0 text-sm leading-5 break-words whitespace-normal">
+        ${f.food_menu}
+    </div>
 
-        <div class="flex items-start gap-2 mb-2">
-            {% comment %} <i data-lucide="sun" class="w-4 h-4 text-yellow-400"></i> {% endcomment %}
+</div>
+
+        {% comment %} <div class="flex items-start gap-2 mb-2">
+     
             <div>
-                {% comment %} <p class="font-semibold">Morning</p>
-                <p>Idli, Dosa, Tea/Coffee</p> {% endcomment %}
 
                 ${f.food_menu}
             </div>
-        </div>
+        </div> {% endcomment %}
 
         <!-- Morning -->
         {% comment %} <div class="flex items-start gap-2 mb-2">
@@ -1194,7 +1194,7 @@ ${
 
 
   <a href="/farmhouse/${f.slug}/${f.location.slug}/"
-     class="bg-primary text-white px-1  md:px-4 py-2 rounded-lg text-sm md:font-medium hover:bg-primary-dark transition">
+     class="bg-primary text-white px-1  md:px-2 py-2 rounded-lg text-sm  md:font-medium hover:bg-primary-dark transition">
     Know More 
   </a>
 
