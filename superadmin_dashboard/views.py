@@ -1558,7 +1558,8 @@ def admin_user_list(request):
         users = users.filter(
             Q(username__icontains=search) |
             Q(email__icontains=search) |
-            Q(phone__icontains=search)
+            Q(phone__icontains=search) |
+            Q(farmhouse__name__icontains=search)  
         )
 
     # ================= FILTER =================
@@ -1575,6 +1576,12 @@ def admin_user_list(request):
             is_staff=False,
             farmhouse_user=False
         )
+        
+    paginator = Paginator(users, 10)  # 10 users per page
+
+    page_number = request.GET.get("page")
+
+    users = paginator.get_page(page_number)
 
     return render(request, "superadmin/user/user_list.html", {
         "users": users,

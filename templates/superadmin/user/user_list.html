@@ -1,7 +1,7 @@
 {% extends "superadmin/base.html" %}
 {% block content %}
 
-<div class="container-fluid">
+<div class="container">
 
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -17,7 +17,9 @@
         <div class="card-body p-0">
 
             <!-- HORIZONTAL SCROLL ONLY -->
-            <div style="overflow-x: auto; overflow-y: visible; width: 100%;">
+            {% comment %} <div style="overflow-x: auto; overflow-y: visible; width: 100%;"> {% endcomment %}
+            <div class="table-responsive"
+     style="overflow-x:auto; overflow-y:hidden; width:100%;">
 
 
 <form method="GET" class="row g-3 mb-3 pb-2">
@@ -31,7 +33,6 @@
             value="{{ search }}"
         >
     </div>
-    
 
     <div class="col-md-3">
         <select name="role" class="form-control">
@@ -79,6 +80,7 @@
                             <th class="ps-4">Username</th>
                             <th>Email</th>
                             <th>Phone</th>
+                            <th style="min-width: 250px;">farmhouse</th>
                             <th>Role</th>
                             <th>Status</th>
                             <th class="text-end pe-4">Action</th>
@@ -92,6 +94,29 @@
                             <td>{{ u.email }}</td>
                             <td>{{ u.phone }}</td>
 
+                          <td style="min-width: 250px; white-space: normal;">
+
+    {% if u.farmhouses.all %}
+
+        {% for farmhouse in u.farmhouses.all %}
+
+            <span class="badge bg-dark mb-1">
+                {{ farmhouse.title }}
+            </span>
+
+        {% empty %}
+
+            -
+
+        {% endfor %}
+
+    {% else %}
+
+        -
+
+    {% endif %}
+
+</td>
                             <td>
 
 
