@@ -1559,7 +1559,8 @@ def admin_user_list(request):
             Q(username__icontains=search) |
             Q(email__icontains=search) |
             Q(phone__icontains=search) |
-            Q(farmhouse__name__icontains=search)  
+            # Q(farmhouse__name__icontains=search)  
+            Q(farmhouses__title__icontains=search)
         )
 
     # ================= FILTER =================
