@@ -367,3 +367,62 @@ class FarmhouseOfferForm(forms.ModelForm):
         }
         
         
+
+from django import forms
+
+from rating.models import Rating
+
+
+class RatingForm(forms.ModelForm):
+
+    class Meta:
+
+        model = Rating
+
+        exclude = ["created_at"]
+
+        widgets = {
+
+            "user": forms.Select(
+                attrs={
+                    "class": "form-select custom-input"
+                }
+            ),
+
+            "farmhouse": forms.Select(
+                attrs={
+                    "class": "form-select custom-input"
+                }
+            ),
+
+            "rating": forms.NumberInput(
+                attrs={
+                    "class": "form-control custom-input",
+                    "placeholder": "Enter rating",
+                    "step": "0.1",
+                    "min": "1",
+                    "max": "5"
+                }
+            ),
+
+            "review": forms.Textarea(
+                attrs={
+                    "class": "form-control custom-input",
+                    "placeholder": "Write review...",
+                    "rows": 5
+                }
+            ),
+
+            "anonymous": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input"
+                }
+            ),
+
+            "active": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input"
+                }
+            ),
+
+        }

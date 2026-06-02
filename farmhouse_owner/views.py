@@ -2591,3 +2591,228 @@ def download_coupon(request, coupon_id):
 #     doc.build(elements)
 
 #     return response
+
+
+
+
+
+from django.shortcuts import (
+    render,
+    redirect,
+    get_object_or_404
+)
+
+from django.core.paginator import Paginator
+from django.db.models import Q
+
+from rating.models import Rating
+from superadmin_dashboard.forms import RatingForm
+
+
+# =========================================
+# LIST
+# =========================================
+
+
+@owner_required
+def owner_rating_list(request):
+
+    ratings = Rating.objects.select_related(
+        "user",
+        "farmhouse"
+    ).filter(
+
+        farmhouse__user=request.user
+
+    ).order_by("-id")
+
+    # SEARCH
+
+    search = request.GET.get("search")
+
+    if search:
+
+        ratings = ratings.filter(
+
+            Q(user__username__icontains=search) |
+
+            Q(farmhouse__title__icontains=search) |
+
+            Q(review__icontains=search)
+
+        )
+
+    # ACTIVE FILTER
+
+    active = request.GET.get("active")
+
+    if active == "active":
+
+        ratings = ratings.filter(active=True)
+
+    elif active == "inactive":
+
+        ratings = ratings.filter(active=False)
+
+    paginator = Paginator(ratings, 10)
+
+    page_number = request.GET.get("page")
+
+    ratings = paginator.get_page(page_number)
+
+    return render(
+
+        request,
+
+        "farmhouse_admin/rating/list.html",
+
+        {
+            "ratings": ratings,
+            "search": search,
+            "active": active,
+        }
+
+    )
+
+
+
+# =========================================
+# ADD
+# =========================================
+
+@owner_required
+def owner_rating_add(request):
+
+    form = RatingForm(
+        request.POST or None
+    )
+
+    # ONLY OWNER FARMHOUSES
+
+    form.fields[
+        "farmhouse"
+    ].queryset = Farmhouse.objects.filter(
+
+        user=request.user
+
+    )
+
+    if request.method == "POST":
+
+        if form.is_valid():
+
+            try:
+
+                form.save()
+
+                return redirect(
+                    "owner_rating_list"
+                )
+
+            except Exception as e:
+
+                print(e)
+
+        else:
+
+            print(form.errors)
+
+    return render(
+
+        request,
+
+        "farmhouse_admin/rating/form.html",
+
+        {
+            "form": form,
+            "title": "Add Rating"
+        }
+
+    )
+
+
+
+# =========================================
+# EDIT
+# =========================================
+
+@owner_required
+def owner_rating_edit(request, id):
+
+    rating = get_object_or_404(
+
+        Rating,
+
+        id=id,
+
+        farmhouse__user=request.user
+
+    )
+
+    form = RatingForm(
+        request.POST or None,
+        instance=rating
+    )
+
+    # ONLY OWNER FARMHOUSES
+
+    form.fields[
+        "farmhouse"
+    ].queryset = Farmhouse.objects.filter(
+
+        user=request.user
+
+    )
+
+    if request.method == "POST":
+
+        if form.is_valid():
+
+            try:
+
+                form.save()
+
+                return redirect(
+                    "owner_rating_list"
+                )
+
+            except Exception as e:
+
+                print(e)
+
+        else:
+
+            print(form.errors)
+
+    return render(
+
+        request,
+
+        "farmhouse_admin/rating/form.html",
+
+        {
+            "form": form,
+            "title": "Edit Rating"
+        }
+
+    )
+
+
+# =========================================
+# DELETE
+# =========================================
+
+@owner_required
+def owner_rating_delete(request, id):
+
+    rating = get_object_or_404(
+        Rating,
+        id=id
+    )
+
+    rating.delete()
+
+    return redirect(
+        "owner_rating_list"
+    )
+

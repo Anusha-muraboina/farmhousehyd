@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import *
-
+from . import views
 urlpatterns = [
     path("login/", login_view, name="owner_login"),
     path("dashboard/", owner_dashboard, name="owner_dashboard"),
@@ -119,6 +119,32 @@ urlpatterns = [
     
     path("download/<int:coupon_id>/", download_coupon, name="download_coupon"),
      
+     
+     
+    
+    path(
+    "owner_ratings/",
+    views.owner_rating_list,
+    name="owner_rating_list"
+    ),
+
+    path(
+        "owner_ratings/add/",
+        views.owner_rating_add,
+        name="owner_rating_add"
+    ),
+
+    path(
+        "owner_ratings/edit/<int:id>/",
+        views.owner_rating_edit,
+        name="owner_rating_edit"
+    ),
+
+    path(
+        "owner_ratings/delete/<int:id>/",
+        views.owner_rating_delete,
+        name="owner_rating_delete"
+    ),
     
     
     # urls.py

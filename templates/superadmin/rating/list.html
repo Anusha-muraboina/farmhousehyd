@@ -1,0 +1,526 @@
+{% extends "superadmin/base.html" %}
+
+{% block content %}
+
+<style>
+
+.table-wrapper{
+    background:#fff;
+    border-radius:18px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.06);
+    overflow:hidden;
+}
+
+.page-title{
+    font-size:28px;
+    font-weight:700;
+    color:#111827;
+}
+
+.btn-orange{
+    background:#ff7a00;
+    border:none;
+    color:#fff;
+    font-weight:600;
+    border-radius:10px;
+    padding:10px 18px;
+}
+
+.btn-orange:hover{
+    background:#e66d00;
+    color:#fff;
+}
+
+.custom-table{
+    margin:0;
+}
+
+.custom-table thead{
+    background:#fff7ed;
+}
+
+.custom-table thead th{
+    border:none;
+    padding:18px;
+    color:#ff7a00;
+    font-weight:700;
+    font-size:14px;
+    white-space:nowrap;
+}
+
+.custom-table tbody td{
+    padding:18px;
+    vertical-align:middle;
+    border-color:#f1f5f9;
+}
+
+.custom-table tbody tr{
+    transition:0.3s;
+}
+
+.custom-table tbody tr:hover{
+    background:#fffaf5;
+}
+
+.user-box{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.user-avatar{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#ffedd5;
+    color:#ff7a00;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size:16px;
+}
+
+.user-name{
+    font-weight:600;
+    color:#111827;
+}
+
+.rating-box{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    color:#ffb400;
+    font-weight:700;
+}
+
+.review-box{
+    max-width:260px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    color:#64748b;
+}
+
+.badge-active{
+    background:#dcfce7;
+    color:#166534;
+    padding:7px 14px;
+    border-radius:30px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.badge-inactive{
+    background:#fee2e2;
+    color:#991b1b;
+    padding:7px 14px;
+    border-radius:30px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.action-btn{
+    border:none;
+    border-radius:8px;
+    padding:7px 14px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.btn-edit{
+    background:#facc15;
+    color:#000;
+}
+
+.btn-edit:hover{
+    background:#eab308;
+    color:#000;
+}
+
+.btn-delete{
+    background:#ef4444;
+    color:#fff;
+}
+
+.btn-delete:hover{
+    background:#dc2626;
+    color:#fff;
+}
+
+.pagination .page-link{
+    color:#ff7a00;
+    border-color:#ff7a00;
+    border-radius:8px;
+    margin:0 4px;
+}
+
+.pagination .page-item.active .page-link{
+    background:#ff7a00;
+    border-color:#ff7a00;
+    color:#fff;
+}
+
+.pagination .page-link:hover{
+    background:#fff4e5;
+    color:#ff7a00;
+}
+
+</style>
+
+<div class="container-fluid py-4">
+
+    <!-- HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="page-title mb-1">
+
+                Ratings
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Manage all farmhouse reviews and ratings
+
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'admin_rating_add' %}"
+            class="btn btn-orange"
+        >
+
+            + Add Rating
+
+        </a>
+
+    </div>
+
+    <!-- TABLE -->
+
+    <div class="table-wrapper">
+
+        <div class="table-responsive">
+
+            <table class="table custom-table align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>User</th>
+
+                        <th>Farmhouse</th>
+
+                        <th>Rating</th>
+
+                        <th>Review</th>
+
+                        <th>Status</th>
+
+                        <th>Created</th>
+
+                        <th class="text-center">
+
+                            Actions
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for item in ratings %}
+
+                    <tr>
+
+                        <!-- ID -->
+
+                        <td>
+
+                            <strong>
+
+                                #{{ item.id }}
+
+                            </strong>
+
+                        </td>
+
+                        <!-- USER -->
+
+                        <td>
+
+                            <div class="user-box">
+
+                                {% comment %} <div class="user-avatar">
+
+                                    {{ item.user.username|slice:":1"|upper }}
+
+                                </div> {% endcomment %}
+
+                                <div>
+
+                                    <div class="user-name">
+
+                                        {{ item.user.username }}
+
+                                    </div>
+
+                                    <small class="text-muted">
+
+                                        {{ item.user.email }}
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                        <!-- FARMHOUSE -->
+
+                        <td>
+
+                            <strong>
+
+                                {{ item.farmhouse.title }}
+
+                            </strong>
+
+                        </td>
+
+                        <!-- RATING -->
+
+                        <td>
+
+                            <div class="rating-box">
+
+                                <i class="fas fa-star"></i>
+
+                                {{ item.rating }}
+
+                            </div>
+
+                        </td>
+
+                        <!-- REVIEW -->
+
+                        <td>
+
+                            <div class="review-box">
+
+                                {{ item.review|default:"No Review Added" }}
+
+                            </div>
+
+                        </td>
+
+                        <!-- STATUS -->
+
+                        <td>
+
+                            {% if item.active %}
+
+                                <span class="badge-active">
+
+                                    Active
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge-inactive">
+
+                                    Inactive
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <!-- DATE -->
+
+                        <td>
+
+                            {{ item.created_at|date:"d M Y" }}
+
+                        </td>
+
+                        <!-- ACTIONS -->
+
+                        <td class="text-center">
+
+                            <div class="d-flex justify-content-center gap-2">
+
+                                <a
+                                    href="{% url 'admin_rating_edit' item.id %}"
+                                    class="btn action-btn btn-edit"
+                                >
+
+                                    Edit
+
+                                </a>
+
+                                <a
+                                    href="{% url 'admin_rating_delete' item.id %}"
+                                    onclick="return confirm('Delete this rating?')"
+                                    class="btn action-btn btn-delete"
+                                >
+
+                                    Delete
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="8" class="text-center py-5">
+
+                            No Ratings Found
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- PAGINATION -->
+
+    {% if ratings.has_other_pages %}
+
+    <nav class="mt-4">
+
+        <ul class="pagination justify-content-center">
+
+            <!-- PREVIOUS -->
+
+            {% if ratings.has_previous %}
+
+                <li class="page-item">
+
+                    <a
+                        class="page-link"
+                        href="?page={{ ratings.previous_page_number }}"
+                    >
+
+                        Previous
+
+                    </a>
+
+                </li>
+
+            {% else %}
+
+                <li class="page-item disabled">
+
+                    <span class="page-link">
+
+                        Previous
+
+                    </span>
+
+                </li>
+
+            {% endif %}
+
+            <!-- PAGE NUMBERS -->
+
+            {% for num in ratings.paginator.page_range %}
+
+                {% if ratings.number == num %}
+
+                    <li class="page-item active">
+
+                        <span class="page-link">
+
+                            {{ num }}
+
+                        </span>
+
+                    </li>
+
+                {% elif num > ratings.number|add:'-3' and num < ratings.number|add:'3' %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ num }}"
+                        >
+
+                            {{ num }}
+
+                        </a>
+
+                    </li>
+
+                {% endif %}
+
+            {% endfor %}
+
+            <!-- NEXT -->
+
+            {% if ratings.has_next %}
+
+                <li class="page-item">
+
+                    <a
+                        class="page-link"
+                        href="?page={{ ratings.next_page_number }}"
+                    >
+
+                        Next
+
+                    </a>
+
+                </li>
+
+            {% else %}
+
+                <li class="page-item disabled">
+
+                    <span class="page-link">
+
+                        Next
+
+                    </span>
+
+                </li>
+
+            {% endif %}
+
+        </ul>
+
+    </nav>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

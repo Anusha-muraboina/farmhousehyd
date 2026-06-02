@@ -302,6 +302,19 @@ Payment
 
 </a>
 
+
+
+
+<a href="{% url 'owner_rating_list' %}"
+class="{% if request.resolver_match.url_name in 'owner_rating_list owner_rating_add owner_rating_edit' %}active-parent{% endif %}">
+
+<i class="fa-solid fa-tags"></i>
+Rating
+
+</a>
+
+
+
 <a href="{% url 'owner_contact_list' %}">
 
 <i class="fa-solid fa-envelope"></i>

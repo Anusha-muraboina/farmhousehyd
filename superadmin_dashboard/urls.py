@@ -251,7 +251,29 @@ urlpatterns = [
     # ),
 
 
+    path(
+    "ratings/",
+    views.admin_rating_list,
+    name="admin_rating_list"
+    ),
 
+    path(
+        "ratings/add/",
+        views.admin_rating_add,
+        name="admin_rating_add"
+    ),
+
+    path(
+        "ratings/edit/<int:id>/",
+        views.admin_rating_edit,
+        name="admin_rating_edit"
+    ),
+
+    path(
+        "ratings/delete/<int:id>/",
+        views.admin_rating_delete,
+        name="admin_rating_delete"
+    ),
 
 
 ]

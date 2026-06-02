@@ -328,6 +328,16 @@ class="{% if request.resolver_match.url_name == 'payment_policy_create' %}active
 
 
 
+<a href="{% url 'admin_rating_list' %}"
+   class="{% if request.resolver_match.url_name in 'admin_rating_list admin_rating_add admin_rating_edit' %}active-parent{% endif %}">
+    
+    <div class="menu-left">
+        <i class="fa-solid fa-screwdriver-wrench"></i>
+        <span class="menu-text">Rating</span>
+    </div>
+</a>
+
+
 <!-- FARMHOUSES -->
 <a href="{% url 'superadmin-farmhouses' %}"
 class="{% if request.resolver_match.url_name == 'superadmin-farmhouses' %}active-parent{% endif %}">
@@ -336,6 +346,16 @@ class="{% if request.resolver_match.url_name == 'superadmin-farmhouses' %}active
 <span class="menu-text">Farmhouses</span>
 </div>
 </a>
+
+
+
+
+
+
+
+
+
+
 
 
 {% comment %} <a href="{% url 'farmhouse-trash' %}">

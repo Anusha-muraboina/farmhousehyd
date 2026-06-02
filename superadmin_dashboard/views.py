@@ -3777,3 +3777,196 @@ def download_coupon(request, coupon_id):
     pisa.CreatePDF(html, dest=response)
 
     return response
+
+
+
+
+
+from django.shortcuts import (
+    render,
+    redirect,
+    get_object_or_404
+)
+
+from django.core.paginator import Paginator
+from django.db.models import Q
+
+from rating.models import Rating
+from superadmin_dashboard.forms import RatingForm
+
+
+# =========================================
+# LIST
+# =========================================
+
+@superadmin_required
+def admin_rating_list(request):
+
+    ratings = Rating.objects.select_related(
+        "user",
+        "farmhouse"
+    ).order_by("-id")
+
+    # SEARCH
+
+    search = request.GET.get("search")
+
+    if search:
+
+        ratings = ratings.filter(
+
+            Q(user__username__icontains=search) |
+
+            Q(farmhouse__title__icontains=search) |
+
+            Q(review__icontains=search)
+
+        )
+
+    # ACTIVE FILTER
+
+    active = request.GET.get("active")
+
+    if active == "active":
+
+        ratings = ratings.filter(active=True)
+
+    elif active == "inactive":
+
+        ratings = ratings.filter(active=False)
+
+    paginator = Paginator(ratings, 10)
+
+    page_number = request.GET.get("page")
+
+    ratings = paginator.get_page(page_number)
+
+    return render(
+
+        request,
+
+        "superadmin/rating/list.html",
+
+        {
+            "ratings": ratings,
+            "search": search,
+            "active": active,
+        }
+
+    )
+
+
+# =========================================
+# ADD
+# =========================================
+
+@superadmin_required
+def admin_rating_add(request):
+
+    form = RatingForm(
+        request.POST or None
+    )
+
+    if request.method == "POST":
+
+        if form.is_valid():
+
+            try:
+
+                form.save()
+
+                return redirect(
+                    "admin_rating_list"
+                )
+
+            except Exception as e:
+
+                print(e)
+
+        else:
+
+            print(form.errors)
+
+    return render(
+
+        request,
+
+        "superadmin/rating/form.html",
+
+        {
+            "form": form,
+            "title": "Add Rating"
+        }
+
+    )
+
+
+# =========================================
+# EDIT
+# =========================================
+
+@superadmin_required
+def admin_rating_edit(request, id):
+
+    rating = get_object_or_404(
+        Rating,
+        id=id
+    )
+
+    form = RatingForm(
+        request.POST or None,
+        instance=rating
+    )
+
+    if request.method == "POST":
+
+        if form.is_valid():
+
+            try:
+
+                form.save()
+
+                return redirect(
+                    "admin_rating_list"
+                )
+
+            except Exception as e:
+
+                print(e)
+
+        else:
+
+            print(form.errors)
+
+    return render(
+
+        request,
+
+        "superadmin/rating/form.html",
+
+        {
+            "form": form,
+            "title": "Edit Rating"
+        }
+
+    )
+
+
+# =========================================
+# DELETE
+# =========================================
+
+@superadmin_required
+def admin_rating_delete(request, id):
+
+    rating = get_object_or_404(
+        Rating,
+        id=id
+    )
+
+    rating.delete()
+
+    return redirect(
+        "admin_rating_list"
+    )
+

@@ -1,0 +1,263 @@
+{% extends 'farmhouse_admin/base.html' %}
+
+{% block content %}
+
+<style>
+
+.rating-form-card{
+
+    max-width:850px;
+    margin:auto;
+    background:#fff;
+    border-radius:22px;
+    padding:40px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+
+}
+
+.page-title{
+
+    font-size:38px;
+    font-weight:700;
+    color:#111827;
+    margin-bottom:35px;
+
+}
+
+.form-label{
+
+    font-weight:600;
+    color:#111827;
+    margin-bottom:10px;
+
+}
+
+.custom-input{
+
+    border-radius:14px !important;
+    border:1px solid #d1d5db !important;
+    min-height:54px;
+    padding:12px 18px !important;
+    font-size:15px !important;
+    transition:0.3s;
+
+}
+
+.custom-input:focus{
+
+    border-color:#ff7a00 !important;
+    box-shadow:0 0 0 0.2rem rgba(255,122,0,0.15) !important;
+
+}
+
+textarea.custom-input{
+
+    min-height:140px;
+
+}
+
+.checkbox-wrapper{
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:10px;
+
+}
+
+.form-check-input{
+
+    width:20px;
+    height:20px;
+
+}
+
+.btn-orange{
+
+    background:#ff7a00;
+    color:#fff;
+    border:none;
+    border-radius:14px;
+    padding:12px 28px;
+    font-weight:600;
+
+}
+
+.btn-orange:hover{
+
+    background:#e66d00;
+    color:#fff;
+
+}
+
+.btn-light-custom{
+
+    background:#f3f4f6;
+    color:#111827;
+    border:none;
+    border-radius:14px;
+    padding:12px 28px;
+    font-weight:600;
+
+}
+
+.btn-light-custom:hover{
+
+    background:#e5e7eb;
+
+}
+
+</style>
+
+<div class="container py-5">
+
+    <div class="rating-form-card">
+
+        <h1 class="page-title">
+
+            {{ title }}
+
+        </h1>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+{% if form.errors %}
+
+<div class="alert alert-danger mb-4">
+
+    {{ form.errors }}
+
+</div>
+
+{% endif %}
+
+
+            <div class="row">
+
+                <!-- USER -->
+
+                <div class="col-md-6 mb-4">
+
+                    <label class="form-label">
+
+                        User
+
+                    </label>
+
+                    {{ form.user }}
+
+                </div>
+
+                <!-- FARMHOUSE -->
+
+                <div class="col-md-6 mb-4">
+
+                    <label class="form-label">
+
+                        Farmhouse
+
+                    </label>
+
+                    {{ form.farmhouse }}
+
+                </div>
+
+                <!-- RATING -->
+
+                <div class="col-md-6 mb-4">
+
+                    <label class="form-label">
+
+                        Rating
+
+                    </label>
+
+                    {{ form.rating }}
+
+                </div>
+
+                <!-- REVIEW -->
+
+                <div class="col-12 mb-4">
+
+                    <label class="form-label">
+
+                        Review
+
+                    </label>
+
+                    {{ form.review }}
+
+                </div>
+
+                <!-- ANONYMOUS -->
+
+                <div class="col-md-6">
+
+                    <div class="checkbox-wrapper">
+
+                        {{ form.anonymous }}
+
+                        <label>
+
+                            Anonymous Review
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+                <!-- ACTIVE -->
+
+                <div class="col-md-6">
+
+                    <div class="checkbox-wrapper">
+
+                        {{ form.active }}
+
+                        <label>
+
+                            Active
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- BUTTONS -->
+
+            <div class="d-flex gap-3 mt-5">
+
+                <button
+                    type="submit"
+                    class="btn btn-orange"
+                >
+
+                    Save Rating
+
+                </button>
+
+                <a
+                    href="{% url 'owner_rating_list' %}"
+                    class="btn btn-light-custom"
+                >
+
+                    Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
