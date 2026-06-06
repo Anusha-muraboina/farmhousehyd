@@ -160,6 +160,8 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             "total_reviews",
             "ratings",
             
+            "weekend_days",
+            
             "dynamic_price",
             "current_offer",
             

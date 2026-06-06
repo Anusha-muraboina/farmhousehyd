@@ -390,13 +390,7 @@ Base Price / Day
 </div>
 
 
-<div class="mb-4">
-<label class="custom-label">
 
-<span class="label-hint">days</span>
-</label>
-{{ form.weekend_days }}
-</div>
 
 <!-- ADVANCED PRICING -->
 <div class="mt-4">
@@ -406,7 +400,7 @@ Base Price / Day
 <div class="mb-3">
 <label class="custom-label">
 Weekday Price
-<span class="label-hint">Mon – Thu pricing</span>
+{% comment %} <span class="label-hint">Mon – Thu pricing</span> {% endcomment %}
 </label>
 {{ pricing_form.normal_day_price }}
 </div>
@@ -414,9 +408,18 @@ Weekday Price
 <div class="mb-3">
 <label class="custom-label">
 Weekend Price
-<span class="label-hint">Fri – Sun pricing</span>
+{% comment %} <span class="label-hint">Fri – Sun pricing</span> {% endcomment %}
 </label>
 {{ pricing_form.weekend_price }}
+</div>
+
+
+<div class="mb-4">
+<label class="custom-label">
+
+<span class="label-hint"> Weekend days</span>
+</label>
+{{ form.weekend_days }}
 </div>
 
 <div class="mb-3">

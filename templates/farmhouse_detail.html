@@ -2428,12 +2428,23 @@ onDayCreate: function(dObj, dStr, fp, dayElem) {
     //////////////////////////////////////////////////
     // ✅ WEEKEND LOGIC
     //////////////////////////////////////////////////
+
     let weekendDays = (farmhouse.weekend_days && farmhouse.weekend_days.length)
+    ? farmhouse.weekend_days
+    : [5,6];
+
+    // JS day => Python day
+    let jsDay = date.getDay();
+    let pythonDay = (jsDay + 6) % 7;
+
+    let isWeekend = weekendDays.includes(pythonDay);
+
+    {% comment %} let weekendDays = (farmhouse.weekend_days && farmhouse.weekend_days.length)
         ? farmhouse.weekend_days
         : [5,6];
 
     let day = date.getDay();
-    let isWeekend = weekendDays.includes(day);
+    let isWeekend = weekendDays.includes(day); {% endcomment %}
 
     //////////////////////////////////////////////////
     // ✅ FINAL PRICE
@@ -2575,12 +2586,22 @@ onDayCreate: function(dObj, dStr, fp, dayElem) {
     //////////////////////////////////////////////////
     // ✅ WEEKEND LOGIC
     //////////////////////////////////////////////////
+
     let weekendDays = (farmhouse.weekend_days && farmhouse.weekend_days.length)
+    ? farmhouse.weekend_days
+    : [5,6];
+
+    let jsDay = date.getDay();
+    let pythonDay = (jsDay + 6) % 7;
+
+    let isWeekend = weekendDays.includes(pythonDay);
+
+    {% comment %} let weekendDays = (farmhouse.weekend_days && farmhouse.weekend_days.length)
         ? farmhouse.weekend_days
         : [5,6];
 
     let day = date.getDay();
-    let isWeekend = weekendDays.includes(day);
+    let isWeekend = weekendDays.includes(day); {% endcomment %}
 
     //////////////////////////////////////////////////
     // ✅ FINAL PRICE
@@ -2806,9 +2827,15 @@ function calculateTotal() {
         let weekendDays = (farmhouse.weekend_days && farmhouse.weekend_days.length)
             ? farmhouse.weekend_days
             : [5,6];
-
+{% comment %} 
         let day = start.getDay();
-        let isWeekend = weekendDays.includes(day);
+        let isWeekend = weekendDays.includes(day); {% endcomment %}
+
+
+        let jsDay = start.getDay();
+        let pythonDay = (jsDay + 6) % 7;
+
+        let isWeekend = weekendDays.includes(pythonDay);
 
         let basePrice = isWeekend ? weekend : normal;
 
