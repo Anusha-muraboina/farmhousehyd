@@ -304,7 +304,7 @@ class FarmhouseListAPI(APIView):
             
             
             "amenities"
-        ).order_by(
+        ).distinct().order_by(
             F("Slot_position").asc(nulls_last=True)
         )
 
