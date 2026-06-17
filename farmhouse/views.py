@@ -601,10 +601,20 @@ class HomeAPIView(APIView):
         
         
                 # ✅ LIMITED (FOR UI GRID)
-        limited_farmhouses = farmhouses.order_by("-created_at")[:6]
+        # limited_farmhouses = farmhouses.order_by("-created_at")[:6]
+        
+        limited_farmhouses = farmhouses.order_by(
+            F("Slot_position").asc(nulls_last=True)
+        )[:6]
 
         # ✅ FULL DATA (FOR SEARCH DROPDOWN)
-        all_farmhouses = Farmhouse.objects.filter(is_active=True)
+        # all_farmhouses = Farmhouse.objects.filter(is_active=True)
+        
+        all_farmhouses = Farmhouse.objects.filter(
+            is_active=True
+        ).order_by(
+            F("Slot_position").asc(nulls_last=True)
+        )
 
         # if not search:
         #    farmhouses = farmhouses[:6]
