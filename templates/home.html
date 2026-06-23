@@ -1025,10 +1025,47 @@ if (blogs.length > 1) {
 
     grid.innerHTML += `
       <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
-        <div class="relative h-56">
+        {% comment %} <div class="relative h-56">
           <img src="${f.primary_image || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80'}"
                class="w-full h-full object-cover"  loading="lazy" >
-        </div>
+        </div> {% endcomment %}
+
+
+
+        <div class="relative h-56 overflow-hidden">
+
+  ${f.images.map((img, index) => `
+      <img
+          src="${img.image}"
+          class="farmhouse-image-${f.id}
+                 absolute inset-0 w-full h-full object-cover
+                 ${index === 0 ? '' : 'hidden'}">
+  `).join('')}
+
+  ${
+    f.images.length > 1
+      ? `
+<button
+    type="button"
+    onclick="event.stopPropagation(); prevFarmhouseImage(${f.id})"
+    class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full w-8 h-8 z-10">
+    ❮c
+</button>c
+
+<button
+    type="button"
+    onclick="event.stopPropagation(); nextFarmhouseImage(${f.id})"
+    class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full w-8 h-8 z-10">
+    ❯
+</button>
+      `
+      : ""
+  }
+
+</div>
+
+
+
 
         <div class="p-5">
           <p class="text-xl font-bold text-secondary mb-2">
@@ -1428,6 +1465,68 @@ searchForm.addEventListener("submit", function(e){
     }
 
 });
+
+
+
+
+
+
+
+const farmhouseIndexes = {};
+
+function showFarmhouseImage(id, index) {
+    const images = document.querySelectorAll(
+        `.farmhouse-image-${id}`
+    );
+
+    if (!images.length) return;
+
+    images.forEach((img, i) => {
+        if (i === index) {
+            img.classList.remove("hidden");
+        } else {
+            img.classList.add("hidden");
+        }
+    });
+
+    farmhouseIndexes[id] = index;
+}
+
+function nextFarmhouseImage(id) {
+    const images = document.querySelectorAll(
+        `.farmhouse-image-${id}`
+    );
+
+    if (!images.length) return;
+
+    let current = farmhouseIndexes[id] ?? 0;
+
+    current++;
+
+    if (current >= images.length) {
+        current = 0;
+    }
+
+    showFarmhouseImage(id, current);
+}
+
+function prevFarmhouseImage(id) {
+    const images = document.querySelectorAll(
+        `.farmhouse-image-${id}`
+    );
+
+    if (!images.length) return;
+
+    let current = farmhouseIndexes[id] ?? 0;
+
+    current--;
+
+    if (current < 0) {
+        current = images.length - 1;
+    }
+
+    showFarmhouseImage(id, current);
+}
 
 </script>
 
