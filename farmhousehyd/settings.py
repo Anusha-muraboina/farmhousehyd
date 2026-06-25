@@ -246,8 +246,8 @@ CC_EMAIL = ["anushamuraboina99@gmail.com"]
 # =================================================================
 
 
-RAZORPAY_KEY_ID = "rzp_live_SJVDXOrw6k20Yj"
-RAZORPAY_KEY_SECRET = "a2oTbAtcyq3XYQsiYyib7Hhz"
+RAZORPAY_KEY_ID = "rzp_live_T2KvE742FGfmqg"
+RAZORPAY_KEY_SECRET = "vq5xp4vxOL30GYxSOZ1otgsP"
 RAZORPAY_WEBHOOK_SECRET = "fosufweh fsdufjhtu3u40574075jlkrwSSdsdFosdjth84j@#$5jjhgjldsg"
 
 # ====================================
