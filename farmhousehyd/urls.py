@@ -25,11 +25,12 @@ from django.views.generic import TemplateView
 
 from django.contrib.sitemaps.views import sitemap
 
-from farmhousehyd.sitemap import StaticSitemap, FarmhouseSitemap, BlogSitemap
+from farmhousehyd.sitemap import StaticSitemap, FarmhouseSitemap, BlogSitemap,FarmhouseLocationSitemap
 
 sitemaps = {
     "static": StaticSitemap(),
     "farmhouses": FarmhouseSitemap(),
+    "farmhouse-location": FarmhouseLocationSitemap,
     "blogs": BlogSitemap(),
 }
 # from farmhousehyd.sitemap import BlogSitemap, BlogListSitemap,StaticSitemap,BookingSitemap

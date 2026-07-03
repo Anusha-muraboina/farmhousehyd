@@ -1,6 +1,6 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
-from farmhouse.models import Farmhouse
+from farmhouse.models import Farmhouse ,Location
 from blogs.models import Blog
 
 
@@ -38,7 +38,23 @@ class FarmhouseSitemap(Sitemap):
     def location(self, obj):
         return reverse(
             "farmhouse_detail",
-            args=[obj.slug, obj.location.slug]
+            args=[obj.slug, obj.location.slug] ,
+            
+            
+        )
+        
+
+
+class FarmhouseLocationSitemap(Sitemap):
+    def items(self):
+        return Location.objects.filter(is_active=True)
+
+    def location(self, obj):
+        return reverse(
+            "farmhouses-location",
+            kwargs={
+                "location": obj.meta_title.replace(" ", "_")
+            }
         )
 
 ####################################################

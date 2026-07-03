@@ -49,6 +49,7 @@ ALLOWED_HOSTS = [
                 
                 "3.6.87.103",
                 
+
                  ]
 
 ADMIN_TRASH_PIN = "1234"
@@ -248,7 +249,7 @@ CC_EMAIL = ["anushamuraboina99@gmail.com"]
 
 RAZORPAY_KEY_ID = "rzp_live_T2KvE742FGfmqg"
 RAZORPAY_KEY_SECRET = "vq5xp4vxOL30GYxSOZ1otgsP"
-RAZORPAY_WEBHOOK_SECRET = "fosufweh fsdufjhtu3u40574075jlkrwSSdsdFosdjth84j@#$5jjhgjldsg"
+RAZORPAY_WEBHOOK_SECRET = "fosufwehfsdufjhtu3u40574075jlkrwSSdsdFosdjth84j@#$5jjhgjldsg"
 
 # ====================================
 
