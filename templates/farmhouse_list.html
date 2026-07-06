@@ -7,12 +7,17 @@
         <div class="absolute inset-0 bg-gradient-to-r from-gray-900/70 to-gray-900/40"></div>
     </div>
     <div class="relative h-full container mx-auto px-4 flex flex-col items-center justify-center text-center">
-        <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Farm Houses in {{ current_location }}</h1>
+        {% comment %} <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Farmhouses in {{ current_location }}</h1> {% endcomment %}
+       <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">
+    Farmhouses in {{ current_location|default:"Hyderabad" }}
+</h1>
+
         <div class="flex items-center gap-2 text-white">
             {% comment %} <a href="/" class="hover:text-secondary">Home</a>
             <span>/</span> {% endcomment %}
             <h2 class=" font-medium ">Explore Our Farmhouses</h2>
         </div>
+
     </div>
 </section>
 
