@@ -274,6 +274,11 @@ urlpatterns = [
         views.admin_rating_delete,
         name="admin_rating_delete"
     ),
-
+    
+    path("faq/", views.faq_list, name="faq_list"),
+    path("faq/create/", views.faq_create, name="faq_create"),
+    path("faq/update/<int:pk>/", views.faq_update, name="faq_update"),
+    path("faq/delete/<int:pk>/", views.faq_delete, name="faq_delete"),
+    
 
 ]

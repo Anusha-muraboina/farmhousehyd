@@ -17,7 +17,8 @@ from .serializers import (
     LocationSerializer,
     FarmhouseSerializer,
     BlogSerializer ,
-    PropertyrulesSerializer
+    PropertyrulesSerializer,
+    FAQSerializer
 )
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import AllowAny
@@ -561,6 +562,8 @@ class HomeAPIView(APIView):
         know_whoweare = AboutWhoWeAre.objects.filter(is_active=True)
 
         popup = HomePopup.objects.filter(is_active=True).first()
+        
+        faqs = FAQ.objects.filter(is_active=True)
 
         location_meta = None
 
@@ -669,6 +672,12 @@ class HomeAPIView(APIView):
 
             "latest_blogs": BlogSerializer(
                 latest_blogs, many=True, context={"request": request}
+            ).data,
+            
+            "faqs": FAQSerializer(
+                faqs,
+                many=True,
+                context={"request": request}
             ).data,
             
         }

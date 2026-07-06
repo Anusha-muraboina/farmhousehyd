@@ -756,6 +756,17 @@ class="{% if request.resolver_match.url_name == 'facilities_list' %}active{% end
 </a>
 
 
+
+<a href="{% url 'faq_list' %}"
+class="{% if request.resolver_match.url_name == 'faq_list' %}active{% endif %}">
+    <div class="menu-left">
+        <i class="fa-solid fa-user-group"></i>
+        <span class="menu-text">FAQ</span>
+    </div>
+</a>
+
+
+
 <a href="{% url 'seo_list' %}"
 class="{% if request.resolver_match.url_name == 'seo_list' %}active{% endif %}">
     <div class="menu-left">

@@ -3970,3 +3970,75 @@ def admin_rating_delete(request, id):
         "admin_rating_list"
     )
 
+
+
+
+
+
+
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from farmhouse.models import FAQ
+
+
+def faq_list(request):
+    faqs = FAQ.objects.all().order_by("-id")
+
+    context = {
+        "faqs": faqs,
+    }
+
+    return render(request, "superadmin/faq/list.html", context)
+
+
+def faq_create(request):
+
+    if request.method == "POST":
+
+        FAQ.objects.create(
+            question=request.POST.get("question"),
+            answer=request.POST.get("answer"),
+            is_active=True if request.POST.get("is_active") else False,
+        )
+
+        return redirect("faq_list")
+
+    return render(request, "superadmin/faq/form.html")
+
+
+def faq_update(request, pk):
+
+    faq = get_object_or_404(
+        FAQ,
+        pk=pk
+    )
+
+    if request.method == "POST":
+
+        faq.question = request.POST.get("question")
+        faq.answer = request.POST.get("answer")
+        faq.is_active = True if request.POST.get("is_active") else False
+
+        faq.save()
+
+        return redirect("faq_list")
+
+    context = {
+        "faq": faq
+    }
+
+    return render(request, "superadmin/faq/form.html", context)
+
+
+def faq_delete(request, pk):
+
+    faq = get_object_or_404(
+        FAQ,
+        pk=pk
+    )
+
+    faq.delete()
+
+    return redirect("faq_list")

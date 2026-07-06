@@ -530,6 +530,32 @@ class HomePopup(models.Model):
 
 
 
+
+
+
+
+
+from django.db import models
+
+
+class FAQ(models.Model):
+    question = models.CharField(max_length=255)
+    answer = models.TextField()
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["id"]
+        verbose_name = "FAQ"
+        verbose_name_plural = "FAQs"
+
+    def __str__(self):
+        return self.question
+
+
+
+
+
 class TouristPlace(models.Model):
     title = models.CharField(
         max_length=150,

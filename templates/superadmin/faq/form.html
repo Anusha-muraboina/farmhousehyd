@@ -1,0 +1,269 @@
+{% extends "superadmin/base.html" %}
+
+{% block title %}
+{% if faq %}Edit FAQ{% else %}Add FAQ{% endif %}
+{% endblock %}
+
+{% block page_title %}
+{% if faq %}Edit FAQ{% else %}Add FAQ{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+                <!-- Header -->
+                <div class="card-header faq-header border-0 py-4">
+
+                    <div class="d-flex align-items-center">
+
+                        {% comment %} <div class="icon-box me-3">
+
+                            <i class="bi bi-patch-question-fill fs-2"></i>
+
+                        </div> {% endcomment %}
+
+                        <div>
+
+                            <h3 class="fw-bold mb-1 text-white">
+
+                                {% if faq %}
+                                    Edit FAQ
+                                {% else %}
+                                    Add New FAQ
+                                {% endif %}
+
+                            </h3>
+
+                            <p class="text-white-50 mb-0">
+                                Create and manage frequently asked questions.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Body -->
+                <div class="card-body p-5">
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <!-- Question -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+
+                                <i class="bi bi-chat-left-text-fill text-orange me-2"></i>
+
+                                Question
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="question"
+                                value="{{ faq.question|default:'' }}"
+                                class="form-control form-control-lg"
+                                placeholder="Enter FAQ Question"
+                                required>
+
+                        </div>
+
+                        <!-- Answer -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+
+                                <i class="bi bi-file-earmark-text-fill text-orange me-2"></i>
+
+                                Answer
+
+                            </label>
+
+                            <textarea
+                                name="answer"
+                                rows="7"
+                                class="form-control"
+                                placeholder="Write the FAQ answer..."
+                                required>{{ faq.answer|default:'' }}</textarea>
+
+                        </div>
+
+                        <!-- Status -->
+                        <div class="mb-5">
+
+                            <div class="form-check form-switch">
+
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="status"
+                                    name="is_active"
+
+                                    {% if faq %}
+                                        {% if faq.is_active %}
+                                            checked
+                                        {% endif %}
+                                    {% else %}
+                                        checked
+                                    {% endif %}>
+
+                                <label class="form-check-label fw-semibold ms-2" for="status">
+
+                                    Active FAQ
+
+                                </label>
+
+                            </div>
+
+                            <small class="text-muted">
+                                Disable this option to hide this FAQ from your website.
+                            </small>
+
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-end gap-3">
+
+                            <a href="{% url 'faq_list' %}"
+                               class="btn btn-light border px-4">
+
+                                <i class="bi bi-arrow-left me-2"></i>
+
+                                Cancel
+
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="btn btn-orange px-5">
+
+                                <i class="bi bi-check-circle-fill me-2"></i>
+
+                                {% if faq %}
+                                    Update FAQ
+                                {% else %}
+                                    Save FAQ
+                                {% endif %}
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+body{
+    background:#f8f9fa;
+}
+
+/* Card */
+.card{
+    border-radius:20px;
+}
+
+/* Header */
+.faq-header{
+    background:linear-gradient(135deg,#ff8c00,#ff6b00);
+}
+
+/* Header Icon */
+.icon-box{
+    width:65px;
+    height:65px;
+    background:rgba(255,255,255,.2);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:18px;
+}
+
+/* Orange Text */
+.text-orange{
+    color:#ff6b00;
+}
+
+/* Inputs */
+.form-control{
+    border-radius:12px;
+    border:1px solid #dee2e6;
+    padding:14px 18px;
+    transition:.3s;
+}
+
+.form-control:focus{
+    border-color:#ff8c00;
+    box-shadow:0 0 0 .25rem rgba(255,140,0,.18);
+}
+
+/* Switch */
+.form-switch .form-check-input{
+    width:3rem;
+    height:1.5rem;
+    cursor:pointer;
+}
+
+.form-check-input:checked{
+    background-color:#ff6b00;
+    border-color:#ff6b00;
+}
+
+/* Orange Button */
+.btn-orange{
+    background:#ff6b00;
+    color:#fff;
+    border:none;
+    border-radius:12px;
+    font-weight:600;
+    transition:.3s;
+}
+
+.btn-orange:hover{
+    background:#e65c00;
+    color:#fff;
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(255,107,0,.3);
+}
+
+/* Cancel Button */
+.btn-light{
+    border-radius:12px;
+    font-weight:600;
+}
+
+/* Textarea */
+textarea{
+    resize:none;
+}
+
+/* Labels */
+.form-label{
+    color:#444;
+    margin-bottom:10px;
+}
+
+</style>
+
+{% endblock %}
