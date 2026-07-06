@@ -766,6 +766,22 @@ class="{% if request.resolver_match.url_name == 'faq_list' %}active{% endif %}">
 </a>
 
 
+<a href="{% url 'contact_info_list' %}"
+class="{% if request.resolver_match.url_name == 'contact_info_list' %}active{% endif %}">
+    <div class="menu-left">
+        <i class="fa-solid fa-user-group"></i>
+        <span class="menu-text">Contact Info</span>
+    </div>
+</a>
+
+
+<a href="{% url 'contact_message_list' %}"
+class="{% if request.resolver_match.url_name == 'contact_message_list' %}active{% endif %}">
+    <div class="menu-left">
+        <i class="fa-solid fa-user-group"></i>
+        <span class="menu-text">Messages</span>
+    </div>
+</a>
 
 <a href="{% url 'seo_list' %}"
 class="{% if request.resolver_match.url_name == 'seo_list' %}active{% endif %}">
