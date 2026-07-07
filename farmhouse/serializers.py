@@ -109,8 +109,8 @@ class FarmhouseSerializer(serializers.ModelSerializer):
         # 🔥 THIS IS THE KEY LINE
     amenities = AmenitySerializer(many=True, read_only=True)
     primary_image = serializers.SerializerMethodField()
-    images = FarmhouseImageSerializer(many=True, read_only=True)
-    # images = serializers.SerializerMethodField()
+    # images = FarmhouseImageSerializer(many=True, read_only=True)
+    images = serializers.SerializerMethodField()
     facilities = FacilitySerializer(many=True, read_only=True)
     
     thingstocarry = ThingstocarrySerializer(many=True, read_only=True)
@@ -124,6 +124,7 @@ class FarmhouseSerializer(serializers.ModelSerializer):
     average_rating = serializers.SerializerMethodField()
     total_reviews = serializers.SerializerMethodField()
     ratings = serializers.SerializerMethodField()
+    
     
     
     dynamic_price = serializers.SerializerMethodField()
@@ -282,6 +283,17 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             return round(avg, 1)
 
         return 0
+    
+    def get_images(self, obj):
+        request = self.context.get("request")
+
+        images = obj.images.all().order_by("-is_primary", "id")
+
+        return FarmhouseImageSerializer(
+            images,
+            many=True,
+            context={"request": request}
+        ).data
 
 
     # ⭐ Total Reviews
