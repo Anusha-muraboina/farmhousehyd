@@ -1116,22 +1116,17 @@ if (blogs.length > 1) {
 
     grid.innerHTML += `
       <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
-        {% comment %} <div class="relative h-56">
-          <img src="${f.primary_image || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80'}"
-               class="w-full h-full object-cover"  loading="lazy" >
-        </div> {% endcomment %}
-
-
-
         <div class="relative h-56 overflow-hidden">
 
-  ${f.images.map((img, index) => `
-      <img
-          src="${img.image}"
-          class="farmhouse-image-${f.id}
-                 absolute inset-0 w-full h-full object-cover
-                 ${index === 0 ? '' : 'hidden'}">
-  `).join('')}
+ ${[...f.images]
+.sort((a, b) => Number(b.is_primary) - Number(a.is_primary))
+.map((img, index) => `
+    <img
+        src="${img.image}"
+        class="farmhouse-image-${f.id}
+               absolute inset-0 w-full h-full object-cover
+               ${index === 0 ? '' : 'hidden'}">
+`).join('')}
 
   ${
     f.images.length > 1
@@ -1141,7 +1136,7 @@ if (blogs.length > 1) {
     onclick="event.stopPropagation(); prevFarmhouseImage(${f.id})"
     class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full w-8 h-8 z-10">
     ❮
-</button>c
+</button>
 
 <button
     type="button"
