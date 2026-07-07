@@ -298,7 +298,35 @@ class FarmhouseSerializer(serializers.ModelSerializer):
             many=True
         ).data
         
-        
+  
+  
+class FarmhouseSearchSerializer(serializers.ModelSerializer):
+
+    primary_image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Farmhouse
+        fields = [
+            "id",
+            "title",
+            "slug",
+            "location",
+            "primary_image",
+        ]
+
+    def get_primary_image(self, obj):
+
+        request = self.context.get("request")
+
+        image = obj.images.filter(is_primary=True).first()
+
+        if not image:
+            image = obj.images.first()
+
+        if image and request:
+            return request.build_absolute_uri(image.image.url)
+
+        return None      
 
 
 class BlogSerializer(serializers.ModelSerializer):

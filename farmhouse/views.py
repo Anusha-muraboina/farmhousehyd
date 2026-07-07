@@ -555,7 +555,25 @@ class HomeAPIView(APIView):
 
         banners = Banner.objects.filter(is_active=True).order_by("Slot_position")
         locations = Location.objects.filter(is_active=True)
-        farmhouses = Farmhouse.objects.filter(is_active=True)
+        # farmhouses = Farmhouse.objects.filter(is_active=True)
+        
+        farmhouses = (
+                Farmhouse.objects
+                .filter(is_active=True)
+                .select_related(
+                    "location",
+                    "payment_policy"
+                )
+                .prefetch_related(
+                    "images",
+                    "amenities",
+                    "facilities",
+                    "thingstocarry",
+                    "properyrules",
+                    "offers",
+                    "ratings__user",
+                )
+            )
 
         services = Choos_Services.objects.filter(is_active=True)
         ourfacility = OurFacility.objects.filter(is_active=True)
@@ -613,10 +631,20 @@ class HomeAPIView(APIView):
         # ✅ FULL DATA (FOR SEARCH DROPDOWN)
         # all_farmhouses = Farmhouse.objects.filter(is_active=True)
         
-        all_farmhouses = Farmhouse.objects.filter(
-            is_active=True
-        ).order_by(
-            F("Slot_position").asc(nulls_last=True)
+        # all_farmhouses = Farmhouse.objects.filter(
+        #     is_active=True
+        # ).order_by(
+        #     F("Slot_position").asc(nulls_last=True)
+        # )
+        
+        all_farmhouses = (
+            Farmhouse.objects
+            .filter(is_active=True)
+            .select_related("location")
+            .prefetch_related("images")
+            .order_by(
+                F("Slot_position").asc(nulls_last=True)
+            )
         )
 
         # if not search:
@@ -654,9 +682,11 @@ class HomeAPIView(APIView):
             ).data,
 
             # ✅ FOR SEARCH DROPDOWN (FULL)
-            "all_farmhouses": FarmhouseSerializer(
-                all_farmhouses, many=True, context={"request": request}
-            ).data,
+            # "all_farmhouses": FarmhouseSerializer(
+            #     all_farmhouses, many=True, context={"request": request}
+            # ).data,
+            
+            "all_farmhouses": [],
 
             "services": ChooseServicesSerializer(
                 services, many=True, context={"request": request}
