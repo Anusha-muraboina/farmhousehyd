@@ -114,6 +114,14 @@ class Booking(models.Model):
         default=Decimal("0.00"),
         help_text="Manual discount by admin"
     )
+    
+    admin_amount =  models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal("0.00"),
+        help_text="Flat discount amount (e.g. ₹500)"
+    )
+    
     advance_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,

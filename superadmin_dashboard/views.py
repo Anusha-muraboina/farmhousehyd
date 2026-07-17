@@ -1800,6 +1800,8 @@ def admin_calculate_booking_price(request):
     coupon_id = data.get("coupon")
     admin_discount = Decimal(str(data.get("admin_discount", 0)))
     
+    admin_amount = Decimal(str(data.get("admin_amount", 0)))
+    
     advance_amount = Decimal(str(data.get("advance_amount", 0)))
 
     if not farmhouse_id or not check_in or not check_out:
@@ -1848,16 +1850,36 @@ def admin_calculate_booking_price(request):
     # =========================
     # ADMIN DISCOUNT (%)  ✅ ALWAYS RUN
     # =========================
-    admin_percent = admin_discount or Decimal("0.00")
+    # admin_percent = admin_discount or Decimal("0.00")
 
-    admin_discount_amount = (
-        subtotal * admin_percent / Decimal("100")
-    ).quantize(Decimal("0.01"))
+    # admin_discount_amount = (
+    #     subtotal * admin_percent / Decimal("100")
+    # ).quantize(Decimal("0.01"))
 
     # =========================
     # TOTAL DISCOUNT ✅ ALWAYS RUN
     # =========================
-    total_discount = coupon_discount + admin_discount_amount
+    # total_discount = coupon_discount + admin_discount_amount
+    
+    
+    
+    
+    # Percentage discount
+    admin_percent = admin_discount or Decimal("0.00")
+
+    percentage_discount = (
+        subtotal * admin_percent / Decimal("100")
+    ).quantize(Decimal("0.01"))
+
+    # Flat amount discount
+    admin_amount_discount = admin_amount or Decimal("0.00")
+
+    # Total discount
+    total_discount = (
+        coupon_discount
+        + percentage_discount
+        + admin_amount_discount
+    )
 
     if total_discount > subtotal:
         total_discount = subtotal
@@ -1875,118 +1897,18 @@ def admin_calculate_booking_price(request):
     return JsonResponse({
         "subtotal": float(subtotal),
         "coupon_discount": float(coupon_discount),
-        "admin_discount": float(admin_discount_amount),
+        # "admin_discount": float(admin_discount_amount),
+        "admin_discount": float(percentage_discount),
+        "admin_amount": float(admin_amount_discount),
         "admin_percent": float(admin_percent),
         "total": float(total),
     "advance_paid": float(advance_amount),
     "remaining": float(remaining_amount)
     })
 
-# @superadmin_required
-# @require_POST
-# def admin_calculate_booking_price(request):
-#     data = json.loads(request.body)
-#     farmhouse_id = data.get("farmhouse")
-#     check_in = data.get("check_in")
-#     check_out = data.get("check_out")
-#     extra_guest_count = int(data.get("extra_guest_count", 0))
-#     coupon_id = data.get("coupon")
-#     admin_discount = Decimal(str(data.get("admin_discount", 0)))
-#     if not farmhouse_id or not check_in or not check_out:
-#         return JsonResponse({"total": 0})
-
-#     try:
-#         farmhouse = Farmhouse.objects.select_related("pricing").get(id=farmhouse_id)
-#         pricing = farmhouse.pricing
-#     except:
-#         return JsonResponse({"total": 0})
-
-#     start = datetime.strptime(check_in, "%Y-%m-%d")
-#     end = datetime.strptime(check_out, "%Y-%m-%d")
-
-#     subtotal = Decimal("0.00")
-
-#     while start < end:
-
-#         # ⭐ SALE FIRST
-#         if pricing.sale_price and pricing.sale_price > 0:
-#             subtotal += pricing.sale_price
-
-#         elif start.weekday() in [5, 6]:
-#             subtotal += pricing.weekend_price
-
-#         else:
-#             subtotal += pricing.normal_day_price
-
-#         start += timedelta(days=1)
-
-#     ###################################
-#     # EXTRA GUEST
-#     ###################################
-
-#     subtotal += extra_guest_count * pricing.extra_guest_price
-
-#     ###################################
-#     # COUPON
-#     ###################################
-#     coupon_discount = Decimal("0.00")
-
-#     if coupon_id:
-#         coupon = Coupon.objects.filter(id=coupon_id).first()
-#         if coupon and coupon.is_active and subtotal >= coupon.min_booking_amount:
-#             coupon_discount = coupon.calculate_discount(subtotal)
 
 
 
-#         # =========================
-#         # ADMIN DISCOUNT (%)
-#         # =========================
-#         admin_percent = admin_discount or Decimal("0.00")
-
-#         admin_discount_amount = (
-#             subtotal * admin_percent / Decimal("100")
-#         ).quantize(Decimal("0.01"))
-
-#         # =========================
-#         # TOTAL DISCOUNT
-#         # =========================
-#         total_discount = coupon_discount + admin_discount_amount
-        
-#     # ✅ ADD ADMIN DISCOUNT
-#     # total_discount = coupon_discount + admin_discount
-
-#     if total_discount > subtotal:
-#         total_discount = subtotal
-
-#     total = subtotal - total_discount
-
-#     # discount = Decimal("0.00")
-
-#     # if coupon_id:
-
-#     #     coupon = Coupon.objects.filter(
-#     #         id=coupon_id,
-#     #         is_active=True
-#     #     ).first()
-
-#     #     if coupon and subtotal >= coupon.min_booking_amount:
-#     #         discount = coupon.calculate_discount(subtotal)
-
-#     # total = subtotal - discount
-
-#     return JsonResponse({
-        
-    
-#     "subtotal": float(subtotal),
-#     "discount": float(total_discount),
-#     "total": float(total),
-#     "coupon_discount": float(coupon_discount),
-#     "admin_discount": float(admin_discount_amount),
-#     "admin_percent": float(admin_percent)
-#         # "subtotal": float(subtotal),
-#         # "discount": float(discount),
-#         # "total": float(total)
-#     })
 
 from decimal import Decimal
 from datetime import datetime, timedelta
@@ -2068,19 +1990,61 @@ def admin_booking_create(request):
                     coupon_discount = coupon.calculate_discount(subtotal)
 
           
+          
+          
+          
+          
+          
+          
+            # =========================
+            # ADMIN DISCOUNT (%)
+            # =========================
+            # admin_percent = booking.admin_discount or Decimal("0.00")
+
+            # admin_discount_amount = (
+            #     subtotal * admin_percent / Decimal("100")
+            # ).quantize(Decimal("0.01"))
+
+            # =========================
+            # TOTAL DISCOUNT
+            # =========================
+            # total_discount = coupon_discount + admin_discount_amount
+            
+            
+            
             # =========================
             # ADMIN DISCOUNT (%)
             # =========================
             admin_percent = booking.admin_discount or Decimal("0.00")
 
-            admin_discount_amount = (
+            percentage_discount = (
                 subtotal * admin_percent / Decimal("100")
             ).quantize(Decimal("0.01"))
 
             # =========================
+            # ADMIN AMOUNT DISCOUNT
+            # =========================
+            admin_amount_discount = booking.admin_amount or Decimal("0.00")
+
+            # =========================
             # TOTAL DISCOUNT
             # =========================
-            total_discount = coupon_discount + admin_discount_amount
+            total_discount = (
+                coupon_discount
+                + percentage_discount
+                + admin_amount_discount
+            )
+                        
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             # admin_discount = booking.admin_discount or Decimal("0.00")
 
             # =========================
@@ -3232,17 +3196,6 @@ def admin_offer_list(request):
 
     return render(request, "superadmin/offers/list.html", {"offers": offers})
 
-# from django.shortcuts import render, redirect
-# from django.contrib import messages
-# from .models import FarmhouseOfferPricing, Farmhouse
-# from .forms import FarmhouseOfferForm
-
-
-
-# from django.shortcuts import render, redirect, get_object_or_404
-# from django.contrib import messages
-# from .models import FarmhouseOfferPricing, Farmhouse
-# from .forms import FarmhouseOfferForm
 
 
 import requests
@@ -3312,40 +3265,7 @@ def admin_offer_create(request):
         "offer_dates": offer_dates,
         "selected_farmhouse_id": selected_farmhouse_id
     })
-    
-# @superadmin_required
-# def admin_offer_create(request):
-
-#     form = FarmhouseOfferForm(request.POST or None)
-#     form.fields["farmhouse"].queryset = Farmhouse.objects.all()
-
-#     # ✅ get selected farmhouse (POST first, then GET)
-#     selected_farmhouse_id = request.POST.get("farmhouse") or request.GET.get("farmhouse")
-
-#     # ✅ IMPORTANT: default empty
-#     offers = FarmhouseOfferPricing.objects.none()
-
-#     if selected_farmhouse_id:
-#         offers = FarmhouseOfferPricing.objects.filter(
-#             farmhouse_id=selected_farmhouse_id
-#         ).order_by('-id')
-
-#     offer_dates = [
-#         {
-#             "from": o.start_date.strftime("%Y-%m-%d"),
-#             "to": o.end_date.strftime("%Y-%m-%d"),
-#             "price": float(o.price)
-#         }
-#         for o in offers
-#     ]
-
-#     return render(request, "superadmin/offers/form.html", {
-#         "form": form,
-#         "offer_dates": offer_dates,
-#         "selected_farmhouse_id": selected_farmhouse_id
-#     })
-    
-    
+ 
 
 @superadmin_required
 def admin_offer_update(request, pk):
