@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Farmhouses Hyderabad - Best Farmhouses{% endblock %}
 {% block content %}
-<section class="relative h-[300px] md:h-[400px] overflow-hidden">
+<section class="relative h-[300px] md:h-[400px] overflow-hidden ">
     <div class="absolute inset-0 bg-cover bg-center"
         style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80');">
         <div class="absolute inset-0 bg-gradient-to-r from-gray-900/70 to-gray-900/40"></div>
@@ -30,7 +30,7 @@
 
     <!-- POPUP -->
 <div id="popupModal"
-     class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center">
+     class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center ">
 
     <div class="bg-white rounded-xl overflow-hidden relative max-w-md w-full">
 
@@ -45,8 +45,8 @@
 </div>
 
 
-<section class="md:py-16 py-4 bg-gray-50">
-    <div class="md:px-12 px-4 mx-auto">
+<section class="md:py-16 py-4 bg-gray-50 md:px-20">
+    <div class="md:px-12 mx-auto">
         <form id="filterForm" method="GET"
             class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 w-full">
             {% if request.GET.search %}

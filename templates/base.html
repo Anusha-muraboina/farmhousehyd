@@ -257,7 +257,7 @@
     {% block extra_css %}{% endblock %}
 </head>
 
-<body class="bg-gray-50">
+<body class="bg-gray-50  ">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNKJD99S"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -265,7 +265,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
  
     {% include "includes/header.html" %}
 
-    {% block content %}{% endblock %}
+
+  
+          {% block content %}
+         
+          {% endblock %}
+   
+  
 
     {% include "includes/footer.html" %}
 
