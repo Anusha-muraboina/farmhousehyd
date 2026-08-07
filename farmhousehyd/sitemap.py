@@ -45,18 +45,33 @@ class FarmhouseSitemap(Sitemap):
         
 
 
+# class FarmhouseLocationSitemap(Sitemap):
+#     def items(self):
+#         return Location.objects.filter(is_active=True)
+
+#     def location(self, obj):
+#         return reverse(
+#             "farmhouses-location",
+#             kwargs={
+#                 "location": obj.meta_title.replace(" ", "_")
+#             }
+#         )
 class FarmhouseLocationSitemap(Sitemap):
+
     def items(self):
-        return Location.objects.filter(is_active=True)
+        return Location.objects.filter(
+            is_active=True
+        ).exclude(meta_title="")
 
     def location(self, obj):
+        title = (obj.meta_title or "").strip()
+
         return reverse(
             "farmhouses-location",
             kwargs={
-                "location": obj.meta_title.replace(" ", "_")
+                "location": title.replace(" ", "_")
             }
         )
-
 ####################################################
 # BLOG DETAIL PAGES
 ####################################################
