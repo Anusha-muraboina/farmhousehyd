@@ -523,168 +523,446 @@ from .serializers import HomePopupSerializer
 # from rest_framework.response import Response
 # from rest_framework.authentication import BasicAuthentication
 # from rest_framework.permissions import AllowAny
-
 class HomeAPIView(APIView):
 
-    authentication_classes = [BasicAuthentication]
+    authentication_classes = []
     permission_classes = [AllowAny]
 
-    # def get(self, request, location=None):
-
-    #     search = request.GET.get("search")
-
-    #     selected_location = None
-
-    #     # convert URL underscore → space
-    #     if location:
-    #         selected_location = location.replace("_", " ")
     def get(self, request):
+
         location = request.GET.get("location")
         search = request.GET.get("search")
 
         selected_location = None
 
         if location:
-            selected_location = location.replace("_", " ")
+            selected_location = location.replace("_", " ").strip()
 
-        cache_key = f"home_page_data_{selected_location}_{search}"
+        if search:
+            search = search.strip()
+
+        # ==============================
+        # CACHE
+        # ==============================
+
+        cache_key = (
+            f"home_page_v2:"
+            f"location={selected_location or ''}:"
+            f"search={search or ''}"
+        )
 
         cached_data = cache.get(cache_key)
-        if cached_data:
+
+        if cached_data is not None:
             return Response(cached_data)
 
-        banners = Banner.objects.filter(is_active=True).order_by("Slot_position")
-        locations = Location.objects.filter(is_active=True)
-        farmhouses = Farmhouse.objects.filter(is_active=True)
+        # ==============================
+        # HOME DATA
+        # ==============================
 
-        services = Choos_Services.objects.filter(is_active=True)
-        ourfacility = OurFacility.objects.filter(is_active=True)
-        know_whoweare = AboutWhoWeAre.objects.filter(is_active=True)
+        banners = (
+            Banner.objects
+            .filter(is_active=True)
+            .order_by("Slot_position")
+        )
 
-        popup = HomePopup.objects.filter(is_active=True).first()
-        
-        faqs = FAQ.objects.filter(is_active=True)
+        locations = (
+            Location.objects
+            .filter(is_active=True)
+        )
+
+        farmhouses = (
+            Farmhouse.objects
+            .filter(is_active=True)
+            .select_related("location", "pricing")
+            .prefetch_related(
+                "images",
+                "amenities",
+            )
+        )
+
+        services = (
+            Choos_Services.objects
+            .filter(is_active=True)
+        )
+
+        ourfacility = (
+            OurFacility.objects
+            .filter(is_active=True)
+        )
+
+        know_whoweare = (
+            AboutWhoWeAre.objects
+            .filter(is_active=True)
+        )
+
+        popup = (
+            HomePopup.objects
+            .filter(is_active=True)
+            .first()
+        )
+
+        faqs = (
+            FAQ.objects
+            .filter(is_active=True)
+            .order_by("id")
+        )
+
+        # ==============================
+        # LOCATION FILTER
+        # ==============================
 
         location_meta = None
 
-        # ✅ LOCATION FILTER
         if selected_location:
 
-            location_obj = Location.objects.filter(
-                meta_title__iexact=selected_location,
-                is_active=True
-            ).first()
+            location_obj = (
+                Location.objects
+                .filter(
+                    meta_title__iexact=selected_location,
+                    is_active=True
+                )
+                .first()
+            )
 
             if location_obj:
 
-                farmhouses = farmhouses.filter(location=location_obj)
+                farmhouses = farmhouses.filter(
+                    location=location_obj
+                )
 
                 location_meta = {
                     "meta_title": location_obj.meta_title,
                     "meta_description": location_obj.meta_description,
-                    "meta_keywords": location_obj.meta_keywords
+                    "meta_keywords": location_obj.meta_keywords,
                 }
 
-        # ✅ SEARCH FILTER
+        # ==============================
+        # SEARCH FILTER
+        # ==============================
+
         if search:
+
             farmhouses = farmhouses.filter(
-                Q(title__icontains=search) |
-                Q(location__name__icontains=search) |
-                        Q(short_description__icontains=search) |
-        Q(description__icontains=search)
+                Q(title__icontains=search)
+                |
+                Q(location__name__icontains=search)
+                |
+                Q(short_description__icontains=search)
+                |
+                Q(description__icontains=search)
             )
 
+        # ==============================
+        # LATEST BLOGS
+        # ==============================
 
-        latest_blogs = Blog.objects.filter(
-            is_published=True
-        ).order_by("-published_at")[:3]
-
-        # farmhouses = farmhouses.order_by("-created_at")[:6]
-        
-        
-        
-                # ✅ LIMITED (FOR UI GRID)
-        # limited_farmhouses = farmhouses.order_by("-created_at")[:6]
-        
-        limited_farmhouses = farmhouses.order_by(
-            F("Slot_position").asc(nulls_last=True)
-        )[:6]
-
-        # ✅ FULL DATA (FOR SEARCH DROPDOWN)
-        # all_farmhouses = Farmhouse.objects.filter(is_active=True)
-        
-        all_farmhouses = Farmhouse.objects.filter(
-            is_active=True
-        ).order_by(
-            F("Slot_position").asc(nulls_last=True)
+        latest_blogs = (
+            Blog.objects
+            .filter(is_published=True)
+            .order_by("-published_at")[:3]
         )
 
-        # if not search:
-        #    farmhouses = farmhouses[:6]
-        
-        # ✅ LIMIT ONLY WHEN NO SEARCH & NO LOCATION
-        # if not search and not selected_location:
-        #     farmhouses = farmhouses[:6]
+        # ==============================
+        # ONLY 6 FOR HOMEPAGE
+        # ==============================
+
+        limited_farmhouses = (
+            farmhouses
+            .order_by(
+                F("Slot_position").asc(nulls_last=True)
+            )[:6]
+        )
+
+        # ==============================
+        # LIGHTWEIGHT SEARCH DATA
+        # ==============================
+
+        all_farmhouses = (
+            Farmhouse.objects
+            .filter(is_active=True)
+            .select_related("location")
+            .order_by(
+                F("Slot_position").asc(nulls_last=True)
+            )
+            .values(
+                "id",
+                "title",
+                "slug",
+                "short_description",
+                "location__id",
+                "location__name",
+                "location__slug",
+            )
+        )
+
+        search_farmhouses = []
+
+        for farmhouse in all_farmhouses:
+
+            search_farmhouses.append({
+
+                "id": farmhouse["id"],
+
+                "title": farmhouse["title"],
+
+                "slug": farmhouse["slug"],
+
+                "short_description": (
+                    farmhouse["short_description"] or ""
+                ),
+
+                "location": {
+
+                    "id": farmhouse["location__id"],
+
+                    "name": farmhouse["location__name"],
+
+                    "slug": farmhouse["location__slug"],
+                }
+            })
+
+        # ==============================
+        # RESPONSE
+        # ==============================
 
         data = {
 
-            "popup": HomePopupSerializer(
-                popup,
-                context={"request": request}
-            ).data if popup else None,
+            "popup": (
+                HomePopupSerializer(
+                    popup,
+                    context={"request": request}
+                ).data
+                if popup
+                else None
+            ),
 
             "location_meta": location_meta,
 
             "banners": BannerSerializer(
-                banners, many=True, context={"request": request}
+                banners,
+                many=True,
+                context={"request": request}
             ).data,
 
             "locations": LocationSerializer(
-                locations, many=True
+                locations,
+                many=True
             ).data,
 
-            # "farmhouses": FarmhouseSerializer(
-            #     farmhouses, many=True, context={"request": request}
-            # ).data,
-            
-            
-             # ✅ FOR GRID (LIMITED)
+            # ONLY 6
             "farmhouses": FarmhouseSerializer(
-                limited_farmhouses, many=True, context={"request": request}
+                limited_farmhouses,
+                many=True,
+                context={"request": request}
             ).data,
 
-            # ✅ FOR SEARCH DROPDOWN (FULL)
-            "all_farmhouses": FarmhouseSerializer(
-                all_farmhouses, many=True, context={"request": request}
-            ).data,
+            # LIGHTWEIGHT SEARCH DATA
+            "all_farmhouses": search_farmhouses,
 
             "services": ChooseServicesSerializer(
-                services, many=True, context={"request": request}
+                services,
+                many=True,
+                context={"request": request}
             ).data,
 
             "ourfacility": OurFacilitySerializer(
-                ourfacility, many=True, context={"request": request}
+                ourfacility,
+                many=True,
+                context={"request": request}
             ).data,
 
             "know_whoweare": AboutWhoWeAreSerializer(
-                know_whoweare, many=True, context={"request": request}
+                know_whoweare,
+                many=True,
+                context={"request": request}
             ).data,
 
             "latest_blogs": BlogSerializer(
-                latest_blogs, many=True, context={"request": request}
+                latest_blogs,
+                many=True,
+                context={"request": request}
             ).data,
-            
+
             "faqs": FAQSerializer(
                 faqs,
                 many=True,
                 context={"request": request}
             ).data,
-            
         }
 
-        cache.set(cache_key, data, 60 * 5)
+        # ==============================
+        # CACHE 5 MINUTES
+        # ==============================
+
+        cache.set(
+            cache_key,
+            data,
+            60 * 5
+        )
 
         return Response(data)
+# class HomeAPIView(APIView):
+
+#     authentication_classes = [BasicAuthentication]
+#     permission_classes = [AllowAny]
+
+#     # def get(self, request, location=None):
+
+#     #     search = request.GET.get("search")
+
+#     #     selected_location = None
+
+#     #     # convert URL underscore → space
+#     #     if location:
+#     #         selected_location = location.replace("_", " ")
+#     def get(self, request):
+#         location = request.GET.get("location")
+#         search = request.GET.get("search")
+
+#         selected_location = None
+
+#         if location:
+#             selected_location = location.replace("_", " ")
+
+#         cache_key = f"home_page_data_{selected_location}_{search}"
+
+#         cached_data = cache.get(cache_key)
+#         if cached_data:
+#             return Response(cached_data)
+
+#         banners = Banner.objects.filter(is_active=True).order_by("Slot_position")
+#         locations = Location.objects.filter(is_active=True)
+#         farmhouses = Farmhouse.objects.filter(is_active=True)
+
+#         services = Choos_Services.objects.filter(is_active=True)
+#         ourfacility = OurFacility.objects.filter(is_active=True)
+#         know_whoweare = AboutWhoWeAre.objects.filter(is_active=True)
+
+#         popup = HomePopup.objects.filter(is_active=True).first()
+        
+#         faqs = FAQ.objects.filter(is_active=True)
+
+#         location_meta = None
+
+#         # ✅ LOCATION FILTER
+#         if selected_location:
+
+#             location_obj = Location.objects.filter(
+#                 meta_title__iexact=selected_location,
+#                 is_active=True
+#             ).first()
+
+#             if location_obj:
+
+#                 farmhouses = farmhouses.filter(location=location_obj)
+
+#                 location_meta = {
+#                     "meta_title": location_obj.meta_title,
+#                     "meta_description": location_obj.meta_description,
+#                     "meta_keywords": location_obj.meta_keywords
+#                 }
+
+#         # ✅ SEARCH FILTER
+#         if search:
+#             farmhouses = farmhouses.filter(
+#                 Q(title__icontains=search) |
+#                 Q(location__name__icontains=search) |
+#                         Q(short_description__icontains=search) |
+#         Q(description__icontains=search)
+#             )
+
+
+#         latest_blogs = Blog.objects.filter(
+#             is_published=True
+#         ).order_by("-published_at")[:3]
+
+#         # farmhouses = farmhouses.order_by("-created_at")[:6]
+        
+        
+        
+#                 # ✅ LIMITED (FOR UI GRID)
+#         # limited_farmhouses = farmhouses.order_by("-created_at")[:6]
+        
+#         limited_farmhouses = farmhouses.order_by(
+#             F("Slot_position").asc(nulls_last=True)
+#         )[:6]
+
+#         # ✅ FULL DATA (FOR SEARCH DROPDOWN)
+#         # all_farmhouses = Farmhouse.objects.filter(is_active=True)
+        
+#         all_farmhouses = Farmhouse.objects.filter(
+#             is_active=True
+#         ).order_by(
+#             F("Slot_position").asc(nulls_last=True)
+#         )
+
+#         # if not search:
+#         #    farmhouses = farmhouses[:6]
+        
+#         # ✅ LIMIT ONLY WHEN NO SEARCH & NO LOCATION
+#         # if not search and not selected_location:
+#         #     farmhouses = farmhouses[:6]
+
+#         data = {
+
+#             "popup": HomePopupSerializer(
+#                 popup,
+#                 context={"request": request}
+#             ).data if popup else None,
+
+#             "location_meta": location_meta,
+
+#             "banners": BannerSerializer(
+#                 banners, many=True, context={"request": request}
+#             ).data,
+
+#             "locations": LocationSerializer(
+#                 locations, many=True
+#             ).data,
+
+#             # "farmhouses": FarmhouseSerializer(
+#             #     farmhouses, many=True, context={"request": request}
+#             # ).data,
+            
+            
+#              # ✅ FOR GRID (LIMITED)
+#             "farmhouses": FarmhouseSerializer(
+#                 limited_farmhouses, many=True, context={"request": request}
+#             ).data,
+
+#             # ✅ FOR SEARCH DROPDOWN (FULL)
+#             "all_farmhouses": FarmhouseSerializer(
+#                 all_farmhouses, many=True, context={"request": request}
+#             ).data,
+
+#             "services": ChooseServicesSerializer(
+#                 services, many=True, context={"request": request}
+#             ).data,
+
+#             "ourfacility": OurFacilitySerializer(
+#                 ourfacility, many=True, context={"request": request}
+#             ).data,
+
+#             "know_whoweare": AboutWhoWeAreSerializer(
+#                 know_whoweare, many=True, context={"request": request}
+#             ).data,
+
+#             "latest_blogs": BlogSerializer(
+#                 latest_blogs, many=True, context={"request": request}
+#             ).data,
+            
+#             "faqs": FAQSerializer(
+#                 faqs,
+#                 many=True,
+#                 context={"request": request}
+#             ).data,
+            
+#         }
+
+#         cache.set(cache_key, data, 60 * 5)
+
+#         return Response(data)
 
     
 class AboutAPIView(APIView):
