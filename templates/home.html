@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
-
+{% load static %}
 {% block title %}Farmhouses Hyderabad - Best Farmhouses{% endblock %}
 
 {% block content %}
@@ -182,7 +182,7 @@ class="max-w-full max-h-[70vh] object-contain rounded-lg">
 
 
 <!-- ================= HERO ================= -->
-<section class="relative   px-2">
+<section class="relative  md:h-[600px] px-2">
 
   <!-- SLIDER -->
   <div class="absolute inset-0">
@@ -192,7 +192,7 @@ class="max-w-full max-h-[70vh] object-contain rounded-lg">
   </div>
 
   <!-- CONTENT -->
-  <div class="relative h-full flex items-center justify-center md:px-20 py-2 md:py-20 text-center text-white bg-black">
+  <div class="relative h-full flex items-center justify-center md:px-20 py-4 text-center text-white bg-black">
     <div class="space-y-1 md:space-y-4 px-2 md:px-0 w-full">
 
       <h1 class="md:text-4xl text-md font-bold text-white-600 pb-2 md:pb-8 ">
@@ -280,13 +280,10 @@ class="location-bar md:flex md:flex-wrap md:justify-center gap-3 md:gap-5  px-2"
 {% comment %} <section
   class="relative w-full bg-cover bg-center py-2 md:py-10  lg:px-28"
   style="background-image:url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&q=80');"> {% endcomment %}
-
-
-
-  <section
+<section
     class="relative w-full bg-cover bg-center py-2 md:py-10 lg:px-28"
     style="
-        background-image: url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=65');
+        background-image: url('{% static "images/farmhouse-1.jpg" %}');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -325,17 +322,17 @@ class="location-bar md:flex md:flex-wrap md:justify-center gap-3 md:gap-5  px-2"
 
 
 
-
-{% comment %} <section class="relative py-20 bg-cover bg-center md:px-20"
+{% comment %} 
+<section class="relative py-20 bg-cover bg-center md:px-20"
     style="background-image:url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80');"> {% endcomment %}
 <section
     class="relative py-20 bg-cover bg-center md:px-20"
     style="
-        background-image: url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1200&q=70');
+        background-image: url('{% static "images/farmhouse-4.jpg" %}');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-"
+    "
 >
     <div class="absolute inset-0 bg-white/85"></div>
 
@@ -385,24 +382,14 @@ class="location-bar md:flex md:flex-wrap md:justify-center gap-3 md:gap-5  px-2"
 
             <!-- RIGHT IMAGE -->
             <div class="relative">
-                {% comment %} <img id="aboutImage"
-                     class="rounded-2xl shadow-xl  w-full h-full "
-                     alt="About"> {% endcomment %}
+                <img id="aboutImage"
+                     class="rounded-2xl shadow-xl"
+                     alt="About">
 
-
-                <img
-    id="aboutImage"
-w-full h-full 
-    loading="lazy"
-    decoding="async"
-    class="w-full aspect-[10/7] object-cover rounded-2xl shadow-xl"
-    alt="About Farmhouses Hyderabad"
->
-
-                {% comment %} <div class="absolute -bottom-6 -left-6 bg-primary text-white p-6 rounded-2xl shadow-lg">
+                <div class="absolute -bottom-6 -left-6 bg-primary text-white p-6 rounded-2xl shadow-lg">
                     <p class="text-3xl font-bold">10+</p>
                     <p class="text-sm">Years Experience</p>
-                </div> {% endcomment %}
+                </div>
             </div>
 
         </div>
@@ -438,18 +425,16 @@ w-full h-full
 </section>
     <!-- Why Choose Us Section -->
     {% comment %} <section class="py-4 md:px-20 md:py-20 relative bg-cover bg-center"  style="background-image:url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&q=80');"> {% endcomment %}
-    
-    <section
+     <section
     class="py-4 md:px-20 md:py-20 relative bg-cover bg-center"
     style="
-        background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&q=65');
+        background-image: url('{% static "images/farmhouse-2.jpg" %}');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
     "
 >
-    
-    <!-- Overlay -->
+      <!-- Overlay -->
   <div class="absolute inset-0 bg-white/85"></div>
 
      
@@ -509,16 +494,20 @@ w-full h-full
 
 
 
-    
-{% comment %} <section class="relative md:px-20 py-20 bg-cover bg-center"
+{% comment %}     
+<section class="relative md:px-20 py-20 bg-cover bg-center"
     style="background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1920&q=80');"> {% endcomment %}
 
-    {% comment %} <section
-    class="relative md:px-20 py-20 bg-cover bg-center"
-    style="background-image: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200&q=65'); background-size: cover; background-position: center; background-repeat: no-repeat;"
-> {% endcomment %}
 
-<section class="relative md:px-20 py-20 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200&q=65'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+    <section
+    class="relative md:px-20 py-20 bg-cover bg-center"
+    style="
+        background-image: url('{% static "images/farmhouse-3.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    "
+>
     <div class="absolute inset-0 bg-white/90"></div>
 
     <div class="relative mx-auto px-4 md:px-12">
@@ -1011,18 +1000,8 @@ if (data.ourfacility && data.ourfacility.length > 0) {
 
         <!-- IMAGE -->
         <div>
-          {% comment %} <img src="${item.image}" loading="lazy" 
-               class="rounded-2xl shadow-2xl"> {% endcomment %}
-
-
-               <img
-    src="${item.image}"
-   w-full h-full
-    loading="lazy"
-    decoding="async"
-    class="w-full aspect-[3/2] object-cover rounded-2xl shadow-2xl"
-    alt="${item.main_title || "Farmhouse facilities"}"
->
+          <img src="${item.image}" loading="lazy" 
+               class="rounded-2xl shadow-2xl">
         </div>
       </div>
     `;
@@ -1124,6 +1103,9 @@ if (blogs.length > 1) {
       </div>`;
   }
 
+const farmhouseImageData = {};
+const farmhouseImageIndexes = {};
+
   data.farmhouses.forEach(f => {
     {% comment %} const sale = Number(f.pricing?.sale_price || 0);
     const weekday = Number(f.pricing?.normal_day_price || 0);
@@ -1170,46 +1152,69 @@ if (blogs.length > 1) {
       </span>
     `).join("");
 
-    grid.innerHTML += `
-      <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
-        <div class="relative aspect-[4/3] overflow-hidden bg-gray-200">
-
-          ${
-        [...f.images]
-        .sort((a, b) => Number(b.is_primary) - Number(a.is_primary))
-        .map((img, index) => `
-            <img
-                src="${img.image}"
-                class="farmhouse-image-${f.id} absolute inset-0 w-full h-full object-cover ${index === 0 ? "" : "hidden"}"
-                alt="${f.title}">
-        `)
-        .join("")
-    }
 
 
-  ${
-    f.images.length > 1
-      ? `
-<button
-    type="button"
-    onclick="event.stopPropagation(); prevFarmhouseImage(${f.id})"
-    class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full w-8 h-8 z-10">
-    ❮
-</button>
+const sortedImages = [...(f.images || [])]
+    .sort((a, b) => Number(b.is_primary) - Number(a.is_primary));
 
-<button
-    type="button"
-    onclick="event.stopPropagation(); nextFarmhouseImage(${f.id})"
-    class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full w-8 h-8 z-10">
-    ❯
-</button>
-      `
-      : ""
-  }
+farmhouseImageData[f.id] = sortedImages;
+farmhouseImageIndexes[f.id] = 0;
 
-</div>
+const primaryImage = sortedImages[0]?.image || "";
 
+grid.innerHTML += `
+    <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
 
+        <div class="relative h-56 overflow-hidden bg-gray-200">
+
+            ${
+                primaryImage
+                ? `
+                    <img
+                        id="farmhouse-image-${f.id}"
+                        src="${primaryImage}"
+                        width="800"
+                        height="600"
+                        loading="lazy"
+                        decoding="async"
+                        class="w-full h-full object-cover"
+                        alt="${f.title}"
+                    >
+                `
+                : `
+                    <div class="w-full h-full bg-gray-200"></div>
+                `
+            }
+
+            ${
+                sortedImages.length > 1
+                ? `
+                    <button
+                        type="button"
+                        onclick="event.stopPropagation(); prevFarmhouseImage(${f.id})"
+                        class="absolute left-2 top-1/2 -translate-y-1/2
+                               bg-black/50 hover:bg-black/70
+                               text-white rounded-full
+                               w-8 h-8 z-10
+                               flex items-center justify-center">
+                        ❮
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="event.stopPropagation(); nextFarmhouseImage(${f.id})"
+                        class="absolute right-2 top-1/2 -translate-y-1/2
+                               bg-black/50 hover:bg-black/70
+                               text-white rounded-full
+                               w-8 h-8 z-10
+                               flex items-center justify-center">
+                        ❯
+                    </button>
+                `
+                : ""
+            }
+
+        </div>
 
 
         <div class="p-5">
@@ -1636,41 +1641,61 @@ function showFarmhouseImage(id, index) {
 
     farmhouseIndexes[id] = index;
 }
-
 function nextFarmhouseImage(id) {
-    const images = document.querySelectorAll(
-        `.farmhouse-image-${id}`
-    );
 
-    if (!images.length) return;
+    const images = farmhouseImageData[id];
 
-    let current = farmhouseIndexes[id] ?? 0;
-
-    current++;
-
-    if (current >= images.length) {
-        current = 0;
+    if (!images || images.length <= 1) {
+        return;
     }
 
-    showFarmhouseImage(id, current);
+    let currentIndex = farmhouseImageIndexes[id] || 0;
+
+    currentIndex++;
+
+    if (currentIndex >= images.length) {
+        currentIndex = 0;
+    }
+
+    farmhouseImageIndexes[id] = currentIndex;
+
+    const imageElement = document.getElementById(
+        `farmhouse-image-${id}`
+    );
+
+    if (!imageElement) {
+        return;
+    }
+
+    imageElement.src = images[currentIndex].image;
 }
-
 function prevFarmhouseImage(id) {
-    const images = document.querySelectorAll(
-        `.farmhouse-image-${id}`
-    );
 
-    if (!images.length) return;
+    const images = farmhouseImageData[id];
 
-    let current = farmhouseIndexes[id] ?? 0;
-
-    current--;
-
-    if (current < 0) {
-        current = images.length - 1;
+    if (!images || images.length <= 1) {
+        return;
     }
 
-    showFarmhouseImage(id, current);
+    let currentIndex = farmhouseImageIndexes[id] || 0;
+
+    currentIndex--;
+
+    if (currentIndex < 0) {
+        currentIndex = images.length - 1;
+    }
+
+    farmhouseImageIndexes[id] = currentIndex;
+
+    const imageElement = document.getElementById(
+        `farmhouse-image-${id}`
+    );
+
+    if (!imageElement) {
+        return;
+    }
+
+    imageElement.src = images[currentIndex].image;
 }
 
 </script>
