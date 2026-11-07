@@ -430,12 +430,6 @@ ACCOUNT_EMAIL_REQUIRED = True
 # # Media URL - replaces MEDIA_URL = '/media/'
 # MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
-
-
-
-
-
-
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -444,11 +438,6 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
-
-
-
-
-
 
 # reddis
 
