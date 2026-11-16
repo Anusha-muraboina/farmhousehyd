@@ -574,7 +574,8 @@ const searchParam = params.get("search");
 
 let locationsList = [];
 let farmhousesList = [];
-
+let farmhouseImageData = {};
+let farmhouseImageIndexes = {};
 /* ================= API CALL ================= */
 axios.get("/api/home/", {
   params: {
@@ -1090,8 +1091,6 @@ if (blogs.length > 1) {
 }
 
 
-
-  
   /* ================= FARMHOUSES ================= */
   const grid = document.getElementById("farmhouseGrid");
   grid.innerHTML = "";
@@ -1103,8 +1102,8 @@ if (blogs.length > 1) {
       </div>`;
   }
 
-const farmhouseImageData = {};
-const farmhouseImageIndexes = {};
+{% comment %} const farmhouseImageData = {};
+const farmhouseImageIndexes = {}; {% endcomment %}
 
   data.farmhouses.forEach(f => {
     {% comment %} const sale = Number(f.pricing?.sale_price || 0);

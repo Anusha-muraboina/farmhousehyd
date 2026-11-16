@@ -179,34 +179,11 @@ WSGI_APPLICATION = 'farmhousehyd.wsgi.application'
 # else:
 #     DB_HOST = "3.110.215.192"
     
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.mysql",
-#         "NAME": "farmhouse_hyd",        # DB NAME
-#         "USER": "farmhouse_user",       # DB USER
-#         "PASSWORD": "Farmhouse@2026!",  # DB PASSWORD
-#         "HOST": DB_HOST,            # or localhost
-#         "PORT": "3306",
-#         "OPTIONS": {
-#             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
-#             "charset": "utf8mb4",
-#         },
-#     }
-# }
-
-
-
-# settings.py
-# if os.environ.get("ENV") == "production":
-#     DB_HOST = "127.0.0.1"
-# else:
-#     DB_HOST = "3.110.215.192"
-    
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "farmhousehyd",        # DB NAME
-        "USER": "farmhouseuser",       # DB USER
+        "NAME": "farmhouse_hyd",        # DB NAME
+        "USER": "farmhouse_user",       # DB USER
         "PASSWORD": "Farmhouse@2026!",  # DB PASSWORD
         "HOST": "localhost",            # or localhost
         "PORT": "3306",
@@ -218,8 +195,31 @@ DATABASES = {
 }
 
 
+
+# settings.py
+# if os.environ.get("ENV") == "production":
+#     DB_HOST = "127.0.0.1"
+# else:
+#     DB_HOST = "3.110.215.192"
+    
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "farmhousehyd",        # DB NAME
+#         "USER": "farmhouseuser",       # DB USER
+#         "PASSWORD": "Farmhouse@2026!",  # DB PASSWORD
+#         "HOST": "localhost",            # or localhost
+#         "PORT": "3306",
+#         "OPTIONS": {
+#             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+#             "charset": "utf8mb4",
+#         },
+#     }
+# }
+
+
 # TIME_ZONE = "Asia/Kolkata"
-# USE_TZ = True
+# USE_TZ = True  
 
 
 USE_I18N = True
