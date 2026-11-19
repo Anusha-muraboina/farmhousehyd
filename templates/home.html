@@ -1166,7 +1166,31 @@ grid.innerHTML += `
 
         <div class="relative h-56 overflow-hidden bg-gray-200">
 
-            ${
+        <a href="/farmhouse/${f.slug}/${f.location.slug}/"
+   class="block w-full h-full cursor-pointer">
+
+    ${
+        primaryImage
+        ? `
+            <img
+                id="farmhouse-image-${f.id}"
+                src="${primaryImage}"
+                width="800"
+                height="600"
+                loading="lazy"
+                decoding="async"
+                class="w-full h-full object-cover hover:scale-105 transition duration-300"
+                alt="${f.title}"
+            >
+        `
+        : `
+            <div class="w-full h-full bg-gray-200"></div>
+        `
+    }
+
+</a>
+
+            {% comment %} ${
                 primaryImage
                 ? `
                     <img
@@ -1183,7 +1207,7 @@ grid.innerHTML += `
                 : `
                     <div class="w-full h-full bg-gray-200"></div>
                 `
-            }
+            } {% endcomment %}
 
             ${
                 sortedImages.length > 1

@@ -656,6 +656,36 @@ class="mobile-thumb w-[80px] h-[60px] object-cover rounded-lg cursor-pointer bor
 src="${safeImage(farmhouse.images[0]?.image)}"
 class="w-full h-full object-cover transition duration-200">
 
+
+
+  <!-- PREVIOUS BUTTON -->
+        <button type="button"
+                onclick="mobilePrevImage()"
+                class="absolute left-2 top-1/2 -translate-y-1/2
+                       bg-black/60 text-white w-9 h-9 rounded-full
+                       flex items-center justify-center text-2xl
+                       hover:bg-black/80">
+            ‹
+        </button>
+
+        <!-- NEXT BUTTON -->
+        <button type="button"
+                onclick="mobileNextImage()"
+                class="absolute right-2 top-1/2 -translate-y-1/2
+                       bg-black/60 text-white w-9 h-9 rounded-full
+                       flex items-center justify-center text-2xl
+                       hover:bg-black/80">
+            ›
+        </button>
+
+        <!-- IMAGE COUNTER -->
+        <div class="absolute bottom-2 left-2 bg-black/60 text-white
+                    text-xs px-3 py-1 rounded-full">
+            <span id="mobileImageCounter">1 / ${farmhouse.images.length}</span>
+        </div>
+
+
+        
 <!-- ZOOM CONTROLS -->
 <div class="absolute bottom-2 right-2 flex gap-2">
 
@@ -3688,7 +3718,7 @@ function renderStars(rating){
     return stars;
 }
 
-
+{% comment %} 
 
 function changeMobileImage(index){
 
@@ -3705,7 +3735,96 @@ document.querySelectorAll(".mobile-thumb")
 document.querySelectorAll(".mobile-thumb")[index]
 .classList.add("border-orange-500");
 
+} {% endcomment %}
+
+
+// MOBILE GALLERY NAVIGATION
+
+let mobileCurrentImageIndex = 0;
+
+function updateMobileGallery() {
+
+    const images = farmhouse.images || [];
+
+    if (!images.length) return;
+
+    const mainImage = document.getElementById("mobileMainImage");
+    const counter = document.getElementById("mobileImageCounter");
+
+    if (!mainImage) return;
+
+    // Update main image
+    mainImage.src = safeImage(images[mobileCurrentImageIndex].image);
+
+    // Update image counter
+    if (counter) {
+        counter.innerText =
+            (mobileCurrentImageIndex + 1) + " / " + images.length;
+    }
+
+    // Reset zoom
+    mobileZoom = 1;
+    mainImage.style.transform = "scale(1)";
+
+    // Update active thumbnail
+    document.querySelectorAll(".mobile-thumb").forEach((thumb, index) => {
+
+        thumb.classList.toggle(
+            "border-orange-500",
+            index === mobileCurrentImageIndex
+        );
+
+        thumb.classList.toggle(
+            "border-transparent",
+            index !== mobileCurrentImageIndex
+        );
+
+    });
 }
+
+
+// NEXT IMAGE
+function mobileNextImage() {
+
+    const images = farmhouse.images || [];
+
+    if (!images.length) return;
+
+    mobileCurrentImageIndex =
+        (mobileCurrentImageIndex + 1) % images.length;
+
+    updateMobileGallery();
+}
+
+
+// PREVIOUS IMAGE
+function mobilePrevImage() {
+
+    const images = farmhouse.images || [];
+
+    if (!images.length) return;
+
+    mobileCurrentImageIndex =
+        (mobileCurrentImageIndex - 1 + images.length) % images.length;
+
+    updateMobileGallery();
+}
+
+
+// THUMBNAIL CLICK
+function changeMobileImage(index) {
+
+    const images = farmhouse.images || [];
+
+    if (index < 0 || index >= images.length) return;
+
+    // Important: update current index
+    mobileCurrentImageIndex = index;
+
+    updateMobileGallery();
+}
+
+
 
 
 {% comment %} function changeMobileImage(index){
